@@ -61,8 +61,9 @@ async def _scope(db: AsyncSession, user: User, p: Params, tz: str) -> Scope:
     extra = f" AND ({p.q})" if p.q and p.q.strip() else ""
     if p.board is not None:
         ba = await boards.load_board(db, user, p.board)
-        source = ba.board.source_rql.strip() or "category IS NOT EMPTY"
-        compiled = await search.compile_rql(db, user, f"({source}){extra}", timezone=tz)
+        source = ba.board.source_rql.strip()
+        rql = f"({source}){extra}" if source else extra.removeprefix(" AND ")
+        compiled = await search.compile_rql(db, user, rql, timezone=tz)
         statuses = await boards.scope_statuses(db, ba.board)
         return Scope(compiled.where, statuses, board=ba.board, project=ba.project)
     if p.project:

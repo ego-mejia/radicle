@@ -369,7 +369,7 @@ Los criterios de aceptación de la etapa se verifican así:
 | 3.4 | Timeline | Listo |
 | 3.5 | Reportes agile | Listo |
 | 3.6 | Reportes generales | Listo |
-| 3.7 | Dashboards | Pendiente |
+| 3.7 | Dashboards | Listo |
 
 ### 3.1 Periodos de estado y snapshots
 
@@ -442,4 +442,32 @@ Los criterios de aceptación de la etapa se verifican así:
 - `tests/integration/test_reports.py`: un sprint sembrado con fechas controladas; cada reporte da los números calculados a mano (burndown ideal y real, burnup, sprint report, velocity, CSV, CFD, cycle time y percentiles, creados vs resueltos, distribución, pronóstico en tiempo y en riesgo, tiempo).
 - `test_performance.py` (marca `slow`): CFD de un año con 10,000 tickets en menos de 1 s (unos 80 ms).
 - E2E `the sprint report and burndown add up, and V1 has a forecast`.
+
+### 3.7 Dashboards
+
+**Qué se hizo**
+
+- Migración `0016`: `dashboards` y `dashboard_widgets`; cada proyecto recibe su "Summary". Decisión: [0022](decisions/0022-dashboards.md).
+- API `/dashboards`, `/dashboards/{id}`, widgets, `/projects/{key}/dashboard` y `/widgets/{id}/data` (datos con los permisos de quien ve).
+- Diez widgets: resultados de filtro, conteo, distribución (barras o pastel), progreso de milestone, creados vs resueltos, burndown del sprint, cumulative flow, bloqueados, mis tickets y markdown.
+- UI: `/dashboards`, `/d/{id}` con modo edición (catálogo, configuración, drag y resize), compartir, refresco cada 5 minutos, y la pestaña "Resumen" en cada proyecto.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_dashboards.py::test_acceptance_v1_go_to_market`: el dashboard con progreso, bugs por área y bloqueados se comparte con el proyecto y un miembro lo ve con sus permisos (sin los bugs de otro proyecto).
+- E2E `build "V1 Go to market" and share it with the project`.
+
+### Aceptación de la etapa 3
+
+| Criterio | Dónde |
+| --- | --- |
+| Columna "Review" con In Review y QA Verified, WIP 3, en rojo con el cuarto | E2E; `test_acceptance_review_column_with_wip_3` |
+| Swimlanes por área y quick filter "Solo bugs" responden al instante | E2E; `test_swimlanes_and_quick_filters` |
+| Planear un sprint con capacidad, iniciar, agregar a mitad y cerrar a #backlog | E2E; `test_acceptance_full_sprint` |
+| El burndown y el sprint report cuadran con lo que pasó | `test_reports.py` con fechas controladas; E2E de reportes |
+| Timeline con V1; arrastrar cambia fechas; dependencia imposible en rojo | E2E; `test_timeline.py` |
+| Progreso de V1 con % y pronóstico; "en riesgo" si pasa la fecha | `test_milestone_forecast`, `test_general_reports` |
+| Dashboard "V1 Go to market" compartido y visto con permisos propios | E2E; `test_acceptance_v1_go_to_market` |
+| Un agente consulta `get_milestone_progress` y `get_sprint` por MCP | `test_mcp_reports`, `test_mcp_sprints` |
+| Rendimiento: CFD de un año con 10,000 tickets < 1 s; board de 500 con swimlanes < 1 s | `test_performance.py` (marca `slow`) |
 

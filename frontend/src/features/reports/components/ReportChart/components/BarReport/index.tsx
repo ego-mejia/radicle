@@ -20,14 +20,15 @@ type Props = {
   series: Series[];
   unit?: string;
   horizontal?: boolean;
+  height?: number | `${number}%`;
 };
 
 /** Bars (and an optional line): velocity, created vs resolved, distribution and time. */
-export function BarReport({ report, x, series, unit, horizontal = false }: Props) {
+export function BarReport({ report, x, series, unit, horizontal = false, height }: Props) {
   const theme = useTheme();
-  const height = horizontal ? Math.max(200, report.rows.length * 34 + 60) : 340;
+  const size = height ?? (horizontal ? Math.max(200, report.rows.length * 34 + 60) : 340);
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={size}>
       <ComposedChart
         data={report.rows}
         layout={horizontal ? 'vertical' : 'horizontal'}

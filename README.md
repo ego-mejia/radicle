@@ -2,7 +2,7 @@
 
 Ticket tracker open source y self-hosted con servidor MCP desde el día 1: personas y agentes trabajan el mismo proyecto.
 
-> Estado: etapas 1 y 2 completas; etapa 3 en curso. Ver [docs/progress.md](docs/progress.md).
+> Estado: etapas 1, 2 y 3 completas; etapa 4 en curso. Ver [docs/progress.md](docs/progress.md).
 
 ## Instalar
 
@@ -84,6 +84,8 @@ La pestaña **Timeline** muestra los tickets en el tiempo por milestone o área:
 
 En **Reportes** están burndown, burnup, velocity, cumulative flow, control chart, sprint report, creados vs resueltos, distribución, progreso de milestone con pronóstico y tiempo; cada uno con su tabla y Exportar CSV. `RADICLE_WORKDAYS` define los días hábiles del burndown.
 
+**Dashboards** junta widgets (conteos, distribuciones, progreso de milestone, burndown, bloqueados...) en una cuadrícula que se arma arrastrando. Cada proyecto tiene su **Resumen**; los demás se comparten contigo, con un proyecto o con todos, y cada quien ve solo los tickets que puede ver.
+
 ## Atajos
 
 `?` muestra todos. Los principales: `c` crear ticket, `/` buscar, `⌘K` paleta de comandos, `g p` proyectos, `g m` mis tickets, `j`/`k` moverse en listas y board, y con un ticket abierto `e` título, `a` asignarme, `m` mover, `l` tags, `p` prioridad. Se pueden apagar en el perfil.
@@ -98,7 +100,7 @@ En **Reportes** están burndown, burnup, velocity, cumulative flow, control char
 
 - Los tests de backend levantan Postgres 16 con testcontainers; no usan SQLite.
 - Si cambias la API: `cd backend && uv run python ../scripts/export_openapi.py` y `cd frontend && pnpm api:types`.
-- Smoke completo: `scripts/smoke.sh` (construye la imagen, la levanta en limpio y la borra al terminar).
+- Smoke completo: `scripts/smoke.sh` (construye la imagen, la levanta en limpio como proyecto `radicle-smoke` en el puerto 8001 y la borra al terminar; no toca tu stack).
 
 ## Documentación
 

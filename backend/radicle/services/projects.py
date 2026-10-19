@@ -90,6 +90,9 @@ async def create_project(
     from radicle.services import boards
 
     await boards.create_default_board(db, project, creator)
+    from radicle.services import dashboards
+
+    await dashboards.create_project_summary(db, project)
     return project
 
 

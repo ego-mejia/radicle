@@ -48,7 +48,9 @@
     "skip": "Saltar al contenido",
     "backlog": "Backlog",
     "timeline": "Timeline",
-    "reports": "Reportes"
+    "reports": "Reportes",
+    "dashboards": "Dashboards",
+    "summary": "Resumen"
   },
   "theme": {
     "label": "Tema",
@@ -1046,6 +1048,98 @@
       "at_risk": "En riesgo",
       "no_forecast": "Sin pronóstico",
       "done": "Terminado"
+    }
+  },
+  "dashboards": {
+    "title": "Dashboards",
+    "all": "Todos los dashboards",
+    "newName": "Nombre del nuevo dashboard",
+    "create": "Crear dashboard",
+    "none": "Todavía no hay dashboards. Crea uno o abre el Resumen de un proyecto.",
+    "notFound": "Este dashboard no existe o no lo puedes ver.",
+    "byOwner": "de @{{owner}}",
+    "refresh": "Refrescar",
+    "refreshWidget": "Refrescar {{title}}",
+    "edit": "Editar",
+    "done": "Listo",
+    "addWidget": "Agregar widget",
+    "share": "Compartir",
+    "delete": "Borrar {{name}}",
+    "deleteConfirm": "Se borra el dashboard con sus widgets. Los tickets no se tocan.",
+    "editWidget": "Editar {{title}}",
+    "removeWidget": "Quitar {{title}}",
+    "removeConfirm": "El widget sale del dashboard.",
+    "emptyTitle": "Todavía no hay widgets",
+    "emptyText": "Haz clic en Editar y Agregar widget.",
+    "visibility": "Quién lo ve",
+    "visibilities": {
+      "private": "Privado",
+      "project": "Proyecto",
+      "instance": "Todos"
+    },
+    "visibilityHelp": {
+      "private": "Solo tú.",
+      "project": "Los miembros del proyecto. Cada quien ve solo los tickets que puede ver.",
+      "instance": "Todos los usuarios de este Radicle, cada uno con sus permisos."
+    },
+    "project": "Proyecto",
+    "widgetTitle": "Título",
+    "savedFilter": "Filtro guardado",
+    "orRql": "O déjalo vacío y escribe RQL.",
+    "rqlOptional": "Opcional: acota qué tickets.",
+    "label": "Etiqueta",
+    "limit": "Cuántos",
+    "chart": "Gráfica",
+    "bars": "Barras",
+    "pie": "Pastel",
+    "days": "Días",
+    "text": "Texto",
+    "noTickets": "No hay nada aquí.",
+    "more_one": "{{count}} más",
+    "more_other": "{{count}} más",
+    "blockedBy": "bloqueado por {{keys}}",
+    "progressLine": "{{count}}% por conteo · {{hours}} h restantes",
+    "widgets": {
+      "filter_results": {
+        "name": "Resultados de filtro",
+        "help": "Tickets de un filtro guardado o RQL."
+      },
+      "count": {
+        "name": "Conteo",
+        "help": "Un número grande a partir de un RQL."
+      },
+      "distribution": {
+        "name": "Distribución",
+        "help": "Tickets por área, prioridad, responsable..."
+      },
+      "milestone_progress": {
+        "name": "Progreso de milestone",
+        "help": "Porcentaje, horas restantes y pronóstico."
+      },
+      "created_vs_resolved": {
+        "name": "Creados vs resueltos",
+        "help": "Tendencia de un RQL en los últimos días."
+      },
+      "sprint_burndown": {
+        "name": "Burndown del sprint",
+        "help": "El sprint activo de un board Scrum."
+      },
+      "cumulative_flow": {
+        "name": "Cumulative flow",
+        "help": "Tickets por estado en el tiempo de un board."
+      },
+      "blocked_tickets": {
+        "name": "Bloqueados",
+        "help": "Tickets bloqueados y quién los bloquea."
+      },
+      "my_tickets": {
+        "name": "Mis tickets",
+        "help": "Los tickets abiertos de quien lo ve."
+      },
+      "markdown": {
+        "name": "Markdown",
+        "help": "Texto libre: notas, links, metas."
+      }
     }
   }
 }

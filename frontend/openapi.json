@@ -1717,6 +1717,214 @@
         "title": "CustomFieldType",
         "type": "string"
       },
+      "DashboardCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Project key, for project visibility",
+            "title": "Project"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/FilterVisibility",
+            "default": "private"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "DashboardCreate",
+        "type": "object"
+      },
+      "DashboardDetail": {
+        "properties": {
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_project_default": {
+            "title": "Is Project Default",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "owner": {
+            "description": "Owner handle",
+            "title": "Owner",
+            "type": "string"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project"
+          },
+          "refresh_seconds": {
+            "description": "How often the UI refreshes the widgets",
+            "title": "Refresh Seconds",
+            "type": "integer"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/FilterVisibility"
+          },
+          "widgets": {
+            "items": {
+              "$ref": "#/components/schemas/WidgetOut"
+            },
+            "title": "Widgets",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "owner",
+          "visibility",
+          "project",
+          "is_project_default",
+          "can_edit",
+          "updated_at",
+          "widgets",
+          "refresh_seconds"
+        ],
+        "title": "DashboardDetail",
+        "type": "object"
+      },
+      "DashboardOut": {
+        "properties": {
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_project_default": {
+            "title": "Is Project Default",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "owner": {
+            "description": "Owner handle",
+            "title": "Owner",
+            "type": "string"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/FilterVisibility"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "owner",
+          "visibility",
+          "project",
+          "is_project_default",
+          "can_edit",
+          "updated_at"
+        ],
+        "title": "DashboardOut",
+        "type": "object"
+      },
+      "DashboardPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "layout": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/LayoutItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "New positions of several widgets at once (after a drag)",
+            "title": "Layout"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project"
+          },
+          "visibility": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FilterVisibility"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "DashboardPatch",
+        "type": "object"
+      },
       "DependencyOut": {
         "properties": {
           "blocked": {
@@ -2325,6 +2533,69 @@
           "count"
         ],
         "title": "LaneOut",
+        "type": "object"
+      },
+      "Layout": {
+        "additionalProperties": false,
+        "properties": {
+          "h": {
+            "title": "H",
+            "type": "integer"
+          },
+          "w": {
+            "title": "W",
+            "type": "integer"
+          },
+          "x": {
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "w",
+          "h"
+        ],
+        "title": "Layout",
+        "type": "object"
+      },
+      "LayoutItem": {
+        "additionalProperties": false,
+        "properties": {
+          "h": {
+            "title": "H",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "w": {
+            "title": "W",
+            "type": "integer"
+          },
+          "x": {
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "x",
+          "y",
+          "w",
+          "h",
+          "id"
+        ],
+        "title": "LayoutItem",
         "type": "object"
       },
       "Limits": {
@@ -3086,6 +3357,34 @@
           "next_cursor"
         ],
         "title": "Page[CustomFieldOut]",
+        "type": "object"
+      },
+      "Page_DashboardOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DashboardOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[DashboardOut]",
         "type": "object"
       },
       "Page_EventOut_": {
@@ -7665,6 +7964,342 @@
         "title": "WarningOut",
         "type": "object"
       },
+      "WidgetCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "title": "Config",
+            "type": "object"
+          },
+          "layout": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Layout"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Default: a new row at the bottom"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "widget_type": {
+            "description": "filter_results, count, distribution, milestone_progress, created_vs_resolved, sprint_burndown, cumulative_flow, blocked_tickets, my_tickets, markdown",
+            "title": "Widget Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "widget_type",
+          "title"
+        ],
+        "title": "WidgetCreate",
+        "type": "object"
+      },
+      "WidgetDataOut": {
+        "properties": {
+          "data": {
+            "additionalProperties": true,
+            "title": "Data",
+            "type": "object"
+          },
+          "tickets": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/WidgetTicket"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tickets"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          },
+          "widget_id": {
+            "title": "Widget Id",
+            "type": "string"
+          },
+          "widget_type": {
+            "title": "Widget Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "widget_id",
+          "widget_type",
+          "data",
+          "tickets",
+          "total"
+        ],
+        "title": "WidgetDataOut",
+        "type": "object"
+      },
+      "WidgetOut": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "title": "Config",
+            "type": "object"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "layout": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Layout",
+            "type": "object"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "widget_type": {
+            "title": "Widget Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "widget_type",
+          "title",
+          "config",
+          "layout"
+        ],
+        "title": "WidgetOut",
+        "type": "object"
+      },
+      "WidgetPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Config"
+          },
+          "layout": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Layout"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "title": "WidgetPatch",
+        "type": "object"
+      },
+      "WidgetTicket": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "assignee": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "blocked": {
+            "title": "Blocked",
+            "type": "boolean"
+          },
+          "blocked_by": {
+            "description": "Open blockers you can see",
+            "items": {
+              "type": "string"
+            },
+            "title": "Blocked By",
+            "type": "array"
+          },
+          "checklist_done": {
+            "title": "Checklist Done",
+            "type": "integer"
+          },
+          "checklist_total": {
+            "title": "Checklist Total",
+            "type": "integer"
+          },
+          "custom_fields": {
+            "additionalProperties": true,
+            "title": "Custom Fields",
+            "type": "object"
+          },
+          "due_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due Date"
+          },
+          "estimate_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimate Hours"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milestone"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/Priority"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "string"
+          },
+          "resolution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Resolution"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "spent_hours": {
+            "title": "Spent Hours",
+            "type": "number"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
+          "status": {
+            "$ref": "#/components/schemas/StatusRef"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TicketType"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "vote_count": {
+            "title": "Vote Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "title",
+          "type",
+          "status",
+          "resolution",
+          "priority",
+          "assignee",
+          "area",
+          "milestone",
+          "tags",
+          "custom_fields",
+          "blocked",
+          "start_date",
+          "due_date",
+          "estimate_hours",
+          "spent_hours",
+          "vote_count",
+          "checklist_done",
+          "checklist_total",
+          "rank",
+          "updated_at",
+          "blocked_by"
+        ],
+        "title": "WidgetTicket",
+        "type": "object"
+      },
       "WipMode": {
         "enum": [
           "soft",
@@ -9088,6 +9723,356 @@
         ]
       }
     },
+    "/api/v1/dashboards": {
+      "get": {
+        "description": "Yours, the ones shared with your projects and with the instance.",
+        "operationId": "list_dashboards_api_v1_dashboards_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_DashboardOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Dashboards",
+        "tags": [
+          "dashboards"
+        ]
+      },
+      "post": {
+        "operationId": "create_dashboard_api_v1_dashboards_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Dashboard",
+        "tags": [
+          "dashboards"
+        ]
+      }
+    },
+    "/api/v1/dashboards/{dashboard_id}": {
+      "delete": {
+        "operationId": "delete_dashboard_api_v1_dashboards__dashboard_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dashboard_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dashboard Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Dashboard",
+        "tags": [
+          "dashboards"
+        ]
+      },
+      "get": {
+        "operationId": "get_dashboard_api_v1_dashboards__dashboard_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dashboard_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dashboard Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Dashboard",
+        "tags": [
+          "dashboards"
+        ]
+      },
+      "patch": {
+        "description": "Rename, share, or move several widgets at once with `layout`.",
+        "operationId": "patch_dashboard_api_v1_dashboards__dashboard_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dashboard_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dashboard Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Dashboard",
+        "tags": [
+          "dashboards"
+        ]
+      }
+    },
+    "/api/v1/dashboards/{dashboard_id}/widgets": {
+      "post": {
+        "operationId": "add_widget_api_v1_dashboards__dashboard_id__widgets_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dashboard_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dashboard Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WidgetCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WidgetOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Widget",
+        "tags": [
+          "dashboards"
+        ]
+      }
+    },
+    "/api/v1/dashboards/{dashboard_id}/widgets/{widget_id}": {
+      "delete": {
+        "operationId": "delete_widget_api_v1_dashboards__dashboard_id__widgets__widget_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dashboard_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dashboard Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "widget_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Widget Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Widget",
+        "tags": [
+          "dashboards"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_widget_api_v1_dashboards__dashboard_id__widgets__widget_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dashboard_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Dashboard Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "widget_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Widget Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WidgetPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WidgetOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Widget",
+        "tags": [
+          "dashboards"
+        ]
+      }
+    },
     "/api/v1/filters": {
       "get": {
         "description": "Filters you can see: yours, your projects' and the instance's. With `project`,\nonly project filters of that project.",
@@ -10125,6 +11110,49 @@
         "summary": "Create Board",
         "tags": [
           "boards"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/dashboard": {
+      "get": {
+        "description": "The project's \"Summary\" dashboard; its admins edit it.",
+        "operationId": "project_dashboard_api_v1_projects__key__dashboard_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Project Dashboard",
+        "tags": [
+          "dashboards"
         ]
       }
     },
@@ -14453,6 +15481,50 @@
         "summary": "Version",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/api/v1/widgets/{widget_id}/data": {
+      "get": {
+        "description": "Computed with your permissions: a shared widget never shows tickets you cannot see.",
+        "operationId": "widget_data_api_v1_widgets__widget_id__data_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "widget_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Widget Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WidgetDataOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Widget Data",
+        "tags": [
+          "dashboards"
         ]
       }
     },

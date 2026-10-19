@@ -210,3 +210,66 @@ test('drag a bar on the timeline and see a dependency in red', async () => {
   const history = await api<{ items: { field: string | null }[] }>('GET', `/tickets/${a}/history`);
   expect(history.items.some((e) => e.field === 'start_date')).toBe(true);
 });
+
+test('build "V1 Go to market" and share it with the project', async ({ browser }) => {
+  await page.goto('/dashboards');
+  await page.getByLabel('New dashboard name').fill('V1 Go to market');
+  await page.getByRole('button', { name: 'Create dashboard' }).click();
+  await expect(page.getByRole('heading', { name: 'V1 Go to market' })).toBeVisible();
+  await page.getByRole('button', { name: 'Edit' }).click();
+
+  async function add(widget: string, fill?: (d: ReturnType<Page['getByRole']>) => Promise<void>) {
+    await page.getByRole('button', { name: 'Add widget' }).click();
+    await page
+      .getByRole('dialog', { name: 'Add widget' })
+      .getByRole('button', { name: widget })
+      .click();
+    const dialog = page.getByRole('dialog', { name: new RegExp(`^${widget.split(' ')[0]}`) });
+    if (fill) await fill(dialog);
+    await dialog.getByRole('button', { name: 'Save' }).click();
+    await expect(dialog).toBeHidden();
+  }
+  await add('Milestone progress', async (d) => {
+    await d.getByLabel('Project').selectOption('PA');
+    await d.getByLabel('Milestone').fill('V1');
+  });
+  await add('Distribution', async (d) => {
+    await d.getByLabel('Title').fill('Open bugs by area');
+    await d.getByLabel('RQL').fill('project = PA AND type = bug AND category != done');
+    await d.getByLabel('Chart').selectOption('pie');
+  });
+  await add('Blocked tickets', async (d) => {
+    await d.getByLabel('RQL').fill('project = PA');
+  });
+  await expect(page.getByTestId('widget-Milestone progress')).toContainText('%');
+  await expect(page.getByTestId('widget-Blocked tickets')).toContainText('blocked by');
+  await page.getByRole('button', { name: 'Done' }).click();
+
+  await page.getByRole('button', { name: 'Share' }).click();
+  const share = page.getByRole('dialog', { name: 'Share' });
+  await share.getByLabel('Who sees it').selectOption('project');
+  await share.getByLabel('Project').selectOption('PA');
+  await share.getByRole('button', { name: 'Save' }).click();
+  await expect(share).toBeHidden();
+  const url = page.url();
+
+  // Someone else in the project sees it, computed with their own permissions.
+  await api('POST', '/users', {
+    handle: 'ana',
+    display_name: 'Ana',
+    email: 'ana@example.com',
+    password: 'ana-password-1',
+  });
+  await api('PUT', '/projects/PA/members/ana', { role: 'viewer' });
+  const other = await browser.newPage();
+  await other.goto('/login');
+  await other.getByLabel('Email').fill('ana@example.com');
+  await other.getByLabel('Password').fill('ana-password-1');
+  await other.getByRole('button', { name: 'Sign in' }).click();
+  await expect(other.getByRole('heading', { name: 'Projects' })).toBeVisible();
+  await other.goto(url);
+  await expect(other.getByRole('heading', { name: 'V1 Go to market' })).toBeVisible();
+  await expect(other.getByTestId('widget-Open bugs by area')).toBeVisible();
+  await expect(other.getByRole('button', { name: 'Edit' })).toHaveCount(0);
+  await other.close();
+});

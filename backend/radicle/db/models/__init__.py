@@ -1,6 +1,7 @@
 from radicle.db.models.attachments import Attachment
 from radicle.db.models.base import Base, utcnow
 from radicle.db.models.boards import Board, BoardKind, BoardQuickFilter, Swimlane, WipMode
+from radicle.db.models.dashboards import Dashboard, DashboardWidget
 from radicle.db.models.discussion import (
     LINK_LABELS,
     Comment,
@@ -64,6 +65,8 @@ __all__ = [
     "CustomFieldDefinition",
     "CustomFieldType",
     "DailyStatusCount",
+    "Dashboard",
+    "DashboardWidget",
     "EventType",
     "FilterVisibility",
     "Job",

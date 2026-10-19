@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, createLink } from '@tanstack/react-router';
-import { FolderKanban, Inbox, LogOut, Shield, UserRound } from 'lucide-react';
+import { FolderKanban, Inbox, LayoutDashboard, LogOut, Shield, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Logo } from '../../../../components/icons/Logo';
 import { Avatar } from '../../../../components/ui/Avatar';
@@ -48,6 +48,10 @@ export function Sidebar({ open, onClose }: Props) {
           <NavLink to="/me/tickets" search={{ t: undefined }}>
             <Inbox />
             <span>{t('nav.myTickets')}</span>
+          </NavLink>
+          <NavLink to="/dashboards">
+            <LayoutDashboard />
+            <span>{t('nav.dashboards')}</span>
           </NavLink>
           {me.is_instance_admin && (
             <NavLink to="/admin" search={{ tab: undefined }}>

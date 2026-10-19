@@ -128,3 +128,21 @@ export const REPORT_TYPES = [
   'time',
 ] as const;
 export type ReportType = (typeof REPORT_TYPES)[number];
+
+export type DashboardSummary = S['DashboardOut'];
+export type Dashboard = S['DashboardDetail'];
+export type Widget = S['WidgetOut'];
+export type WidgetData = S['WidgetDataOut'];
+export const WIDGET_TYPES = [
+  'filter_results',
+  'count',
+  'distribution',
+  'milestone_progress',
+  'created_vs_resolved',
+  'sprint_burndown',
+  'cumulative_flow',
+  'blocked_tickets',
+  'my_tickets',
+  'markdown',
+] as const;
+export type WidgetType = (typeof WIDGET_TYPES)[number];

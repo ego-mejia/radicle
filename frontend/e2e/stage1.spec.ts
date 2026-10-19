@@ -83,7 +83,7 @@ test('create project PA with four areas and milestone V1', async () => {
 });
 
 test('create a task, a bug and a draft: PA-1, PA-2, PA-3', async () => {
-  await page.getByRole('link', { name: 'Board' }).click();
+  await page.getByRole('link', { name: 'Board', exact: true }).click();
   await createTicket('Task', 'API de pagos', 'Backend');
   await createTicket('Bug', 'Checkout se congela', 'Frontend');
   await createTicket('Draft', 'Idea: pagar con QR');

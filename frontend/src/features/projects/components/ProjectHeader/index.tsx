@@ -1,5 +1,14 @@
 import { createLink } from '@tanstack/react-router';
-import { CalendarRange, ChartLine, Columns3, Flag, List, ListTodo, Settings } from 'lucide-react';
+import {
+  CalendarRange,
+  ChartLine,
+  Columns3,
+  Flag,
+  LayoutDashboard,
+  List,
+  ListTodo,
+  Settings,
+} from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Badge, TicketKey } from '../../../../components/ui/Badge';
 import type { ProjectDetail } from '../../../../services/api/types';
@@ -22,6 +31,10 @@ export function ProjectHeader({ project, actions }: Props) {
         {actions}
       </S.TitleRow>
       <S.Tabs aria-label={project.name}>
+        <Tab to="/p/$key/summary" params={params}>
+          <LayoutDashboard />
+          {t('nav.summary')}
+        </Tab>
         <Tab
           to="/p/$key/board"
           params={params}

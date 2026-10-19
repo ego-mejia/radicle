@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 # Smoke test: bring the stack up, run first-time setup, create an agent and use its token.
 # Usage: scripts/smoke.sh [base_url]   (set SMOKE_KEEP=1 to leave the stack running)
+# It runs as its own Compose project on port 8001 and deletes its volumes at the end, so it
+# never touches the stack you develop with.
 set -euo pipefail
 
-BASE_URL="${1:-http://localhost:${RADICLE_PORT:-8000}}"
+export COMPOSE_PROJECT_NAME="${SMOKE_PROJECT:-radicle-smoke}"
+export RADICLE_PORT="${SMOKE_PORT:-8001}"
+BASE_URL="${1:-http://localhost:${RADICLE_PORT}}"
 JAR="$(mktemp)"
 trap 'rm -f "$JAR"; [ "${SMOKE_KEEP:-0}" = 1 ] || docker compose down -v >/dev/null 2>&1' EXIT
 

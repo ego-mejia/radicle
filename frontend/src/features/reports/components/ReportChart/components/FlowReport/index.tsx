@@ -15,13 +15,19 @@ import type { Category, ReportData } from '../../../../../../services/api/types'
 type Status = { name: string; category: Category };
 
 /** Cumulative flow: one stacked area per status, done at the bottom, in category colors. */
-export function FlowReport({ report }: { report: ReportData }) {
+export function FlowReport({
+  report,
+  height = 360,
+}: {
+  report: ReportData;
+  height?: number | `${number}%`;
+}) {
   const theme = useTheme();
   const statuses = ((report.summary.statuses as Status[] | undefined) ?? []).slice().reverse();
   // Several statuses share a category: vary the opacity so the bands stay apart.
   const seen: Record<string, number> = {};
   return (
-    <ResponsiveContainer width="100%" height={360}>
+    <ResponsiveContainer width="100%" height={height}>
       <AreaChart data={report.rows} margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
         <CartesianGrid stroke={theme.color.border} strokeDasharray="3 3" />
         <XAxis dataKey="date" stroke={theme.color.textMuted} fontSize={11} />

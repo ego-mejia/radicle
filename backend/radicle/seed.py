@@ -87,6 +87,9 @@ async def seed(
     from radicle.services.boards import create_default_board
 
     await create_default_board(db, project, users[0])
+    from radicle.services.dashboards import create_project_summary
+
+    await create_project_summary(db, project)
     for i, user in enumerate(users):
         role = (
             ProjectRole.admin

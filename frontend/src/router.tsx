@@ -14,6 +14,9 @@ import { BoardView } from './features/board/views/BoardView';
 import { BacklogView } from './features/sprints/views/BacklogView';
 import { TimelineView } from './features/timeline/views/TimelineView';
 import { ReportsView } from './features/reports/views/ReportsView';
+import { DashboardsView } from './features/dashboards/views/DashboardsView';
+import { DashboardView } from './features/dashboards/views/DashboardView';
+import { ProjectSummaryView } from './features/dashboards/views/ProjectSummaryView';
 import { ListView } from './features/list/views/ListView';
 import { MilestonesView } from './features/milestones/views/MilestonesView';
 import { MyTicketsView } from './features/mytickets/views/MyTicketsView';
@@ -182,6 +185,24 @@ const reportsRoute = createRoute({
   }),
 });
 
+const dashboardsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/dashboards',
+  component: DashboardsView,
+});
+
+const dashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/d/$id',
+  component: DashboardView,
+});
+
+const summaryRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/p/$key/summary',
+  component: ProjectSummaryView,
+});
+
 const listRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/p/$key/list',
@@ -250,6 +271,9 @@ const routeTree = rootRoute.addChildren([
     backlogRoute,
     timelineRoute,
     reportsRoute,
+    dashboardsRoute,
+    dashboardRoute,
+    summaryRoute,
     listRoute,
     milestonesRoute,
     settingsRoute,

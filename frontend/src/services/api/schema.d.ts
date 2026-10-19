@@ -304,6 +304,84 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/dashboards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Dashboards
+         * @description Yours, the ones shared with your projects and with the instance.
+         */
+        get: operations["list_dashboards_api_v1_dashboards_get"];
+        put?: never;
+        /** Create Dashboard */
+        post: operations["create_dashboard_api_v1_dashboards_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboards/{dashboard_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Dashboard */
+        get: operations["get_dashboard_api_v1_dashboards__dashboard_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Dashboard */
+        delete: operations["delete_dashboard_api_v1_dashboards__dashboard_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Dashboard
+         * @description Rename, share, or move several widgets at once with `layout`.
+         */
+        patch: operations["patch_dashboard_api_v1_dashboards__dashboard_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/dashboards/{dashboard_id}/widgets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Widget */
+        post: operations["add_widget_api_v1_dashboards__dashboard_id__widgets_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboards/{dashboard_id}/widgets/{widget_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Widget */
+        delete: operations["delete_widget_api_v1_dashboards__dashboard_id__widgets__widget_id__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Widget */
+        patch: operations["patch_widget_api_v1_dashboards__dashboard_id__widgets__widget_id__patch"];
+        trace?: never;
+    };
     "/api/v1/filters": {
         parameters: {
             query?: never;
@@ -620,6 +698,26 @@ export interface paths {
         put?: never;
         /** Create Board */
         post: operations["create_board_api_v1_projects__key__boards_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Project Dashboard
+         * @description The project's "Summary" dashboard; its admins edit it.
+         */
+        get: operations["project_dashboard_api_v1_projects__key__dashboard_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1786,6 +1884,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/widgets/{widget_id}/data": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Widget Data
+         * @description Computed with your permissions: a shared widget never shows tickets you cannot see.
+         */
+        get: operations["widget_data_api_v1_widgets__widget_id__data_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/worklogs/{worklog_id}": {
         parameters: {
             query?: never;
@@ -2399,6 +2517,80 @@ export interface components {
          * @enum {string}
          */
         CustomFieldType: "text" | "number" | "date" | "select" | "checkbox" | "user" | "url";
+        /** DashboardCreate */
+        DashboardCreate: {
+            /** Name */
+            name: string;
+            /**
+             * Project
+             * @description Project key, for project visibility
+             */
+            project?: string | null;
+            /** @default private */
+            visibility?: components["schemas"]["FilterVisibility"];
+        };
+        /** DashboardDetail */
+        DashboardDetail: {
+            /** Can Edit */
+            can_edit: boolean;
+            /** Id */
+            id: string;
+            /** Is Project Default */
+            is_project_default: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Owner
+             * @description Owner handle
+             */
+            owner: string;
+            /** Project */
+            project: string | null;
+            /**
+             * Refresh Seconds
+             * @description How often the UI refreshes the widgets
+             */
+            refresh_seconds: number;
+            /** Updated At */
+            updated_at: string;
+            visibility: components["schemas"]["FilterVisibility"];
+            /** Widgets */
+            widgets: components["schemas"]["WidgetOut"][];
+        };
+        /** DashboardOut */
+        DashboardOut: {
+            /** Can Edit */
+            can_edit: boolean;
+            /** Id */
+            id: string;
+            /** Is Project Default */
+            is_project_default: boolean;
+            /** Name */
+            name: string;
+            /**
+             * Owner
+             * @description Owner handle
+             */
+            owner: string;
+            /** Project */
+            project: string | null;
+            /** Updated At */
+            updated_at: string;
+            visibility: components["schemas"]["FilterVisibility"];
+        };
+        /** DashboardPatch */
+        DashboardPatch: {
+            /**
+             * Layout
+             * @description New positions of several widgets at once (after a drag)
+             */
+            layout?: components["schemas"]["LayoutItem"][] | null;
+            /** Name */
+            name?: string | null;
+            /** Project */
+            project?: string | null;
+            visibility?: components["schemas"]["FilterVisibility"] | null;
+        };
         /** DependencyOut */
         DependencyOut: {
             /** Blocked */
@@ -2600,6 +2792,30 @@ export interface components {
             key: string;
             /** Label */
             label: string;
+        };
+        /** Layout */
+        Layout: {
+            /** H */
+            h: number;
+            /** W */
+            w: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
+        /** LayoutItem */
+        LayoutItem: {
+            /** H */
+            h: number;
+            /** Id */
+            id: string;
+            /** W */
+            w: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
         };
         /** Limits */
         Limits: {
@@ -2853,6 +3069,13 @@ export interface components {
         Page_CustomFieldOut_: {
             /** Items */
             items: components["schemas"]["CustomFieldOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[DashboardOut] */
+        Page_DashboardOut_: {
+            /** Items */
+            items: components["schemas"]["DashboardOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -4368,6 +4591,111 @@ export interface components {
             /** Message */
             message: string;
         };
+        /** WidgetCreate */
+        WidgetCreate: {
+            /** Config */
+            config?: {
+                [key: string]: unknown;
+            };
+            /** @description Default: a new row at the bottom */
+            layout?: components["schemas"]["Layout"] | null;
+            /** Title */
+            title: string;
+            /**
+             * Widget Type
+             * @description filter_results, count, distribution, milestone_progress, created_vs_resolved, sprint_burndown, cumulative_flow, blocked_tickets, my_tickets, markdown
+             */
+            widget_type: string;
+        };
+        /** WidgetDataOut */
+        WidgetDataOut: {
+            /** Data */
+            data: {
+                [key: string]: unknown;
+            };
+            /** Tickets */
+            tickets: components["schemas"]["WidgetTicket"][] | null;
+            /** Total */
+            total: number | null;
+            /** Widget Id */
+            widget_id: string;
+            /** Widget Type */
+            widget_type: string;
+        };
+        /** WidgetOut */
+        WidgetOut: {
+            /** Config */
+            config: {
+                [key: string]: unknown;
+            };
+            /** Id */
+            id: string;
+            /** Layout */
+            layout: {
+                [key: string]: number;
+            };
+            /** Title */
+            title: string;
+            /** Widget Type */
+            widget_type: string;
+        };
+        /** WidgetPatch */
+        WidgetPatch: {
+            /** Config */
+            config?: {
+                [key: string]: unknown;
+            } | null;
+            layout?: components["schemas"]["Layout"] | null;
+            /** Title */
+            title?: string | null;
+        };
+        /** WidgetTicket */
+        WidgetTicket: {
+            /** Area */
+            area: string | null;
+            assignee: components["schemas"]["UserRef"] | null;
+            /** Blocked */
+            blocked: boolean;
+            /**
+             * Blocked By
+             * @description Open blockers you can see
+             */
+            blocked_by: string[];
+            /** Checklist Done */
+            checklist_done: number;
+            /** Checklist Total */
+            checklist_total: number;
+            /** Custom Fields */
+            custom_fields: {
+                [key: string]: unknown;
+            };
+            /** Due Date */
+            due_date: string | null;
+            /** Estimate Hours */
+            estimate_hours: number | null;
+            /** Key */
+            key: string;
+            /** Milestone */
+            milestone: string | null;
+            priority: components["schemas"]["Priority"];
+            /** Rank */
+            rank: string;
+            resolution: components["schemas"]["Resolution"] | null;
+            /** Spent Hours */
+            spent_hours: number;
+            /** Start Date */
+            start_date: string | null;
+            status: components["schemas"]["StatusRef"];
+            /** Tags */
+            tags: string[];
+            /** Title */
+            title: string;
+            type: components["schemas"]["TicketType"];
+            /** Updated At */
+            updated_at: string;
+            /** Vote Count */
+            vote_count: number;
+        };
         /**
          * WipMode
          * @enum {string}
@@ -5170,6 +5498,255 @@ export interface operations {
             };
         };
     };
+    list_dashboards_api_v1_dashboards_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_DashboardOut_"];
+                };
+            };
+        };
+    };
+    create_dashboard_api_v1_dashboards_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DashboardCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_dashboard_api_v1_dashboards__dashboard_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dashboard_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_dashboard_api_v1_dashboards__dashboard_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dashboard_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_dashboard_api_v1_dashboards__dashboard_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dashboard_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DashboardPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_widget_api_v1_dashboards__dashboard_id__widgets_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dashboard_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WidgetCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WidgetOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_widget_api_v1_dashboards__dashboard_id__widgets__widget_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dashboard_id: string;
+                widget_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_widget_api_v1_dashboards__dashboard_id__widgets__widget_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                dashboard_id: string;
+                widget_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WidgetPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WidgetOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_filters_api_v1_filters_get: {
         parameters: {
             query?: {
@@ -5936,6 +6513,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BoardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    project_dashboard_api_v1_projects__key__dashboard_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardDetail"];
                 };
             };
             /** @description Validation Error */
@@ -8591,6 +9199,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Version"];
+                };
+            };
+        };
+    };
+    widget_data_api_v1_widgets__widget_id__data_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                widget_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WidgetDataOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
