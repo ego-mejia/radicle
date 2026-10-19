@@ -6,27 +6,35 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
+from argon2 import PasswordHasher
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
 from radicle.api.ratelimit import login_limiter
+from radicle.core import security
 from radicle.core.config import get_settings
 from radicle.db.session import get_db
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 ADMIN_PASSWORD = "admin-password-1"
 
+# Cheap hashing keeps fixtures that create many users fast. Production uses argon2 defaults.
+security._hasher = PasswordHasher(time_cost=1, memory_cost=1024, parallelism=1)
+
 
 def run_alembic(url: str, *args: str) -> None:
     env = {**os.environ, "RADICLE_DATABASE_URL": url}
-    subprocess.run(
+    result = subprocess.run(
         [sys.executable, "-m", "alembic", *args],
         cwd=BACKEND_DIR,
         env=env,
-        check=True,
         capture_output=True,
+        text=True,
+        check=False,
     )
+    if result.returncode != 0:
+        raise AssertionError(f"alembic {' '.join(args)} failed:\n{result.stderr[-3000:]}")
 
 
 @pytest.fixture(scope="session")
@@ -151,3 +159,48 @@ async def new_agent(client: AsyncClient, admin: Actor, handle: str) -> Actor:
     )
     assert r.status_code == 201, r.text
     return Actor(handle, {"Authorization": f"Bearer {r.json()['token']['token']}"})
+
+
+@dataclass
+class Team:
+    """Project PA with one actor per role, plus an outsider. All use bearer tokens
+    except `instance`, the instance admin, who uses the shared client's session."""
+
+    instance: Actor
+    admin: Actor
+    member: Actor
+    viewer: Actor
+    agent: Actor
+    outsider: Actor
+
+    def by_role(self, role: str) -> Actor:
+        return getattr(self, role)
+
+
+async def make_project(client: AsyncClient, admin: Actor, key: str = "PA") -> dict:
+    r = await client.post(
+        "/api/v1/projects", headers=admin.headers, json={"key": key, "name": "ProyectoA"}
+    )
+    assert r.status_code == 201, r.text
+    return r.json()
+
+
+@pytest.fixture
+async def team(client: AsyncClient, admin: Actor) -> Team:
+    await make_project(client, admin)
+    actors = {
+        "admin": await bearer_for_new_human(client, admin, "ana"),
+        "member": await bearer_for_new_human(client, admin, "luis"),
+        "viewer": await bearer_for_new_human(client, admin, "vera"),
+        "outsider": await bearer_for_new_human(client, admin, "olga"),
+        "agent": await new_agent(client, admin, "agent-backend"),
+    }
+    roles = {"admin": "admin", "member": "member", "viewer": "viewer", "agent": "member"}
+    for name, role in roles.items():
+        r = await client.put(
+            f"/api/v1/projects/PA/members/{actors[name].handle}",
+            headers=admin.headers,
+            json={"role": role},
+        )
+        assert r.status_code == 200, r.text
+    return Team(instance=admin, **actors)

@@ -6,8 +6,8 @@ Estado de cada entregable. Se actualiza al cerrar cada uno.
 
 | # | Entregable | Estado |
 | --- | --- | --- |
-| 1.1 | Base, auth y usuarios | Listo para aceptación |
-| 1.2 | Proyectos, miembros, áreas y milestones | Pendiente |
+| 1.1 | Base, auth y usuarios | Aceptado |
+| 1.2 | Proyectos, miembros, áreas y milestones | Listo |
 | 1.3 | Tickets e historial | Pendiente |
 | 1.4 | Workflows y transiciones | Pendiente |
 | 1.5 | Links, comentarios y reacciones | Pendiente |
@@ -54,3 +54,19 @@ curl -H "Authorization: Bearer rdc_..." localhost:8000/api/v1/me
 **Cobertura al cerrar:** 93% total; `services/` entre 90% y 100%.
 
 **Pendiente para entregables siguientes:** `/me` regresa `projects: []` hasta 1.2; el smoke agrega MCP en 1.7.
+
+### 1.2 Proyectos, miembros, áreas y milestones
+
+**Qué se hizo**
+
+- Migración `0002`: `projects` (key inmutable por trigger), `project_members`, `areas`, `milestones`, `statuses`, `transitions` y los enums de rol, tipo, categoría, resolution y estado de milestone.
+- Al crear un proyecto se siembran los workflows de Task, Bug y Draft del spec y el creador queda como admin.
+- Endpoints de proyectos, archivar y desarchivar (solo lectura mientras está archivado), miembros (nunca sin admin), áreas (crear, editar, archivar y restaurar), milestones (crear, editar, cerrar, reabrir) y workflows.
+- `/me` y el login regresan los proyectos con rol.
+- Permisos en `services/access.py`, usados por todos los routers. Decisión: [0004](decisions/0004-admin-de-instancia-en-proyectos.md).
+- El conteo por categoría de los milestones ya está en la respuesta; se llena con tickets reales en 1.3.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_projects.py::test_acceptance_project_with_areas_and_milestone`: ProyectoA (PA) con Legal, Marketing, Backend, Frontend y V1.
+- `tests/integration/test_project_permissions.py`: matriz de 10 acciones por 6 roles; viewer recibe 403 al editar y no miembro 404 en todo.

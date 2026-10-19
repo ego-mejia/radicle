@@ -3,7 +3,7 @@ from sqlalchemy import text
 
 from radicle import __version__
 from radicle.api.deps import AppSettings, Db, set_session_cookies
-from radicle.api.schemas import Health, SetupIn, SetupStatus, UserOut, Version
+from radicle.api.schemas.users import Health, SetupIn, SetupStatus, UserOut, Version
 from radicle.core.errors import ProblemError
 from radicle.services import auth, users
 

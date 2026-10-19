@@ -4,10 +4,10 @@ from fastapi import APIRouter, Response
 
 from radicle.api.deps import AppSettings, Db, InstanceAdmin
 from radicle.api.pagination import DEFAULT_LIMIT, Limit, decode_cursor, encode_cursor
-from radicle.api.schemas import (
+from radicle.api.schemas.common import Page
+from radicle.api.schemas.users import (
     AgentCreate,
     AgentCreated,
-    Page,
     TokenCreate,
     TokenCreated,
     TokenOut,

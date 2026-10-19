@@ -57,6 +57,7 @@ module = ["radicle.services.*", "radicle.query.*"]
 strict = true
 
 [tool.pytest.ini_options]
+filterwarnings = ["error::DeprecationWarning:radicle.*", "error::sqlalchemy.exc.SADeprecationWarning"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
 asyncio_default_test_loop_scope = "session"

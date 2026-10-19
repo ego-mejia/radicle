@@ -137,6 +137,233 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Projects
+         * @description Projects where you are a member, with your role. Instance admins see all.
+         */
+        get: operations["list_projects_api_v1_projects_get"];
+        put?: never;
+        /**
+         * Create Project
+         * @description Create a project, seed the Task, Bug and Draft workflows, and make you its admin.
+         */
+        post: operations["create_project_api_v1_projects_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Project
+         * @description Project with its areas, milestones, workflows and members.
+         */
+        get: operations["get_project_api_v1_projects__key__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Patch Project */
+        patch: operations["patch_project_api_v1_projects__key__patch"];
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archive Project
+         * @description Archived projects stay visible but become read-only.
+         */
+        post: operations["archive_project_api_v1_projects__key__archive_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/areas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Areas */
+        get: operations["list_areas_api_v1_projects__key__areas_get"];
+        put?: never;
+        /** Create Area */
+        post: operations["create_area_api_v1_projects__key__areas_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/areas/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Area
+         * @description Archives the area; tickets keep it but new tickets cannot use it.
+         */
+        delete: operations["delete_area_api_v1_projects__key__areas__name__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Area
+         * @description Rename, recolor, reorder, or archive and restore with `archived`.
+         */
+        patch: operations["patch_area_api_v1_projects__key__areas__name__patch"];
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/members": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Members */
+        get: operations["list_members_api_v1_projects__key__members_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/members/{handle}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Member
+         * @description Add a user or agent to the project, or change their role.
+         */
+        put: operations["put_member_api_v1_projects__key__members__handle__put"];
+        post?: never;
+        /**
+         * Delete Member
+         * @description Remove a member. A project can never be left without an admin.
+         */
+        delete: operations["delete_member_api_v1_projects__key__members__handle__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/milestones": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Milestones
+         * @description Milestones with ticket counts per status category, soonest target date first.
+         */
+        get: operations["list_milestones_api_v1_projects__key__milestones_get"];
+        put?: never;
+        /** Create Milestone */
+        post: operations["create_milestone_api_v1_projects__key__milestones_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/milestones/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Milestone */
+        get: operations["get_milestone_api_v1_projects__key__milestones__name__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Patch Milestone
+         * @description Edit, close (`status: closed`) or reopen (`status: open`).
+         */
+        patch: operations["patch_milestone_api_v1_projects__key__milestones__name__patch"];
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/unarchive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Unarchive Project */
+        post: operations["unarchive_project_api_v1_projects__key__unarchive_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/workflows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Workflows
+         * @description Statuses and transitions per ticket type.
+         */
+        get: operations["get_workflows_api_v1_projects__key__workflows_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/setup": {
         parameters: {
             query?: never;
@@ -291,6 +518,56 @@ export interface components {
             mcp_url: string;
             token: components["schemas"]["TokenCreated"];
         };
+        /** AreaCreate */
+        AreaCreate: {
+            /** Color */
+            color?: string | null;
+            /** Name */
+            name: string;
+        };
+        /** AreaOut */
+        AreaOut: {
+            /** Archived */
+            archived: boolean;
+            /** Color */
+            color: string | null;
+            /** Name */
+            name: string;
+            /** Position */
+            position: number;
+        };
+        /** AreaPatch */
+        AreaPatch: {
+            /** Archived */
+            archived?: boolean | null;
+            /**
+             * Color
+             * @description Hex like #4D7C0F; null clears it
+             */
+            color?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Position */
+            position?: number | null;
+        };
+        /** CategoryCounts */
+        CategoryCounts: {
+            /**
+             * Done
+             * @default 0
+             */
+            done: number;
+            /**
+             * In Progress
+             * @default 0
+             */
+            in_progress: number;
+            /**
+             * Todo
+             * @default 0
+             */
+            todo: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -349,8 +626,98 @@ export interface components {
             key: string;
             /** Name */
             name: string;
-            /** Role */
-            role: string;
+            role: components["schemas"]["ProjectRole"];
+        };
+        /** MemberOut */
+        MemberOut: {
+            /** Display Name */
+            display_name: string;
+            /** Handle */
+            handle: string;
+            /** Is Active */
+            is_active: boolean;
+            kind: components["schemas"]["UserKind"];
+            role: components["schemas"]["ProjectRole"];
+        };
+        /** MemberPut */
+        MemberPut: {
+            role: components["schemas"]["ProjectRole"];
+        };
+        /** MilestoneCreate */
+        MilestoneCreate: {
+            /**
+             * Description Md
+             * @default
+             */
+            description_md: string;
+            /** Name */
+            name: string;
+            /** Target Date */
+            target_date?: string | null;
+        };
+        /** MilestoneOut */
+        MilestoneOut: {
+            /** Closed At */
+            closed_at: string | null;
+            /** @description Tickets per status category */
+            counts: components["schemas"]["CategoryCounts"];
+            /** Description Md */
+            description_md: string;
+            /** Name */
+            name: string;
+            /** Position */
+            position: number;
+            status: components["schemas"]["MilestoneStatus"];
+            /** Target Date */
+            target_date: string | null;
+        };
+        /** MilestonePatch */
+        MilestonePatch: {
+            /** Description Md */
+            description_md?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Position */
+            position?: number | null;
+            status?: components["schemas"]["MilestoneStatus"] | null;
+            /**
+             * Target Date
+             * @description null clears it
+             */
+            target_date?: string | null;
+        };
+        /**
+         * MilestoneStatus
+         * @enum {string}
+         */
+        MilestoneStatus: "open" | "closed";
+        /** Page[AreaOut] */
+        Page_AreaOut_: {
+            /** Items */
+            items: components["schemas"]["AreaOut"][];
+            /** Next Cursor */
+            next_cursor?: string | null;
+        };
+        /** Page[MemberOut] */
+        Page_MemberOut_: {
+            /** Items */
+            items: components["schemas"]["MemberOut"][];
+            /** Next Cursor */
+            next_cursor?: string | null;
+        };
+        /** Page[MilestoneOut] */
+        Page_MilestoneOut_: {
+            /** Items */
+            items: components["schemas"]["MilestoneOut"][];
+            /** Next Cursor */
+            next_cursor?: string | null;
+        };
+        /** Page[ProjectOut] */
+        Page_ProjectOut_: {
+            /** Items */
+            items: components["schemas"]["ProjectOut"][];
+            /** Next Cursor */
+            next_cursor?: string | null;
         };
         /** Page[TokenOut] */
         Page_TokenOut_: {
@@ -366,6 +733,90 @@ export interface components {
             /** Next Cursor */
             next_cursor?: string | null;
         };
+        /** ProjectCreate */
+        ProjectCreate: {
+            /**
+             * Description Md
+             * @default
+             */
+            description_md: string;
+            /**
+             * Key
+             * @description 2-10 chars, uppercase letter then letters/digits. Immutable.
+             */
+            key: string;
+            /** Name */
+            name: string;
+        };
+        /** ProjectDetail */
+        ProjectDetail: {
+            /** Archived */
+            archived: boolean;
+            /** Areas */
+            areas: components["schemas"]["AreaOut"][];
+            /** Created At */
+            created_at: string;
+            /** Description Md */
+            description_md: string;
+            /** Key */
+            key: string;
+            /** Members */
+            members: components["schemas"]["MemberOut"][];
+            /** Milestones */
+            milestones: components["schemas"]["MilestoneOut"][];
+            /** Name */
+            name: string;
+            /**
+             * Open Tickets
+             * @default 0
+             */
+            open_tickets: number;
+            /** @description Your role in the project */
+            role: components["schemas"]["ProjectRole"];
+            /** Updated At */
+            updated_at: string;
+            /** Workflows */
+            workflows: components["schemas"]["WorkflowOut"][];
+        };
+        /** ProjectOut */
+        ProjectOut: {
+            /** Archived */
+            archived: boolean;
+            /** Created At */
+            created_at: string;
+            /** Description Md */
+            description_md: string;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            /**
+             * Open Tickets
+             * @default 0
+             */
+            open_tickets: number;
+            /** @description Your role in the project */
+            role: components["schemas"]["ProjectRole"];
+            /** Updated At */
+            updated_at: string;
+        };
+        /** ProjectPatch */
+        ProjectPatch: {
+            /** Description Md */
+            description_md?: string | null;
+            /** Name */
+            name?: string | null;
+        };
+        /**
+         * ProjectRole
+         * @enum {string}
+         */
+        ProjectRole: "admin" | "member" | "viewer";
+        /**
+         * Resolution
+         * @enum {string}
+         */
+        Resolution: "done" | "wont_do" | "duplicate" | "cannot_reproduce";
         /** SetupIn */
         SetupIn: {
             /** Display Name */
@@ -385,6 +836,24 @@ export interface components {
             /** Needs Setup */
             needs_setup: boolean;
         };
+        /**
+         * StatusCategory
+         * @enum {string}
+         */
+        StatusCategory: "todo" | "in_progress" | "done";
+        /** StatusOut */
+        StatusOut: {
+            category: components["schemas"]["StatusCategory"];
+            /** Is Initial */
+            is_initial: boolean;
+            /** Name */
+            name: string;
+        };
+        /**
+         * TicketType
+         * @enum {string}
+         */
+        TicketType: "task" | "bug" | "draft";
         /** TokenCreate */
         TokenCreate: {
             /** Expires At */
@@ -436,6 +905,23 @@ export interface components {
             prefix: string;
             /** Revoked At */
             revoked_at: string | null;
+        };
+        /** TransitionOut */
+        TransitionOut: {
+            /**
+             * Allowed Resolutions
+             * @description Only for done targets; null = all resolutions
+             */
+            allowed_resolutions: components["schemas"]["Resolution"][] | null;
+            /**
+             * From Status
+             * @description null = from any status not in done
+             */
+            from_status: string | null;
+            /** Name */
+            name: string;
+            /** To Status */
+            to_status: string;
         };
         /** UserCreate */
         UserCreate: {
@@ -512,6 +998,14 @@ export interface components {
             api_version: string;
             /** Version */
             version: string;
+        };
+        /** WorkflowOut */
+        WorkflowOut: {
+            /** Statuses */
+            statuses: components["schemas"]["StatusOut"][];
+            /** Transitions */
+            transitions: components["schemas"]["TransitionOut"][];
+            type: components["schemas"]["TicketType"];
         };
     };
     responses: never;
@@ -749,6 +1243,596 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_projects_api_v1_projects_get: {
+        parameters: {
+            query?: {
+                include_archived?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ProjectOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_project_api_v1_projects_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProjectCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_project_api_v1_projects__key__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_project_api_v1_projects__key__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProjectPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    archive_project_api_v1_projects__key__archive_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_areas_api_v1_projects__key__areas_get: {
+        parameters: {
+            query?: {
+                include_archived?: boolean;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AreaOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_area_api_v1_projects__key__areas_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AreaCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AreaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_area_api_v1_projects__key__areas__name__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_area_api_v1_projects__key__areas__name__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AreaPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AreaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_members_api_v1_projects__key__members_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_MemberOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_member_api_v1_projects__key__members__handle__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                handle: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MemberPut"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemberOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_member_api_v1_projects__key__members__handle__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                handle: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_milestones_api_v1_projects__key__milestones_get: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["MilestoneStatus"] | null;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_MilestoneOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_milestone_api_v1_projects__key__milestones_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MilestoneCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestoneOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_milestone_api_v1_projects__key__milestones__name__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestoneOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_milestone_api_v1_projects__key__milestones__name__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MilestonePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestoneOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unarchive_project_api_v1_projects__key__unarchive_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_workflows_api_v1_projects__key__workflows_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkflowOut"][];
+                };
             };
             /** @description Validation Error */
             422: {

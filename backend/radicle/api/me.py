@@ -1,19 +1,39 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Response
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.api.deps import CurrentPrincipal, Db, HumanUser
-from radicle.api.schemas import MeOut, MePatch, Page, TokenCreate, TokenCreated, TokenOut
+from radicle.api.schemas.common import Page
+from radicle.api.schemas.users import (
+    MeOut,
+    MePatch,
+    MeProject,
+    TokenCreate,
+    TokenCreated,
+    TokenOut,
+    UserOut,
+)
 from radicle.core.errors import ValidationFailed
-from radicle.services import auth, users
+from radicle.db.models import User
+from radicle.services import auth, projects, users
 
 router = APIRouter(prefix="/me", tags=["me"])
 
 
+async def me_out(db: AsyncSession, user: User) -> MeOut:
+    rows = await projects.list_projects(db, user)
+    base = UserOut.model_validate(user).model_dump()
+    return MeOut(
+        **base,
+        projects=[MeProject(key=r.project.key, name=r.project.name, role=r.role) for r in rows],
+    )
+
+
 @router.get("", response_model=MeOut)
-async def get_me(principal: CurrentPrincipal) -> MeOut:
+async def get_me(principal: CurrentPrincipal, db: Db) -> MeOut:
     """Current user or agent and the projects they belong to, with role."""
-    return MeOut.model_validate(principal.user)
+    return await me_out(db, principal.user)
 
 
 @router.patch("", response_model=MeOut)
@@ -29,7 +49,7 @@ async def patch_me(body: MePatch, user: HumanUser, db: Db) -> MeOut:
         )
     if body.display_name is not None:
         await users.update_user(db, user, users.UserChanges(display_name=body.display_name))
-    return MeOut.model_validate(user)
+    return await me_out(db, user)
 
 
 @router.get("/tokens", response_model=Page[TokenOut])

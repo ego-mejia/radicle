@@ -1,18 +1,12 @@
 import enum
 import uuid
-from datetime import UTC, datetime
+from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, String, Text, func
 from sqlalchemy.dialects.postgresql import CITEXT, UUID
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-
-def utcnow() -> datetime:
-    return datetime.now(UTC)
-
-
-class Base(DeclarativeBase):
-    pass
+from radicle.db.models.base import Base, utcnow
 
 
 class UserKind(enum.StrEnum):

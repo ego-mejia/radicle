@@ -7,8 +7,9 @@ from radicle.api.deps import (
     clear_session_cookies,
     set_session_cookies,
 )
+from radicle.api.me import me_out
 from radicle.api.ratelimit import login_limiter
-from radicle.api.schemas import LoginIn, MeOut
+from radicle.api.schemas.users import LoginIn, MeOut
 from radicle.core.errors import ValidationFailed
 from radicle.services import auth
 
@@ -31,7 +32,7 @@ async def login(
         user_agent=request.headers.get("user-agent"),
     )
     set_session_cookies(response, issued.token, settings)
-    return MeOut.model_validate(user)
+    return await me_out(db, user)
 
 
 @router.post("/logout", status_code=204)
