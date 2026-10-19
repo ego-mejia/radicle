@@ -12,6 +12,7 @@ from radicle.db.models import (
     StatusCategory,
     TicketType,
     Transition,
+    TransitionRule,
 )
 
 TODO, IN_PROGRESS, DONE = StatusCategory.todo, StatusCategory.in_progress, StatusCategory.done
@@ -90,6 +91,10 @@ class Workflow:
     ticket_type: TicketType
     statuses: list[Status] = field(default_factory=list)
     transitions: list[Transition] = field(default_factory=list)
+    rules: dict[uuid.UUID, list[TransitionRule]] = field(default_factory=dict)
+
+    def rules_for(self, transition: Transition) -> list[TransitionRule]:
+        return self.rules.get(transition.id, [])
 
     def status_by_id(self, status_id: uuid.UUID) -> Status:
         return next(s for s in self.statuses if s.id == status_id)
@@ -112,6 +117,18 @@ async def load_workflows(db: AsyncSession, project_id: uuid.UUID) -> dict[Ticket
     transitions = await db.scalars(
         select(Transition).where(Transition.project_id == project_id).order_by(Transition.position)
     )
+    by_id: dict[uuid.UUID, TicketType] = {}
     for transition in transitions:
         workflows[transition.ticket_type].transitions.append(transition)
+        by_id[transition.id] = transition.ticket_type
+    if by_id:
+        rules = await db.scalars(
+            select(TransitionRule)
+            .where(TransitionRule.transition_id.in_(by_id))
+            .order_by(TransitionRule.position)
+        )
+        for rule in rules:
+            workflows[by_id[rule.transition_id]].rules.setdefault(rule.transition_id, []).append(
+                rule
+            )
     return workflows

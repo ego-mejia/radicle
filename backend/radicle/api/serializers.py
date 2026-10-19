@@ -13,6 +13,7 @@ from radicle.api.schemas.projects import (
     ProjectDetail,
     ProjectOut,
     ProjectTemplateOut,
+    RuleOut,
     StatusOut,
     TransitionOut,
     WorkflowOut,
@@ -98,6 +99,10 @@ def workflow_out(workflow: Workflow) -> WorkflowOut:
                 from_status=names[t.from_status_id] if t.from_status_id else None,
                 to_status=names[t.to_status_id],
                 allowed_resolutions=t.allowed_resolutions,
+                rules=[
+                    RuleOut(kind=r.kind.value, rule_type=r.rule_type, config=r.config)
+                    for r in workflow.rules_for(t)
+                ],
             )
             for t in workflow.transitions
         ],

@@ -42,6 +42,11 @@ export function TransitionMatrix({ workflow, readOnly, onOpen, onCreate }: Props
                     {found.map((tr) => (
                       <S.On key={tr.ref} type="button" onClick={() => onOpen(tr)}>
                         {tr.name}
+                        {(tr.rules ?? []).length > 0 && (
+                          <S.Rules title={t('rules.count', { count: tr.rules!.length })}>
+                            {tr.rules!.length}
+                          </S.Rules>
+                        )}
                       </S.On>
                     ))}
                     {!found.length && !readOnly && (

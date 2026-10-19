@@ -2144,6 +2144,49 @@
         "title": "RuleConf",
         "type": "object"
       },
+      "RuleFailureOut": {
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "rule": {
+            "title": "Rule",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rule",
+          "message"
+        ],
+        "title": "RuleFailureOut",
+        "type": "object"
+      },
+      "RuleOut": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "title": "Config",
+            "type": "object"
+          },
+          "kind": {
+            "description": "condition, validator or post_function",
+            "title": "Kind",
+            "type": "string"
+          },
+          "rule_type": {
+            "title": "Rule Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "rule_type",
+          "config"
+        ],
+        "title": "RuleOut",
+        "type": "object"
+      },
       "SaveAsTemplateIn": {
         "additionalProperties": false,
         "properties": {
@@ -3707,6 +3750,24 @@
       "TransitionIn": {
         "additionalProperties": false,
         "properties": {
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Saved as a comment; required by comment_required rules",
+            "title": "Comment"
+          },
+          "force": {
+            "default": false,
+            "description": "Admins only: move a blocked ticket despite policy enforce",
+            "title": "Force",
+            "type": "boolean"
+          },
           "resolution": {
             "anyOf": [
               {
@@ -3758,12 +3819,31 @@
             "description": "Set when the target is a done status; pick one of these",
             "title": "Allowed Resolutions"
           },
+          "available": {
+            "default": true,
+            "description": "False only with include_unavailable",
+            "title": "Available",
+            "type": "boolean"
+          },
           "category": {
             "$ref": "#/components/schemas/StatusCategory"
           },
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "reasons": {
+            "description": "Conditions that fail for you",
+            "items": {
+              "$ref": "#/components/schemas/RuleFailureOut"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "requires_comment": {
+            "default": false,
+            "title": "Requires Comment",
+            "type": "boolean"
           },
           "to_status": {
             "title": "To Status",
@@ -3774,7 +3854,10 @@
           "name",
           "to_status",
           "category",
-          "allowed_resolutions"
+          "allowed_resolutions",
+          "available",
+          "reasons",
+          "requires_comment"
         ],
         "title": "TransitionOption",
         "type": "object"
@@ -3834,6 +3917,13 @@
             ],
             "title": "Ref"
           },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleOut"
+            },
+            "title": "Rules",
+            "type": "array"
+          },
           "to_ref": {
             "title": "To Ref",
             "type": "string"
@@ -3850,7 +3940,8 @@
           "name",
           "from_status",
           "to_status",
-          "allowed_resolutions"
+          "allowed_resolutions",
+          "rules"
         ],
         "title": "TransitionOut",
         "type": "object"
@@ -7408,7 +7499,7 @@
     },
     "/api/v1/tickets/{key}/transitions": {
       "get": {
-        "description": "Transitions available from the ticket's current status.",
+        "description": "Transitions you can run from the ticket's current status. With\n`include_unavailable`, also the ones whose conditions fail, with the reasons.",
         "operationId": "get_transitions_api_v1_tickets__key__transitions_get",
         "parameters": [
           {
@@ -7418,6 +7509,16 @@
             "schema": {
               "title": "Key",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_unavailable",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Unavailable",
+              "type": "boolean"
             }
           }
         ],

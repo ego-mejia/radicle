@@ -55,20 +55,33 @@ export async function deleteTicket(key: string) {
   unwrap(await api.DELETE('/api/v1/tickets/{key}', path(key)));
 }
 
-export async function fetchTransitions(key: string) {
-  return unwrap(await api.GET('/api/v1/tickets/{key}/transitions', path(key)));
+export async function fetchTransitions(key: string, includeUnavailable = true) {
+  return unwrap(
+    await api.GET('/api/v1/tickets/{key}/transitions', {
+      params: { path: { key }, query: { include_unavailable: includeUnavailable } },
+    }),
+  );
 }
 
-export async function transitionTicket(
-  key: string,
-  toStatus: string,
-  resolution?: Resolution | null,
-  transition?: string,
-) {
+export type Move = {
+  to: string;
+  resolution?: Resolution | null;
+  transition?: string;
+  comment?: string | null;
+  force?: boolean;
+};
+
+export async function transitionTicket(key: string, move: Move) {
   return unwrap(
     await api.POST('/api/v1/tickets/{key}/transitions', {
       ...path(key),
-      body: { to_status: toStatus, resolution: resolution ?? null, transition: transition ?? null },
+      body: {
+        to_status: move.to,
+        resolution: move.resolution ?? null,
+        transition: move.transition ?? null,
+        comment: move.comment || null,
+        force: move.force ?? false,
+      },
     }),
   );
 }

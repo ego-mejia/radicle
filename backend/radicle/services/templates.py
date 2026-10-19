@@ -30,6 +30,7 @@ from radicle.services.template_config import (
     AreaConf,
     FieldConf,
     FieldOptionConf,
+    RuleConf,
     SettingsConf,
     StatusConf,
     TemplateConfig,
@@ -482,6 +483,10 @@ async def config_from_project(db: AsyncSession, project: Project) -> TemplateCon
                     allowed_resolutions=list(t.allowed_resolutions)
                     if t.allowed_resolutions
                     else None,
+                    rules=[
+                        RuleConf(kind=r.kind.value, rule_type=r.rule_type, config=r.config)
+                        for r in workflow.rules_for(t)
+                    ],
                 )
                 for i, (t, ref) in enumerate(
                     zip(workflow.transitions, transition_refs, strict=True)

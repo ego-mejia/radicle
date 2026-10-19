@@ -154,7 +154,13 @@
     "notFound": "Este ticket no existe o no lo puedes ver.",
     "editTitle": "Editar título",
     "addTag": "Agregar tag",
-    "addCollaborator": "Agregar colaborador"
+    "addCollaborator": "Agregar colaborador",
+    "warningForced": "Se forzó aunque lo bloquea {{keys}}.",
+    "rulesFailed": "No se cumplen las reglas de la transición:",
+    "force": "Forzar",
+    "moveComment": "Comentario (opcional)",
+    "moveCommentRequired": "Comentario (obligatorio en este paso)",
+    "moveTo": "Mover a {{status}}"
   },
   "create": {
     "title": "Crear ticket",
@@ -455,6 +461,71 @@
       "linkedHelp": "Los cambios del template llegan a este proyecto.",
       "detached": "Independiente",
       "detachedHelp": "Copia la configuración una vez y la editas libremente."
+    }
+  },
+  "rules": {
+    "kinds": {
+      "condition": "Conditions",
+      "validator": "Validators",
+      "post_function": "Post-functions"
+    },
+    "kindHelp": {
+      "condition": "Quién puede ejecutar la transición. Si una falla, no se ofrece.",
+      "validator": "Lo que el ticket necesita antes de moverse. El error dice qué falta.",
+      "post_function": "Cambios que se hacen justo después del movimiento, en orden."
+    },
+    "add": "Agregar a {{kind}}",
+    "addOne": "Agregar regla",
+    "count_one": "{{count}} regla",
+    "count_other": "{{count}} reglas",
+    "userKind": "Quién",
+    "humans": "Solo personas",
+    "agents": "Solo agentes",
+    "field": "Campo",
+    "value": "Valor",
+    "tag": "Tag",
+    "template": "Plantilla del comentario ({actor}, {from}, {to})",
+    "types": {
+      "only_assignee": "Solo el assignee",
+      "only_reporter": "Solo el reporter",
+      "only_roles": "Solo estos roles",
+      "only_user_kind": "Solo personas o solo agentes",
+      "not_blocked": "No bloqueado",
+      "checklist_complete": "Checklist completo",
+      "field_required": "Campo obligatorio",
+      "has_estimate": "Tiene estimación",
+      "children_done": "Subtickets terminados",
+      "has_worklog": "Tiene tiempo registrado",
+      "comment_required": "Comentario obligatorio",
+      "assign_to_actor": "Asignar a quien lo mueve",
+      "unassign": "Quitar assignee",
+      "set_field": "Fijar un campo",
+      "clear_field": "Limpiar un campo",
+      "add_tag": "Agregar un tag",
+      "remove_tag": "Quitar un tag",
+      "add_comment": "Agregar un comentario"
+    },
+    "help": {
+      "only_assignee": "Solo el assignee del ticket ve esta transición.",
+      "only_reporter": "Solo quien reportó el ticket ve esta transición.",
+      "not_blocked": "Con la política impedir, un ticket bloqueado no la puede usar; con avisar sí, con un aviso.",
+      "checklist_complete": "Todos los items del checklist deben estar marcados; el error lista los pendientes.",
+      "has_estimate": "El ticket necesita horas estimadas.",
+      "children_done": "Todos los subtickets deben estar en un estado Done.",
+      "has_worklog": "Alguien debe haber registrado tiempo en el ticket.",
+      "comment_required": "El movimiento necesita un comentario, que se guarda en el ticket.",
+      "assign_to_actor": "Quien mueve el ticket queda como assignee.",
+      "unassign": "El ticket se queda sin assignee."
+    },
+    "fields": {
+      "priority": "Prioridad",
+      "area": "Área",
+      "milestone": "Milestone",
+      "assignee": "Assignee",
+      "due_date": "Fecha límite",
+      "estimate_hours": "Estimación",
+      "description_md": "Descripción",
+      "parent": "Padre"
     }
   }
 }

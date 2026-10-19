@@ -288,15 +288,19 @@ def register(server: MCPServer) -> None:
         resolution: Annotated[
             Resolution | None, Field(description="Needed when the target is a done status")
         ] = None,
+        comment: Annotated[
+            str | None,
+            Field(description="Saved as a comment; some transitions require one"),
+        ] = None,
     ) -> dict[str, Any]:
         """Move a ticket through its workflow. The result includes `warnings`, e.g. when
-        the ticket is still blocked by unfinished tickets."""
+        the ticket is still blocked by unfinished tickets. If the transition has rules
+        (checklist complete, a field required...), the error lists the ones that failed."""
+        body: dict[str, Any] = {"to_status": to_status, "resolution": resolution}
+        if comment:
+            body["comment"] = comment
         async with api(ctx) as client:
-            ticket = await client.call(
-                "POST",
-                f"/tickets/{key}/transitions",
-                json={"to_status": to_status, "resolution": resolution},
-            )
+            ticket = await client.call("POST", f"/tickets/{key}/transitions", json=body)
         out = compact(ticket)
         out["resolution"] = ticket["resolution"]
         out["version"] = ticket["version"]
@@ -447,6 +451,12 @@ def _search_out(page: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def _rule_text(rule: dict[str, Any]) -> str:
+    config = ", ".join(f"{k}={v}" for k, v in (rule.get("config") or {}).items())
+    name = f"{rule['rule_type']}({config})" if config else rule["rule_type"]
+    return f"{rule['kind']}: {name}"
+
+
 def project_schema(p: dict[str, Any]) -> dict[str, Any]:
     return {
         "key": p["key"],
@@ -478,6 +488,7 @@ def project_schema(p: dict[str, Any]) -> dict[str, Any]:
                         "from": t["from_status"] or "any not done",
                         "to": t["to_status"],
                         "resolutions": t["allowed_resolutions"],
+                        "rules": [_rule_text(r) for r in t.get("rules", [])],
                     }
                     for t in w["transitions"]
                 ],

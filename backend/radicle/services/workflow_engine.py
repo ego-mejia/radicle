@@ -64,8 +64,11 @@ def decide(
     to_status: str,
     resolution: Resolution | None = None,
     transition: str | None = None,
+    options: list[Option] | None = None,
 ) -> Decision:
-    options = available(workflow, current)
+    """Pick the transition for a move. `options` narrows the candidates (e.g. to those
+    whose conditions pass); by default every transition from the current status."""
+    options = available(workflow, current) if options is None else options
     target = workflow.status_named(to_status)
     matches = [o for o in options if target is not None and o.to_status.id == target.id]
     if transition is not None:

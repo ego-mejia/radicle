@@ -58,6 +58,7 @@ async def test_whoami_projects_and_project(seeded: Team, mcp_for: McpFor) -> Non
             "from": "any not done",
             "to": "Done",
             "resolutions": ["wont_do", "duplicate"],
+            "rules": [],
         }
         assert "Project ZZ not found" in error_text(
             await mcp.call_tool("get_project", {"project": "ZZ"})

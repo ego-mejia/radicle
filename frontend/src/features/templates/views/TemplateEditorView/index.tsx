@@ -180,6 +180,7 @@ function Editor({ template }: { template: TemplateDetail }) {
               key={ticketType}
               value={config.workflows[ticketType]!}
               readOnly={readOnly}
+              customFields={(config.custom_fields ?? []).map((f) => f.key)}
               onChange={(workflow) =>
                 setConfig({ ...config, workflows: { ...config.workflows, [ticketType]: workflow } })
               }

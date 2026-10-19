@@ -17,11 +17,13 @@ from radicle.db.models.projects import (
     ProjectMember,
     ProjectRole,
     Resolution,
+    RuleKind,
     Status,
     StatusCategory,
     TemplateMode,
     TicketType,
     Transition,
+    TransitionRule,
 )
 from radicle.db.models.templates import SyncStatus, Template, TemplateSyncRun
 from radicle.db.models.tickets import (
@@ -58,6 +60,7 @@ __all__ = [
     "ProjectMember",
     "ProjectRole",
     "Resolution",
+    "RuleKind",
     "Session",
     "Status",
     "StatusCategory",
@@ -71,6 +74,7 @@ __all__ = [
     "TicketLink",
     "TicketType",
     "Transition",
+    "TransitionRule",
     "User",
     "UserKind",
     "utcnow",

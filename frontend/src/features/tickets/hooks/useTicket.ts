@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useErrorMessage } from '../../../hooks/useErrorMessage';
 import { useToast } from '../../../hooks/useToast';
 import { isApiError } from '../../../services/api/client';
 import { projectKeys } from '../../../services/api/projects';
 import * as api from '../../../services/api/tickets';
-import type { Resolution, Ticket, TicketPatch, TicketType } from '../../../services/api/types';
+import type { Ticket, TicketPatch, TicketType } from '../../../services/api/types';
+import { useMoveFeedback } from './useMoveFeedback';
 
 export function useTicket(key: string) {
   return useQuery({ queryKey: api.ticketKeys.detail(key), queryFn: () => api.fetchTicket(key) });
@@ -19,25 +19,18 @@ type Patch = Omit<TicketPatch, 'expected_version'>;
  * refresh lists; a 409 version conflict is surfaced instead of overwriting.
  */
 export function useTicketActions(ticket: Ticket | undefined) {
-  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const toast = useToast();
   const errorMessage = useErrorMessage();
   const [conflict, setConflict] = useState(false);
+  const feedback = useMoveFeedback();
   const key = ticket?.key ?? '';
 
   const settle = (updated: Ticket) => {
     queryClient.setQueryData(api.ticketKeys.detail(updated.key), updated);
     void queryClient.invalidateQueries({ queryKey: api.ticketKeys.all, refetchType: 'active' });
     void queryClient.invalidateQueries({ queryKey: projectKeys.detail(updated.project) });
-    for (const warning of updated.warnings ?? []) {
-      toast(
-        warning.code === 'blocked'
-          ? t('ticket.warningBlocked', { keys: (warning.by ?? []).join(', ') })
-          : warning.message,
-        'warning',
-      );
-    }
+    feedback.warnings(updated);
   };
   const onError = (error: unknown) => {
     if (isApiError(error, 409) && error.problem.current_version !== undefined) {
@@ -53,9 +46,10 @@ export function useTicketActions(ticket: Ticket | undefined) {
     ...options,
   });
   const transition = useMutation({
-    mutationFn: (v: { to: string; resolution?: Resolution | null; transition?: string }) =>
-      api.transitionTicket(key, v.to, v.resolution, v.transition),
-    ...options,
+    mutationFn: (move: api.Move) => api.transitionTicket(key, move),
+    onSuccess: settle,
+    onError: (error: unknown, move: api.Move) =>
+      feedback.error(error, () => transition.mutate({ ...move, force: true })),
   });
   const changeType = useMutation({
     mutationFn: (v: { type: TicketType; area?: string | null }) =>

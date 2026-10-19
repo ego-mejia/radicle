@@ -103,6 +103,8 @@ class Ticket(Base):
     rank: Mapped[str] = mapped_column(Text)
     # {"environment": "prod", "requires_signature": true}; user fields hold the user id.
     custom_fields: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, server_default="{}")
+    # Sum of worklogs, kept in the same transaction as each worklog change.
+    time_spent_minutes: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     version: Mapped[int] = mapped_column(Integer, default=1, server_default="1")
     search_vector: Mapped[Any] = mapped_column(
         TSVECTOR, Computed(SEARCH_VECTOR_SQL, persisted=True), deferred=True

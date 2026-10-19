@@ -17,6 +17,7 @@ from radicle.db.models import (
     StatusCategory,
     TicketType,
 )
+from radicle.services.rule_catalog import check_rule
 from radicle.services.workflows import DEFAULT_WORKFLOWS
 
 REF_RE = re.compile(r"^[a-z0-9][a-z0-9_]{0,59}$")
@@ -189,6 +190,8 @@ def check_workflow(workflow: WorkflowConf, ticket_type: TicketType, path: str) -
                 )
         if t.from_ == t.to:
             raise _fail(path, f"Transition '{t.name}' in {label} starts and ends at '{t.to}'.")
+        for rule in t.rules:
+            rule.config = check_rule(rule.kind, rule.rule_type, rule.config, f"{path}.{t.ref}")
 
 
 def unreachable(workflow: WorkflowConf) -> list[str]:

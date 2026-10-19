@@ -41,6 +41,9 @@ export type Problem = {
   allowed_resolutions?: string[];
   valid_transitions?: { name: string; to_status: string }[];
   retry_after?: number;
+  failed_rules?: { rule: string; message: string }[];
+  blocked_by?: string[];
+  can_force?: boolean;
 };
 
 export class ApiError extends Error {

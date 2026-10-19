@@ -8,6 +8,7 @@ from radicle.api.schemas.common import Page
 from radicle.api.schemas.tickets import (
     ChecklistPatch,
     EventOut,
+    RuleFailureOut,
     TicketCreate,
     TicketOut,
     TicketPatch,
@@ -160,18 +161,25 @@ def _int_cursor(cursor: str | None) -> int | None:
 
 
 @router.get("/tickets/{key}/transitions", response_model=list[TransitionOption])
-async def get_transitions(key: str, principal: CurrentPrincipal, db: Db) -> list[TransitionOption]:
-    """Transitions available from the ticket's current status."""
-    _, ticket = await tickets.load_ticket(db, principal.user, key)
-    options = await transitions.available_transitions(db, ticket)
+async def get_transitions(
+    key: str, principal: CurrentPrincipal, db: Db, include_unavailable: bool = False
+) -> list[TransitionOption]:
+    """Transitions you can run from the ticket's current status. With
+    `include_unavailable`, also the ones whose conditions fail, with the reasons."""
+    access, ticket = await tickets.load_ticket(db, principal.user, key)
+    views = await transitions.transition_options(db, access, ticket)
     return [
         TransitionOption(
-            name=o.transition.name,
-            to_status=o.to_status.name,
-            category=o.to_status.category,
-            allowed_resolutions=list(o.resolutions) or None,
+            name=v.option.transition.name,
+            to_status=v.option.to_status.name,
+            category=v.option.to_status.category,
+            allowed_resolutions=list(v.option.resolutions) or None,
+            available=v.available,
+            reasons=[RuleFailureOut(rule=f.rule, message=f.message) for f in v.failures],
+            requires_comment=v.requires_comment,
         )
-        for o in options
+        for v in views
+        if v.available or include_unavailable
     ]
 
 
@@ -188,6 +196,8 @@ async def transition_ticket(
         to_status=body.to_status,
         resolution=body.resolution,
         transition=body.transition,
+        comment=body.comment,
+        force=body.force,
     )
     return await ticket_out(
         db, ticket, warnings=[WarningOut(code=w.code, message=w.message, by=w.by) for w in warnings]

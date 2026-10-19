@@ -121,7 +121,7 @@ export function toConf(workflow: Workflow): WorkflowConf {
       from: tr.from_ref ?? (tr.from_status ? refOf(tr.from_status) : null),
       to: tr.to_ref || refOf(tr.to_status),
       allowed_resolutions: tr.allowed_resolutions,
-      rules: [],
+      rules: tr.rules,
     })),
   };
 }

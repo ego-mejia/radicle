@@ -35,6 +35,7 @@ export const Item = styled.div<{ $tone: 'info' | 'error' | 'warning' }>`
         ? theme.color.warning
         : theme.color.accentFill};
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  white-space: pre-line;
   animation: ${enter} 0.15s ease-out;
 `;
 

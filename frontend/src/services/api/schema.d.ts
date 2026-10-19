@@ -956,7 +956,8 @@ export interface paths {
         };
         /**
          * Get Transitions
-         * @description Transitions available from the ticket's current status.
+         * @description Transitions you can run from the ticket's current status. With
+         *     `include_unavailable`, also the ones whose conditions fail, with the reasons.
          */
         get: operations["get_transitions_api_v1_tickets__key__transitions_get"];
         put?: never;
@@ -1809,6 +1810,27 @@ export interface components {
             /** Rule Type */
             rule_type: string;
         };
+        /** RuleFailureOut */
+        RuleFailureOut: {
+            /** Message */
+            message: string;
+            /** Rule */
+            rule: string;
+        };
+        /** RuleOut */
+        RuleOut: {
+            /** Config */
+            config: {
+                [key: string]: unknown;
+            };
+            /**
+             * Kind
+             * @description condition, validator or post_function
+             */
+            kind: string;
+            /** Rule Type */
+            rule_type: string;
+        };
         /** SaveAsTemplateIn */
         SaveAsTemplateIn: {
             /**
@@ -2322,6 +2344,17 @@ export interface components {
         };
         /** TransitionIn */
         TransitionIn: {
+            /**
+             * Comment
+             * @description Saved as a comment; required by comment_required rules
+             */
+            comment?: string | null;
+            /**
+             * Force
+             * @description Admins only: move a blocked ticket despite policy enforce
+             * @default false
+             */
+            force?: boolean;
             resolution?: components["schemas"]["Resolution"] | null;
             /**
              * To Status
@@ -2341,9 +2374,25 @@ export interface components {
              * @description Set when the target is a done status; pick one of these
              */
             allowed_resolutions: components["schemas"]["Resolution"][] | null;
+            /**
+             * Available
+             * @description False only with include_unavailable
+             * @default true
+             */
+            available: boolean;
             category: components["schemas"]["StatusCategory"];
             /** Name */
             name: string;
+            /**
+             * Reasons
+             * @description Conditions that fail for you
+             */
+            reasons: components["schemas"]["RuleFailureOut"][];
+            /**
+             * Requires Comment
+             * @default false
+             */
+            requires_comment: boolean;
             /** To Status */
             to_status: string;
         };
@@ -2365,6 +2414,8 @@ export interface components {
             name: string;
             /** Ref */
             ref: string | null;
+            /** Rules */
+            rules: components["schemas"]["RuleOut"][];
             /** To Ref */
             to_ref: string;
             /** To Status */
@@ -4641,7 +4692,9 @@ export interface operations {
     };
     get_transitions_api_v1_tickets__key__transitions_get: {
         parameters: {
-            query?: never;
+            query?: {
+                include_unavailable?: boolean;
+            };
             header?: never;
             path: {
                 key: string;

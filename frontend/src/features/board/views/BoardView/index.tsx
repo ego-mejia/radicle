@@ -14,15 +14,18 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../../../../components/ui/EmptyState';
 import { PageSpinner } from '../../../../components/ui/Spinner';
-import { useErrorMessage } from '../../../../hooks/useErrorMessage';
-import { useToast } from '../../../../hooks/useToast';
 import type { BoardFilters as Filters } from '../../../../lib/rql';
 import { fetchSearchFields, projectKeys } from '../../../../services/api/projects';
-import { fetchTransitions, ticketKeys, transitionTicket } from '../../../../services/api/tickets';
+import {
+  fetchTransitions,
+  type Move,
+  ticketKeys,
+  transitionTicket,
+} from '../../../../services/api/tickets';
+import { useMoveFeedback } from '../../../tickets/hooks/useMoveFeedback';
 import {
   CATEGORIES,
   type Category,
-  type Resolution,
   type TicketSummary,
   type TransitionOption,
 } from '../../../../services/api/types';
@@ -45,8 +48,6 @@ export function BoardView() {
   const search = useSearch({ from: '/app/p/$key/board' });
   const navigate = useNavigate({ from: '/p/$key/board' });
   const queryClient = useQueryClient();
-  const toast = useToast();
-  const errorMessage = useErrorMessage();
   const projectKey = key.toUpperCase();
   const { data: project, isPending: loadingProject, isError } = useProject(projectKey);
   const { t: openKey, ...filters } = search;
@@ -62,24 +63,11 @@ export function BoardView() {
     useSensor(KeyboardSensor),
   );
 
+  const feedback = useMoveFeedback();
   const move = useMutation({
-    mutationFn: (v: {
-      key: string;
-      to: string;
-      resolution: Resolution | null;
-      transition: string;
-    }) => transitionTicket(v.key, v.to, v.resolution, v.transition),
-    onSuccess: (ticket) => {
-      for (const w of ticket.warnings ?? []) {
-        toast(
-          w.code === 'blocked'
-            ? t('ticket.warningBlocked', { keys: (w.by ?? []).join(', ') })
-            : w.message,
-          'warning',
-        );
-      }
-    },
-    onError: (error) => toast(errorMessage(error), 'error'),
+    mutationFn: (v: Move & { key: string }) => transitionTicket(v.key, v),
+    onSuccess: (ticket) => feedback.warnings(ticket),
+    onError: (error, v) => feedback.error(error, () => move.mutate({ ...v, force: true })),
     onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ticketKeys.all });
       void queryClient.invalidateQueries({ queryKey: projectKeys.detail(projectKey) });
@@ -115,7 +103,8 @@ export function BoardView() {
     if (options.length === 0) return;
     const only = options[0]!;
     const resolutions = only.allowed_resolutions ?? [];
-    if (options.length === 1 && (only.category !== 'done' || resolutions.length <= 1)) {
+    const simple = only.available && !only.requires_comment;
+    if (options.length === 1 && simple && (only.category !== 'done' || resolutions.length <= 1)) {
       move.mutate({
         key: current.ticket.key,
         to: only.to_status,
@@ -130,7 +119,7 @@ export function BoardView() {
   const columnState = (category: Category): 'idle' | 'allowed' | 'blocked' => {
     if (!drag || category === drag.ticket.status.category) return 'idle';
     if (!drag.options) return 'idle';
-    return drag.options.some((o) => o.category === category) ? 'allowed' : 'blocked';
+    return drag.options.some((o) => o.category === category && o.available) ? 'allowed' : 'blocked';
   };
 
   return (
@@ -182,12 +171,13 @@ export function BoardView() {
           ticketKey={pending.ticket.key}
           options={pending.options}
           onCancel={() => setPending(null)}
-          onPick={({ option, resolution }) => {
+          onPick={({ option, resolution, comment }) => {
             move.mutate({
               key: pending.ticket.key,
               to: option.to_status,
               resolution,
               transition: option.name,
+              comment,
             });
             setPending(null);
           }}

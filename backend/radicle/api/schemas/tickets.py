@@ -157,6 +157,11 @@ class TicketSummary(Output):
     updated_at: UtcDatetime
 
 
+class RuleFailureOut(Output):
+    rule: str
+    message: str
+
+
 class TransitionOption(Output):
     name: str
     to_status: str
@@ -164,6 +169,11 @@ class TransitionOption(Output):
     allowed_resolutions: list[Resolution] | None = Field(
         description="Set when the target is a done status; pick one of these"
     )
+    available: bool = Field(default=True, description="False only with include_unavailable")
+    reasons: list[RuleFailureOut] = Field(
+        default_factory=list, description="Conditions that fail for you"
+    )
+    requires_comment: bool = False
 
 
 class TransitionIn(Input):
@@ -171,6 +181,12 @@ class TransitionIn(Input):
     resolution: Resolution | None = None
     transition: str | None = Field(
         default=None, description="Transition name, only needed when several reach the target"
+    )
+    comment: str | None = Field(
+        default=None, description="Saved as a comment; required by comment_required rules"
+    )
+    force: bool = Field(
+        default=False, description="Admins only: move a blocked ticket despite policy enforce"
     )
 
 

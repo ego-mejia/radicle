@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { freshRef, unreachable, workflowErrors } from '../../../../lib/workflow';
 import type { TransitionConf, WorkflowConf } from '../../../../services/api/types';
+import { RulesEditor } from '../RulesEditor';
 import { StatusList } from './components/StatusList';
 import { TransitionDialog } from './components/TransitionDialog';
 import { TransitionMatrix } from './components/TransitionMatrix';
@@ -12,15 +13,12 @@ type Props = {
   value: WorkflowConf;
   onChange: (next: WorkflowConf) => void;
   readOnly?: boolean;
-  /** Extra editors inside the transition dialog (rules). */
-  transitionExtras?: (
-    draft: TransitionConf,
-    set: (next: TransitionConf) => void,
-  ) => React.ReactNode;
+  /** Custom field keys offered to field rules. */
+  customFields?: string[];
 };
 
 /** Statuses, transition matrix and a live diagram for one ticket type. */
-export function WorkflowEditor({ value, onChange, readOnly = false, transitionExtras }: Props) {
+export function WorkflowEditor({ value, onChange, readOnly = false, customFields = [] }: Props) {
   const { t } = useTranslation();
   const [open, setOpen] = useState<TransitionConf | null>(null);
   const transitions = value.transitions ?? [];
@@ -99,7 +97,14 @@ export function WorkflowEditor({ value, onChange, readOnly = false, transitionEx
             setOpen(null);
           }}
         >
-          {transitionExtras}
+          {(draft, set) => (
+            <RulesEditor
+              rules={draft.rules ?? []}
+              readOnly={readOnly}
+              customFields={customFields}
+              onChange={(rules) => set({ ...draft, rules })}
+            />
+          )}
         </TransitionDialog>
       )}
     </S.Grid>

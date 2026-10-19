@@ -54,6 +54,7 @@ export function WorkflowForm({ project }: { project: ProjectDetail }) {
       <WorkflowEditor
         key={type}
         value={value}
+        customFields={project.custom_fields.map((f) => f.key)}
         onChange={(next) => setDraft({ ...draft, [type]: next })}
       />
       <S.Actions>

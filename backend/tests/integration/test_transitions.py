@@ -62,12 +62,18 @@ async def test_get_transitions(client: AsyncClient, board: Team) -> None:
             "to_status": "In Progress",
             "category": "in_progress",
             "allowed_resolutions": None,
+            "available": True,
+            "reasons": [],
+            "requires_comment": False,
         },
         {
             "name": "Close",
             "to_status": "Done",
             "category": "done",
             "allowed_resolutions": ["wont_do", "duplicate", "cannot_reproduce"],
+            "available": True,
+            "reasons": [],
+            "requires_comment": False,
         },
     ]
 

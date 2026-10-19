@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Any
 from uuid import UUID
 
 from pydantic import ConfigDict, Field
@@ -116,6 +117,12 @@ class StatusOut(Output):
     is_initial: bool
 
 
+class RuleOut(Output):
+    kind: str = Field(description="condition, validator or post_function")
+    rule_type: str
+    config: dict[str, Any]
+
+
 class TransitionOut(Output):
     ref: str | None
     from_ref: str | None
@@ -126,6 +133,7 @@ class TransitionOut(Output):
     allowed_resolutions: list[Resolution] | None = Field(
         description="Only for done targets; null = all resolutions"
     )
+    rules: list[RuleOut]
 
 
 class WorkflowOut(Output):

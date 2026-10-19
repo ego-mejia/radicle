@@ -194,7 +194,7 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 | --- | --- | --- |
 | 2.1 | Worker y campos custom | Listo |
 | 2.2 | Templates y editor de workflows | Listo |
-| 2.3 | Reglas de transición | Pendiente |
+| 2.3 | Reglas de transición | Listo |
 | 2.4 | Screens | Pendiente |
 | 2.5 | Adjuntos | Pendiente |
 | 2.6 | Votos y tiempo real invertido | Pendiente |
@@ -238,3 +238,19 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 - `test_removing_a_status_needs_a_mapping_and_moves_tickets`: quitar In Review sin mapeo da 422 con los tickets afectados; con mapeo el ticket pasa a In Progress con `status_remapped` por `system`.
 - `test_rename_reorder_and_fields_by_ref`, `test_failed_sync_does_not_stop_others_and_can_be_retried`, `test_independent_project_workflow_editor` y validaciones de configuración.
 - `scripts/smoke.sh`: un cambio al template llega a un proyecto ligado a través del contenedor `worker`.
+
+### 2.3 Reglas de transición
+
+**Qué se hizo**
+
+- Migración `0007`: `transition_rules` y `tickets.time_spent_minutes`.
+- Catálogo completo del spec: conditions (`only_assignee`, `only_reporter`, `only_roles`, `only_user_kind`, `not_blocked`), validators (`checklist_complete`, `field_required`, `has_estimate`, `children_done`, `has_worklog`, `comment_required`) y post-functions (`assign_to_actor`, `unassign`, `set_field`, `clear_field`, `add_tag`, `remove_tag`, `add_comment`). Decisión: [0011](decisions/0011-reglas-de-transicion.md).
+- Orden de ejecución: conditions, política de bloqueo, validators, cambio de estado, comentario y post-functions, todo en una transacción.
+- Política de bloqueo `warn` o `enforce` con `force` para admins registrado en el historial.
+- API: `include_unavailable` en las transiciones; `comment` y `force` al transicionar. MCP: `transition_ticket` acepta `comment` y `get_project` resume las reglas por transición.
+- UI: panel de reglas por transición en el editor de workflows (template y proyecto independiente), contador de reglas en la matriz; al mover un ticket se ven las transiciones no disponibles con su motivo, se pide comentario cuando es obligatorio, los validators fallidos se listan exactos y un admin puede forzar un ticket bloqueado.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_transition_rules.py::test_acceptance_checklist_complete_blocks_complete`: con `checklist_complete` en Complete, un ticket con dos items abiertos no pasa y el error los nombra.
+- El mismo archivo prueba cada regla con caso que pasa y que falla, el orden de ejecución, el rollback de una post-function fallida, `warn` y `enforce` con `force`, y que las reglas viajan con el template.

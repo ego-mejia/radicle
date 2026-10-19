@@ -62,3 +62,17 @@ export const Off = styled.button`
     border-color: ${({ theme }) => theme.color.border};
   }
 `;
+
+export const Rules = styled.span`
+  display: inline-grid;
+  place-items: center;
+  min-width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  padding: 0 4px;
+  border-radius: ${({ theme }) => theme.radius.full};
+  background: ${({ theme }) => theme.color.accent};
+  color: ${({ theme }) => theme.color.surface};
+  font-size: 10px;
+  font-weight: 600;
+`;

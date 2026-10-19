@@ -29,6 +29,7 @@ from radicle.db.models import (
     Ticket,
     TicketType,
     Transition,
+    TransitionRule,
     User,
     utcnow,
 )
@@ -210,7 +211,7 @@ async def _apply_transitions(
             )
         )
     )
-    by_ref = {t.template_ref: t for t in existing if t.template_ref}
+    by_ref: dict[str, Transition] = {t.template_ref: t for t in existing if t.template_ref}
     wanted = {t.ref for t in workflow.transitions}
     stale = [t.id for t in existing if t.template_ref not in wanted]
     if stale:
@@ -228,6 +229,7 @@ async def _apply_transitions(
                 name=conf.name,
             )
             db.add(transition)
+            by_ref[conf.ref] = transition
         transition.name = conf.name
         transition.from_status_id = statuses[conf.from_].id if conf.from_ else None
         transition.to_status_id = statuses[conf.to].id
@@ -236,14 +238,41 @@ async def _apply_transitions(
         )
         transition.position = position
     await db.flush()
-    await _after_transitions(db, project, ticket_type, workflow)
+    await _apply_rules(db, workflow, by_ref)
 
 
-async def _after_transitions(
-    db: AsyncSession, project: Project, ticket_type: TicketType, workflow: WorkflowConf
+async def _apply_rules(
+    db: AsyncSession, workflow: WorkflowConf, transitions: dict[str, Transition]
 ) -> None:
-    """Hook for transition rules (stage 2.3)."""
-    return None
+    """Rules are small and ordered: replace them when they differ."""
+    for conf in workflow.transitions:
+        transition = transitions.get(conf.ref)
+        if transition is None:  # pragma: no cover - every configured ref exists by now
+            continue
+        wanted = [(r.kind, r.rule_type, dict(r.config)) for r in conf.rules]
+        current = list(
+            await db.scalars(
+                select(TransitionRule)
+                .where(TransitionRule.transition_id == transition.id)
+                .order_by(TransitionRule.position)
+            )
+        )
+        if [(r.kind.value, r.rule_type, r.config) for r in current] == wanted:
+            continue
+        await db.execute(
+            delete(TransitionRule).where(TransitionRule.transition_id == transition.id)
+        )
+        for position, (kind, rule_type, config) in enumerate(wanted):
+            db.add(
+                TransitionRule(
+                    transition_id=transition.id,
+                    kind=kind,
+                    rule_type=rule_type,
+                    config=config,
+                    position=position,
+                )
+            )
+    await db.flush()
 
 
 async def apply_fields(

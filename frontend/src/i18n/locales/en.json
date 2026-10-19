@@ -154,7 +154,13 @@
     "notFound": "This ticket does not exist or you cannot see it.",
     "editTitle": "Edit title",
     "addTag": "Add tag",
-    "addCollaborator": "Add collaborator"
+    "addCollaborator": "Add collaborator",
+    "warningForced": "Forced while blocked by {{keys}}.",
+    "rulesFailed": "The transition rules did not pass:",
+    "force": "Force",
+    "moveComment": "Comment (optional)",
+    "moveCommentRequired": "Comment (required for this move)",
+    "moveTo": "Move to {{status}}"
   },
   "create": {
     "title": "Create ticket",
@@ -455,6 +461,71 @@
       "linkedHelp": "Template changes reach this project.",
       "detached": "Independent",
       "detachedHelp": "Copy the configuration once and edit it freely."
+    }
+  },
+  "rules": {
+    "kinds": {
+      "condition": "Conditions",
+      "validator": "Validators",
+      "post_function": "Post-functions"
+    },
+    "kindHelp": {
+      "condition": "Who can run the transition. If one fails it is not offered.",
+      "validator": "What the ticket needs before moving. The error says what is missing.",
+      "post_function": "Changes made right after the move, in order."
+    },
+    "add": "Add to {{kind}}",
+    "addOne": "Add rule",
+    "count_one": "{{count}} rule",
+    "count_other": "{{count}} rules",
+    "userKind": "Who",
+    "humans": "Only people",
+    "agents": "Only agents",
+    "field": "Field",
+    "value": "Value",
+    "tag": "Tag",
+    "template": "Comment template ({actor}, {from}, {to})",
+    "types": {
+      "only_assignee": "Only the assignee",
+      "only_reporter": "Only the reporter",
+      "only_roles": "Only these roles",
+      "only_user_kind": "Only people or only agents",
+      "not_blocked": "Not blocked",
+      "checklist_complete": "Checklist complete",
+      "field_required": "Field required",
+      "has_estimate": "Has an estimate",
+      "children_done": "Subtickets done",
+      "has_worklog": "Has logged time",
+      "comment_required": "Comment required",
+      "assign_to_actor": "Assign to whoever moves it",
+      "unassign": "Unassign",
+      "set_field": "Set a field",
+      "clear_field": "Clear a field",
+      "add_tag": "Add a tag",
+      "remove_tag": "Remove a tag",
+      "add_comment": "Add a comment"
+    },
+    "help": {
+      "only_assignee": "Only the ticket's assignee sees this transition.",
+      "only_reporter": "Only whoever reported the ticket sees this transition.",
+      "not_blocked": "With the enforce policy a blocked ticket cannot use it; with warn it can, with a warning.",
+      "checklist_complete": "Every checklist item must be checked; the error lists the open ones.",
+      "has_estimate": "The ticket needs estimate hours.",
+      "children_done": "Every subticket must be in a done status.",
+      "has_worklog": "Someone must have logged time on the ticket.",
+      "comment_required": "The move needs a comment, saved on the ticket.",
+      "assign_to_actor": "Whoever moves the ticket becomes its assignee.",
+      "unassign": "The ticket loses its assignee."
+    },
+    "fields": {
+      "priority": "Priority",
+      "area": "Area",
+      "milestone": "Milestone",
+      "assignee": "Assignee",
+      "due_date": "Due date",
+      "estimate_hours": "Estimate",
+      "description_md": "Description",
+      "parent": "Parent"
     }
   }
 }
