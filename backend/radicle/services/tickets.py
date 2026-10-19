@@ -323,6 +323,7 @@ async def update_ticket(
         if new_start != ticket.start_date:
             diffs.append(("start_date", fields.iso(ticket.start_date), fields.iso(new_start)))
             ticket.start_date = new_start
+    remaining_before = ticket.remaining_hours
     if "estimate_hours" in changes:
         new_estimate = fields.normalize_estimate(changes["estimate_hours"])
         if new_estimate != ticket.estimate_hours:
@@ -383,6 +384,15 @@ async def update_ticket(
     else:
         changed_custom = False
 
+    if ticket.remaining_hours != remaining_before and all(d[0] != "remaining_hours" for d in diffs):
+        # A side effect of the estimate: recorded so burndowns can replay any day.
+        diffs.append(
+            (
+                "remaining_hours",
+                fields.estimate_json(remaining_before),
+                fields.estimate_json(ticket.remaining_hours),
+            )
+        )
     for name, old, new in diffs:
         history.record(
             db, ticket, access.user, EventType.field_changed, field=name, old=old, new=new

@@ -68,3 +68,8 @@ export const Legend = styled.div`
 export const Description = styled.div`
   color: ${({ theme }) => theme.color.textMuted};
 `;
+
+export const Forecast = styled.span<{ $risk: boolean }>`
+  font-weight: 600;
+  color: ${({ theme, $risk }) => ($risk ? theme.color.warning : theme.color.accent)};
+`;

@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { CategoryIcon } from '../../../../components/icons/CategoryIcon';
@@ -5,6 +6,7 @@ import { MarkdownView } from '../../../../components/Markdown/MarkdownView';
 import { Badge } from '../../../../components/ui/Badge';
 import { formatDate, isOverdue } from '../../../../lib/format';
 import { rqlValue } from '../../../../lib/rql';
+import { fetchReport, reportKeys } from '../../../../services/api/reports';
 import { CATEGORIES, type Milestone } from '../../../../services/api/types';
 import * as S from './style';
 
@@ -18,6 +20,15 @@ export function MilestoneCard({ project, milestone, actions }: Props) {
   const percent = total ? Math.round((counts.done / total) * 100) : 0;
   const closed = milestone.status === 'closed';
   const late = !closed && isOverdue(milestone.target_date) && counts.done < total;
+  const params = { project, milestone: milestone.name };
+  const { data: progress } = useQuery({
+    queryKey: reportKeys.data('milestone_progress', params),
+    queryFn: () => fetchReport('milestone_progress', params),
+    enabled: !closed,
+  });
+  const forecast = progress?.summary as
+    | { state: string; forecast_date: string | null; reason: string; percent_by_hours: number }
+    | undefined;
   return (
     <S.Card $closed={closed}>
       <S.Top>
@@ -61,6 +72,15 @@ export function MilestoneCard({ project, milestone, actions }: Props) {
           </span>
         ))}
         <span>{t('milestones.percent', { percent })}</span>
+        {forecast && (
+          <S.Forecast $risk={forecast.state === 'at_risk'} title={forecast.reason}>
+            {forecast.forecast_date
+              ? t(`milestones.forecast.${forecast.state}`, {
+                  date: formatDate(forecast.forecast_date),
+                })
+              : t('milestones.forecast.none')}
+          </S.Forecast>
+        )}
         <Link
           to="/p/$key/list"
           params={{ key: project }}

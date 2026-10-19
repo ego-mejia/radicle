@@ -3,7 +3,7 @@
 import random
 import uuid
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -28,7 +28,7 @@ from radicle.db.models import (
     UserKind,
     utcnow,
 )
-from radicle.services import rank
+from radicle.services import periods, rank
 from radicle.services.templates import instantiate
 
 AREAS = ["Legal", "Marketing", "Backend", "Frontend", "Mobile", "Data", "Infra", "Design"]
@@ -117,7 +117,9 @@ async def seed(
         ticket_type = rng.choices(list(TicketType), weights=[6, 3, 1])[0]
         status = rng.choice(by_type[ticket_type])
         done = status.category is StatusCategory.done
-        created = now - timedelta(minutes=rng.randint(0, 60 * 24 * 180))
+        created = now - timedelta(minutes=rng.randint(60 * 24 * 3, 60 * 24 * 180))
+        # Done tickets were resolved a few days later; in-progress ones started after a while.
+        resolved = created + timedelta(hours=rng.randint(4, 24 * 20)) if done else None
         current_rank = rank.after(current_rank)
         ticket_id = uuid.uuid4()
         ids.append(ticket_id)
@@ -152,18 +154,46 @@ async def seed(
                 "rank": current_rank,
                 "created_at": created,
                 "updated_at": created + timedelta(hours=rng.randint(0, 200)),
-                "resolved_at": created + timedelta(days=2) if done else None,
+                "resolved_at": resolved,
             }
         )
+        initial = next((s for s in by_type[ticket_type] if s.is_initial), by_type[ticket_type][0])
         events.append(
             {
                 "ticket_id": ticket_id,
                 "actor_id": reporter.id,
                 "event_type": "created",
-                "new_value": {"type": ticket_type.value},
+                "field": None,
+                "old_value": None,
+                "new_value": {"type": ticket_type.value, "status": initial.name},
                 "created_at": created,
             }
         )
+        # A believable path to the current status, so periods and reports have history.
+        path: list[tuple[datetime, Status]] = []
+        doing = [s for s in by_type[ticket_type] if s.category is StatusCategory.in_progress]
+        if status.id != initial.id:
+            if status.category is StatusCategory.done and resolved is not None:
+                if doing and status.name != "Discarded":
+                    started = created + (resolved - created) * rng.uniform(0.1, 0.6)
+                    path.append((started, rng.choice(doing)))
+                path.append((resolved, status))
+            else:
+                path.append((created + timedelta(hours=rng.randint(1, 72)), status))
+        previous = initial
+        for moment, step in path:
+            events.append(
+                {
+                    "ticket_id": ticket_id,
+                    "actor_id": reporter.id,
+                    "event_type": "status_changed",
+                    "field": "status",
+                    "old_value": {"status": previous.name, "resolution": None},
+                    "new_value": {"status": step.name},
+                    "created_at": moment,
+                }
+            )
+            previous = step
     for start in range(0, len(rows), 2000):
         await db.execute(insert(Ticket), rows[start : start + 2000])
         await db.execute(insert(TicketEvent), events[start : start + 2000])
@@ -183,4 +213,5 @@ async def seed(
         await db.execute(insert(TicketLink), link_rows)
     await db.execute(update(Project).where(Project.id == project.id).values(ticket_seq=tickets))
     await db.flush()
+    await periods.backfill(db, ids)
     return Seeded(project_key, "fernando@example.com", password, tickets)

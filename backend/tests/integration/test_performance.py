@@ -51,6 +51,20 @@ async def test_search_p95_and_board_with_10k_tickets(
     async with db_session.get_sessionmaker()() as db:
         await seed(db, tickets=10_000)
         await db.commit()
+        # The seed writes one to three periods per ticket; two more each make the year
+        # scan about 50,000 periods.
+        for back, length in ((40, 20), (20, 10)):
+            await db.execute(
+                text(
+                    "INSERT INTO ticket_status_periods "
+                    "(id, ticket_id, status_id, category, entered_at, exited_at) "
+                    "SELECT gen_random_uuid(), id, status_id, 'in_progress', "
+                    "created_at - make_interval(days => :back), "
+                    "created_at - make_interval(days => :until) FROM tickets"
+                ),
+                {"back": back, "until": back - length},
+            )
+        await db.commit()
         await db.execute(text("ANALYZE"))
         await db.commit()
     try:
@@ -95,8 +109,19 @@ async def test_search_p95_and_board_with_10k_tickets(
             configured = time.perf_counter() - start
             assert r.status_code == 200 and r.json()["lanes"]
             assert configured < 1.0, f"configurable board took {configured * 1000:.0f} ms"
+            start = time.perf_counter()
+            r = await c.get(
+                "/api/v1/reports/cfd",
+                headers=bearer,
+                params={"project": "PERF", "from": "2025-10-20", "to": "2026-10-19"},
+            )
+            cfd = time.perf_counter() - start
+            assert r.status_code == 200 and len(r.json()["rows"]) == 365, r.text
+            assert sum(r.json()["rows"][-1][k] for k in r.json()["columns"][1:]) > 0
+            assert cfd < 1.0, f"CFD of a year took {cfd * 1000:.0f} ms"
             print(
-                f"\nRQL p95 {p95 * 1000:.0f} ms; board {loaded} tickets {board * 1000:.0f} ms; "
+                f"\nCFD 365 days {cfd * 1000:.0f} ms; "
+                f"RQL p95 {p95 * 1000:.0f} ms; board {loaded} tickets {board * 1000:.0f} ms; "
                 f"configurable board with lanes {configured * 1000:.0f} ms"
             )
     finally:

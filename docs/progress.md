@@ -367,8 +367,8 @@ Los criterios de aceptación de la etapa se verifican así:
 | 3.2 | Boards configurables | Listo |
 | 3.3 | Scrum | Listo |
 | 3.4 | Timeline | Listo |
-| 3.5 | Reportes agile | Pendiente |
-| 3.6 | Reportes generales | Pendiente |
+| 3.5 | Reportes agile | Listo |
+| 3.6 | Reportes generales | Listo |
 | 3.7 | Dashboards | Pendiente |
 
 ### 3.1 Periodos de estado y snapshots
@@ -427,4 +427,19 @@ Los criterios de aceptación de la etapa se verifican así:
 
 - `tests/integration/test_timeline.py`: grupos, sin fechas, conflicto que se resuelve al mover fechas, historial de fechas y pronóstico "en riesgo"/"en tiempo"/"sin pronóstico".
 - E2E `drag a bar on the timeline and see a dependency in red`.
+
+### 3.5 y 3.6 Reportes
+
+**Qué se hizo**
+
+- `GET /reports/{type}` y `/reports/{type}.csv`: burndown, burnup, velocity, cumulative flow, control chart, sprint report, creados vs resueltos, distribución por campo, progreso de milestone con pronóstico y tiempo. Decisión: [0021](decisions/0021-reportes.md).
+- Restante reconstruible por día: todo cambio de `remaining_hours` queda en el historial. Nueva variable `RADICLE_WORKDAYS`.
+- MCP: `get_report` y `get_milestone_progress`.
+- UI `/p/{key}/reports` con Recharts: lista de reportes, filtros comunes (board, sprint, milestone, área, rango), cifras clave, tabla plegable y Exportar CSV. Las tarjetas de milestones muestran el pronóstico y si está en tiempo o en riesgo.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_reports.py`: un sprint sembrado con fechas controladas; cada reporte da los números calculados a mano (burndown ideal y real, burnup, sprint report, velocity, CSV, CFD, cycle time y percentiles, creados vs resueltos, distribución, pronóstico en tiempo y en riesgo, tiempo).
+- `test_performance.py` (marca `slow`): CFD de un año con 10,000 tickets en menos de 1 s (unos 80 ms).
+- E2E `the sprint report and burndown add up, and V1 has a forecast`.
 

@@ -958,6 +958,47 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/reports/{kind}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Report
+         * @description burndown, burnup, velocity, cfd, control_chart, sprint, created_resolved,
+         *     distribution, milestone_progress or time. Only tickets you can see count.
+         */
+        get: operations["report_api_v1_reports__kind__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reports/{kind}.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Report Csv
+         * @description The report's rows as CSV.
+         */
+        get: operations["report_csv_api_v1_reports__kind__csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/search/fields": {
         parameters: {
             query?: never;
@@ -3135,6 +3176,26 @@ export interface components {
             remaining_hours: number;
             /** Title */
             title: string;
+        };
+        /** ReportOut */
+        ReportOut: {
+            /**
+             * Columns
+             * @description Row keys, in order; also the CSV header
+             */
+            columns: string[];
+            /** Rows */
+            rows: {
+                [key: string]: unknown;
+            }[];
+            /** Summary */
+            summary: {
+                [key: string]: unknown;
+            };
+            /** Title */
+            title: string;
+            /** Type */
+            type: string;
         };
         /** ResizeIn */
         ResizeIn: {
@@ -6615,6 +6676,97 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["WorkflowPutOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    report_api_v1_reports__kind__get: {
+        parameters: {
+            query?: {
+                /** @description Project key */
+                project?: string | null;
+                board?: string | null;
+                sprint?: string | null;
+                /** @description Milestone name (with project) */
+                milestone?: string | null;
+                /** @description Extra RQL, combined with AND */
+                q?: string | null;
+                from?: string | null;
+                to?: string | null;
+                /** @description distribution: area, priority, cf.<key>… */
+                field?: string | null;
+                /** @description created_resolved: day or week */
+                interval?: string;
+                /** @description time: ticket, milestone, area or assignee */
+                by?: string;
+                /** @description velocity: how many closed sprints */
+                count?: number;
+            };
+            header?: never;
+            path: {
+                kind: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    report_csv_api_v1_reports__kind__csv_get: {
+        parameters: {
+            query?: {
+                project?: string | null;
+                board?: string | null;
+                sprint?: string | null;
+                milestone?: string | null;
+                q?: string | null;
+                from?: string | null;
+                to?: string | null;
+                field?: string | null;
+                interval?: string;
+                by?: string;
+                count?: number;
+            };
+            header?: never;
+            path: {
+                kind: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

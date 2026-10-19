@@ -49,6 +49,8 @@ TOOLS = {
     "remove_from_sprint",
     "start_sprint",
     "complete_sprint",
+    "get_milestone_progress",
+    "get_report",
 }
 
 

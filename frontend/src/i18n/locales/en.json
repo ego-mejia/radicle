@@ -25,7 +25,9 @@
     "required": "Required",
     "optional": "optional",
     "you": "you",
-    "seeAll": "See all"
+    "seeAll": "See all",
+    "yes": "Yes",
+    "no": "No"
   },
   "nav": {
     "projects": "Projects",
@@ -45,7 +47,8 @@
     "breadcrumb": "Breadcrumb",
     "skip": "Skip to content",
     "backlog": "Backlog",
-    "timeline": "Timeline"
+    "timeline": "Timeline",
+    "reports": "Reports"
   },
   "theme": {
     "label": "Theme",
@@ -361,7 +364,14 @@
     "percent": "{{percent}}% done",
     "seeTickets": "See tickets",
     "emptyTitle": "No milestones yet",
-    "emptyText": "Milestones group tickets toward a release, like V1."
+    "emptyText": "Milestones group tickets toward a release, like V1.",
+    "forecast": {
+      "on_track": "On track · forecast {{date}}",
+      "at_risk": "At risk · forecast {{date}}",
+      "done": "Done",
+      "no_forecast": "No forecast",
+      "none": "No forecast yet"
+    }
   },
   "myTickets": {
     "subtitle": "Open tickets assigned to you in every project, most urgent first.",
@@ -914,5 +924,128 @@
       "quarter": "Quarter"
     },
     "truncated": "Showing the first 2,000 tickets. Narrow the query."
+  },
+  "reports": {
+    "title": "Reports",
+    "groups": {
+      "agile": "Agile",
+      "general": "General"
+    },
+    "types": {
+      "burndown": "Burndown",
+      "burnup": "Burnup",
+      "velocity": "Velocity",
+      "cfd": "Cumulative flow",
+      "control_chart": "Control chart",
+      "sprint": "Sprint report",
+      "created_resolved": "Created vs resolved",
+      "distribution": "Distribution",
+      "milestone_progress": "Milestone progress",
+      "time": "Time"
+    },
+    "help": {
+      "burndown": "Remaining hours of the sprint each working day against the ideal line. Orange marks are scope changes.",
+      "burnup": "Scope and completed hours per day, for a sprint or a milestone.",
+      "velocity": "Committed against completed hours in the last closed sprints.",
+      "cfd": "Tickets per status each day, stacked in workflow order.",
+      "control_chart": "Cycle time of each resolved ticket, with rolling mean and percentiles.",
+      "sprint": "What was completed, what was not, what was added after starting and what was taken out.",
+      "created_resolved": "Tickets created and resolved per period and the running difference.",
+      "distribution": "How many tickets have each value of a field.",
+      "milestone_progress": "Percent done and when the milestone will be done at the recent pace.",
+      "time": "Original estimate against time spent, and who went over."
+    },
+    "cols": {
+      "date": "Date",
+      "ideal_hours": "Ideal",
+      "remaining_hours": "Remaining",
+      "scope_change": "Scope change",
+      "scope_hours": "Scope",
+      "completed_hours": "Completed",
+      "committed_hours": "Committed",
+      "sprint": "Sprint",
+      "key": "Key",
+      "resolved": "Resolved",
+      "cycle_days": "Cycle time (days)",
+      "lead_days": "Lead time (days)",
+      "rolling_mean_days": "Rolling mean",
+      "outcome": "Outcome",
+      "title": "Title",
+      "estimate_hours": "Estimate",
+      "period": "Period",
+      "created": "Created",
+      "cumulative_difference": "Open (cumulative)",
+      "value": "Value",
+      "count": "Tickets",
+      "percent": "%",
+      "metric": "Metric",
+      "ticket": "Ticket",
+      "milestone": "Milestone",
+      "area": "Area",
+      "assignee": "Assignee",
+      "original_estimate_hours": "Original estimate",
+      "spent_hours": "Spent",
+      "difference_hours": "Difference"
+    },
+    "csv": "Export CSV",
+    "data_one": "Data ({{count}} row)",
+    "data_other": "Data ({{count}} rows)",
+    "empty": "No data for these filters.",
+    "board": "Board",
+    "sprint": "Sprint",
+    "milestone": "Milestone",
+    "area": "Area",
+    "from": "From",
+    "to": "To",
+    "field": "Field",
+    "interval": "Interval",
+    "day": "Day",
+    "week": "Week",
+    "groupBy": "Group by",
+    "wholeProject": "Whole project",
+    "noSprints": "No sprints yet",
+    "useSprint": "— use the sprint —",
+    "fields": {
+      "area": "Area",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "type": "Type",
+      "status": "Status",
+      "tag": "Tag",
+      "milestone": "Milestone"
+    },
+    "by": {
+      "ticket": "Ticket",
+      "milestone": "Milestone",
+      "area": "Area",
+      "assignee": "Person"
+    },
+    "needScrum": "This report needs a Scrum board.",
+    "needSprint": "Start a sprint to see this report.",
+    "needMilestone": "Create a milestone to see its progress.",
+    "workingDays": "Working days",
+    "averageLast3": "Average of the last 3",
+    "tickets": "Tickets",
+    "daysUnit": "d",
+    "goalMet": "Goal met",
+    "outcomes": {
+      "completed": "Completed",
+      "not_completed": "Not completed",
+      "added_after_start": "Added after start",
+      "removed": "Removed"
+    },
+    "progressCount": "Done by count",
+    "progressHours": "Done by hours",
+    "pace": "Pace",
+    "hoursPerWeek": "h/week",
+    "target": "Target",
+    "forecast": "Forecast",
+    "state": "State",
+    "states": {
+      "on_track": "On track",
+      "at_risk": "At risk",
+      "no_forecast": "No forecast",
+      "done": "Done"
+    }
   }
 }

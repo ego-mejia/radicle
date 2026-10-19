@@ -152,6 +152,7 @@ async def test_patch_fields_and_history(client: AsyncClient, board: Team) -> Non
         "assignee": (None, "luis"),
         "due_date": (None, "2026-12-01"),
         "estimate_hours": (None, 3.5),
+        "remaining_hours": (None, 3.5),
         "tags": ([], ["a", "b"]),
     }
     assert all(e["actor"]["handle"] == "luis" for e in events)

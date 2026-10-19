@@ -82,6 +82,8 @@ Los boards Scrum tienen sprints. En la pestaña **Backlog** se planean arrastran
 
 La pestaña **Timeline** muestra los tickets en el tiempo por milestone o área: arrastra una barra para cambiar sus fechas, o un ticket del panel "Sin fechas" para dárselas. Las dependencias imposibles se marcan en rojo.
 
+En **Reportes** están burndown, burnup, velocity, cumulative flow, control chart, sprint report, creados vs resueltos, distribución, progreso de milestone con pronóstico y tiempo; cada uno con su tabla y Exportar CSV. `RADICLE_WORKDAYS` define los días hábiles del burndown.
+
 ## Atajos
 
 `?` muestra todos. Los principales: `c` crear ticket, `/` buscar, `⌘K` paleta de comandos, `g p` proyectos, `g m` mis tickets, `j`/`k` moverse en listas y board, y con un ticket abierto `e` título, `a` asignarme, `m` mover, `l` tags, `p` prioridad. Se pueden apagar en el perfil.

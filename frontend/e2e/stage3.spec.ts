@@ -160,6 +160,20 @@ test('run a whole sprint: plan, start, add mid-way and close to #backlog', async
   expect(found.items.map((t) => t.key)).toEqual([keys[1]]);
 });
 
+test('the sprint report and burndown add up, and V1 has a forecast', async () => {
+  await page.goto('/p/PA/reports?type=sprint');
+  const chart = page.getByTestId('report-sprint');
+  await expect(chart.getByText('Added after start')).toBeVisible();
+  await expect(chart).toContainText('13h'); // committed: 8 h + 5 h
+  await page.getByRole('link', { name: 'Burndown' }).click();
+  await expect(page.getByTestId('report-burndown')).toContainText('Committed');
+  await expect(page.getByText(/Data \(\d+ rows?\)/)).toBeVisible();
+  await page.getByRole('link', { name: 'Milestone progress' }).click();
+  await expect(page.getByTestId('report-milestone_progress')).toContainText('Forecast');
+  const csv = page.getByRole('link', { name: 'Export CSV' });
+  await expect(csv).toHaveAttribute('href', /milestone_progress\.csv\?project=PA&milestone=V1/);
+});
+
 test('drag a bar on the timeline and see a dependency in red', async () => {
   const a = await newTicket({
     title: 'Diseño API',

@@ -13,6 +13,7 @@ import { BoardSettingsView } from './features/board/views/BoardSettingsView';
 import { BoardView } from './features/board/views/BoardView';
 import { BacklogView } from './features/sprints/views/BacklogView';
 import { TimelineView } from './features/timeline/views/TimelineView';
+import { ReportsView } from './features/reports/views/ReportsView';
 import { ListView } from './features/list/views/ListView';
 import { MilestonesView } from './features/milestones/views/MilestonesView';
 import { MyTicketsView } from './features/mytickets/views/MyTicketsView';
@@ -150,6 +151,37 @@ const timelineRoute = createRoute({
   }),
 });
 
+type ReportSearch = {
+  type?: string;
+  board?: string;
+  sprint?: string;
+  milestone?: string;
+  area?: string;
+  from?: string;
+  to?: string;
+  field?: string;
+  interval?: string;
+  by?: string;
+};
+
+const reportsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/p/$key/reports',
+  component: ReportsView,
+  validateSearch: (search: Record<string, unknown>): ReportSearch => ({
+    type: str(search.type),
+    board: str(search.board),
+    sprint: str(search.sprint),
+    milestone: str(search.milestone),
+    area: str(search.area),
+    from: str(search.from),
+    to: str(search.to),
+    field: str(search.field),
+    interval: str(search.interval),
+    by: str(search.by),
+  }),
+});
+
 const listRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/p/$key/list',
@@ -217,6 +249,7 @@ const routeTree = rootRoute.addChildren([
     boardSettingsRoute,
     backlogRoute,
     timelineRoute,
+    reportsRoute,
     listRoute,
     milestonesRoute,
     settingsRoute,

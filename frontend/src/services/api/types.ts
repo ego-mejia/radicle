@@ -113,3 +113,18 @@ export type SprintState = Sprint['state'];
 export type Timeline = S['TimelineOut'];
 export type TimelineTicket = S['TimelineTicket'];
 export type TimelineGroup = S['TimelineGroup'];
+
+export type ReportData = S['ReportOut'];
+export const REPORT_TYPES = [
+  'burndown',
+  'burnup',
+  'velocity',
+  'cfd',
+  'control_chart',
+  'sprint',
+  'created_resolved',
+  'distribution',
+  'milestone_progress',
+  'time',
+] as const;
+export type ReportType = (typeof REPORT_TYPES)[number];

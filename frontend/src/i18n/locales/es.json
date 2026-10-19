@@ -25,7 +25,9 @@
     "required": "Obligatorio",
     "optional": "opcional",
     "you": "tú",
-    "seeAll": "Ver todo"
+    "seeAll": "Ver todo",
+    "yes": "Sí",
+    "no": "No"
   },
   "nav": {
     "projects": "Proyectos",
@@ -45,7 +47,8 @@
     "breadcrumb": "Ruta",
     "skip": "Saltar al contenido",
     "backlog": "Backlog",
-    "timeline": "Timeline"
+    "timeline": "Timeline",
+    "reports": "Reportes"
   },
   "theme": {
     "label": "Tema",
@@ -361,7 +364,14 @@
     "percent": "{{percent}}% hecho",
     "seeTickets": "Ver tickets",
     "emptyTitle": "Todavía no hay milestones",
-    "emptyText": "Los milestones agrupan tickets hacia una entrega, como V1."
+    "emptyText": "Los milestones agrupan tickets hacia una entrega, como V1.",
+    "forecast": {
+      "on_track": "En tiempo · pronóstico {{date}}",
+      "at_risk": "En riesgo · pronóstico {{date}}",
+      "done": "Terminado",
+      "no_forecast": "Sin pronóstico",
+      "none": "Sin pronóstico todavía"
+    }
   },
   "myTickets": {
     "subtitle": "Tickets abiertos asignados a ti en todos los proyectos, lo más urgente primero.",
@@ -914,5 +924,128 @@
       "quarter": "Trimestre"
     },
     "truncated": "Se muestran los primeros 2,000 tickets. Acota la consulta."
+  },
+  "reports": {
+    "title": "Reportes",
+    "groups": {
+      "agile": "Agile",
+      "general": "Generales"
+    },
+    "types": {
+      "burndown": "Burndown",
+      "burnup": "Burnup",
+      "velocity": "Velocity",
+      "cfd": "Cumulative flow",
+      "control_chart": "Control chart",
+      "sprint": "Reporte de sprint",
+      "created_resolved": "Creados vs resueltos",
+      "distribution": "Distribución",
+      "milestone_progress": "Progreso de milestone",
+      "time": "Tiempo"
+    },
+    "help": {
+      "burndown": "Horas restantes del sprint cada día hábil contra la línea ideal. Las marcas naranjas son cambios de alcance.",
+      "burnup": "Alcance y horas completadas por día, de un sprint o un milestone.",
+      "velocity": "Horas comprometidas contra completadas en los últimos sprints cerrados.",
+      "cfd": "Tickets por estado cada día, apilados en el orden del workflow.",
+      "control_chart": "Cycle time de cada ticket resuelto, con media móvil y percentiles.",
+      "sprint": "Qué se terminó, qué no, qué se agregó después de iniciar y qué se sacó.",
+      "created_resolved": "Tickets creados y resueltos por periodo y la diferencia acumulada.",
+      "distribution": "Cuántos tickets tienen cada valor de un campo.",
+      "milestone_progress": "Porcentaje terminado y cuándo se termina el milestone al ritmo reciente.",
+      "time": "Estimado original contra tiempo invertido, y quién se pasó."
+    },
+    "cols": {
+      "date": "Fecha",
+      "ideal_hours": "Ideal",
+      "remaining_hours": "Restante",
+      "scope_change": "Cambio de alcance",
+      "scope_hours": "Alcance",
+      "completed_hours": "Completado",
+      "committed_hours": "Comprometido",
+      "sprint": "Sprint",
+      "key": "Key",
+      "resolved": "Resuelto",
+      "cycle_days": "Cycle time (días)",
+      "lead_days": "Lead time (días)",
+      "rolling_mean_days": "Media móvil",
+      "outcome": "Resultado",
+      "title": "Título",
+      "estimate_hours": "Estimación",
+      "period": "Periodo",
+      "created": "Creados",
+      "cumulative_difference": "Abiertos (acumulado)",
+      "value": "Valor",
+      "count": "Tickets",
+      "percent": "%",
+      "metric": "Métrica",
+      "ticket": "Ticket",
+      "milestone": "Milestone",
+      "area": "Área",
+      "assignee": "Responsable",
+      "original_estimate_hours": "Estimado original",
+      "spent_hours": "Invertido",
+      "difference_hours": "Diferencia"
+    },
+    "csv": "Exportar CSV",
+    "data_one": "Datos ({{count}} fila)",
+    "data_other": "Datos ({{count}} filas)",
+    "empty": "No hay datos con estos filtros.",
+    "board": "Board",
+    "sprint": "Sprint",
+    "milestone": "Milestone",
+    "area": "Área",
+    "from": "Desde",
+    "to": "Hasta",
+    "field": "Campo",
+    "interval": "Intervalo",
+    "day": "Día",
+    "week": "Semana",
+    "groupBy": "Agrupar por",
+    "wholeProject": "Todo el proyecto",
+    "noSprints": "Todavía no hay sprints",
+    "useSprint": "— usar el sprint —",
+    "fields": {
+      "area": "Área",
+      "priority": "Prioridad",
+      "assignee": "Responsable",
+      "type": "Tipo",
+      "status": "Estado",
+      "tag": "Tag",
+      "milestone": "Milestone"
+    },
+    "by": {
+      "ticket": "Ticket",
+      "milestone": "Milestone",
+      "area": "Área",
+      "assignee": "Persona"
+    },
+    "needScrum": "Este reporte necesita un board Scrum.",
+    "needSprint": "Inicia un sprint para ver este reporte.",
+    "needMilestone": "Crea un milestone para ver su progreso.",
+    "workingDays": "Días hábiles",
+    "averageLast3": "Promedio de los últimos 3",
+    "tickets": "Tickets",
+    "daysUnit": "d",
+    "goalMet": "Meta cumplida",
+    "outcomes": {
+      "completed": "Terminados",
+      "not_completed": "No terminados",
+      "added_after_start": "Agregados después de iniciar",
+      "removed": "Sacados"
+    },
+    "progressCount": "Terminado por conteo",
+    "progressHours": "Terminado por horas",
+    "pace": "Ritmo",
+    "hoursPerWeek": "h/semana",
+    "target": "Objetivo",
+    "forecast": "Pronóstico",
+    "state": "Estado",
+    "states": {
+      "on_track": "En tiempo",
+      "at_risk": "En riesgo",
+      "no_forecast": "Sin pronóstico",
+      "done": "Terminado"
+    }
   }
 }

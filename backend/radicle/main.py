@@ -18,6 +18,7 @@ from radicle.api import (
     me,
     planning,
     projects,
+    reports,
     screens,
     search,
     sprints,
@@ -80,6 +81,7 @@ def create_app() -> FastAPI:
         attachments,
         time,
         timeline,
+        reports,
     ):
         api.include_router(module.router)
     app.include_router(api)

@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://radicle:radicle@localhost:5432/radicle"
     base_url: str = "http://localhost:8000"
     timezone: str = "UTC"
+    # Working days for burndowns, e.g. "mon,tue,wed,thu,fri".
+    workdays: str = "mon,tue,wed,thu,fri"
     # None means auto: Secure cookies when base_url is https.
     cookie_secure: bool | None = None
     session_days: int = 14

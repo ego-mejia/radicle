@@ -6,8 +6,16 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
-def utcnow() -> datetime:
+def _system_clock() -> datetime:
     return datetime.now(UTC)
+
+
+# Every "now" in Radicle goes through here; tests that replay a dated history swap it.
+clock = _system_clock
+
+
+def utcnow() -> datetime:
+    return clock()
 
 
 class Base(DeclarativeBase):

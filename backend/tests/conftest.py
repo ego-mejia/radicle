@@ -3,6 +3,7 @@ import subprocess
 import sys
 from collections.abc import AsyncIterator, Iterator
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -274,3 +275,25 @@ async def run_jobs(db: AsyncSession) -> list[str]:
         await queue.HANDLERS[row.task_name](db, **row.args)
         await db.flush()
         ran.append(row.task_name)
+
+
+@dataclass
+class Clock:
+    """Controls `utcnow()` so a test can replay a history with known dates."""
+
+    now: datetime
+
+    def set(self, moment: datetime) -> None:
+        self.now = moment
+
+    def advance(self, **delta: float) -> None:
+        self.now += timedelta(**delta)
+
+
+@pytest.fixture
+def clock(monkeypatch: pytest.MonkeyPatch) -> Clock:
+    from radicle.db.models import base
+
+    c = Clock(base._system_clock())
+    monkeypatch.setattr(base, "clock", lambda: c.now)
+    return c
