@@ -74,6 +74,10 @@ Todo se configura con variables de entorno (ver `.env.example`). Las más import
 
 El contenedor `worker` corre los trabajos en segundo plano: propagación de templates, variantes de imágenes, ediciones masivas grandes y rebalanceo del ranking. Si no está corriendo, esas tareas esperan en la cola.
 
+## Boards
+
+Cada proyecto empieza con un board Kanban "Main". Los admins crean más desde el board (**Nuevo board**) y los configuran en **Configurar**: origen RQL (un área o varios proyectos), columnas por estado o por categoría, límites WIP suaves (avisan en rojo) o duros (bloquean, un admin puede forzar), carriles, campos de la tarjeta y quick filters.
+
 ## Atajos
 
 `?` muestra todos. Los principales: `c` crear ticket, `/` buscar, `⌘K` paleta de comandos, `g p` proyectos, `g m` mis tickets, `j`/`k` moverse en listas y board, y con un ticket abierto `e` título, `a` asignarme, `m` mover, `l` tags, `p` prioridad. Se pueden apagar en el perfil.

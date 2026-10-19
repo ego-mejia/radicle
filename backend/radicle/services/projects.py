@@ -87,6 +87,9 @@ async def create_project(
     await db.flush()
     db.add(ProjectMember(project_id=project.id, user_id=creator.id, role=ProjectRole.admin))
     await templates.instantiate(db, project, creator, template_id=template_id, mode=template_mode)
+    from radicle.services import boards
+
+    await boards.create_default_board(db, project, creator)
     return project
 
 

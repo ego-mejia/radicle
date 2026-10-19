@@ -364,7 +364,7 @@ Los criterios de aceptación de la etapa se verifican así:
 | # | Entregable | Estado |
 | --- | --- | --- |
 | 3.1 | Periodos de estado y snapshots | Listo |
-| 3.2 | Boards configurables | Pendiente |
+| 3.2 | Boards configurables | Listo |
 | 3.3 | Scrum | Pendiente |
 | 3.4 | Timeline | Pendiente |
 | 3.5 | Reportes agile | Pendiente |
@@ -383,3 +383,19 @@ Los criterios de aceptación de la etapa se verifican así:
 
 - `tests/integration/test_periods.py::test_backfill_rebuilds_exactly_the_live_periods`: con reapertura, cambio de tipo y movimiento de proyecto, el backfill da exactamente los periodos que se escribieron en vivo.
 - `test_snapshot_is_idempotent_and_uses_the_time_zone`: dos snapshots del mismo día no duplican, y el corte del día sigue `RADICLE_TIMEZONE`.
+
+### 3.2 Boards configurables
+
+**Qué se hizo**
+
+- Migración `0014`: `boards` y `board_quick_filters`; cada proyecto recibe un board Kanban "Main" con una columna por categoría y cuatro quick filters (Mis tickets, Solo bugs, #backlog, Bloqueados). Decisión: [0018](decisions/0018-boards-configurables.md).
+- API `/projects/{key}/boards`, `/boards/{id}`, quick filters, `/boards/{id}/data` (agrupado por columna y carril, 50 por columna) y `/boards/{id}/move` (transición y rank juntos, WIP duro con forzado de admin).
+- MCP: `list_boards` y `get_board`.
+- UI: selector de boards, quick filters, carriles plegables con conteo, WIP en rojo al pasarse, campos de tarjeta elegibles y la pantalla `/p/{key}/boards/{id}` para configurar todo.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_boards.py::test_acceptance_review_column_with_wip_3`: columna "Review" con In Review y QA Verified, WIP 3, en rojo con el cuarto.
+- Mismo archivo: mover con una, varias y ninguna transición, WIP duro y forzado, cada swimlane, quick filters combinados y tickets no visibles.
+- `test_performance.py` (marca `slow`): board de 500 tickets con swimlanes en menos de 1 s.
+

@@ -1,5 +1,6 @@
 from radicle.db.models.attachments import Attachment
 from radicle.db.models.base import Base, utcnow
+from radicle.db.models.boards import Board, BoardKind, BoardQuickFilter, Swimlane, WipMode
 from radicle.db.models.discussion import (
     LINK_LABELS,
     Comment,
@@ -54,6 +55,9 @@ __all__ = [
     "Attachment",
     "Base",
     "BlockedPolicy",
+    "Board",
+    "BoardKind",
+    "BoardQuickFilter",
     "Comment",
     "CommentReaction",
     "CustomFieldDefinition",
@@ -80,6 +84,7 @@ __all__ = [
     "Session",
     "Status",
     "StatusCategory",
+    "Swimlane",
     "SyncStatus",
     "Template",
     "TemplateMode",
@@ -97,6 +102,7 @@ __all__ = [
     "User",
     "UserKind",
     "UserPreferences",
+    "WipMode",
     "Worklog",
     "utcnow",
 ]

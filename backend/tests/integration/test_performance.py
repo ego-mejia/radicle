@@ -85,7 +85,20 @@ async def test_search_p95_and_board_with_10k_tickets(
                 cursor = r.json()["next_cursor"]
             board = time.perf_counter() - start
             assert board < 1.0, f"board of {loaded} tickets took {board * 1000:.0f} ms"
-            print(f"\nRQL p95 {p95 * 1000:.0f} ms; board {loaded} tickets {board * 1000:.0f} ms")
+
+            boards = (await c.get("/api/v1/projects/PERF/boards", headers=bearer)).json()
+            board_id = boards["items"][0]["id"]
+            start = time.perf_counter()
+            r = await c.get(
+                f"/api/v1/boards/{board_id}/data", headers=bearer, params={"swimlane": "area"}
+            )
+            configured = time.perf_counter() - start
+            assert r.status_code == 200 and r.json()["lanes"]
+            assert configured < 1.0, f"configurable board took {configured * 1000:.0f} ms"
+            print(
+                f"\nRQL p95 {p95 * 1000:.0f} ms; board {loaded} tickets {board * 1000:.0f} ms; "
+                f"configurable board with lanes {configured * 1000:.0f} ms"
+            )
     finally:
         await db_session.dispose_engine()
         get_settings.cache_clear()

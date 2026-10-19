@@ -77,3 +77,30 @@ export type Worklog = S['WorklogOut'];
 
 export type SavedFilter = S['FilterOut'];
 export type Preferences = S['PreferencesOut'];
+
+export type Board = S['BoardOut'];
+export type BoardData = S['BoardDataOut'];
+export type BoardColumnData = S['ColumnData'];
+export type BoardCard = S['Card'];
+export type BoardStatus = S['BoardStatus'];
+export type ColumnConf = S['ColumnConf'];
+export type Swimlane = Board['swimlane_by'];
+export const SWIMLANES: Swimlane[] = [
+  'none',
+  'area',
+  'assignee',
+  'priority',
+  'milestone',
+  'parent',
+  'type',
+];
+export const CARD_FIELDS = [
+  'priority',
+  'assignee',
+  'tags',
+  'due',
+  'estimate',
+  'remaining',
+  'checklist',
+  'votes',
+] as const;

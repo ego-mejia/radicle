@@ -9,10 +9,12 @@ function DraggableCard({
   ticket,
   onOpen,
   disabled,
+  fields,
 }: {
   ticket: TicketSummary;
   onOpen: () => void;
   disabled: boolean;
+  fields?: string[];
 }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: ticket.key,
@@ -29,6 +31,7 @@ function DraggableCard({
       }}
       dropTarget={drop.isOver && !isDragging}
       ticket={ticket}
+      fields={fields}
       dragging={isDragging}
       data-nav-item
       {...attributes}
@@ -43,36 +46,74 @@ function DraggableCard({
 }
 
 type Props = {
+  /** Droppable id; the board knows which column (and lane) it is. */
+  dropId: string;
+  index: number;
+  name: string;
   category: Category;
   tickets: TicketSummary[];
+  count: number;
+  wipLimit?: number | null;
+  overLimit?: boolean;
   state: 'idle' | 'allowed' | 'blocked';
   canDrag: boolean;
   onOpen: (key: string) => void;
+  fields?: string[];
   footer?: React.ReactNode;
+  /** In a swimlane the header is shared, so cells hide it. */
+  showHeader?: boolean;
 };
 
-export function BoardColumn({ category, tickets, state, canDrag, onOpen, footer }: Props) {
+export function BoardColumn({
+  dropId,
+  index,
+  name,
+  category,
+  tickets,
+  count,
+  wipLimit,
+  overLimit = false,
+  state,
+  canDrag,
+  onOpen,
+  fields,
+  footer,
+  showHeader = true,
+}: Props) {
   const { t } = useTranslation();
-  const { setNodeRef, isOver } = useDroppable({ id: category, disabled: state === 'blocked' });
-  const label = t(`ticket.categories.${category}`);
+  const { setNodeRef, isOver } = useDroppable({
+    id: dropId,
+    data: { column: index },
+    disabled: state === 'blocked',
+  });
   return (
     <S.Column
       ref={setNodeRef}
       $state={isOver && state === 'allowed' ? 'over' : state}
-      aria-label={label}
+      $over={overLimit}
+      aria-label={name}
       data-testid={`column-${category}`}
+      data-column={index}
     >
-      <S.Head>
-        <CategoryIcon category={category} size={16} />
-        <h2>{label}</h2>
-        <S.Count>{tickets.length}</S.Count>
-      </S.Head>
+      {showHeader && (
+        <S.Head>
+          <CategoryIcon category={category} size={16} />
+          <h2>{name}</h2>
+          <S.Count
+            $over={overLimit}
+            title={wipLimit ? t('board.wip', { limit: wipLimit }) : undefined}
+          >
+            {wipLimit ? `${count} / ${wipLimit}` : count}
+          </S.Count>
+        </S.Head>
+      )}
       <S.Cards>
         {tickets.length === 0 && <S.Empty>{t('board.emptyColumn')}</S.Empty>}
         {tickets.map((ticket) => (
           <DraggableCard
             key={ticket.key}
             ticket={ticket}
+            fields={fields}
             disabled={!canDrag}
             onOpen={() => onOpen(ticket.key)}
           />

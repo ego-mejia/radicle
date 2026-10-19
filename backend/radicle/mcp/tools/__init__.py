@@ -2,12 +2,12 @@
 
 from mcp.server.mcpserver import MCPServer
 
-from radicle.mcp.tools import bulk, core, files, time, work
+from radicle.mcp.tools import bulk, core, files, planning, time, work
 from radicle.mcp.tools.common import project_schema
 
 __all__ = ["project_schema", "register"]
 
 
 def register(server: MCPServer) -> None:
-    for module in (core, files, time, bulk, work):
+    for module in (core, files, time, bulk, work, planning):
         module.register(server)

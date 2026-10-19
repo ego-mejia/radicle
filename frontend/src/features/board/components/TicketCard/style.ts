@@ -66,12 +66,12 @@ export const Tag = styled.span`
   color: ${({ theme }) => theme.color.accent};
 `;
 
-export const Meta = styled.span`
+export const Meta = styled.span<{ $danger?: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: 3px;
   font-size: ${({ theme }) => theme.fontSize.xs};
-  color: ${({ theme }) => theme.color.textMuted};
+  color: ${({ theme, $danger }) => ($danger ? theme.color.danger : theme.color.textMuted)};
 
   svg {
     width: 12px;

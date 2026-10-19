@@ -84,6 +84,9 @@ async def seed(
     db.add(project)
     await db.flush()
     await instantiate(db, project, users[0], template_id=None)
+    from radicle.services.boards import create_default_board
+
+    await create_default_board(db, project, users[0])
     for i, user in enumerate(users):
         role = (
             ProjectRole.admin

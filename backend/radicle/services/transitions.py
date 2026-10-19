@@ -109,6 +109,7 @@ async def transition_ticket(
     force: bool = False,
     fields: dict[str, Any] | None = None,
     log_minutes: int | None = None,
+    note: dict[str, Any] | None = None,
 ) -> list[TicketWarning]:
     """Conditions, blocked policy, validators, the move itself and post-functions,
     in that order. Anything that fails raises and nothing is saved."""
@@ -213,6 +214,7 @@ async def transition_ticket(
     }
     if forced:
         new["forced"] = True
+    new.update(note or {})
     event = history.record(
         db, ticket, access.user, EventType.status_changed, field="status", old=old, new=new
     )

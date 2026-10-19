@@ -122,6 +122,105 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/boards/{board_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Board */
+        get: operations["get_board_api_v1_boards__board_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Board */
+        delete: operations["delete_board_api_v1_boards__board_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Board
+         * @description Columns group statuses (by id, or whole categories); a status sits in one column.
+         */
+        patch: operations["patch_board_api_v1_boards__board_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/boards/{board_id}/data": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Board Data
+         * @description Cards grouped by column (50 per column, by rank), with WIP counts and lanes.
+         *     Active quick filters combine with AND.
+         */
+        get: operations["board_data_api_v1_boards__board_id__data_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/boards/{board_id}/move": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Move Card
+         * @description Transition into the column (when it changes) and rank, in one call.
+         */
+        post: operations["move_card_api_v1_boards__board_id__move_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/boards/{board_id}/quick-filters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Quick Filters */
+        get: operations["list_quick_filters_api_v1_boards__board_id__quick_filters_get"];
+        put?: never;
+        /** Create Quick Filter */
+        post: operations["create_quick_filter_api_v1_boards__board_id__quick_filters_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/boards/{board_id}/quick-filters/{filter_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Quick Filter */
+        delete: operations["delete_quick_filter_api_v1_boards__board_id__quick_filters__filter_id__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Quick Filter */
+        patch: operations["patch_quick_filter_api_v1_boards__board_id__quick_filters__filter_id__patch"];
+        trace?: never;
+    };
     "/api/v1/comments/{comment_id}": {
         parameters: {
             query?: never;
@@ -466,6 +565,24 @@ export interface paths {
          * @description Rename, recolor, reorder, or archive and restore with `archived`.
          */
         patch: operations["patch_area_api_v1_projects__key__areas__name__patch"];
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/boards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Boards */
+        get: operations["list_boards_api_v1_projects__key__boards_get"];
+        put?: never;
+        /** Create Board */
+        post: operations["create_board_api_v1_projects__key__boards_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/projects/{key}/detach": {
@@ -1601,6 +1718,155 @@ export interface components {
          * @enum {string}
          */
         BlockedPolicy: "warn" | "enforce";
+        /** BoardCreate */
+        BoardCreate: {
+            /** Card Fields */
+            card_fields?: string[];
+            /** Columns */
+            columns?: components["schemas"]["ColumnConf"][] | null;
+            /**
+             * Done Window Days
+             * @default 14
+             */
+            done_window_days?: number;
+            /** @default kanban */
+            kind?: components["schemas"]["BoardKind"];
+            /** Name */
+            name: string;
+            /**
+             * Source Rql
+             * @description Default: the whole project
+             */
+            source_rql?: string | null;
+            /** @default none */
+            swimlane_by?: components["schemas"]["Swimlane"];
+            /** @default soft */
+            wip_mode?: components["schemas"]["WipMode"];
+        };
+        /** BoardDataOut */
+        BoardDataOut: {
+            board: components["schemas"]["BoardOut"];
+            /** Columns */
+            columns: components["schemas"]["ColumnData"][];
+            /** Lanes */
+            lanes: components["schemas"]["LaneOut"][];
+            swimlane_by: components["schemas"]["Swimlane"];
+        };
+        /**
+         * BoardKind
+         * @enum {string}
+         */
+        BoardKind: "kanban" | "scrum";
+        /** BoardMoveIn */
+        BoardMoveIn: {
+            /** After */
+            after?: string | null;
+            /**
+             * Before
+             * @description Rank it right above this key
+             */
+            before?: string | null;
+            /**
+             * Column
+             * @description Target column index
+             */
+            column: number;
+            /** Comment */
+            comment?: string | null;
+            /** Fields */
+            fields?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Force
+             * @description Admins: go over a hard WIP limit
+             * @default false
+             */
+            force?: boolean;
+            /**
+             * Log Minutes
+             * @description Time to log with the move
+             */
+            log_minutes?: number | null;
+            resolution?: components["schemas"]["Resolution"] | null;
+            /**
+             * Ticket
+             * @description Ticket key
+             */
+            ticket: string;
+            /**
+             * Transition
+             * @description Needed when several transitions reach the column
+             */
+            transition?: string | null;
+        };
+        /** BoardMoveOut */
+        BoardMoveOut: {
+            ticket: components["schemas"]["TicketSummary"];
+            /** Warnings */
+            warnings: components["schemas"]["WarningOut"][];
+        };
+        /** BoardOut */
+        BoardOut: {
+            /** Card Fields */
+            card_fields: string[];
+            /** Columns */
+            columns: components["schemas"]["ColumnOut"][];
+            /** Created At */
+            created_at: string;
+            /** Done Window Days */
+            done_window_days: number;
+            /** Id */
+            id: string;
+            kind: components["schemas"]["BoardKind"];
+            /** Name */
+            name: string;
+            /** Project */
+            project: string | null;
+            /** Quick Filters */
+            quick_filters: components["schemas"]["QuickFilterOut"][];
+            /** Source Rql */
+            source_rql: string;
+            /**
+             * Statuses
+             * @description Statuses in the board's scope
+             */
+            statuses: components["schemas"]["BoardStatus"][];
+            swimlane_by: components["schemas"]["Swimlane"];
+            /**
+             * Unmapped Statuses
+             * @description Statuses in no column: their tickets do not show
+             */
+            unmapped_statuses: components["schemas"]["BoardStatus"][];
+            /** Updated At */
+            updated_at: string;
+            wip_mode: components["schemas"]["WipMode"];
+        };
+        /** BoardPatch */
+        BoardPatch: {
+            /** Card Fields */
+            card_fields?: string[] | null;
+            /** Columns */
+            columns?: components["schemas"]["ColumnConf"][] | null;
+            /** Done Window Days */
+            done_window_days?: number | null;
+            kind?: components["schemas"]["BoardKind"] | null;
+            /** Name */
+            name?: string | null;
+            /** Source Rql */
+            source_rql?: string | null;
+            swimlane_by?: components["schemas"]["Swimlane"] | null;
+            wip_mode?: components["schemas"]["WipMode"] | null;
+        };
+        /** BoardStatus */
+        BoardStatus: {
+            category: components["schemas"]["StatusCategory"];
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            type: components["schemas"]["TicketType"];
+        };
         /** Body_upload_attachment_api_v1_tickets__key__attachments_post */
         Body_upload_attachment_api_v1_tickets__key__attachments_post: {
             /** Comment Id */
@@ -1665,6 +1931,51 @@ export interface components {
             /** Ok */
             ok: boolean;
         };
+        /** Card */
+        Card: {
+            /** Area */
+            area: string | null;
+            assignee: components["schemas"]["UserRef"] | null;
+            /** Blocked */
+            blocked: boolean;
+            /** Checklist Done */
+            checklist_done: number;
+            /** Checklist Total */
+            checklist_total: number;
+            /** Custom Fields */
+            custom_fields: {
+                [key: string]: unknown;
+            };
+            /** Due Date */
+            due_date: string | null;
+            /** Estimate Hours */
+            estimate_hours: number | null;
+            /** Key */
+            key: string;
+            /**
+             * Lane
+             * @description Swimlane key; empty for 'none'
+             */
+            lane: string;
+            /** Milestone */
+            milestone: string | null;
+            priority: components["schemas"]["Priority"];
+            /** Rank */
+            rank: string;
+            resolution: components["schemas"]["Resolution"] | null;
+            /** Spent Hours */
+            spent_hours: number;
+            status: components["schemas"]["StatusRef"];
+            /** Tags */
+            tags: string[];
+            /** Title */
+            title: string;
+            type: components["schemas"]["TicketType"];
+            /** Updated At */
+            updated_at: string;
+            /** Vote Count */
+            vote_count: number;
+        };
         /** CategoryCounts */
         CategoryCounts: {
             /**
@@ -1723,6 +2034,53 @@ export interface components {
              * @description Default: same project
              */
             target_project?: string | null;
+        };
+        /** ColumnConf */
+        ColumnConf: {
+            /**
+             * Categories
+             * @description Every status of these categories, now and later
+             */
+            categories?: components["schemas"]["StatusCategory"][];
+            /** Name */
+            name: string;
+            /** Status Ids */
+            status_ids?: string[];
+            /** Wip Limit */
+            wip_limit?: number | null;
+        };
+        /** ColumnData */
+        ColumnData: {
+            /**
+             * Count
+             * @description All tickets in the column, not just this page
+             */
+            count: number;
+            /** Done Only */
+            done_only: boolean;
+            /** Index */
+            index: number;
+            /** Name */
+            name: string;
+            /** Next Cursor */
+            next_cursor: string | null;
+            /** Over Limit */
+            over_limit: boolean;
+            /** Tickets */
+            tickets: components["schemas"]["Card"][];
+            /** Wip Limit */
+            wip_limit: number | null;
+        };
+        /** ColumnOut */
+        ColumnOut: {
+            /** Categories */
+            categories: components["schemas"]["StatusCategory"][];
+            /** Name */
+            name: string;
+            /** Status Ids */
+            status_ids: string[];
+            /** Wip Limit */
+            wip_limit: number | null;
         };
         /** CommentIn */
         CommentIn: {
@@ -2005,6 +2363,15 @@ export interface components {
          * @enum {string}
          */
         JobStatus: "pending" | "running" | "succeeded" | "failed";
+        /** LaneOut */
+        LaneOut: {
+            /** Count */
+            count: number;
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+        };
         /** Limits */
         Limits: {
             /**
@@ -2223,6 +2590,13 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** Page[BoardOut] */
+        Page_BoardOut_: {
+            /** Items */
+            items: components["schemas"]["BoardOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** Page[CommentOut] */
         Page_CommentOut_: {
             /** Items */
@@ -2269,6 +2643,13 @@ export interface components {
         Page_ProjectOut_: {
             /** Items */
             items: components["schemas"]["ProjectOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[QuickFilterOut] */
+        Page_QuickFilterOut_: {
+            /** Items */
+            items: components["schemas"]["QuickFilterOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -2483,6 +2864,26 @@ export interface components {
              * @description Most used tags first
              */
             tags: string[];
+        };
+        /** QuickFilterIn */
+        QuickFilterIn: {
+            /** Name */
+            name: string;
+            /** Position */
+            position?: number | null;
+            /** Rql */
+            rql: string;
+        };
+        /** QuickFilterOut */
+        QuickFilterOut: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Position */
+            position: number;
+            /** Rql */
+            rql: string;
         };
         /** RankIn */
         RankIn: {
@@ -2756,6 +3157,11 @@ export interface components {
             /** Name */
             name: string;
         };
+        /**
+         * Swimlane
+         * @enum {string}
+         */
+        Swimlane: "none" | "area" | "assignee" | "priority" | "milestone" | "parent" | "type";
         /** SyncRunOut */
         SyncRunOut: {
             /** Created At */
@@ -3386,6 +3792,11 @@ export interface components {
             /** Message */
             message: string;
         };
+        /**
+         * WipMode
+         * @enum {string}
+         */
+        WipMode: "soft" | "hard";
         /** WorkflowConf */
         WorkflowConf: {
             /** Statuses */
@@ -3648,6 +4059,307 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    get_board_api_v1_boards__board_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                board_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_board_api_v1_boards__board_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                board_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_board_api_v1_boards__board_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                board_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BoardPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoardOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    board_data_api_v1_boards__board_id__data_get: {
+        parameters: {
+            query?: {
+                quick_filters?: string[] | null;
+                swimlane?: components["schemas"]["Swimlane"] | null;
+                /** @description Only this column (to page it) */
+                column?: number | null;
+                cursor?: string | null;
+                /** @description Extra RQL, combined with AND */
+                q?: string | null;
+            };
+            header?: never;
+            path: {
+                board_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoardDataOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    move_card_api_v1_boards__board_id__move_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                board_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BoardMoveIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoardMoveOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_quick_filters_api_v1_boards__board_id__quick_filters_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                board_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_QuickFilterOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_quick_filter_api_v1_boards__board_id__quick_filters_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                board_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuickFilterIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuickFilterOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_quick_filter_api_v1_boards__board_id__quick_filters__filter_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                board_id: string;
+                filter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_quick_filter_api_v1_boards__board_id__quick_filters__filter_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                board_id: string;
+                filter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuickFilterIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuickFilterOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
             };
         };
     };
@@ -4479,6 +5191,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AreaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_boards_api_v1_projects__key__boards_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_BoardOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_board_api_v1_projects__key__boards_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BoardCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BoardOut"];
                 };
             };
             /** @description Validation Error */

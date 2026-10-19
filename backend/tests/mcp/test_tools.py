@@ -41,6 +41,8 @@ TOOLS = {
     "list_filters",
     "run_filter",
     "save_filter",
+    "list_boards",
+    "get_board",
 }
 
 

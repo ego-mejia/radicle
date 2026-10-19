@@ -313,6 +313,465 @@
         "title": "BlockedPolicy",
         "type": "string"
       },
+      "BoardCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "card_fields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Card Fields",
+            "type": "array"
+          },
+          "columns": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ColumnConf"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Columns"
+          },
+          "done_window_days": {
+            "default": 14,
+            "title": "Done Window Days",
+            "type": "integer"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/BoardKind",
+            "default": "kanban"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "source_rql": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Default: the whole project",
+            "title": "Source Rql"
+          },
+          "swimlane_by": {
+            "$ref": "#/components/schemas/Swimlane",
+            "default": "none"
+          },
+          "wip_mode": {
+            "$ref": "#/components/schemas/WipMode",
+            "default": "soft"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "BoardCreate",
+        "type": "object"
+      },
+      "BoardDataOut": {
+        "properties": {
+          "board": {
+            "$ref": "#/components/schemas/BoardOut"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/ColumnData"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "lanes": {
+            "items": {
+              "$ref": "#/components/schemas/LaneOut"
+            },
+            "title": "Lanes",
+            "type": "array"
+          },
+          "swimlane_by": {
+            "$ref": "#/components/schemas/Swimlane"
+          }
+        },
+        "required": [
+          "board",
+          "swimlane_by",
+          "lanes",
+          "columns"
+        ],
+        "title": "BoardDataOut",
+        "type": "object"
+      },
+      "BoardKind": {
+        "enum": [
+          "kanban",
+          "scrum"
+        ],
+        "title": "BoardKind",
+        "type": "string"
+      },
+      "BoardMoveIn": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After"
+          },
+          "before": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Rank it right above this key",
+            "title": "Before"
+          },
+          "column": {
+            "description": "Target column index",
+            "title": "Column",
+            "type": "integer"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment"
+          },
+          "fields": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fields"
+          },
+          "force": {
+            "default": false,
+            "description": "Admins: go over a hard WIP limit",
+            "title": "Force",
+            "type": "boolean"
+          },
+          "log_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Time to log with the move",
+            "title": "Log Minutes"
+          },
+          "resolution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Resolution"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ticket": {
+            "description": "Ticket key",
+            "title": "Ticket",
+            "type": "string"
+          },
+          "transition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Needed when several transitions reach the column",
+            "title": "Transition"
+          }
+        },
+        "required": [
+          "ticket",
+          "column"
+        ],
+        "title": "BoardMoveIn",
+        "type": "object"
+      },
+      "BoardMoveOut": {
+        "properties": {
+          "ticket": {
+            "$ref": "#/components/schemas/TicketSummary"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/WarningOut"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "ticket",
+          "warnings"
+        ],
+        "title": "BoardMoveOut",
+        "type": "object"
+      },
+      "BoardOut": {
+        "properties": {
+          "card_fields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Card Fields",
+            "type": "array"
+          },
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/ColumnOut"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "done_window_days": {
+            "title": "Done Window Days",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/BoardKind"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project"
+          },
+          "quick_filters": {
+            "items": {
+              "$ref": "#/components/schemas/QuickFilterOut"
+            },
+            "title": "Quick Filters",
+            "type": "array"
+          },
+          "source_rql": {
+            "title": "Source Rql",
+            "type": "string"
+          },
+          "statuses": {
+            "description": "Statuses in the board's scope",
+            "items": {
+              "$ref": "#/components/schemas/BoardStatus"
+            },
+            "title": "Statuses",
+            "type": "array"
+          },
+          "swimlane_by": {
+            "$ref": "#/components/schemas/Swimlane"
+          },
+          "unmapped_statuses": {
+            "description": "Statuses in no column: their tickets do not show",
+            "items": {
+              "$ref": "#/components/schemas/BoardStatus"
+            },
+            "title": "Unmapped Statuses",
+            "type": "array"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "wip_mode": {
+            "$ref": "#/components/schemas/WipMode"
+          }
+        },
+        "required": [
+          "id",
+          "project",
+          "name",
+          "kind",
+          "source_rql",
+          "columns",
+          "wip_mode",
+          "swimlane_by",
+          "card_fields",
+          "done_window_days",
+          "quick_filters",
+          "statuses",
+          "unmapped_statuses",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "BoardOut",
+        "type": "object"
+      },
+      "BoardPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "card_fields": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Card Fields"
+          },
+          "columns": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ColumnConf"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Columns"
+          },
+          "done_window_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Done Window Days"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BoardKind"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "source_rql": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Rql"
+          },
+          "swimlane_by": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Swimlane"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "wip_mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WipMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "BoardPatch",
+        "type": "object"
+      },
+      "BoardStatus": {
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/StatusCategory"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TicketType"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "category"
+        ],
+        "title": "BoardStatus",
+        "type": "object"
+      },
       "Body_upload_attachment_api_v1_tickets__key__attachments_post": {
         "properties": {
           "comment_id": {
@@ -481,6 +940,162 @@
         "title": "BulkTicketResult",
         "type": "object"
       },
+      "Card": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "assignee": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "blocked": {
+            "title": "Blocked",
+            "type": "boolean"
+          },
+          "checklist_done": {
+            "title": "Checklist Done",
+            "type": "integer"
+          },
+          "checklist_total": {
+            "title": "Checklist Total",
+            "type": "integer"
+          },
+          "custom_fields": {
+            "additionalProperties": true,
+            "title": "Custom Fields",
+            "type": "object"
+          },
+          "due_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due Date"
+          },
+          "estimate_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimate Hours"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "lane": {
+            "description": "Swimlane key; empty for 'none'",
+            "title": "Lane",
+            "type": "string"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milestone"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/Priority"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "string"
+          },
+          "resolution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Resolution"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "spent_hours": {
+            "title": "Spent Hours",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/components/schemas/StatusRef"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TicketType"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "vote_count": {
+            "title": "Vote Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "title",
+          "type",
+          "status",
+          "resolution",
+          "priority",
+          "assignee",
+          "area",
+          "milestone",
+          "tags",
+          "custom_fields",
+          "blocked",
+          "due_date",
+          "estimate_hours",
+          "spent_hours",
+          "vote_count",
+          "checklist_done",
+          "checklist_total",
+          "rank",
+          "updated_at",
+          "lane"
+        ],
+        "title": "Card",
+        "type": "object"
+      },
       "CategoryCounts": {
         "properties": {
           "done": {
@@ -595,6 +1210,153 @@
           }
         },
         "title": "CloneIn",
+        "type": "object"
+      },
+      "ColumnConf": {
+        "additionalProperties": false,
+        "properties": {
+          "categories": {
+            "description": "Every status of these categories, now and later",
+            "items": {
+              "$ref": "#/components/schemas/StatusCategory"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "status_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Status Ids",
+            "type": "array"
+          },
+          "wip_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wip Limit"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "ColumnConf",
+        "type": "object"
+      },
+      "ColumnData": {
+        "properties": {
+          "count": {
+            "description": "All tickets in the column, not just this page",
+            "title": "Count",
+            "type": "integer"
+          },
+          "done_only": {
+            "title": "Done Only",
+            "type": "boolean"
+          },
+          "index": {
+            "title": "Index",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "over_limit": {
+            "title": "Over Limit",
+            "type": "boolean"
+          },
+          "tickets": {
+            "items": {
+              "$ref": "#/components/schemas/Card"
+            },
+            "title": "Tickets",
+            "type": "array"
+          },
+          "wip_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wip Limit"
+          }
+        },
+        "required": [
+          "index",
+          "name",
+          "wip_limit",
+          "count",
+          "over_limit",
+          "done_only",
+          "tickets",
+          "next_cursor"
+        ],
+        "title": "ColumnData",
+        "type": "object"
+      },
+      "ColumnOut": {
+        "properties": {
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/StatusCategory"
+            },
+            "title": "Categories",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "status_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Status Ids",
+            "type": "array"
+          },
+          "wip_limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wip Limit"
+          }
+        },
+        "required": [
+          "name",
+          "status_ids",
+          "categories",
+          "wip_limit"
+        ],
+        "title": "ColumnOut",
         "type": "object"
       },
       "CommentIn": {
@@ -1471,6 +2233,29 @@
         "title": "JobStatus",
         "type": "string"
       },
+      "LaneOut": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "count"
+        ],
+        "title": "LaneOut",
+        "type": "object"
+      },
       "Limits": {
         "properties": {
           "image_default_resize": {
@@ -2098,6 +2883,34 @@
         "title": "Page[AttachmentOut]",
         "type": "object"
       },
+      "Page_BoardOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BoardOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[BoardOut]",
+        "type": "object"
+      },
       "Page_CommentOut_": {
         "properties": {
           "items": {
@@ -2292,6 +3105,34 @@
           "next_cursor"
         ],
         "title": "Page[ProjectOut]",
+        "type": "object"
+      },
+      "Page_QuickFilterOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/QuickFilterOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[QuickFilterOut]",
         "type": "object"
       },
       "Page_ScreenOut_": {
@@ -2921,6 +3762,64 @@
           "custom_fields"
         ],
         "title": "ProjectValues",
+        "type": "object"
+      },
+      "QuickFilterIn": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "rql": {
+            "title": "Rql",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "rql"
+        ],
+        "title": "QuickFilterIn",
+        "type": "object"
+      },
+      "QuickFilterOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "rql": {
+            "title": "Rql",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "rql",
+          "position"
+        ],
+        "title": "QuickFilterOut",
         "type": "object"
       },
       "RankIn": {
@@ -3621,6 +4520,19 @@
         ],
         "title": "StatusRef",
         "type": "object"
+      },
+      "Swimlane": {
+        "enum": [
+          "none",
+          "area",
+          "assignee",
+          "priority",
+          "milestone",
+          "parent",
+          "type"
+        ],
+        "title": "Swimlane",
+        "type": "string"
       },
       "SyncRunOut": {
         "properties": {
@@ -5497,6 +6409,14 @@
         "title": "WarningOut",
         "type": "object"
       },
+      "WipMode": {
+        "enum": [
+          "soft",
+          "hard"
+        ],
+        "title": "WipMode",
+        "type": "string"
+      },
       "WorkflowConf": {
         "additionalProperties": false,
         "properties": {
@@ -6009,6 +6929,522 @@
         "summary": "Logout",
         "tags": [
           "auth"
+        ]
+      }
+    },
+    "/api/v1/boards/{board_id}": {
+      "delete": {
+        "operationId": "delete_board_api_v1_boards__board_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Board",
+        "tags": [
+          "boards"
+        ]
+      },
+      "get": {
+        "operationId": "get_board_api_v1_boards__board_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Board",
+        "tags": [
+          "boards"
+        ]
+      },
+      "patch": {
+        "description": "Columns group statuses (by id, or whole categories); a status sits in one column.",
+        "operationId": "patch_board_api_v1_boards__board_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BoardPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Board",
+        "tags": [
+          "boards"
+        ]
+      }
+    },
+    "/api/v1/boards/{board_id}/data": {
+      "get": {
+        "description": "Cards grouped by column (50 per column, by rank), with WIP counts and lanes.\nActive quick filters combine with AND.",
+        "operationId": "board_data_api_v1_boards__board_id__data_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "quick_filters",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Quick Filters"
+            }
+          },
+          {
+            "in": "query",
+            "name": "swimlane",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Swimlane"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Swimlane"
+            }
+          },
+          {
+            "description": "Only this column (to page it)",
+            "in": "query",
+            "name": "column",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only this column (to page it)",
+              "title": "Column"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "description": "Extra RQL, combined with AND",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Extra RQL, combined with AND",
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoardDataOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Board Data",
+        "tags": [
+          "boards"
+        ]
+      }
+    },
+    "/api/v1/boards/{board_id}/move": {
+      "post": {
+        "description": "Transition into the column (when it changes) and rank, in one call.",
+        "operationId": "move_card_api_v1_boards__board_id__move_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BoardMoveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoardMoveOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Move Card",
+        "tags": [
+          "boards"
+        ]
+      }
+    },
+    "/api/v1/boards/{board_id}/quick-filters": {
+      "get": {
+        "operationId": "list_quick_filters_api_v1_boards__board_id__quick_filters_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_QuickFilterOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Quick Filters",
+        "tags": [
+          "boards"
+        ]
+      },
+      "post": {
+        "operationId": "create_quick_filter_api_v1_boards__board_id__quick_filters_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuickFilterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuickFilterOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Quick Filter",
+        "tags": [
+          "boards"
+        ]
+      }
+    },
+    "/api/v1/boards/{board_id}/quick-filters/{filter_id}": {
+      "delete": {
+        "operationId": "delete_quick_filter_api_v1_boards__board_id__quick_filters__filter_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filter_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Filter Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Quick Filter",
+        "tags": [
+          "boards"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_quick_filter_api_v1_boards__board_id__quick_filters__filter_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "filter_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Filter Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuickFilterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuickFilterOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Quick Filter",
+        "tags": [
+          "boards"
         ]
       }
     },
@@ -7148,6 +8584,98 @@
         "summary": "Patch Area",
         "tags": [
           "areas and milestones"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/boards": {
+      "get": {
+        "operationId": "list_boards_api_v1_projects__key__boards_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_BoardOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Boards",
+        "tags": [
+          "boards"
+        ]
+      },
+      "post": {
+        "operationId": "create_board_api_v1_projects__key__boards_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BoardCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Board",
+        "tags": [
+          "boards"
         ]
       }
     },

@@ -5,43 +5,33 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  type DragEndEvent,
-  type DragStartEvent,
 } from '@dnd-kit/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../../../../components/ui/EmptyState';
 import { PageSpinner } from '../../../../components/ui/Spinner';
-import type { BoardFilters as Filters } from '../../../../lib/rql';
+import { columnCategory } from '../../../../lib/boards';
+import { filterClauses, type BoardFilters as Filters } from '../../../../lib/rql';
+import {
+  boardKeys,
+  createBoard,
+  fetchBoardData,
+  fetchBoards,
+} from '../../../../services/api/boards';
 import { fetchSearchFields, projectKeys } from '../../../../services/api/projects';
-import {
-  fetchTransitions,
-  type Move,
-  ticketKeys,
-  transitionTicket,
-} from '../../../../services/api/tickets';
-import { rankTicket } from '../../../../services/api/work';
-import { useMoveFeedback } from '../../../tickets/hooks/useMoveFeedback';
-import {
-  CATEGORIES,
-  type Category,
-  type TicketSummary,
-  type TransitionOption,
-} from '../../../../services/api/types';
+import type { Swimlane } from '../../../../services/api/types';
 import { ProjectHeader } from '../../../projects/components/ProjectHeader';
 import { useProject } from '../../../projects/hooks/useProject';
 import { TicketPanel } from '../../../tickets/components/TicketPanel';
 import { BoardColumn } from '../../components/BoardColumn';
 import { BoardFilters } from '../../components/BoardFilters';
+import { BoardLanes } from '../../components/BoardLanes';
+import { BoardToolbar } from '../../components/BoardToolbar';
 import { DropResolver } from '../../components/DropResolver';
 import { TicketCard } from '../../components/TicketCard';
-import { DONE_WINDOW_DAYS, useBoard } from '../../hooks/useBoard';
+import { useBoardDrag } from '../../hooks/useBoardDrag';
 import * as S from './style';
-
-type Drag = { ticket: TicketSummary; options: TransitionOption[] | null };
-type Pending = { ticket: TicketSummary; options: TransitionOption[] };
 
 export function BoardView() {
   const { t } = useTranslation();
@@ -51,27 +41,34 @@ export function BoardView() {
   const queryClient = useQueryClient();
   const projectKey = key.toUpperCase();
   const { data: project, isPending: loadingProject, isError } = useProject(projectKey);
-  const { t: openKey, ...filters } = search;
-  const board = useBoard(projectKey, filters);
+  const { t: openKey, board: boardParam, qf, lane, ...filters } = search;
+  const quickFilters = qf ? qf.split(',') : [];
   const { data: fields } = useQuery({
     queryKey: projectKeys.fields(projectKey),
     queryFn: () => fetchSearchFields(projectKey),
   });
-  const [drag, setDrag] = useState<Drag | null>(null);
-  const [pending, setPending] = useState<Pending | null>(null);
+  const { data: boards } = useQuery({
+    queryKey: boardKeys.list(projectKey),
+    queryFn: () => fetchBoards(projectKey),
+  });
+  const boardId = boardParam ?? boards?.[0]?.id;
+  const q = filterClauses(filters).join(' AND ');
+  const params = { quick_filters: quickFilters, swimlane: lane as Swimlane | undefined, q };
+  const { data, isPending } = useQuery({
+    queryKey: boardKeys.data(boardId ?? '', params),
+    queryFn: () => fetchBoardData(boardId!, params),
+    enabled: Boolean(boardId),
+  });
+  const dnd = useBoardDrag(data, projectKey);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor),
   );
-
-  const feedback = useMoveFeedback();
-  const move = useMutation({
-    mutationFn: (v: Move & { key: string }) => transitionTicket(v.key, v),
-    onSuccess: (ticket) => feedback.warnings(ticket),
-    onError: (error, v) => feedback.error(error, () => move.mutate({ ...v, force: true })),
-    onSettled: () => {
-      void queryClient.invalidateQueries({ queryKey: ticketKeys.all });
-      void queryClient.invalidateQueries({ queryKey: projectKeys.detail(projectKey) });
+  const create = useMutation({
+    mutationFn: () => createBoard(projectKey, { name: t('board.newName') }),
+    onSuccess: async (board) => {
+      await queryClient.invalidateQueries({ queryKey: boardKeys.list(projectKey) });
+      void navigate({ to: '/p/$key/boards/$id', params: { key: projectKey, id: board.id } });
     },
   });
 
@@ -79,127 +76,117 @@ export function BoardView() {
   if (isError || !project) return <EmptyState plant="seed" title={t('board.notFound')} />;
 
   const canDrag = project.role !== 'viewer' && !project.archived;
-  const setFilters = (next: Filters) => void navigate({ search: { ...next, t: openKey } });
-  const openTicket = (ticketKey?: string) =>
-    void navigate({ search: { ...filters, t: ticketKey } });
-
-  const onDragStart = async (event: DragStartEvent) => {
-    const ticket = event.active.data.current?.ticket as TicketSummary;
-    setDrag({ ticket, options: null });
-    const options = await queryClient.fetchQuery({
-      queryKey: [...ticketKeys.transitions(ticket.key), 'drag'],
-      queryFn: () => fetchTransitions(ticket.key),
-      staleTime: 0,
-    });
-    setDrag((current) => (current?.ticket.key === ticket.key ? { ticket, options } : current));
-  };
-
-  const onDragEnd = (event: DragEndEvent) => {
-    const current = drag;
-    setDrag(null);
-    let target = event.over?.id as Category | undefined;
-    const overTicket = event.over?.data.current?.ticket as TicketSummary | undefined;
-    if (current && overTicket) {
-      if (overTicket.status.category === current.ticket.status.category) {
-        if (overTicket.key !== current.ticket.key) {
-          void rankTicket(current.ticket.key, { before: overTicket.key })
-            .then(() => queryClient.invalidateQueries({ queryKey: ticketKeys.all }))
-            .catch((error: unknown) => feedback.error(error));
-        }
-        return;
-      }
-      target = overTicket.status.category;
-    }
-    if (!current || !target || target === current.ticket.status.category || !current.options)
-      return;
-    const options = current.options.filter((o) => o.category === target);
-    if (options.length === 0) return;
-    const only = options[0]!;
-    const resolutions = only.allowed_resolutions ?? [];
-    const simple = only.available && !only.requires_comment && !only.has_screen;
-    if (options.length === 1 && simple && (only.category !== 'done' || resolutions.length <= 1)) {
-      move.mutate({
-        key: current.ticket.key,
-        to: only.to_status,
-        resolution: resolutions[0] ?? null,
-        transition: only.name,
-      });
-    } else {
-      setPending({ ticket: current.ticket, options });
-    }
-  };
-
-  const columnState = (category: Category): 'idle' | 'allowed' | 'blocked' => {
-    if (!drag || category === drag.ticket.status.category) return 'idle';
-    if (!drag.options) return 'idle';
-    return drag.options.some((o) => o.category === category && o.available) ? 'allowed' : 'blocked';
-  };
+  const isAdmin = project.role === 'admin';
+  const go = (next: Partial<typeof search>) => void navigate({ search: { ...search, ...next } });
+  const setFilters = (next: Filters) =>
+    void navigate({ search: { ...next, t: openKey, board: boardParam, qf, lane } });
 
   return (
     <>
       <ProjectHeader project={project} />
+      {data && boards && (
+        <BoardToolbar
+          boards={boards}
+          board={data.board}
+          activeFilters={quickFilters}
+          swimlane={data.swimlane_by}
+          isAdmin={isAdmin}
+          onBoard={(id) => go({ board: id, qf: undefined, lane: undefined })}
+          onFilters={(ids) => go({ qf: ids.length ? ids.join(',') : undefined })}
+          onSwimlane={(value) => go({ lane: value })}
+          onConfigure={() =>
+            void navigate({
+              to: '/p/$key/boards/$id',
+              params: { key: projectKey, id: data.board.id },
+            })
+          }
+          onCreate={() => create.mutate()}
+        />
+      )}
       <BoardFilters
         project={project}
         tags={fields?.values?.tags ?? []}
         value={filters}
         onChange={setFilters}
       />
-      {board.isPending ? (
+      {!data || isPending ? (
         <PageSpinner />
       ) : (
         <DndContext
           sensors={sensors}
-          onDragStart={(e) => void onDragStart(e)}
-          onDragEnd={onDragEnd}
-          onDragCancel={() => setDrag(null)}
+          onDragStart={(e) => void dnd.onDragStart(e)}
+          onDragEnd={dnd.onDragEnd}
+          onDragCancel={dnd.cancel}
         >
-          <S.Columns>
-            {CATEGORIES.map((category) => (
-              <BoardColumn
-                key={category}
-                category={category}
-                tickets={board.columns[category]}
-                state={columnState(category)}
-                canDrag={canDrag}
-                onOpen={openTicket}
-                footer={
-                  category === 'done' && (
-                    <Link
-                      to="/p/$key/list"
-                      params={{ key: projectKey }}
-                      search={{ q: board.allDoneQuery }}
-                    >
-                      {t('board.seeAllDone', { days: DONE_WINDOW_DAYS })}
-                    </Link>
-                  )
-                }
-              />
-            ))}
-          </S.Columns>
-          <DragOverlay>{drag && <TicketCard ticket={drag.ticket} overlay />}</DragOverlay>
+          {data.swimlane_by !== 'none' ? (
+            <BoardLanes
+              data={data}
+              columnState={dnd.columnState}
+              canDrag={canDrag}
+              onOpen={(ticketKey) => go({ t: ticketKey })}
+            />
+          ) : (
+            <S.Columns
+              style={{ gridTemplateColumns: `repeat(${data.columns.length}, minmax(240px, 1fr))` }}
+            >
+              {data.columns.map((column) => {
+                const category = columnCategory(data.board, data.board.columns[column.index]!);
+                return (
+                  <BoardColumn
+                    key={column.index}
+                    dropId={`col:${column.index}`}
+                    index={column.index}
+                    name={column.name}
+                    category={category}
+                    tickets={column.tickets}
+                    count={column.count}
+                    wipLimit={column.wip_limit}
+                    overLimit={column.over_limit}
+                    state={dnd.columnState(column.index)}
+                    canDrag={canDrag}
+                    onOpen={(ticketKey) => go({ t: ticketKey })}
+                    fields={data.board.card_fields}
+                    footer={
+                      column.done_only && (
+                        <Link
+                          to="/p/$key/list"
+                          params={{ key: projectKey }}
+                          search={{
+                            q: `project = ${projectKey} AND category = done ORDER BY resolved DESC`,
+                          }}
+                        >
+                          {t('board.seeAllDone', { days: data.board.done_window_days })}
+                        </Link>
+                      )
+                    }
+                  />
+                );
+              })}
+            </S.Columns>
+          )}
+          <DragOverlay>
+            {dnd.drag && <TicketCard ticket={dnd.drag} fields={data.board.card_fields} overlay />}
+          </DragOverlay>
         </DndContext>
       )}
-      {pending && (
+      {dnd.pending && (
         <DropResolver
-          ticketKey={pending.ticket.key}
-          ticketType={pending.ticket.type}
-          options={pending.options}
-          onCancel={() => setPending(null)}
-          onPick={({ option, resolution, comment, fields, logMinutes }) => {
-            move.mutate({
-              key: pending.ticket.key,
-              to: option.to_status,
-              resolution,
+          ticketKey={dnd.pending.ticket.key}
+          ticketType={dnd.pending.ticket.type}
+          options={dnd.pending.options}
+          onCancel={dnd.closePending}
+          onPick={({ option, resolution, comment, fields: values, logMinutes }) =>
+            dnd.resolve({
               transition: option.name,
+              resolution,
               comment,
-              fields,
+              fields: values,
               log_minutes: logMinutes,
-            });
-            setPending(null);
-          }}
+            })
+          }
         />
       )}
-      <TicketPanel ticketKey={openKey} onClose={() => openTicket(undefined)} />
+      <TicketPanel ticketKey={openKey} onClose={() => go({ t: undefined })} />
     </>
   );
 }

@@ -21,7 +21,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
-from radicle.query.compiler import Context, compile_query
+from radicle.query.compiler import Compiled, Context, compile_query
 from radicle.query.parser import parse
 from radicle.services import custom_fields
 
@@ -79,16 +79,10 @@ def _decode_cursor(cursor: str | None) -> int:
     return offset
 
 
-async def search(
-    db: AsyncSession,
-    user: User,
-    q: str,
-    *,
-    limit: int = DEFAULT_LIMIT,
-    cursor: str | None = None,
-    timezone: str = "UTC",
-    now: datetime | None = None,
-) -> SearchResult:
+async def compile_rql(
+    db: AsyncSession, user: User, q: str, *, timezone: str = "UTC", now: datetime | None = None
+) -> Compiled:
+    """Parse and compile RQL for this user: their custom fields and saved filters."""
     query = parse(q)
     from radicle.services import filters
 
@@ -101,7 +95,20 @@ async def search(
         custom_fields={k: t.value for k, t in types.items()},
         filters=saved,
     )
-    compiled = compile_query(query, ctx)
+    return compile_query(query, ctx)
+
+
+async def search(
+    db: AsyncSession,
+    user: User,
+    q: str,
+    *,
+    limit: int = DEFAULT_LIMIT,
+    cursor: str | None = None,
+    timezone: str = "UTC",
+    now: datetime | None = None,
+) -> SearchResult:
+    compiled = await compile_rql(db, user, q, timezone=timezone, now=now)
     offset = _decode_cursor(cursor)
     limit = max(1, min(limit, MAX_LIMIT))
 

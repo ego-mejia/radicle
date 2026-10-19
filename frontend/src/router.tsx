@@ -9,6 +9,7 @@ import {
 import { AdminView } from './features/admin/views/AdminView';
 import { LoginView } from './features/auth/views/LoginView';
 import { SetupView } from './features/auth/views/SetupView';
+import { BoardSettingsView } from './features/board/views/BoardSettingsView';
 import { BoardView } from './features/board/views/BoardView';
 import { ListView } from './features/list/views/ListView';
 import { MilestonesView } from './features/milestones/views/MilestonesView';
@@ -32,6 +33,9 @@ export type BoardSearch = {
   assignee?: string;
   tag?: string;
   t?: string;
+  board?: string;
+  qf?: string;
+  lane?: string;
 };
 
 const str = (value: unknown) => (typeof value === 'string' && value ? value : undefined);
@@ -96,6 +100,9 @@ const boardSearch = (search: Record<string, unknown>): BoardSearch => ({
   assignee: str(search.assignee),
   tag: str(search.tag),
   t: str(search.t),
+  board: str(search.board),
+  qf: str(search.qf),
+  lane: str(search.lane),
 });
 
 const projectsRoute = createRoute({
@@ -109,6 +116,12 @@ const boardRoute = createRoute({
   path: '/p/$key/board',
   component: BoardView,
   validateSearch: boardSearch,
+});
+
+const boardSettingsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/p/$key/boards/$id',
+  component: BoardSettingsView,
 });
 
 const listRoute = createRoute({
@@ -175,6 +188,7 @@ const routeTree = rootRoute.addChildren([
   appLayout.addChildren([
     projectsRoute,
     boardRoute,
+    boardSettingsRoute,
     listRoute,
     milestonesRoute,
     settingsRoute,
