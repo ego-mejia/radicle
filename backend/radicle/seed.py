@@ -11,8 +11,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from radicle.core import security
 from radicle.db.models import (
     Area,
+    Classification,
     LinkType,
     Milestone,
+    Origin,
     Priority,
     Project,
     ProjectMember,
@@ -40,6 +42,21 @@ WORDS = (
 TAGS = ["backlog", "pagos", "ux", "tech-debt", "security", "perf", "mobile", "copy", "infra"]
 HUMANS = ["fernando", "ana", "luis", "vera", "marta", "jorge"]
 AGENTS = ["agent-backend", "agent-frontend", "agent-qa"]
+
+
+def _inbox_fields(rng: random.Random) -> dict[str, object]:
+    """Drafts land in the inbox: classified, half from users, most of them scored."""
+    scored = rng.random() < 0.7
+    origin = Origin.user if rng.random() < 0.5 else Origin.team
+    kinds = [
+        c for c in Classification if origin is Origin.team or c is not Classification.experiment
+    ]
+    return {
+        "classification": rng.choice(kinds),
+        "origin": origin,
+        "impact": rng.randint(1, 5) if scored else None,
+        "effort": rng.randint(1, 5) if scored else None,
+    }
 
 
 @dataclass(frozen=True)
@@ -158,6 +175,7 @@ async def seed(
                 "created_at": created,
                 "updated_at": created + timedelta(hours=rng.randint(0, 200)),
                 "resolved_at": resolved,
+                **(_inbox_fields(rng) if ticket_type is TicketType.draft else {}),
             }
         )
         initial = next((s for s in by_type[ticket_type] if s.is_initial), by_type[ticket_type][0])

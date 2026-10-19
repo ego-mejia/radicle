@@ -67,7 +67,7 @@ mcp '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"whoami","ar
   | grep -q 'agent-smoke' || fail "MCP whoami"
 
 echo "==> MCP create_ticket"
-mcp '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"create_ticket","arguments":{"project":"PA","type":"draft","title":"From MCP"}}}' \
+mcp '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"create_ticket","arguments":{"project":"PA","type":"draft","classification":"idea","title":"From MCP"}}}' \
   | grep -q 'PA-1' || fail "MCP create_ticket"
 [ "$(curl -fsS -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/v1/tickets/PA-1" \
   | json "['reporter']['handle']")" = "agent-smoke" ] || fail "ticket reporter"
