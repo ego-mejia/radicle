@@ -44,6 +44,7 @@ export function BarReport({ report, x, series, unit, horizontal = false, height 
               stroke={theme.color.textMuted}
               fontSize={11}
               width={120}
+              interval={0}
             />
           </>
         ) : (
