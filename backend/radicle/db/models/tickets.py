@@ -32,6 +32,11 @@ from radicle.db.models.projects import (
 from radicle.db.models.users import User
 
 
+class RemainingMode(enum.StrEnum):
+    auto = "auto"
+    manual = "manual"
+
+
 class Priority(enum.StrEnum):
     highest = "highest"
     high = "high"
@@ -49,6 +54,7 @@ PRIORITY_ORDER = {
 }
 
 priority_enum = _enum(Priority, "priority")
+remaining_mode_enum = _enum(RemainingMode, "remaining_mode")
 
 # Title weighs more than description; both languages so stemming works in en and es.
 SEARCH_VECTOR_SQL = (
@@ -73,6 +79,7 @@ class Ticket(Base):
         ),
         Index("ix_tickets_project_status", "project_id", "status_id"),
         Index("ix_tickets_project_rank", "project_id", "rank"),
+        Index("ix_tickets_project_votes", "project_id", "vote_count"),
         Index(
             "ix_tickets_custom_fields",
             "custom_fields",
@@ -99,6 +106,13 @@ class Ticket(Base):
     reporter_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
     due_date: Mapped[date | None] = mapped_column(Date, index=True)
     estimate_hours: Mapped[Decimal | None] = mapped_column(Numeric(7, 2))
+    # Copied from the first estimate the ticket ever gets, then never changes.
+    original_estimate_hours: Mapped[Decimal | None] = mapped_column(Numeric(7, 2))
+    remaining_hours: Mapped[Decimal | None] = mapped_column(Numeric(7, 2))
+    remaining_mode: Mapped[RemainingMode] = mapped_column(
+        remaining_mode_enum, default=RemainingMode.auto, server_default="auto"
+    )
+    vote_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     tags: Mapped[list[str]] = mapped_column(ARRAY(Text), default=list, server_default="{}")
     rank: Mapped[str] = mapped_column(Text)
     # {"environment": "prod", "requires_signature": true}; user fields hold the user id.
@@ -177,6 +191,11 @@ class EventType(enum.StrEnum):
     attachment_added = "attachment_added"
     attachment_removed = "attachment_removed"
     attachment_resized = "attachment_resized"
+    vote_added = "vote_added"
+    vote_removed = "vote_removed"
+    worklog_added = "worklog_added"
+    worklog_updated = "worklog_updated"
+    worklog_deleted = "worklog_deleted"
 
 
 class TicketEvent(Base):
@@ -197,3 +216,41 @@ class TicketEvent(Base):
     )
 
     actor: Mapped[User] = relationship(lazy="joined")
+
+
+class TicketVote(Base):
+    __tablename__ = "ticket_votes"
+
+    ticket_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("tickets.id", ondelete="CASCADE"), primary_key=True
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True, index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, server_default=func.now()
+    )
+
+    user: Mapped[User] = relationship(lazy="joined")
+
+
+class Worklog(Base):
+    __tablename__ = "worklogs"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    ticket_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("tickets.id", ondelete="CASCADE"), index=True
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    minutes: Mapped[int] = mapped_column(Integer)
+    description: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, server_default=func.now()
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    user: Mapped[User] = relationship(lazy="joined")

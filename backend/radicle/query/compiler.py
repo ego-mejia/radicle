@@ -400,6 +400,10 @@ def _column(f: Field) -> Any:
         "updated": Ticket.updated_at,
         "resolved": Ticket.resolved_at,
         "estimate": Ticket.estimate_hours,
+        "original_estimate": Ticket.original_estimate_hours,
+        "remaining": Ticket.remaining_hours,
+        "spent": Ticket.time_spent_minutes.cast(Numeric) / literal(60),
+        "votes": Ticket.vote_count,
     }
     return columns[f.name]
 
@@ -465,6 +469,9 @@ def _order_by(sorts: tuple[ast.Sort, ...]) -> list[Any]:
                     "due": Ticket.due_date,
                     "rank": Ticket.rank,
                     "estimate": Ticket.estimate_hours,
+                    "votes": Ticket.vote_count,
+                    "spent": Ticket.time_spent_minutes,
+                    "remaining": Ticket.remaining_hours,
                 }[name]
             ]
         for column in columns:

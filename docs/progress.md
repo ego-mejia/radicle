@@ -197,7 +197,7 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 | 2.3 | Reglas de transición | Listo |
 | 2.4 | Screens | Listo |
 | 2.5 | Adjuntos | Listo |
-| 2.6 | Votos y tiempo real invertido | Pendiente |
+| 2.6 | Votos y tiempo real invertido | Listo |
 | 2.7 | Clonar, mover y bulk edit | Pendiente |
 | 2.8 | Filtros, ranking, atajos y cmd+k | Pendiente |
 
@@ -287,3 +287,19 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 - `tests/integration/test_attachments.py::test_acceptance_screenshot_in_comment_resized_to_medium`: un screenshot en un comentario, preview hecho por el worker, reducido a mediano y su tamaño baja.
 - El mismo archivo prueba presets exactos, EXIF, tipo por contenido, el 413, la expiración de la firma, permisos y borrado. `tests/integration/test_storage_s3.py` prueba S3 contra un servidor real.
 - `frontend/src/features/tickets/components/UploadStatus/UploadStatus.test.tsx`: pegar una imagen pide tamaño y deja el markdown en el editor.
+
+### 2.6 Votos y tiempo real invertido
+
+**Qué se hizo**
+
+- Migración `0010`: `ticket_votes`, `worklogs` y en tickets `original_estimate_hours`, `remaining_hours`, `remaining_mode` y `vote_count`. Decisión: [0014](decisions/0014-votos-y-tiempo.md).
+- Votos 🙋: `PUT` y `DELETE /tickets/{key}/vote` y `GET /tickets/{key}/voters`; un voto por persona, sin notificaciones, los agentes no votan.
+- Worklogs: registrar, listar, editar y borrar (propios o como admin); estimado original fijo, restante automático o manual. `log_minutes` al transicionar.
+- RQL `votes`, `spent`, `remaining` y `original_estimate`, y `ORDER BY votes DESC`.
+- MCP: `log_work` y `list_worklogs`; `transition_ticket` acepta `log_minutes`; `get_ticket` trae `vote_count` y el tiempo.
+- UI: botón 🙋 con conteo y quién votó al pasar el cursor; columna Votos ordenable en la lista; barra estimado contra invertido que se pone en warning al pasar el original; restante editable con "volver a auto"; Registrar tiempo ("1h 30m"); pestaña Tiempo; tiempo opcional al mover un ticket.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_votes_time.py::test_acceptance_agent_logs_two_hours`: el agente registra 2 h por MCP y el restante baja de 5 a 3.
+- `test_votes_and_backlog_by_votes`: el backlog se ordena por votos. `tests/integration/test_concurrency.py::test_parallel_votes_keep_vote_count_exact`: 8 personas votando 3 veces a la vez dejan `vote_count = 8`.

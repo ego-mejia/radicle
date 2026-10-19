@@ -89,3 +89,14 @@ export const Empty = styled.div`
   padding: 8px;
   color: ${({ theme }) => theme.color.textMuted};
 `;
+
+export const More = styled.span`
+  padding: 0 6px;
+  border-radius: ${({ theme }) => theme.radius.sm};
+  color: ${({ theme }) => theme.color.textMuted};
+
+  &:hover,
+  &:focus-visible {
+    background: ${({ theme }) => theme.color.border};
+  }
+`;

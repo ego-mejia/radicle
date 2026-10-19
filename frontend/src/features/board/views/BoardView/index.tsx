@@ -172,7 +172,7 @@ export function BoardView() {
           ticketType={pending.ticket.type}
           options={pending.options}
           onCancel={() => setPending(null)}
-          onPick={({ option, resolution, comment, fields }) => {
+          onPick={({ option, resolution, comment, fields, logMinutes }) => {
             move.mutate({
               key: pending.ticket.key,
               to: option.to_status,
@@ -180,6 +180,7 @@ export function BoardView() {
               transition: option.name,
               comment,
               fields,
+              log_minutes: logMinutes,
             });
             setPending(null);
           }}

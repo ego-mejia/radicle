@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CategoryIcon } from '../../../../components/icons/CategoryIcon';
 import { Button } from '../../../../components/ui/Button';
-import { Textarea } from '../../../../components/ui/Input';
+import { Input, Textarea } from '../../../../components/ui/Input';
+import { parseDuration } from '../../../../lib/duration';
 import { type Values, toBody } from '../../../../lib/schemaForm';
 import { fetchSchema, screenKeys } from '../../../../services/api/screens';
 import type { Resolution, TicketType, TransitionOption } from '../../../../services/api/types';
@@ -15,6 +16,7 @@ export type Pick = {
   resolution: Resolution | null;
   comment?: string | null;
   fields?: Record<string, unknown> | null;
+  logMinutes?: number | null;
 };
 
 type Props = {
@@ -53,6 +55,8 @@ export function TransitionPicker({
   );
   const [resolution, setResolution] = useState<Resolution | null>(null);
   const [comment, setComment] = useState('');
+  const [logTime, setLogTime] = useState('');
+  const logMinutes = parseDuration(logTime);
   const [values, setValues] = useState<Values>({});
   const { data: screen } = useQuery({
     queryKey: screenKeys.schema(projectKey, ticketType, 'transition', pending?.name),
@@ -93,6 +97,26 @@ export function TransitionPicker({
             {!option.available && <S.Reason>{option.reasons[0]?.message}</S.Reason>}
           </S.Label>
           <S.Via>{option.name}</S.Via>
+          {option.available && !needsForm(option) && (
+            <S.More
+              role="button"
+              tabIndex={0}
+              aria-label={t('ticket.moreOptions', { status: option.to_status })}
+              title={t('ticket.moreOptions', { status: option.to_status })}
+              onClick={(e) => {
+                e.stopPropagation();
+                setPending(option);
+              }}
+              onKeyDown={(e) => {
+                if (e.key !== 'Enter') return;
+                e.stopPropagation();
+                e.preventDefault();
+                setPending(option);
+              }}
+            >
+              ⋯
+            </S.More>
+          )}
         </S.Option>
       ))}
       {pending && (
@@ -110,6 +134,7 @@ export function TransitionPicker({
               resolution,
               comment: comment.trim() || null,
               fields: Object.keys(fields).length ? fields : null,
+              ...(logMinutes ? { logMinutes } : {}),
             });
           }}
         >
@@ -148,11 +173,17 @@ export function TransitionPicker({
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
+          <Input
+            aria-label={t('time.logInMove')}
+            placeholder={t('time.logInMove')}
+            value={logTime}
+            onChange={(e) => setLogTime(e.target.value)}
+          />
           <Button
             type="submit"
             size="sm"
             variant="primary"
-            disabled={Boolean(missingResolution || missingComment)}
+            disabled={Boolean(missingResolution || missingComment || (logTime && !logMinutes))}
           >
             {t('ticket.moveTo', { status: pending.to_status })}
           </Button>

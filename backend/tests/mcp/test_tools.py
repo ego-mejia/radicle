@@ -31,6 +31,8 @@ TOOLS = {
     "upload_attachment",
     "list_attachments",
     "read_attachment",
+    "log_work",
+    "list_worklogs",
 }
 
 

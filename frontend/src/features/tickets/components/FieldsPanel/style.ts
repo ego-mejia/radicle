@@ -20,3 +20,7 @@ export const Muted = styled.span`
   color: ${({ theme }) => theme.color.textMuted};
   font-size: ${({ theme }) => theme.fontSize.sm};
 `;
+
+export const Time = styled.div`
+  padding: ${({ theme }) => theme.space.sm} 0 ${({ theme }) => theme.space.md};
+`;

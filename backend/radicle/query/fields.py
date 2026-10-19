@@ -78,12 +78,28 @@ FIELDS: dict[str, Field] = {
         Field("updated", Kind.datetime, ("=", *ORDER)),
         Field("resolved", Kind.datetime, ("=", *ORDER)),
         Field("estimate", Kind.number, ("=", *ORDER), empty=True, description="Hours"),
+        Field("original_estimate", Kind.number, ("=", *ORDER), empty=True, description="Hours"),
+        Field("remaining", Kind.number, ("=", *ORDER), empty=True, description="Hours"),
+        Field("spent", Kind.number, ("=", *ORDER), description="Hours logged"),
+        Field("votes", Kind.number, ("=", *ORDER), description="🙋 count"),
         Field("blocked", Kind.boolean, ("=",), values=("true", "false")),
         Field("linked", Kind.key, ("=",), description="Linked in any direction to this key"),
     )
 }
 
-SORT_FIELDS = ("created", "updated", "due", "priority", "rank", "key", "status", "estimate")
+SORT_FIELDS = (
+    "created",
+    "updated",
+    "due",
+    "priority",
+    "rank",
+    "key",
+    "status",
+    "estimate",
+    "votes",
+    "spent",
+    "remaining",
+)
 FUNCTIONS = ("currentUser()", "now()", "startOfDay()", "startOfWeek()", "startOfMonth()")
 KEYWORDS = (
     "AND",

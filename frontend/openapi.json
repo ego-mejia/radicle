@@ -2008,6 +2008,62 @@
         "title": "Page[UserOut]",
         "type": "object"
       },
+      "Page_UserRef_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UserRef"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[UserRef]",
+        "type": "object"
+      },
+      "Page_WorklogOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/WorklogOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[WorklogOut]",
+        "type": "object"
+      },
       "Priority": {
         "enum": [
           "highest",
@@ -2403,6 +2459,14 @@
         ],
         "title": "ReactionOut",
         "type": "object"
+      },
+      "RemainingMode": {
+        "enum": [
+          "auto",
+          "manual"
+        ],
+        "title": "RemainingMode",
+        "type": "string"
       },
       "ResizeIn": {
         "additionalProperties": false,
@@ -3620,6 +3684,18 @@
             ],
             "title": "Milestone"
           },
+          "original_estimate_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The first estimate; never changes",
+            "title": "Original Estimate Hours"
+          },
           "parent": {
             "anyOf": [
               {
@@ -3640,6 +3716,21 @@
           "rank": {
             "title": "Rank",
             "type": "string"
+          },
+          "remaining_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remaining Hours"
+          },
+          "remaining_mode": {
+            "$ref": "#/components/schemas/RemainingMode",
+            "description": "auto: estimate - spent; manual: as set"
           },
           "reporter": {
             "$ref": "#/components/schemas/UserRef"
@@ -3664,6 +3755,10 @@
               }
             ],
             "title": "Resolved At"
+          },
+          "spent_hours": {
+            "title": "Spent Hours",
+            "type": "number"
           },
           "status": {
             "$ref": "#/components/schemas/StatusRef"
@@ -3690,6 +3785,14 @@
             "title": "Version",
             "type": "integer"
           },
+          "vote_count": {
+            "title": "Vote Count",
+            "type": "integer"
+          },
+          "voted_by_me": {
+            "title": "Voted By Me",
+            "type": "boolean"
+          },
           "warnings": {
             "items": {
               "$ref": "#/components/schemas/WarningOut"
@@ -3715,6 +3818,12 @@
           "reporter",
           "due_date",
           "estimate_hours",
+          "original_estimate_hours",
+          "remaining_hours",
+          "remaining_mode",
+          "spent_hours",
+          "vote_count",
+          "voted_by_me",
           "tags",
           "custom_fields",
           "checklist",
@@ -3850,6 +3959,31 @@
                 "type": "null"
               }
             ]
+          },
+          "remaining_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Setting it switches remaining_mode to manual",
+            "title": "Remaining Hours"
+          },
+          "remaining_mode": {
+            "anyOf": [
+              {
+                "const": "auto",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Send auto to go back to estimate minus spent",
+            "title": "Remaining Mode"
           },
           "tags": {
             "anyOf": [
@@ -4002,6 +4136,10 @@
               }
             ]
           },
+          "spent_hours": {
+            "title": "Spent Hours",
+            "type": "number"
+          },
           "status": {
             "$ref": "#/components/schemas/StatusRef"
           },
@@ -4022,6 +4160,10 @@
           "updated_at": {
             "title": "Updated At",
             "type": "string"
+          },
+          "vote_count": {
+            "title": "Vote Count",
+            "type": "integer"
           }
         },
         "required": [
@@ -4039,6 +4181,8 @@
           "blocked",
           "due_date",
           "estimate_hours",
+          "spent_hours",
+          "vote_count",
           "checklist_done",
           "checklist_total",
           "rank",
@@ -4307,6 +4451,20 @@
             "description": "Admins only: move a blocked ticket despite policy enforce",
             "title": "Force",
             "type": "boolean"
+          },
+          "log_minutes": {
+            "anyOf": [
+              {
+                "maximum": 1440.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Log time spent in the same move",
+            "title": "Log Minutes"
           },
           "resolution": {
             "anyOf": [
@@ -4755,6 +4913,24 @@
         "title": "Version",
         "type": "object"
       },
+      "VoteOut": {
+        "properties": {
+          "vote_count": {
+            "title": "Vote Count",
+            "type": "integer"
+          },
+          "voted_by_me": {
+            "title": "Voted By Me",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "vote_count",
+          "voted_by_me"
+        ],
+        "title": "VoteOut",
+        "type": "object"
+      },
       "WarningOut": {
         "properties": {
           "by": {
@@ -4880,6 +5056,144 @@
           "warnings"
         ],
         "title": "WorkflowPutOut",
+        "type": "object"
+      },
+      "WorklogIn": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "minutes": {
+            "maximum": 1440.0,
+            "minimum": 1.0,
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Default: now",
+            "title": "Started At"
+          }
+        },
+        "required": [
+          "minutes"
+        ],
+        "title": "WorklogIn",
+        "type": "object"
+      },
+      "WorklogOut": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "minutes": {
+            "title": "Minutes",
+            "type": "integer"
+          },
+          "started_at": {
+            "title": "Started At",
+            "type": "string"
+          },
+          "ticket": {
+            "title": "Ticket",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserRef"
+          }
+        },
+        "required": [
+          "id",
+          "ticket",
+          "user",
+          "minutes",
+          "started_at",
+          "description",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "WorklogOut",
+        "type": "object"
+      },
+      "WorklogPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null clears it",
+            "title": "Description"
+          },
+          "minutes": {
+            "anyOf": [
+              {
+                "maximum": 1440.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minutes"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          }
+        },
+        "title": "WorklogPatch",
         "type": "object"
       }
     }
@@ -8666,6 +8980,225 @@
         ]
       }
     },
+    "/api/v1/tickets/{key}/vote": {
+      "delete": {
+        "operationId": "unvote_api_v1_tickets__key__vote_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unvote",
+        "tags": [
+          "votes and time"
+        ]
+      },
+      "put": {
+        "description": "\ud83d\ude4b One vote per person; voting twice changes nothing. Agents do not vote.",
+        "operationId": "vote_api_v1_tickets__key__vote_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vote",
+        "tags": [
+          "votes and time"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/voters": {
+      "get": {
+        "operationId": "list_voters_api_v1_tickets__key__voters_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_UserRef_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Voters",
+        "tags": [
+          "votes and time"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/worklogs": {
+      "get": {
+        "description": "Time logged on the ticket, newest first.",
+        "operationId": "list_worklogs_api_v1_tickets__key__worklogs_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_WorklogOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Worklogs",
+        "tags": [
+          "votes and time"
+        ]
+      },
+      "post": {
+        "description": "Log minutes worked (1 to 1440). Spent and remaining time update right away.",
+        "operationId": "add_worklog_api_v1_tickets__key__worklogs_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorklogIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorklogOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Worklog",
+        "tags": [
+          "votes and time"
+        ]
+      }
+    },
     "/api/v1/users": {
       "get": {
         "description": "Humans and agents, oldest first.",
@@ -9015,6 +9548,94 @@
         "summary": "Version",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/api/v1/worklogs/{worklog_id}": {
+      "delete": {
+        "operationId": "delete_worklog_api_v1_worklogs__worklog_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "worklog_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Worklog Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Worklog",
+        "tags": [
+          "votes and time"
+        ]
+      },
+      "patch": {
+        "description": "Your own worklogs; admins can edit any.",
+        "operationId": "patch_worklog_api_v1_worklogs__worklog_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "worklog_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Worklog Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorklogPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorklogOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Worklog",
+        "tags": [
+          "votes and time"
         ]
       }
     }

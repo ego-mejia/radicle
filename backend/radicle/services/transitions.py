@@ -20,7 +20,15 @@ from radicle.db.models import (
     TransitionRule,
     utcnow,
 )
-from radicle.services import comments, history, relations, screens, tickets, workflow_engine
+from radicle.services import (
+    comments,
+    history,
+    relations,
+    screens,
+    tickets,
+    timetracking,
+    workflow_engine,
+)
 from radicle.services import ticket_fields as fields
 from radicle.services.access import ProjectAccess
 from radicle.services.rules import (
@@ -99,6 +107,7 @@ async def transition_ticket(
     comment: str | None = None,
     force: bool = False,
     fields: dict[str, Any] | None = None,
+    log_minutes: int | None = None,
 ) -> list[TicketWarning]:
     """Conditions, blocked policy, validators, the move itself and post-functions,
     in that order. Anything that fails raises and nothing is saved."""
@@ -173,6 +182,10 @@ async def transition_ticket(
             )
 
     await apply_screen(db, access, ticket, decision.option, fields or {})
+    if log_minutes:
+        await timetracking.add_worklog(
+            db, access, ticket, minutes=log_minutes, description=f"Moving to {target.name}"
+        )
     failures = await failed_validators(db, rules, ctx)
     if failures:
         raise Conflict(

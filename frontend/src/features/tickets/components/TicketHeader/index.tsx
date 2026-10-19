@@ -15,6 +15,7 @@ import type { Ticket } from '../../../../services/api/types';
 import type { TicketActions } from '../../hooks/useTicket';
 import { ChangeTypeModal } from '../ChangeTypeModal';
 import { StatusButton } from '../StatusButton';
+import { VoteButton } from '../VoteButton';
 import * as S from './style';
 
 type Props = { ticket: Ticket; actions: TicketActions; canEdit: boolean; isAdmin: boolean };
@@ -58,6 +59,7 @@ export function TicketHeader({ ticket, actions, canEdit, isAdmin }: Props) {
         <StatusButton ticket={ticket} actions={actions} canEdit={canEdit} />
         {ticket.blocked && <Badge tone="danger">{t('ticket.blocked')}</Badge>}
         <S.Spacer />
+        <VoteButton ticket={ticket} canVote={canEdit} />
         <Menu
           align="end"
           trigger={

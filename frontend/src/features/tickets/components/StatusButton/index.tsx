@@ -44,7 +44,7 @@ export function StatusButton({ ticket, actions, canEdit }: Props) {
               options={options ?? []}
               projectKey={ticket.project}
               ticketType={ticket.type}
-              onPick={({ option, resolution, comment, fields }) => {
+              onPick={({ option, resolution, comment, fields, logMinutes }) => {
                 setOpen(false);
                 actions.transition.mutate({
                   to: option.to_status,
@@ -52,6 +52,7 @@ export function StatusButton({ ticket, actions, canEdit }: Props) {
                   transition: option.name,
                   comment,
                   fields,
+                  log_minutes: logMinutes,
                 });
               }}
             />

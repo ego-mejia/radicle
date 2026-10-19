@@ -29,7 +29,8 @@ from radicle.db.models import (
     TicketEvent,
     User,
 )
-from radicle.services import attachments, custom_fields, images, markdown, relations
+from radicle.services import attachments, custom_fields, images, markdown, relations, timetracking
+from radicle.services.remaining import spent_hours
 from radicle.services.tickets import list_collaborators
 
 
@@ -141,8 +142,16 @@ def _estimate(ticket: Ticket) -> float | None:
     return float(ticket.estimate_hours) if ticket.estimate_hours is not None else None
 
 
+def _hours(value: object) -> float | None:
+    return float(value) if value is not None else None  # type: ignore[arg-type]
+
+
 async def ticket_out(
-    db: AsyncSession, ticket: Ticket, *, warnings: list[WarningOut] | None = None
+    db: AsyncSession,
+    ticket: Ticket,
+    *,
+    warnings: list[WarningOut] | None = None,
+    viewer: User | None = None,
 ) -> TicketOut:
     await db.refresh(ticket, ["status", "assignee", "reporter"])
     ctx = await load_context(db, [ticket])
@@ -171,6 +180,13 @@ async def ticket_out(
         reporter=user_ref(ticket.reporter),
         due_date=ticket.due_date,
         estimate_hours=_estimate(ticket),
+        original_estimate_hours=_hours(ticket.original_estimate_hours),
+        remaining_hours=_hours(ticket.remaining_hours),
+        remaining_mode=ticket.remaining_mode,
+        spent_hours=float(spent_hours(ticket)),
+        vote_count=ticket.vote_count,
+        voted_by_me=viewer is not None
+        and bool(await timetracking.voted_by(db, [ticket.id], viewer.id)),
         tags=list(ticket.tags),
         custom_fields=ctx.custom_fields(ticket),
         checklist=_checklist(ticket, ctx),
@@ -225,6 +241,8 @@ async def summaries_out(db: AsyncSession, tickets: list[Ticket]) -> list[TicketS
                 blocked=bool(ctx.blocked_by.get(t.id)),
                 due_date=t.due_date,
                 estimate_hours=_estimate(t),
+                spent_hours=float(spent_hours(t)),
+                vote_count=t.vote_count,
                 checklist_done=sum(i.checked for i in items),
                 checklist_total=len(items),
                 rank=t.rank,

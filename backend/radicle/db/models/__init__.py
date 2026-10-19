@@ -34,9 +34,12 @@ from radicle.db.models.tickets import (
     EventType,
     Mention,
     Priority,
+    RemainingMode,
     Ticket,
     TicketCollaborator,
     TicketEvent,
+    TicketVote,
+    Worklog,
 )
 from radicle.db.models.users import ApiToken, Session, User, UserKind
 
@@ -63,6 +66,7 @@ __all__ = [
     "Project",
     "ProjectMember",
     "ProjectRole",
+    "RemainingMode",
     "Resolution",
     "RuleKind",
     "Screen",
@@ -79,9 +83,11 @@ __all__ = [
     "TicketEvent",
     "TicketLink",
     "TicketType",
+    "TicketVote",
     "Transition",
     "TransitionRule",
     "User",
     "UserKind",
+    "Worklog",
     "utcnow",
 ]

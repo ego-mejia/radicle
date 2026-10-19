@@ -16,9 +16,10 @@ import { History } from '../History';
 import { Links } from '../Links';
 import { Subtickets } from '../Subtickets';
 import { TicketHeader } from '../TicketHeader';
+import { Worklogs } from '../Worklogs';
 import * as S from './style';
 
-type Tab = 'comments' | 'history';
+type Tab = 'comments' | 'history' | 'time';
 
 /** Full ticket view; rendered as a page at /t/KEY and in the side panel. */
 export function TicketDetail({ ticketKey }: { ticketKey: string }) {
@@ -69,6 +70,7 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
             tabs={[
               { id: 'comments', label: t('ticket.tabs.comments'), count: ticket.comments_count },
               { id: 'history', label: t('ticket.tabs.history') },
+              { id: 'time', label: t('ticket.tabs.time') },
             ]}
           />
           {tab === 'comments' ? (
@@ -79,8 +81,10 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
               canModerate={isAdmin}
               mentions={mentions}
             />
-          ) : (
+          ) : tab === 'history' ? (
             <History ticket={ticket} />
+          ) : (
+            <Worklogs ticket={ticket} me={me.handle} isAdmin={isAdmin} canEdit={canEdit} />
           )}
         </S.Activity>
       </S.Main>

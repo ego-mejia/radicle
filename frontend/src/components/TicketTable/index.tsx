@@ -30,6 +30,7 @@ const COLUMNS: { id: string; sort?: string }[] = [
   { id: 'title' },
   { id: 'status', sort: 'status' },
   { id: 'priority', sort: 'priority' },
+  { id: 'votes', sort: 'votes' },
   { id: 'assignee' },
   { id: 'area' },
   { id: 'milestone' },
@@ -122,6 +123,15 @@ export function TicketTable({
                   <PriorityIcon priority={ticket.priority} />
                   {t(`ticket.priorities.${ticket.priority}`)}
                 </S.Cell>
+              </td>
+              <td>
+                {ticket.vote_count > 0 ? (
+                  <S.Cell title={t('votes.count', { count: ticket.vote_count })}>
+                    🙋 {ticket.vote_count}
+                  </S.Cell>
+                ) : (
+                  <S.Muted>—</S.Muted>
+                )}
               </td>
               <td>
                 {ticket.assignee ? (

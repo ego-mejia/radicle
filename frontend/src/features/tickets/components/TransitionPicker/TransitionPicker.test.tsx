@@ -92,7 +92,10 @@ describe('TransitionPicker', () => {
     await userEvent.click(screen.getByRole('menuitem', { name: /To Do/ }));
     const submit = screen.getByRole('button', { name: 'Move to To Do' });
     expect(submit).toBeDisabled();
-    await userEvent.type(screen.getByRole('textbox'), 'Sin alcance');
+    await userEvent.type(
+      screen.getByRole('textbox', { name: 'Comment (optional)' }),
+      'Sin alcance',
+    );
     await userEvent.click(submit);
     expect(onPick).toHaveBeenCalledWith({
       option: options[1],

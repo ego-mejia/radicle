@@ -18,6 +18,7 @@ from radicle.db.models import (
     Priority,
     Project,
     ProjectRole,
+    RemainingMode,
     Ticket,
     TicketCollaborator,
     TicketType,
@@ -27,6 +28,7 @@ from radicle.db.models import (
 from radicle.services import custom_fields, history, markdown, rank, screens
 from radicle.services import ticket_fields as fields
 from radicle.services.access import ProjectAccess, project_access
+from radicle.services.remaining import estimate_changed
 from radicle.services.workflows import load_workflows
 
 UPDATABLE = (
@@ -41,6 +43,8 @@ UPDATABLE = (
     "estimate_hours",
     "tags",
     "custom_fields",
+    "remaining_hours",
+    "remaining_mode",
 )
 
 
@@ -171,7 +175,10 @@ async def create_ticket(db: AsyncSession, access: ProjectAccess, data: NewTicket
         tags=tags,
         custom_fields=custom_values,
         rank=rank.after(last_rank),
+        time_spent_minutes=0,
+        remaining_mode=RemainingMode.auto,
     )
+    estimate_changed(ticket)
     db.add(ticket)
     await db.flush()
     for user in collaborators:
@@ -294,6 +301,24 @@ async def update_ticket(
                 )
             )
             ticket.estimate_hours = new_estimate
+            estimate_changed(ticket)
+    if "remaining_hours" in changes:
+        new_remaining = fields.normalize_estimate(changes["remaining_hours"])
+        if new_remaining != ticket.remaining_hours:
+            diffs.append(
+                (
+                    "remaining_hours",
+                    fields.estimate_json(ticket.remaining_hours),
+                    fields.estimate_json(new_remaining),
+                )
+            )
+            ticket.remaining_hours = new_remaining
+        ticket.remaining_mode = RemainingMode.manual
+    if changes.get("remaining_mode") == RemainingMode.auto.value:
+        if ticket.remaining_mode is not RemainingMode.auto:
+            diffs.append(("remaining_mode", ticket.remaining_mode.value, "auto"))
+        ticket.remaining_mode = RemainingMode.auto
+        estimate_changed(ticket)
     if "tags" in changes:
         new_tags = fields.normalize_tags(changes["tags"] or [])
         if new_tags != list(ticket.tags):

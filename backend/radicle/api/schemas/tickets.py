@@ -1,10 +1,17 @@
 from datetime import date
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import Field
 
 from radicle.api.schemas.common import Input, Output, UtcDatetime
-from radicle.db.models import Priority, Resolution, StatusCategory, TicketType, UserKind
+from radicle.db.models import (
+    Priority,
+    RemainingMode,
+    Resolution,
+    StatusCategory,
+    TicketType,
+    UserKind,
+)
 
 
 class UserRef(Output):
@@ -81,6 +88,12 @@ class TicketOut(Output):
     reporter: UserRef
     due_date: date | None
     estimate_hours: float | None
+    original_estimate_hours: float | None = Field(description="The first estimate; never changes")
+    remaining_hours: float | None
+    remaining_mode: RemainingMode = Field(description="auto: estimate - spent; manual: as set")
+    spent_hours: float
+    vote_count: int
+    voted_by_me: bool
     tags: list[str]
     custom_fields: dict[str, Any] = Field(
         description="Values by field key; user fields as handles. Only fields that apply."
@@ -130,6 +143,12 @@ class TicketPatch(Input):
     assignee: str | None = None
     due_date: date | None = None
     estimate_hours: float | None = None
+    remaining_hours: float | None = Field(
+        default=None, description="Setting it switches remaining_mode to manual"
+    )
+    remaining_mode: Literal["auto"] | None = Field(
+        default=None, description="Send auto to go back to estimate minus spent"
+    )
     tags: list[str] | None = None
     custom_fields: dict[str, Any] | None = Field(
         default=None, description="Only the keys you send change; null clears a value"
@@ -170,6 +189,8 @@ class TicketSummary(Output):
     blocked: bool
     due_date: date | None
     estimate_hours: float | None
+    spent_hours: float
+    vote_count: int
     checklist_done: int
     checklist_total: int
     rank: str
@@ -211,6 +232,9 @@ class TransitionIn(Input):
     force: bool = Field(
         default=False, description="Admins only: move a blocked ticket despite policy enforce"
     )
+    log_minutes: int | None = Field(
+        default=None, ge=1, le=1440, description="Log time spent in the same move"
+    )
     fields: dict[str, Any] | None = Field(
         default=None,
         description='Values for the transition\'s screen, e.g. {"cf.environment": "prod"}',
@@ -248,3 +272,31 @@ class CommentOut(Output):
 
 class CommentIn(Input):
     body_md: str
+
+
+class WorklogOut(Output):
+    id: str
+    ticket: str
+    user: UserRef
+    minutes: int
+    started_at: UtcDatetime
+    description: str | None
+    created_at: UtcDatetime
+    updated_at: UtcDatetime
+
+
+class WorklogIn(Input):
+    minutes: int = Field(ge=1, le=1440)
+    started_at: UtcDatetime | None = Field(default=None, description="Default: now")
+    description: str | None = None
+
+
+class WorklogPatch(Input):
+    minutes: int | None = Field(default=None, ge=1, le=1440)
+    started_at: UtcDatetime | None = None
+    description: str | None = Field(default=None, description="null clears it")
+
+
+class VoteOut(Output):
+    vote_count: int
+    voted_by_me: bool

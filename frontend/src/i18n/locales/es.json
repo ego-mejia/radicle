@@ -99,7 +99,8 @@
       "key": "Key",
       "links": "Links",
       "checklist": "Checklist",
-      "collaborator": "Colaborador"
+      "collaborator": "Colaborador",
+      "votes": "Votos"
     },
     "unassigned": "Sin asignar",
     "noArea": "Sin área",
@@ -149,7 +150,8 @@
     "warningBlocked": "Se movió aunque está bloqueado por {{keys}}.",
     "tabs": {
       "comments": "Comentarios",
-      "history": "Historial"
+      "history": "Historial",
+      "time": "Tiempo"
     },
     "notFound": "Este ticket no existe o no lo puedes ver.",
     "editTitle": "Editar título",
@@ -160,7 +162,8 @@
     "force": "Forzar",
     "moveComment": "Comentario (opcional)",
     "moveCommentRequired": "Comentario (obligatorio en este paso)",
-    "moveTo": "Mover a {{status}}"
+    "moveTo": "Mover a {{status}}",
+    "moreOptions": "Más opciones para mover a {{status}}"
   },
   "create": {
     "title": "Crear ticket",
@@ -571,5 +574,31 @@
       "medium": "Mediano",
       "small": "Chico"
     }
+  },
+  "votes": {
+    "add": "Votar",
+    "remove": "Quitar mi voto",
+    "none": "Sin votos",
+    "count_one": "{{count}} voto",
+    "count_other": "{{count}} votos"
+  },
+  "time": {
+    "title": "Tiempo invertido",
+    "spent": "Invertido",
+    "original": "Estimado original",
+    "remaining": "Restante (h)",
+    "auto": "auto",
+    "backToAuto": "volver a auto",
+    "over": "Ya se invirtió más que el estimado original.",
+    "log": "Registrar tiempo",
+    "logTitle": "Registrar tiempo en {{key}}",
+    "logInMove": "Registrar tiempo (ej. 1h 30m)",
+    "duration": "Tiempo",
+    "durationHint": "1h 30m, 1.5h o minutos",
+    "durationInvalid": "Escríbelo como 1h 30m, 1.5h o 90",
+    "started": "Empezó",
+    "description": "Qué se hizo",
+    "empty": "Todavía no hay tiempo registrado.",
+    "deleteLog": "Borrar registro"
   }
 }

@@ -18,6 +18,12 @@ export const TICKET: Ticket = {
   reporter: { handle: 'luis', display_name: 'Luis', kind: 'human' },
   due_date: null,
   estimate_hours: 8,
+  original_estimate_hours: 8,
+  remaining_hours: 6,
+  remaining_mode: 'auto',
+  spent_hours: 2,
+  vote_count: 0,
+  voted_by_me: false,
   tags: ['pagos'],
   custom_fields: { environment: 'staging' },
   checklist: [

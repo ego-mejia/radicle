@@ -1138,6 +1138,68 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tickets/{key}/vote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Vote
+         * @description 🙋 One vote per person; voting twice changes nothing. Agents do not vote.
+         */
+        put: operations["vote_api_v1_tickets__key__vote_put"];
+        post?: never;
+        /** Unvote */
+        delete: operations["unvote_api_v1_tickets__key__vote_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{key}/voters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Voters */
+        get: operations["list_voters_api_v1_tickets__key__voters_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{key}/worklogs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Worklogs
+         * @description Time logged on the ticket, newest first.
+         */
+        get: operations["list_worklogs_api_v1_tickets__key__worklogs_get"];
+        put?: never;
+        /**
+         * Add Worklog
+         * @description Log minutes worked (1 to 1440). Spent and remaining time update right away.
+         */
+        post: operations["add_worklog_api_v1_tickets__key__worklogs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users": {
         parameters: {
             query?: never;
@@ -1230,6 +1292,27 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/worklogs/{worklog_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Worklog */
+        delete: operations["delete_worklog_api_v1_worklogs__worklog_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Worklog
+         * @description Your own worklogs; admins can edit any.
+         */
+        patch: operations["patch_worklog_api_v1_worklogs__worklog_id__patch"];
         trace?: never;
     };
 }
@@ -1893,6 +1976,20 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** Page[UserRef] */
+        Page_UserRef_: {
+            /** Items */
+            items: components["schemas"]["UserRef"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[WorklogOut] */
+        Page_WorklogOut_: {
+            /** Items */
+            items: components["schemas"]["WorklogOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /**
          * Priority
          * @enum {string}
@@ -2047,6 +2144,11 @@ export interface components {
             /** Users */
             users: string[];
         };
+        /**
+         * RemainingMode
+         * @enum {string}
+         */
+        RemainingMode: "auto" | "manual";
         /** ResizeIn */
         ResizeIn: {
             /**
@@ -2502,16 +2604,27 @@ export interface components {
             links: components["schemas"]["LinkOut"][];
             /** Milestone */
             milestone: string | null;
+            /**
+             * Original Estimate Hours
+             * @description The first estimate; never changes
+             */
+            original_estimate_hours: number | null;
             parent: components["schemas"]["TicketRef"] | null;
             priority: components["schemas"]["Priority"];
             /** Project */
             project: string;
             /** Rank */
             rank: string;
+            /** Remaining Hours */
+            remaining_hours: number | null;
+            /** @description auto: estimate - spent; manual: as set */
+            remaining_mode: components["schemas"]["RemainingMode"];
             reporter: components["schemas"]["UserRef"];
             resolution: components["schemas"]["Resolution"] | null;
             /** Resolved At */
             resolved_at: string | null;
+            /** Spent Hours */
+            spent_hours: number;
             status: components["schemas"]["StatusRef"];
             /** Tags */
             tags: string[];
@@ -2522,6 +2635,10 @@ export interface components {
             updated_at: string;
             /** Version */
             version: number;
+            /** Vote Count */
+            vote_count: number;
+            /** Voted By Me */
+            voted_by_me: boolean;
             /** Warnings */
             warnings: components["schemas"]["WarningOut"][];
         };
@@ -2557,6 +2674,16 @@ export interface components {
             /** Parent */
             parent?: string | null;
             priority?: components["schemas"]["Priority"] | null;
+            /**
+             * Remaining Hours
+             * @description Setting it switches remaining_mode to manual
+             */
+            remaining_hours?: number | null;
+            /**
+             * Remaining Mode
+             * @description Send auto to go back to estimate minus spent
+             */
+            remaining_mode?: "auto" | null;
             /** Tags */
             tags?: string[] | null;
             /** Title */
@@ -2601,6 +2728,8 @@ export interface components {
             /** Rank */
             rank: string;
             resolution: components["schemas"]["Resolution"] | null;
+            /** Spent Hours */
+            spent_hours: number;
             status: components["schemas"]["StatusRef"];
             /** Tags */
             tags: string[];
@@ -2609,6 +2738,8 @@ export interface components {
             type: components["schemas"]["TicketType"];
             /** Updated At */
             updated_at: string;
+            /** Vote Count */
+            vote_count: number;
         };
         /**
          * TicketType
@@ -2702,6 +2833,11 @@ export interface components {
              * @default false
              */
             force?: boolean;
+            /**
+             * Log Minutes
+             * @description Log time spent in the same move
+             */
+            log_minutes?: number | null;
             resolution?: components["schemas"]["Resolution"] | null;
             /**
              * To Status
@@ -2867,6 +3003,13 @@ export interface components {
             /** Version */
             version: string;
         };
+        /** VoteOut */
+        VoteOut: {
+            /** Vote Count */
+            vote_count: number;
+            /** Voted By Me */
+            voted_by_me: boolean;
+        };
         /** WarningOut */
         WarningOut: {
             /** By */
@@ -2906,6 +3049,48 @@ export interface components {
         WorkflowPutOut: {
             /** Warnings */
             warnings: string[];
+        };
+        /** WorklogIn */
+        WorklogIn: {
+            /** Description */
+            description?: string | null;
+            /** Minutes */
+            minutes: number;
+            /**
+             * Started At
+             * @description Default: now
+             */
+            started_at?: string | null;
+        };
+        /** WorklogOut */
+        WorklogOut: {
+            /** Created At */
+            created_at: string;
+            /** Description */
+            description: string | null;
+            /** Id */
+            id: string;
+            /** Minutes */
+            minutes: number;
+            /** Started At */
+            started_at: string;
+            /** Ticket */
+            ticket: string;
+            /** Updated At */
+            updated_at: string;
+            user: components["schemas"]["UserRef"];
+        };
+        /** WorklogPatch */
+        WorklogPatch: {
+            /**
+             * Description
+             * @description null clears it
+             */
+            description?: string | null;
+            /** Minutes */
+            minutes?: number | null;
+            /** Started At */
+            started_at?: string | null;
         };
     };
     responses: never;
@@ -5432,6 +5617,165 @@ export interface operations {
             };
         };
     };
+    vote_api_v1_tickets__key__vote_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unvote_api_v1_tickets__key__vote_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_voters_api_v1_tickets__key__voters_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_UserRef_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_worklogs_api_v1_tickets__key__worklogs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_WorklogOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_worklog_api_v1_tickets__key__worklogs_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WorklogIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorklogOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_users_api_v1_users_get: {
         parameters: {
             query?: {
@@ -5675,6 +6019,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Version"];
+                };
+            };
+        };
+    };
+    delete_worklog_api_v1_worklogs__worklog_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                worklog_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_worklog_api_v1_worklogs__worklog_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                worklog_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WorklogPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorklogOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

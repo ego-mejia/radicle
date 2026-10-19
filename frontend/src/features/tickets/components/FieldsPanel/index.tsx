@@ -10,6 +10,7 @@ import {
 } from '../../../../services/api/types';
 import { fetchSchema, screenKeys } from '../../../../services/api/screens';
 import type { TicketActions } from '../../hooks/useTicket';
+import { TimeTracking } from '../TimeTracking';
 import { CustomFieldRows } from './components/CustomFieldRows';
 import { FieldRow, InlineInput, InlineSelect } from './components/FieldRow';
 import { PersonChip, PersonSelect } from './components/PeopleField';
@@ -145,6 +146,9 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
           onCommit={(value) => patch({ estimate_hours: value === '' ? null : Number(value) })}
         />
       </FieldRow>
+      <S.Time>
+        <TimeTracking ticket={ticket} actions={actions} canEdit={can('estimate_hours')} />
+      </S.Time>
       <FieldRow label={t('ticket.fields.tags')}>
         <TagsField
           tags={ticket.tags}

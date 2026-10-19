@@ -37,13 +37,13 @@ async def create_ticket(
     access = await project_access(db, principal.user, key, need=MEMBER, write=True)
     data = tickets.NewTicket(**body.model_dump())
     ticket = await tickets.create_ticket(db, access, data)
-    return await ticket_out(db, ticket)
+    return await ticket_out(db, ticket, viewer=principal.user)
 
 
 @router.get("/tickets/{key}", response_model=TicketOut)
 async def get_ticket(key: str, principal: CurrentPrincipal, db: Db) -> TicketOut:
     _, ticket = await tickets.load_ticket(db, principal.user, key)
-    return await ticket_out(db, ticket)
+    return await ticket_out(db, ticket, viewer=principal.user)
 
 
 def _expected_version(body_version: int | None, if_match: str | None) -> int:
@@ -79,9 +79,11 @@ async def patch_ticket(
     try:
         await tickets.update_ticket(db, access, ticket, changes, expected_version=expected)
     except tickets.VersionConflict as exc:
-        exc.extra["current"] = (await ticket_out(db, exc.ticket)).model_dump(mode="json")
+        exc.extra["current"] = (await ticket_out(db, exc.ticket, viewer=principal.user)).model_dump(
+            mode="json"
+        )
         raise
-    return await ticket_out(db, ticket)
+    return await ticket_out(db, ticket, viewer=principal.user)
 
 
 @router.delete("/tickets/{key}", status_code=204)
@@ -100,7 +102,7 @@ async def restore_ticket(key: str, principal: CurrentPrincipal, db: Db) -> Ticke
         db, principal.user, key, need=ProjectRole.admin, write=True, include_deleted=True
     )
     await tickets.restore_ticket(db, access, ticket)
-    return await ticket_out(db, ticket)
+    return await ticket_out(db, ticket, viewer=principal.user)
 
 
 @router.patch("/tickets/{key}/checklist/{index}", response_model=TicketOut)
@@ -110,7 +112,7 @@ async def set_checklist_item(
     """Check or uncheck item `index` (0-based) of the description checklist."""
     access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
     await tickets.set_checklist_item(db, access, ticket, index, body.checked)
-    return await ticket_out(db, ticket)
+    return await ticket_out(db, ticket, viewer=principal.user)
 
 
 @router.get("/tickets/{key}/children", response_model=Page[TicketSummary])
@@ -123,7 +125,7 @@ async def list_children(key: str, principal: CurrentPrincipal, db: Db) -> Page[T
 async def add_collaborator(key: str, handle: str, principal: CurrentPrincipal, db: Db) -> TicketOut:
     access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
     await tickets.add_collaborator(db, access, ticket, handle)
-    return await ticket_out(db, ticket)
+    return await ticket_out(db, ticket, viewer=principal.user)
 
 
 @router.delete("/tickets/{key}/collaborators/{handle}", response_model=TicketOut)
@@ -132,7 +134,7 @@ async def remove_collaborator(
 ) -> TicketOut:
     access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
     await tickets.remove_collaborator(db, access, ticket, handle)
-    return await ticket_out(db, ticket)
+    return await ticket_out(db, ticket, viewer=principal.user)
 
 
 @router.get("/tickets/{key}/history", response_model=Page[EventOut])
@@ -200,9 +202,13 @@ async def transition_ticket(
         comment=body.comment,
         force=body.force,
         fields=body.fields,
+        log_minutes=body.log_minutes,
     )
     return await ticket_out(
-        db, ticket, warnings=[WarningOut(code=w.code, message=w.message, by=w.by) for w in warnings]
+        db,
+        ticket,
+        viewer=principal.user,
+        warnings=[WarningOut(code=w.code, message=w.message, by=w.by) for w in warnings],
     )
 
 
@@ -213,4 +219,4 @@ async def change_type(
     """Change the type, e.g. Draft to Task. The ticket goes to the new initial status."""
     access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
     await transitions.change_type(db, access, ticket, body.type, body.area)
-    return await ticket_out(db, ticket)
+    return await ticket_out(db, ticket, viewer=principal.user)

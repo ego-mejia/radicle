@@ -66,3 +66,87 @@ async def test_50_parallel_creations_get_numbers_1_to_50(
     finally:
         await db_session.dispose_engine()
         get_settings.cache_clear()
+
+
+async def fresh_app(postgres: PostgresContainer, monkeypatch, name: str):  # type: ignore[no-untyped-def]
+    """An app on its own freshly migrated database, with sessions that really commit."""
+    admin_url = postgres.get_connection_url()
+    engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
+    async with engine.connect() as conn:
+        await conn.execute(text(f"DROP DATABASE IF EXISTS {name}"))
+        await conn.execute(text(f"CREATE DATABASE {name}"))
+    await engine.dispose()
+    url = admin_url.rsplit("/", 1)[0] + f"/{name}"
+    await asyncio.to_thread(run_alembic, url, "upgrade", "head")
+    monkeypatch.setenv("RADICLE_DATABASE_URL", url)
+    get_settings.cache_clear()
+    await db_session.dispose_engine()
+    login_limiter.reset()
+    from radicle.main import create_app
+
+    return create_app()
+
+
+async def test_parallel_votes_keep_vote_count_exact(
+    postgres: PostgresContainer, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    app = await fresh_app(postgres, monkeypatch, "votes_check")
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://t") as c:
+            await c.post(
+                "/api/v1/setup",
+                json={
+                    "handle": "root",
+                    "display_name": "Root",
+                    "email": "r@example.com",
+                    "password": "password-123",
+                },
+            )
+            h = {"X-CSRF-Token": c.cookies["radicle_csrf"]}
+            await c.post("/api/v1/projects", headers=h, json={"key": "PA", "name": "A"})
+            await c.post(
+                "/api/v1/projects/PA/tickets", headers=h, json={"type": "draft", "title": "Idea"}
+            )
+            bearers = []
+            for i in range(8):
+                handle = f"user{i}"
+                await c.post(
+                    "/api/v1/users",
+                    headers=h,
+                    json={
+                        "handle": handle,
+                        "display_name": handle,
+                        "email": f"{handle}@example.com",
+                        "password": "password-123",
+                    },
+                )
+                await c.put(
+                    f"/api/v1/projects/PA/members/{handle}", headers=h, json={"role": "member"}
+                )
+                async with AsyncClient(transport=ASGITransport(app=app), base_url="http://t") as u:
+                    await u.post(
+                        "/api/v1/auth/login",
+                        json={"email": f"{handle}@example.com", "password": "password-123"},
+                    )
+                    token = await u.post(
+                        "/api/v1/me/tokens",
+                        headers={"X-CSRF-Token": u.cookies["radicle_csrf"]},
+                        json={"name": "t"},
+                    )
+                bearers.append({"Authorization": f"Bearer {token.json()['token']}"})
+            c.cookies.clear()
+
+            async def vote(headers: dict[str, str]) -> int:
+                r = await c.put("/api/v1/tickets/PA-1/vote", headers=headers)
+                assert r.status_code == 200, r.text
+                return int(r.status_code)
+
+            # Every user votes three times at once: only one vote each counts.
+            await asyncio.gather(*(vote(b) for b in bearers for _ in range(3)))
+            ticket = (await c.get("/api/v1/tickets/PA-1", headers=bearers[0])).json()
+            assert ticket["vote_count"] == 8
+            voters = (await c.get("/api/v1/tickets/PA-1/voters", headers=bearers[0])).json()
+            assert len(voters["items"]) == 8
+    finally:
+        await db_session.dispose_engine()
+        get_settings.cache_clear()

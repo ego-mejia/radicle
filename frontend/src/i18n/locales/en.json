@@ -99,7 +99,8 @@
       "key": "Key",
       "links": "Links",
       "checklist": "Checklist",
-      "collaborator": "Collaborator"
+      "collaborator": "Collaborator",
+      "votes": "Votes"
     },
     "unassigned": "Unassigned",
     "noArea": "No area",
@@ -149,7 +150,8 @@
     "warningBlocked": "Moved while blocked by {{keys}}.",
     "tabs": {
       "comments": "Comments",
-      "history": "History"
+      "history": "History",
+      "time": "Time"
     },
     "notFound": "This ticket does not exist or you cannot see it.",
     "editTitle": "Edit title",
@@ -160,7 +162,8 @@
     "force": "Force",
     "moveComment": "Comment (optional)",
     "moveCommentRequired": "Comment (required for this move)",
-    "moveTo": "Move to {{status}}"
+    "moveTo": "Move to {{status}}",
+    "moreOptions": "More options to move to {{status}}"
   },
   "create": {
     "title": "Create ticket",
@@ -571,5 +574,31 @@
       "medium": "Medium",
       "small": "Small"
     }
+  },
+  "votes": {
+    "add": "Vote",
+    "remove": "Remove my vote",
+    "none": "No votes yet",
+    "count_one": "{{count}} vote",
+    "count_other": "{{count}} votes"
+  },
+  "time": {
+    "title": "Time tracking",
+    "spent": "Spent",
+    "original": "Original estimate",
+    "remaining": "Remaining (h)",
+    "auto": "auto",
+    "backToAuto": "back to auto",
+    "over": "More time spent than the original estimate.",
+    "log": "Log time",
+    "logTitle": "Log time on {{key}}",
+    "logInMove": "Log time (e.g. 1h 30m)",
+    "duration": "Time",
+    "durationHint": "1h 30m, 1.5h or minutes",
+    "durationInvalid": "Write it like 1h 30m, 1.5h or 90",
+    "started": "Started",
+    "description": "What was done",
+    "empty": "No time logged yet.",
+    "deleteLog": "Delete worklog"
   }
 }

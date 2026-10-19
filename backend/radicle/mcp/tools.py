@@ -107,6 +107,7 @@ async def _ticket(ctx: Context, key: str) -> dict[str, Any]:
 
 def register(server: MCPServer) -> None:
     register_attachments(server)
+    register_time(server)
 
     @server.tool()
     async def whoami(ctx: Context) -> dict[str, Any]:
@@ -336,6 +337,9 @@ def register(server: MCPServer) -> None:
                 '{"cf.environment": "prod"}. See get_ticket_schema.'
             ),
         ] = None,
+        log_minutes: Annotated[
+            int | None, Field(ge=1, le=1440, description="Log time worked in the same move")
+        ] = None,
     ) -> dict[str, Any]:
         """Move a ticket through its workflow. The result includes `warnings`, e.g. when
         the ticket is still blocked by unfinished tickets. If the transition has rules
@@ -345,6 +349,8 @@ def register(server: MCPServer) -> None:
             body["comment"] = comment
         if fields:
             body["fields"] = fields
+        if log_minutes:
+            body["log_minutes"] = log_minutes
         async with api(ctx) as client:
             ticket = await client.call("POST", f"/tickets/{key}/transitions", json=body)
         out = compact(ticket)
@@ -560,6 +566,64 @@ def register_attachments(server: MCPServer) -> None:
             "mime_type": mime,
             "truncated": truncated,
             "content": body[:READ_LIMIT].decode("utf-8", errors="replace"),
+        }
+
+
+def worklog_brief(w: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": w["id"],
+        "user": w["user"]["handle"],
+        "minutes": w["minutes"],
+        "started_at": w["started_at"],
+        "description": w["description"],
+    }
+
+
+def register_time(server: MCPServer) -> None:
+    @server.tool()
+    async def log_work(
+        ctx: Context,
+        key: Key,
+        minutes: Annotated[int, Field(ge=1, le=1440, description="Time worked, in minutes")],
+        description: str | None = None,
+        started_at: Annotated[
+            str | None, Field(description="ISO datetime when the work started; default now")
+        ] = None,
+    ) -> dict[str, Any]:
+        """Log time spent on a ticket. Returns the ticket's spent and remaining hours."""
+        async with api(ctx) as client:
+            worklog = await client.call(
+                "POST",
+                f"/tickets/{key}/worklogs",
+                json={
+                    k: v
+                    for k, v in {
+                        "minutes": minutes,
+                        "description": description,
+                        "started_at": started_at,
+                    }.items()
+                    if v is not None
+                },
+            )
+            ticket = await client.call("GET", f"/tickets/{key}")
+        return {
+            "worklog": worklog_brief(worklog),
+            "spent_hours": ticket["spent_hours"],
+            "remaining_hours": ticket["remaining_hours"],
+            "estimate_hours": ticket["estimate_hours"],
+            "original_estimate_hours": ticket["original_estimate_hours"],
+        }
+
+    @server.tool()
+    async def list_worklogs(ctx: Context, key: Key) -> dict[str, Any]:
+        """Time logged on a ticket, newest first, with totals."""
+        async with api(ctx) as client:
+            page = await client.call("GET", f"/tickets/{key}/worklogs")
+            ticket = await client.call("GET", f"/tickets/{key}")
+        return {
+            "spent_hours": ticket["spent_hours"],
+            "remaining_hours": ticket["remaining_hours"],
+            "items": [worklog_brief(w) for w in page["items"]],
         }
 
 
