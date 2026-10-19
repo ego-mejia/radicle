@@ -443,6 +443,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/search/fields": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search Fields
+         * @description RQL fields and operators; with `project`, also its statuses, areas, people and tags.
+         */
+        get: operations["search_fields_api_v1_search_fields_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/setup": {
         parameters: {
             query?: never;
@@ -472,6 +492,26 @@ export interface paths {
         };
         /** Setup Status */
         get: operations["setup_status_api_v1_setup_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search Tickets
+         * @description Search tickets you can see with RQL. Errors point at the character position.
+         */
+        get: operations["search_tickets_api_v1_tickets_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -915,6 +955,23 @@ export interface components {
             /** Old Value */
             old_value: unknown;
         };
+        /** FieldInfo */
+        FieldInfo: {
+            /** Description */
+            description: string;
+            /** Name */
+            name: string;
+            /** Operators */
+            operators: string[];
+            /** Supports Empty */
+            supports_empty: boolean;
+            /** Supports In */
+            supports_in: boolean;
+            /** Type */
+            type: string;
+            /** Values */
+            values?: string[];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -1208,6 +1265,24 @@ export interface components {
          * @enum {string}
          */
         ProjectRole: "admin" | "member" | "viewer";
+        /** ProjectValues */
+        ProjectValues: {
+            /** Areas */
+            areas: string[];
+            /** Handles */
+            handles: string[];
+            /** Milestones */
+            milestones: string[];
+            /** Project */
+            project: string;
+            /** Statuses */
+            statuses: string[];
+            /**
+             * Tags
+             * @description Most used tags first
+             */
+            tags: string[];
+        };
         /** ReactionOut */
         ReactionOut: {
             /** Count */
@@ -1222,6 +1297,38 @@ export interface components {
          * @enum {string}
          */
         Resolution: "done" | "wont_do" | "duplicate" | "cannot_reproduce";
+        /** SearchFields */
+        SearchFields: {
+            /** Fields */
+            fields: components["schemas"]["FieldInfo"][];
+            /** Functions */
+            functions: string[];
+            /** Keywords */
+            keywords: string[];
+            /** Sort Fields */
+            sort_fields: string[];
+            values?: components["schemas"]["ProjectValues"] | null;
+        };
+        /** SearchPage */
+        SearchPage: {
+            /** Items */
+            items: components["schemas"]["TicketSummary"][];
+            /** Next Cursor */
+            next_cursor?: string | null;
+            /** Total */
+            total: number;
+            /** Warnings */
+            warnings?: components["schemas"]["SearchWarningOut"][];
+        };
+        /** SearchWarningOut */
+        SearchWarningOut: {
+            /** Code */
+            code: string;
+            /** Message */
+            message: string;
+            /** Position */
+            position: number;
+        };
         /** SetupIn */
         SetupIn: {
             /** Display Name */
@@ -2670,6 +2777,37 @@ export interface operations {
             };
         };
     };
+    search_fields_api_v1_search_fields_get: {
+        parameters: {
+            query?: {
+                project?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchFields"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     setup_api_v1_setup_post: {
         parameters: {
             query?: never;
@@ -2719,6 +2857,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SetupStatus"];
+                };
+            };
+        };
+    };
+    search_tickets_api_v1_tickets_get: {
+        parameters: {
+            query?: {
+                /** @description RQL, e.g. `project = PA AND category != done ORDER BY priority DESC` */
+                q?: string;
+                limit?: number;
+                cursor?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

@@ -7,7 +7,17 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from radicle import __version__
-from radicle.api import auth, discussion, me, planning, projects, system, tickets, users
+from radicle.api import (
+    auth,
+    discussion,
+    me,
+    planning,
+    projects,
+    search,
+    system,
+    tickets,
+    users,
+)
 from radicle.core.config import get_settings
 from radicle.core.errors import NotFound, install_error_handlers
 from radicle.db.session import dispose_engine
@@ -35,7 +45,8 @@ def create_app() -> FastAPI:
     install_error_handlers(app)
 
     api = APIRouter(prefix=API_PREFIX)
-    for module in (system, auth, me, users, projects, planning, tickets, discussion):
+    # search goes before tickets so GET /tickets is not shadowed by /tickets/{key}.
+    for module in (system, auth, me, users, projects, planning, search, tickets, discussion):
         api.include_router(module.router)
     app.include_router(api)
     # Unversioned alias for container health checks and load balancers.

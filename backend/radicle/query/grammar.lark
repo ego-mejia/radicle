@@ -1,0 +1,44 @@
+// RQL: Radicle Query Language. AND binds tighter than OR. Keywords are case-insensitive.
+
+start: expr? order_by?
+
+?expr: or_expr
+?or_expr: and_expr (OR and_expr)*
+?and_expr: not_expr (AND not_expr)*
+?not_expr: NOT not_expr                     -> not_
+         | atom
+?atom: "(" expr ")"
+     | clause
+     | TAG                                   -> tag_short
+
+clause: WORD OP value                        -> compare
+      | WORD IN "(" values ")"               -> in_
+      | WORD NOT IN "(" values ")"           -> not_in
+      | WORD IS EMPTY                        -> is_empty
+      | WORD IS NOT EMPTY                    -> is_not_empty
+
+values: value ("," value)*
+value: STRING | WORD | RELDATE | FUNC
+
+order_by: ORDER BY sort ("," sort)*
+sort: WORD DIRECTION?
+
+AND.3: /and(?![\w-])/i
+OR.3: /or(?![\w-])/i
+NOT.3: /not(?![\w-])/i
+IN.3: /in(?![\w-])/i
+IS.3: /is(?![\w-])/i
+EMPTY.3: /empty(?![\w-])/i
+ORDER.3: /order(?![\w-])/i
+BY.3: /by(?![\w-])/i
+DIRECTION.3: /(asc|desc)(?![\w-])/i
+
+OP: "!=" | ">=" | "<=" | "!~" | "=" | ">" | "<" | "~"
+TAG: /#[A-Za-z0-9][A-Za-z0-9_-]*/
+RELDATE.2: /[+-]\d+[mhdw](?![\w-])/
+FUNC.2: /[A-Za-z]+\(\)/
+STRING: /"(?:[^"\\]|\\.)*"/
+WORD: /[A-Za-z0-9_@][A-Za-z0-9_.:@-]*/
+
+%import common.WS
+%ignore WS

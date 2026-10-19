@@ -350,6 +350,54 @@
         "title": "EventOut",
         "type": "object"
       },
+      "FieldInfo": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "operators": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Operators",
+            "type": "array"
+          },
+          "supports_empty": {
+            "title": "Supports Empty",
+            "type": "boolean"
+          },
+          "supports_in": {
+            "title": "Supports In",
+            "type": "boolean"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Values",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "operators",
+          "supports_in",
+          "supports_empty",
+          "description"
+        ],
+        "title": "FieldInfo",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1216,6 +1264,60 @@
         "title": "ProjectRole",
         "type": "string"
       },
+      "ProjectValues": {
+        "properties": {
+          "areas": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Areas",
+            "type": "array"
+          },
+          "handles": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Handles",
+            "type": "array"
+          },
+          "milestones": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Milestones",
+            "type": "array"
+          },
+          "project": {
+            "title": "Project",
+            "type": "string"
+          },
+          "statuses": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Statuses",
+            "type": "array"
+          },
+          "tags": {
+            "description": "Most used tags first",
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project",
+          "statuses",
+          "areas",
+          "milestones",
+          "handles",
+          "tags"
+        ],
+        "title": "ProjectValues",
+        "type": "object"
+      },
       "ReactionOut": {
         "properties": {
           "count": {
@@ -1251,6 +1353,118 @@
         ],
         "title": "Resolution",
         "type": "string"
+      },
+      "SearchFields": {
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/FieldInfo"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "functions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Functions",
+            "type": "array"
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Keywords",
+            "type": "array"
+          },
+          "sort_fields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sort Fields",
+            "type": "array"
+          },
+          "values": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectValues"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "fields",
+          "sort_fields",
+          "functions",
+          "keywords"
+        ],
+        "title": "SearchFields",
+        "type": "object"
+      },
+      "SearchPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TicketSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          },
+          "warnings": {
+            "items": {
+              "$ref": "#/components/schemas/SearchWarningOut"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "SearchPage",
+        "type": "object"
+      },
+      "SearchWarningOut": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "position"
+        ],
+        "title": "SearchWarningOut",
+        "type": "object"
       },
       "SetupIn": {
         "additionalProperties": false,
@@ -4028,6 +4242,56 @@
         ]
       }
     },
+    "/api/v1/search/fields": {
+      "get": {
+        "description": "RQL fields and operators; with `project`, also its statuses, areas, people and tags.",
+        "operationId": "search_fields_api_v1_search_fields_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "project",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Project"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchFields"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Fields",
+        "tags": [
+          "search"
+        ]
+      }
+    },
     "/api/v1/setup": {
       "post": {
         "description": "Create the first instance admin and sign them in. Only works once.",
@@ -4088,6 +4352,81 @@
         "summary": "Setup Status",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/api/v1/tickets": {
+      "get": {
+        "description": "Search tickets you can see with RQL. Errors point at the character position.",
+        "operationId": "search_tickets_api_v1_tickets_get",
+        "parameters": [
+          {
+            "description": "RQL, e.g. `project = PA AND category != done ORDER BY priority DESC`",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "RQL, e.g. `project = PA AND category != done ORDER BY priority DESC`",
+              "maxLength": 2000,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search Tickets",
+        "tags": [
+          "search"
         ]
       }
     },

@@ -14,6 +14,7 @@ dependencies = [
     "asyncpg>=0.30",
     "alembic>=1.14",
     "argon2-cffi>=23.1",
+    "lark>=1.2",
 ]
 
 [dependency-groups]
@@ -58,6 +59,7 @@ strict = true
 
 [tool.pytest.ini_options]
 filterwarnings = ["error::DeprecationWarning:radicle.*", "error::sqlalchemy.exc.SADeprecationWarning"]
+markers = ["slow: performance checks with 10k tickets"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
 asyncio_default_test_loop_scope = "session"

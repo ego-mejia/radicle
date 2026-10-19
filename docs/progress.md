@@ -11,7 +11,7 @@ Estado de cada entregable. Se actualiza al cerrar cada uno.
 | 1.3 | Tickets e historial | Listo |
 | 1.4 | Workflows y transiciones | Listo |
 | 1.5 | Links, comentarios y reacciones | Listo |
-| 1.6 | RQL y búsqueda | Pendiente |
+| 1.6 | RQL y búsqueda | Listo |
 | 1.7 | Servidor MCP | Pendiente |
 | 1.8 | UI web | Pendiente |
 
@@ -126,3 +126,21 @@ curl -H "Authorization: Bearer rdc_..." localhost:8000/api/v1/me
 
 - `tests/integration/test_links.py::test_acceptance_blocked_link_both_sides_and_warning`: PA-5 bloqueado por PA-4, etiqueta en ambos, aviso al mover PA-5.
 - `tests/integration/test_comments.py::test_acceptance_comment_lifecycle`: comentar, reaccionar, editar, borrar y verlo en el historial.
+
+### 1.6 RQL y búsqueda
+
+**Qué se hizo**
+
+- Gramática Lark (`query/grammar.lark`), árbol en `query/ast.py`, parser con errores que dicen posición, qué se encontró y qué se esperaba.
+- Catálogo de 23 campos con operadores, IN y EMPTY (`query/fields.py`); sugerencias por distancia de edición ("Did you mean 'priority'?").
+- Compilador a SQLAlchemy sin acceso a base de datos (`query/compiler.py`), probado comparando SQL generado.
+- `GET /tickets?q=&limit=&cursor=` con filtro de permisos siempre aplicado (solo proyectos donde eres miembro, nunca tickets borrados), `total` y `warnings`.
+- `GET /search/fields?project=PA`: campos, operadores, funciones, palabras clave y valores del proyecto (estados, áreas, milestones, handles, tags más usados).
+- `scripts/seed.py --tickets 10000` crea un proyecto realista para medir y para demos.
+- Decisión: [0005](decisions/0005-rql-cursor-y-semantica.md).
+
+**Cómo verificarlo**
+
+- `tests/integration/test_search.py::test_spec_examples`: los 7 ejemplos del spec regresan lo esperado.
+- `tests/unit/test_rql_parser.py` (más de 60 casos) y `tests/unit/test_rql_compiler.py`: errores con posición.
+- `tests/integration/test_performance.py` con 10,000 tickets: búsqueda p95 de 53 ms y board de 600 tickets en 122 ms (límites 300 ms y 1 s).
