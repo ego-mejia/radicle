@@ -310,6 +310,247 @@
         "title": "CommentOut",
         "type": "object"
       },
+      "CustomFieldCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "applies_to_areas": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Area names; null = all",
+            "title": "Applies To Areas"
+          },
+          "applies_to_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/TicketType"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null = all",
+            "title": "Applies To Types"
+          },
+          "field_type": {
+            "$ref": "#/components/schemas/CustomFieldType"
+          },
+          "key": {
+            "description": "2-40 chars: lowercase letter, then letters, digits or _",
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FieldOption"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only for select",
+            "title": "Options"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "field_type"
+        ],
+        "title": "CustomFieldCreate",
+        "type": "object"
+      },
+      "CustomFieldOut": {
+        "properties": {
+          "applies_to_areas": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null = every area",
+            "title": "Applies To Areas"
+          },
+          "applies_to_types": {
+            "items": {
+              "$ref": "#/components/schemas/TicketType"
+            },
+            "title": "Applies To Types",
+            "type": "array"
+          },
+          "archived": {
+            "title": "Archived",
+            "type": "boolean"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "field_type": {
+            "$ref": "#/components/schemas/CustomFieldType"
+          },
+          "from_template": {
+            "title": "From Template",
+            "type": "boolean"
+          },
+          "key": {
+            "description": "Use it as cf.<key> in RQL and in custom_fields",
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/FieldOptionOut"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "field_type",
+          "options",
+          "applies_to_types",
+          "applies_to_areas",
+          "position",
+          "archived",
+          "from_template",
+          "created_at"
+        ],
+        "title": "CustomFieldOut",
+        "type": "object"
+      },
+      "CustomFieldPatch": {
+        "additionalProperties": false,
+        "description": "Key and type never change. Changing options keeps the values tickets already have.",
+        "properties": {
+          "applies_to_areas": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null = every area",
+            "title": "Applies To Areas"
+          },
+          "applies_to_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/TicketType"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applies To Types"
+          },
+          "archived": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FieldOption"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          }
+        },
+        "title": "CustomFieldPatch",
+        "type": "object"
+      },
+      "CustomFieldType": {
+        "enum": [
+          "text",
+          "number",
+          "date",
+          "select",
+          "checkbox",
+          "user",
+          "url"
+        ],
+        "title": "CustomFieldType",
+        "type": "string"
+      },
       "EventOut": {
         "properties": {
           "actor": {
@@ -406,6 +647,73 @@
         "title": "FieldInfo",
         "type": "object"
       },
+      "FieldOption": {
+        "additionalProperties": false,
+        "properties": {
+          "color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Hex like #4D7C0F",
+            "title": "Color"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "title": "FieldOption",
+        "type": "object"
+      },
+      "FieldOptionOut": {
+        "properties": {
+          "color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Color"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "label",
+          "color"
+        ],
+        "title": "FieldOptionOut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -436,6 +744,81 @@
         ],
         "title": "Health",
         "type": "object"
+      },
+      "JobOut": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "progress": {
+            "title": "Progress",
+            "type": "integer"
+          },
+          "result": {
+            "title": "Result"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "progress",
+          "total",
+          "result",
+          "error",
+          "created_at",
+          "finished_at"
+        ],
+        "title": "JobOut",
+        "type": "object"
+      },
+      "JobStatus": {
+        "enum": [
+          "pending",
+          "running",
+          "succeeded",
+          "failed"
+        ],
+        "title": "JobStatus",
+        "type": "string"
       },
       "LinkCreate": {
         "additionalProperties": false,
@@ -884,6 +1267,34 @@
         "title": "Page[CommentOut]",
         "type": "object"
       },
+      "Page_CustomFieldOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CustomFieldOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[CustomFieldOut]",
+        "type": "object"
+      },
       "Page_EventOut_": {
         "properties": {
           "items": {
@@ -1133,6 +1544,13 @@
             "title": "Created At",
             "type": "string"
           },
+          "custom_fields": {
+            "items": {
+              "$ref": "#/components/schemas/CustomFieldOut"
+            },
+            "title": "Custom Fields",
+            "type": "array"
+          },
           "description_md": {
             "title": "Description Md",
             "type": "string"
@@ -1192,7 +1610,8 @@
           "areas",
           "milestones",
           "workflows",
-          "members"
+          "members",
+          "custom_fields"
         ],
         "title": "ProjectDetail",
         "type": "object"
@@ -1293,6 +1712,14 @@
             "title": "Areas",
             "type": "array"
           },
+          "custom_fields": {
+            "description": "cf.<key> fields of the project",
+            "items": {
+              "$ref": "#/components/schemas/FieldInfo"
+            },
+            "title": "Custom Fields",
+            "type": "array"
+          },
           "handles": {
             "items": {
               "type": "string"
@@ -1333,7 +1760,8 @@
           "areas",
           "milestones",
           "handles",
-          "tags"
+          "tags",
+          "custom_fields"
         ],
         "title": "ProjectValues",
         "type": "object"
@@ -1614,6 +2042,12 @@
             "title": "Collaborators",
             "type": "array"
           },
+          "custom_fields": {
+            "additionalProperties": true,
+            "description": "By field key, e.g. {\"environment\": \"prod\"}",
+            "title": "Custom Fields",
+            "type": "object"
+          },
           "description_md": {
             "default": "",
             "title": "Description Md",
@@ -1743,6 +2177,12 @@
           "created_at": {
             "title": "Created At",
             "type": "string"
+          },
+          "custom_fields": {
+            "additionalProperties": true,
+            "description": "Values by field key; user fields as handles. Only fields that apply.",
+            "title": "Custom Fields",
+            "type": "object"
           },
           "deleted": {
             "default": false,
@@ -1894,6 +2334,7 @@
           "due_date",
           "estimate_hours",
           "tags",
+          "custom_fields",
           "checklist",
           "links",
           "children_count",
@@ -1935,6 +2376,19 @@
               }
             ],
             "title": "Assignee"
+          },
+          "custom_fields": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only the keys you send change; null clears a value",
+            "title": "Custom Fields"
           },
           "description_md": {
             "anyOf": [
@@ -2105,6 +2559,11 @@
             "title": "Checklist Total",
             "type": "integer"
           },
+          "custom_fields": {
+            "additionalProperties": true,
+            "title": "Custom Fields",
+            "type": "object"
+          },
           "due_date": {
             "anyOf": [
               {
@@ -2193,6 +2652,7 @@
           "area",
           "milestone",
           "tags",
+          "custom_fields",
           "blocked",
           "due_date",
           "estimate_hours",
@@ -3138,6 +3598,50 @@
         ]
       }
     },
+    "/api/v1/jobs/{job_id}": {
+      "get": {
+        "description": "Progress and result of a background job you started.",
+        "operationId": "get_job_api_v1_jobs__job_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "job_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Job Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Job",
+        "tags": [
+          "jobs"
+        ]
+      }
+    },
     "/api/v1/links/{link_id}": {
       "delete": {
         "operationId": "delete_link_api_v1_links__link_id__delete",
@@ -3756,6 +4260,214 @@
         "summary": "Patch Area",
         "tags": [
           "areas and milestones"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/fields": {
+      "get": {
+        "description": "Custom fields of the project, in display order.",
+        "operationId": "list_fields_api_v1_projects__key__fields_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Archived",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_CustomFieldOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Fields",
+        "tags": [
+          "custom fields"
+        ]
+      },
+      "post": {
+        "description": "Types: text, number, date, select, checkbox, user, url.",
+        "operationId": "create_field_api_v1_projects__key__fields_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomFieldOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Field",
+        "tags": [
+          "custom fields"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/fields/{field_key}": {
+      "delete": {
+        "description": "Archives the field: tickets keep their values but they stop showing.",
+        "operationId": "archive_field_api_v1_projects__key__fields__field_key__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "field_key",
+            "required": true,
+            "schema": {
+              "title": "Field Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Archive Field",
+        "tags": [
+          "custom fields"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_field_api_v1_projects__key__fields__field_key__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "field_key",
+            "required": true,
+            "schema": {
+              "title": "Field Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomFieldPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomFieldOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Field",
+        "tags": [
+          "custom fields"
         ]
       }
     },

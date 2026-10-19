@@ -1,6 +1,10 @@
 #!/bin/sh
 # Apply pending migrations, then start the app. Retries while Postgres is still booting.
+# The worker sets RADICLE_MIGRATE=false: only the app container migrates.
 set -e
+if [ "${RADICLE_MIGRATE:-true}" = "false" ]; then
+  exec "$@"
+fi
 attempt=0
 until alembic upgrade head; do
   attempt=$((attempt + 1))

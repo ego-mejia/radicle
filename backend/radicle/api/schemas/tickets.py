@@ -64,6 +64,9 @@ class TicketOut(Output):
     due_date: date | None
     estimate_hours: float | None
     tags: list[str]
+    custom_fields: dict[str, Any] = Field(
+        description="Values by field key; user fields as handles. Only fields that apply."
+    )
     checklist: list[ChecklistItemOut]
     links: list[LinkOut]
     children_count: int
@@ -91,6 +94,9 @@ class TicketCreate(Input):
     due_date: date | None = None
     estimate_hours: float | None = None
     tags: list[str] = Field(default_factory=list)
+    custom_fields: dict[str, Any] = Field(
+        default_factory=dict, description='By field key, e.g. {"environment": "prod"}'
+    )
 
 
 class TicketPatch(Input):
@@ -106,6 +112,9 @@ class TicketPatch(Input):
     due_date: date | None = None
     estimate_hours: float | None = None
     tags: list[str] | None = None
+    custom_fields: dict[str, Any] | None = Field(
+        default=None, description="Only the keys you send change; null clears a value"
+    )
     expected_version: int | None = Field(
         default=None, description="Required unless sent as the If-Match header"
     )
@@ -138,6 +147,7 @@ class TicketSummary(Output):
     area: str | None
     milestone: str | None
     tags: list[str]
+    custom_fields: dict[str, Any]
     blocked: bool
     due_date: date | None
     estimate_hours: float | None

@@ -13,8 +13,8 @@ from radicle.api.schemas.search import (
 )
 from radicle.api.ticket_views import summaries_out
 from radicle.db.models import Area, Milestone, ProjectMember, Status, Ticket, User
-from radicle.query.fields import FIELDS, FUNCTIONS, KEYWORDS, SORT_FIELDS
-from radicle.services import search
+from radicle.query.fields import FIELDS, FUNCTIONS, KEYWORDS, SORT_FIELDS, custom_field
+from radicle.services import custom_fields, search
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["search"])
@@ -103,6 +103,20 @@ async def search_fields(
             .order_by(func.count().desc(), tag_rows.c.tag)
             .limit(30)
         )
+        custom = []
+        for d in await custom_fields.list_fields(db, pid):
+            f = custom_field(d.key, d.field_type.value)
+            custom.append(
+                FieldInfo(
+                    name=f.name,
+                    type=d.field_type.value,
+                    operators=list(f.ops),
+                    supports_in=f.in_list,
+                    supports_empty=f.empty,
+                    description=d.name,
+                    values=[str(o["value"]) for o in d.options] or list(f.values),
+                )
+            )
         values = ProjectValues(
             project=access.project.key,
             statuses=list(statuses),
@@ -110,6 +124,7 @@ async def search_fields(
             milestones=list(milestones),
             handles=list(handles),
             tags=list(tags),
+            custom_fields=custom,
         )
     return SearchFields(
         fields=fields,

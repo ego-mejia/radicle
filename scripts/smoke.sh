@@ -72,4 +72,12 @@ echo "==> MCP rejects a missing token"
 [ "$(curl -s -o /dev/null -w '%{http_code}' -X POST "$BASE_URL/mcp" \
   -H 'Content-Type: application/json' -d '{}')" = "401" ] || fail "MCP without token"
 
+echo "==> worker is running"
+for _ in $(seq 1 30); do
+  if docker compose logs worker 2>/dev/null | grep -qi "starting worker"; then break; fi
+  sleep 2
+done
+[ "$(docker compose ps --status running --services | grep -c '^worker$')" = "1" ] \
+  || fail "worker not running"
+
 echo "SMOKE OK"

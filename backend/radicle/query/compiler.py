@@ -14,7 +14,9 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import (
     ColumnElement,
+    Numeric,
     Select,
+    Text,
     and_,
     case,
     exists,
@@ -59,6 +61,8 @@ class Context:
     user_id: uuid.UUID
     now: datetime
     tz: ZoneInfo = field(default_factory=lambda: ZoneInfo("UTC"))
+    # cf.<key> -> custom field type of the fields the user can query.
+    custom_fields: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -95,19 +99,24 @@ class _Compiler:
         if isinstance(node, ast.Not):
             return not_(self.node(node.item))
         if isinstance(node, ast.IsEmpty):
-            f = lookup(node.field, node.field_pos)
+            f = self.lookup(node.field, node.field_pos)
             check_empty(f, node.field_pos)
-            empty: ColumnElement[bool] = _column(f).is_(None)
+            empty: ColumnElement[bool] = (
+                not_(Ticket.custom_fields.has_key(_cf_key(f))) if f.custom else _column(f).is_(None)
+            )
             return not_(empty) if node.negated else empty
         if isinstance(node, ast.InList):
-            f = lookup(node.field, node.field_pos)
+            f = self.lookup(node.field, node.field_pos)
             check_in(f, node.field_pos)
             matches = [self.equals(f, v) for v in node.values]
             any_match = or_(*matches)
             return not_(any_match) if node.negated else any_match
-        f = lookup(node.field, node.field_pos)
+        f = self.lookup(node.field, node.field_pos)
         check_op(f, node.op, node.op_pos)
         return self.compare(f, node.op, node.value)
+
+    def lookup(self, name: str, position: int) -> Field:
+        return lookup(name, position, self.ctx.custom_fields)
 
     def compare(self, f: Field, op: str, value: ast.Value) -> ColumnElement[bool]:
         if op == "=":
@@ -123,6 +132,8 @@ class _Compiler:
 
     def equals(self, f: Field, v: ast.Value) -> ColumnElement[bool]:
         text = v.text.strip()
+        if f.custom:
+            return self.custom_equals(f, v)
         if f.name == "category":
             return _nn(Status.category == StatusCategory(self.enum_value(f, v)))
         if f.kind is Kind.enum:
@@ -211,12 +222,63 @@ class _Compiler:
             .where(Project.key == project_key, other.number == number, other.deleted_at.is_(None))
         )
 
+    # --- custom fields ---------------------------------------------------------------------
+
+    def custom_equals(self, f: Field, v: ast.Value) -> ColumnElement[bool]:
+        key = _cf_key(f)
+        stored = Ticket.custom_fields[key]
+        text = v.text.strip()
+        if f.custom == "checkbox":
+            flag = text.lower()
+            if flag not in ("true", "false"):
+                raise RQLError(f"'{f.name}' takes true or false (at {v.pos}).", position=v.pos)
+            checked = _nn(Ticket.custom_fields.contains({key: True}))
+            return checked if flag == "true" else not_(checked)
+        if f.custom == "user":
+            if v.kind == "func":
+                if v.raw.lower() != "currentuser()":
+                    raise RQLError(
+                        f"'{f.name}' only accepts handles or currentUser() (at {v.pos}).",
+                        position=v.pos,
+                    )
+                return _nn(stored.astext == str(self.ctx.user_id))
+            handle = text.lstrip("@").lower()
+            self.references.append(("handle", handle, v.pos))
+            ids = select(User.id.cast(Text)).where(User.handle == handle)
+            return _nn(stored.astext.in_(ids))
+        if f.custom in ("number", "date"):
+            return self.custom_ordered(f, "=", v)
+        return _nn(func.lower(stored.astext) == text.lower())
+
+    def custom_ordered(self, f: Field, op: str, v: ast.Value) -> ColumnElement[bool]:
+        key = _cf_key(f)
+        stored = Ticket.custom_fields[key]
+        if f.custom == "number":
+            try:
+                number = Decimal(v.text)
+            except InvalidOperation:
+                raise RQLError(
+                    f"'{v.text}' is not a number (at {v.pos}).", position=v.pos
+                ) from None
+            numeric = case(
+                (func.jsonb_typeof(stored) == "number", stored.astext.cast(Numeric)),
+                else_=None,
+            )
+            return _nn(_apply(numeric, op, number))
+        if f.custom != "date":
+            raise RQLError(f"'{f.name}' cannot be compared with {op} (at {v.pos}).", position=v.pos)
+        day = self.as_date(v).isoformat()
+        return _nn(_apply(stored.astext, op, day))
+
     # --- text ------------------------------------------------------------------------------
 
     def matches(self, f: Field, v: ast.Value) -> ColumnElement[bool]:
         text = v.text.strip()
         if not text:
             raise RQLError(f"Empty search text at {v.pos}.", position=v.pos)
+        if f.custom:
+            value = Ticket.custom_fields[_cf_key(f)].astext
+            return _nn(value.ilike(f"%{_escape_like(text)}%"))
         if f.kind is Kind.fulltext:
             query = func.websearch_to_tsquery(_ENGLISH, text).op("||")(
                 func.websearch_to_tsquery(_SPANISH, text)
@@ -227,6 +289,8 @@ class _Compiler:
     # --- ordered values --------------------------------------------------------------------
 
     def ordered(self, f: Field, op: str, v: ast.Value) -> ColumnElement[bool]:
+        if f.custom:
+            return self.custom_ordered(f, op, v)
         if f.kind is Kind.ordinal:
             wanted = PRIORITY_ORDER[Priority(self.enum_value(f, v))]
             levels = [p for p, rank in PRIORITY_ORDER.items() if _cmp(rank, op, wanted)]
@@ -316,6 +380,10 @@ class _Compiler:
             "startOfWeek() or startOfMonth().",
             position=v.pos,
         )
+
+
+def _cf_key(f: Field) -> str:
+    return f.name.split(".", 1)[1]
 
 
 def _column(f: Field) -> Any:

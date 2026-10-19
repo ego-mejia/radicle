@@ -73,6 +73,12 @@ class Ticket(Base):
         ),
         Index("ix_tickets_project_status", "project_id", "status_id"),
         Index("ix_tickets_project_rank", "project_id", "rank"),
+        Index(
+            "ix_tickets_custom_fields",
+            "custom_fields",
+            postgresql_using="gin",
+            postgresql_ops={"custom_fields": "jsonb_path_ops"},
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -95,6 +101,8 @@ class Ticket(Base):
     estimate_hours: Mapped[Decimal | None] = mapped_column(Numeric(7, 2))
     tags: Mapped[list[str]] = mapped_column(ARRAY(Text), default=list, server_default="{}")
     rank: Mapped[str] = mapped_column(Text)
+    # {"environment": "prod", "requires_signature": true}; user fields hold the user id.
+    custom_fields: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, server_default="{}")
     version: Mapped[int] = mapped_column(Integer, default=1, server_default="1")
     search_vector: Mapped[Any] = mapped_column(
         TSVECTOR, Computed(SEARCH_VECTOR_SQL, persisted=True), deferred=True
@@ -162,6 +170,7 @@ class EventType(enum.StrEnum):
     comment_deleted = "comment_deleted"
     deleted = "deleted"
     restored = "restored"
+    custom_field_changed = "custom_field_changed"
 
 
 class TicketEvent(Base):

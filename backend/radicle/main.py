@@ -10,6 +10,8 @@ from radicle import __version__
 from radicle.api import (
     auth,
     discussion,
+    fields,
+    jobs,
     me,
     planning,
     projects,
@@ -48,7 +50,19 @@ def create_app() -> FastAPI:
 
     api = APIRouter(prefix=API_PREFIX)
     # search goes before tickets so GET /tickets is not shadowed by /tickets/{key}.
-    for module in (system, auth, me, users, projects, planning, search, tickets, discussion):
+    for module in (
+        system,
+        auth,
+        me,
+        users,
+        projects,
+        planning,
+        fields,
+        search,
+        tickets,
+        discussion,
+        jobs,
+    ):
         api.include_router(module.router)
     app.include_router(api)
     mcp_server.mount(app)

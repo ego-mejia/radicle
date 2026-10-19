@@ -24,7 +24,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
-from radicle.services import history, markdown, rank
+from radicle.services import custom_fields, history, markdown, rank
 from radicle.services import ticket_fields as fields
 from radicle.services.access import ProjectAccess, project_access
 from radicle.services.workflows import load_workflows
@@ -40,6 +40,7 @@ UPDATABLE = (
     "due_date",
     "estimate_hours",
     "tags",
+    "custom_fields",
 )
 
 
@@ -69,6 +70,7 @@ class NewTicket:
     due_date: date | None = None
     estimate_hours: float | Decimal | None = None
     tags: list[str] = field(default_factory=list)
+    custom_fields: dict[str, Any] = field(default_factory=dict)
 
 
 def bump(ticket: Ticket) -> None:
@@ -134,6 +136,9 @@ async def create_ticket(db: AsyncSession, access: ProjectAccess, data: NewTicket
     ]
     tags = fields.normalize_tags(data.tags)
     estimate = fields.normalize_estimate(data.estimate_hours)
+    custom_values, custom_diffs = await custom_fields.apply_values(
+        db, project, data.type, area.id if area else None, {}, data.custom_fields or {}
+    )
     workflows = await load_workflows(db, project.id)
 
     # Locks the project row: numbers are gapless and the rank read below sees prior inserts.
@@ -163,6 +168,7 @@ async def create_ticket(db: AsyncSession, access: ProjectAccess, data: NewTicket
         due_date=data.due_date,
         estimate_hours=estimate,
         tags=tags,
+        custom_fields=custom_values,
         rank=rank.after(last_rank),
     )
     db.add(ticket)
@@ -176,6 +182,10 @@ async def create_ticket(db: AsyncSession, access: ProjectAccess, data: NewTicket
         EventType.created,
         new={"type": data.type.value, "title": title, "status": workflows[data.type].initial.name},
     )
+    for key, _, new in custom_diffs:
+        history.record(
+            db, ticket, access.user, EventType.custom_field_changed, field=f"cf.{key}", new=new
+        )
     await sync_mentions(db, ticket.id, None, description)
     await db.flush()
     await db.refresh(ticket)
@@ -285,11 +295,36 @@ async def update_ticket(
             diffs.append(("tags", list(ticket.tags), new_tags))
             ticket.tags = new_tags
 
+    if "custom_fields" in changes:
+        new_values, custom_diffs = await custom_fields.apply_values(
+            db,
+            project,
+            ticket.type,
+            ticket.area_id,
+            dict(ticket.custom_fields or {}),
+            changes["custom_fields"] or {},
+        )
+        if custom_diffs:
+            ticket.custom_fields = new_values
+        for key, old, new in custom_diffs:
+            history.record(
+                db,
+                ticket,
+                access.user,
+                EventType.custom_field_changed,
+                field=f"cf.{key}",
+                old=old,
+                new=new,
+            )
+        changed_custom = bool(custom_diffs)
+    else:
+        changed_custom = False
+
     for name, old, new in diffs:
         history.record(
             db, ticket, access.user, EventType.field_changed, field=name, old=old, new=new
         )
-    if diffs:
+    if diffs or changed_custom:
         bump(ticket)
     await db.flush()
     return ticket

@@ -29,7 +29,8 @@ export function suggest(
   const tokens = before.trim().split(/\s+/).filter(Boolean);
   const prev = tokens[tokens.length - 1] ?? '';
   const prev2 = tokens[tokens.length - 2] ?? '';
-  const fields = meta.fields;
+  const custom = meta.values?.custom_fields ?? [];
+  const fields = [...meta.fields, ...custom];
   const fieldNames = fields.map((f) => f.name);
   const lower = word.toLowerCase().replace(/^"/, '');
   const match = (items: Suggestion[]) =>
@@ -51,7 +52,9 @@ export function suggest(
   }
   const opField = fields.find((f) => f.name === prev2.toLowerCase());
   if (opField && opField.operators.includes(prev)) {
-    return { from, items: match(valuesFor(opField.name, opField.values ?? [], meta)) };
+    const kind =
+      opField.name.startsWith('cf.') && opField.type === 'user' ? 'assignee' : opField.name;
+    return { from, items: match(valuesFor(kind, opField.values ?? [], meta)) };
   }
   if (!tokens.length || /^(and|or|not|\()$/i.test(prev) || prev.endsWith('(')) {
     return {

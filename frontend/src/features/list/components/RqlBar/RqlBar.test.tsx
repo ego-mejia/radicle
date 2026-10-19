@@ -46,6 +46,7 @@ const FIELDS: SearchFields = {
     milestones: [],
     handles: [],
     tags: [],
+    custom_fields: [],
   },
 };
 

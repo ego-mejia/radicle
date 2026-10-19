@@ -6,14 +6,15 @@ import { Tabs } from '../../../../components/ui/Tabs';
 import { ProjectHeader } from '../../../projects/components/ProjectHeader';
 import { useProject } from '../../../projects/hooks/useProject';
 import { AreasSection } from '../../components/AreasSection';
+import { CustomFieldsSection } from '../../components/CustomFieldsSection';
 import { GeneralSection } from '../../components/GeneralSection';
 import { MembersSection } from '../../components/MembersSection';
 import { WorkflowsSection } from '../../components/WorkflowsSection';
 import { MilestonesList } from '../../../milestones/components/MilestonesList';
 import * as S from './style';
 
-type Tab = 'general' | 'members' | 'areas' | 'milestones' | 'workflows';
-const TABS: Tab[] = ['general', 'members', 'areas', 'milestones', 'workflows'];
+type Tab = 'general' | 'members' | 'areas' | 'milestones' | 'workflows' | 'fields';
+const TABS: Tab[] = ['general', 'members', 'areas', 'milestones', 'workflows', 'fields'];
 
 export function SettingsView() {
   const { t } = useTranslation();
@@ -44,6 +45,7 @@ export function SettingsView() {
           <MilestonesList project={project} renderHeader={(addButton) => addButton} />
         )}
         {current === 'workflows' && <WorkflowsSection project={project} />}
+        {current === 'fields' && <CustomFieldsSection project={project} isAdmin={isAdmin} />}
       </S.Stack>
     </>
   );

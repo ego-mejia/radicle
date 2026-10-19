@@ -34,6 +34,9 @@ class ProjectValues(Output):
     milestones: list[str]
     handles: list[str]
     tags: list[str] = Field(description="Most used tags first")
+    custom_fields: list[FieldInfo] = Field(
+        default_factory=list, description="cf.<key> fields of the project"
+    )
 
 
 class SearchFields(Output):

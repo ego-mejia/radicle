@@ -314,8 +314,9 @@
     "color": "Color",
     "areaName": "Area name",
     "newArea": "New area",
-    "workflowsHelp": "Statuses and transitions per type. Editing them arrives in stage 2.",
-    "anyStatus": "any not done"
+    "workflowsHelp": "Statuses and transitions per type.",
+    "anyStatus": "any not done",
+    "fields": "Fields"
   },
   "profile": {
     "details": "Details",
@@ -329,5 +330,34 @@
     "tokens": "Personal tokens",
     "tokensHelp": "Use them for the API or to connect an MCP client as yourself.",
     "tokenName": "Token name"
+  },
+  "fields": {
+    "title": "Custom fields",
+    "help": "Extra fields for this project's tickets. Filter them in RQL as cf.<key>.",
+    "empty": "No custom fields yet.",
+    "new": "New field",
+    "edit": "Edit field",
+    "name": "Name",
+    "key": "Key",
+    "keyHint": "Used as cf.<key> in RQL and the API. It cannot change.",
+    "type": "Type",
+    "options": "Options",
+    "optionValue": "Value",
+    "optionLabel": "Label",
+    "addOption": "Add option",
+    "appliesToTypes": "Applies to types",
+    "appliesToAreas": "Applies to areas",
+    "allAreas": "All areas",
+    "noValue": "—",
+    "removedOption": "removed option",
+    "types": {
+      "text": "Text",
+      "number": "Number",
+      "date": "Date",
+      "select": "Select",
+      "checkbox": "Checkbox",
+      "user": "Person",
+      "url": "URL"
+    }
   }
 }

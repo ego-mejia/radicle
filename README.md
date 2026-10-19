@@ -2,7 +2,7 @@
 
 Ticket tracker open source y self-hosted con servidor MCP desde el día 1: personas y agentes trabajan el mismo proyecto.
 
-> Estado: etapa 1 completa (entregables 1.1 a 1.8). Ver [docs/progress.md](docs/progress.md).
+> Estado: etapa 1 completa; etapa 2 en curso. Ver [docs/progress.md](docs/progress.md).
 
 ## Instalar
 
@@ -12,6 +12,8 @@ Requisitos: Docker con Compose.
 cp .env.example .env        # opcional: cambia RADICLE_BASE_URL y POSTGRES_PASSWORD
 docker compose up -d
 ```
+
+Se levantan tres contenedores: `app` (API, UI y MCP), `worker` (jobs en segundo plano) y `db` (Postgres).
 
 Abre `http://localhost:8000`: la primera vez aparece la pantalla de setup para crear el admin. La API está en `/api/v1` y su documentación interactiva en `/api/docs`.
 

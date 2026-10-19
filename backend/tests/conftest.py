@@ -15,6 +15,7 @@ from radicle.api.ratelimit import login_limiter
 from radicle.core import security
 from radicle.core.config import get_settings
 from radicle.db.session import get_db
+from radicle.services import queue
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 ADMIN_PASSWORD = "admin-password-1"
@@ -240,3 +241,32 @@ async def patch_ticket(client: AsyncClient, actor: Actor, key: str, **fields: ob
         headers={**actor.headers, "If-Match": str(current["version"])},
         json=fields,
     )
+
+
+async def run_jobs(db: AsyncSession) -> list[str]:
+    """Run queued background jobs inline with the test session, like the worker would.
+
+    Jobs that queue more jobs are run too. Returns the task names that ran, in order.
+    """
+    from sqlalchemy import text
+
+    import radicle.worker.app as worker_app
+
+    for module in worker_app.JOB_MODULES:
+        __import__(module)
+    ran: list[str] = []
+    while True:
+        row = (
+            await db.execute(
+                text(
+                    "SELECT id, task_name, args FROM procrastinate_jobs "
+                    "WHERE status = 'todo' ORDER BY id LIMIT 1"
+                )
+            )
+        ).first()
+        if row is None:
+            return ran
+        await db.execute(text("DELETE FROM procrastinate_jobs WHERE id = :id"), {"id": row.id})
+        await queue.HANDLERS[row.task_name](db, **row.args)
+        await db.flush()
+        ran.append(row.task_name)

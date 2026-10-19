@@ -6,6 +6,8 @@ from radicle.db.models.discussion import (
     LinkType,
     TicketLink,
 )
+from radicle.db.models.fields import CustomFieldDefinition, CustomFieldType
+from radicle.db.models.jobs import Job, JobStatus
 from radicle.db.models.projects import (
     Area,
     Milestone,
@@ -38,7 +40,11 @@ __all__ = [
     "Base",
     "Comment",
     "CommentReaction",
+    "CustomFieldDefinition",
+    "CustomFieldType",
     "EventType",
+    "Job",
+    "JobStatus",
     "LinkType",
     "Mention",
     "Milestone",

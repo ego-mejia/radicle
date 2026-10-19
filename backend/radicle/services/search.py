@@ -23,6 +23,7 @@ from radicle.db.models import (
 )
 from radicle.query.compiler import Context, compile_query
 from radicle.query.parser import parse
+from radicle.services import custom_fields
 
 DEFAULT_LIMIT = 50
 MAX_LIMIT = 200
@@ -89,7 +90,13 @@ async def search(
     now: datetime | None = None,
 ) -> SearchResult:
     query = parse(q)
-    ctx = Context(user_id=user.id, now=now or utcnow(), tz=ZoneInfo(timezone))
+    types = await custom_fields.rql_types(db, visible_project_ids(user))
+    ctx = Context(
+        user_id=user.id,
+        now=now or utcnow(),
+        tz=ZoneInfo(timezone),
+        custom_fields={k: t.value for k, t in types.items()},
+    )
     compiled = compile_query(query, ctx)
     offset = _decode_cursor(cursor)
     limit = max(1, min(limit, MAX_LIMIT))

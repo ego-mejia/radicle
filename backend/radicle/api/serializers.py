@@ -1,7 +1,10 @@
 """Turn ORM objects into API response models. Shared by REST routers and MCP tools."""
 
+import uuid
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from radicle.api.schemas.fields import CustomFieldOut, FieldOptionOut
 from radicle.api.schemas.projects import (
     AreaOut,
     CategoryCounts,
@@ -13,8 +16,15 @@ from radicle.api.schemas.projects import (
     TransitionOut,
     WorkflowOut,
 )
-from radicle.db.models import Area, Milestone, Project, ProjectMember, ProjectRole
-from radicle.services import planning, projects, stats
+from radicle.db.models import (
+    Area,
+    CustomFieldDefinition,
+    Milestone,
+    Project,
+    ProjectMember,
+    ProjectRole,
+)
+from radicle.services import custom_fields, planning, projects, stats
 from radicle.services.workflows import Workflow, load_workflows
 
 
@@ -88,6 +98,30 @@ def workflow_out(workflow: Workflow) -> WorkflowOut:
     )
 
 
+def field_out(field: CustomFieldDefinition, areas: dict[uuid.UUID, str]) -> CustomFieldOut:
+    return CustomFieldOut(
+        key=field.key,
+        name=field.name,
+        field_type=field.field_type,
+        options=[FieldOptionOut(**o) for o in field.options],
+        applies_to_types=list(field.applies_to_types),
+        applies_to_areas=(
+            [areas[a] for a in field.applies_to_area_ids if a in areas]
+            if field.applies_to_area_ids is not None
+            else None
+        ),
+        position=field.position,
+        archived=field.archived_at is not None,
+        from_template=field.template_ref is not None,
+        created_at=field.created_at,
+    )
+
+
+async def fields_out(db: AsyncSession, fields: list[CustomFieldDefinition]) -> list[CustomFieldOut]:
+    areas = await custom_fields.area_names(db, fields)
+    return [field_out(f, areas) for f in fields]
+
+
 async def project_detail(db: AsyncSession, project: Project, role: ProjectRole) -> ProjectDetail:
     workflows = await load_workflows(db, project.id)
     open_counts = await stats.open_ticket_counts(db, [project.id])
@@ -98,4 +132,5 @@ async def project_detail(db: AsyncSession, project: Project, role: ProjectRole) 
         milestones=await milestones_out(db, await planning.list_milestones(db, project)),
         workflows=[workflow_out(w) for w in workflows.values()],
         members=[member_out(m) for m in await projects.list_members(db, project)],
+        custom_fields=await fields_out(db, await custom_fields.list_fields(db, project.id)),
     )

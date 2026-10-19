@@ -37,3 +37,17 @@ export const TICKET_TYPES: TicketType[] = ['task', 'bug', 'draft'];
 export const PRIORITIES: Priority[] = ['highest', 'high', 'medium', 'low', 'lowest'];
 export const CATEGORIES: Category[] = ['todo', 'in_progress', 'done'];
 export const LINK_TYPES = ['blocks', 'relates_to', 'duplicates', 'clones'] as const;
+
+export type CustomField = S['CustomFieldOut'];
+export type CustomFieldType = CustomField['field_type'];
+export type CustomFieldCreate = S['CustomFieldCreate'];
+export type CustomFieldPatch = S['CustomFieldPatch'];
+export const CUSTOM_FIELD_TYPES: CustomFieldType[] = [
+  'text',
+  'number',
+  'date',
+  'select',
+  'checkbox',
+  'user',
+  'url',
+];

@@ -187,3 +187,36 @@ cd frontend && pnpm e2e                           # recorrido completo de la eta
 ```
 
 El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft (PA-1 a PA-3), mover en el board con drag and drop, comentar con mención, ligar "bloquea" y ver el aviso, buscar con RQL con error en posición, convertir Draft a Task y crear un agente copiando su token.
+
+## Etapa 2: Configuración y trabajo diario
+
+| # | Entregable | Estado |
+| --- | --- | --- |
+| 2.1 | Worker y campos custom | Listo |
+| 2.2 | Templates y editor de workflows | Pendiente |
+| 2.3 | Reglas de transición | Pendiente |
+| 2.4 | Screens | Pendiente |
+| 2.5 | Adjuntos | Pendiente |
+| 2.6 | Votos y tiempo real invertido | Pendiente |
+| 2.7 | Clonar, mover y bulk edit | Pendiente |
+| 2.8 | Filtros, ranking, atajos y cmd+k | Pendiente |
+
+### 2.1 Worker y campos custom
+
+**Qué se hizo**
+
+- Procrastinate como cola de jobs. Los jobs se encolan dentro de la transacción de la petición y el comando `radicle worker` los corre. Servicio `worker` en docker compose con la misma imagen. Decisión: [0008](decisions/0008-worker-y-cola-de-jobs.md).
+- Tabla `jobs` con progreso y resultado, consultable en `GET /jobs/{id}` por quien lo inició.
+- Migración `0005`: esquema de Procrastinate, `jobs`, `custom_field_definitions` y `tickets.custom_fields` (jsonb con índice GIN `jsonb_path_ops`).
+- Campos custom por proyecto de 7 tipos (text, number, date, select, checkbox, user, url), restringibles por tipo de ticket y área. CRUD en `/projects/{key}/fields`; borrar archiva y conserva los valores. Decisión: [0009](decisions/0009-campos-custom.md).
+- Los tickets aceptan `custom_fields` al crear y editar (solo cambian las keys enviadas; `null` limpia). Errores con las opciones válidas. Evento `custom_field_changed` en el historial.
+- RQL `cf.<key>` con los operadores de cada tipo, autocompletado incluido.
+- MCP: `create_ticket` y `update_ticket` aceptan `custom_fields`; `get_project` los lista.
+- UI: pestaña Campos en Settings (crear, editar opciones con color, aplicar a tipos y áreas, archivar y restaurar) y campos editables en el panel del ticket, con "opción eliminada" cuando el valor ya no está entre las opciones.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_custom_fields.py::test_acceptance_environment_select_on_bugs`: campo select "environment" en Bugs, se llena, se filtra con `cf.environment = prod` y un valor inválido da 422 con las opciones.
+- `tests/integration/test_custom_fields.py`: validación por tipo, campo que no aplica, opción eliminada, archivar y restaurar, operadores RQL de cada tipo y permisos.
+- `tests/integration/test_jobs.py`: el job encolado desaparece con un rollback y `queueing_lock` evita duplicados.
+- `scripts/smoke.sh` comprueba que el contenedor `worker` está corriendo.

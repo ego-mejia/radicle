@@ -314,8 +314,9 @@
     "color": "Color",
     "areaName": "Nombre del área",
     "newArea": "Nueva área",
-    "workflowsHelp": "Estados y transiciones por tipo. Editarlos llega en la etapa 2.",
-    "anyStatus": "cualquiera no hecho"
+    "workflowsHelp": "Estados y transiciones por tipo.",
+    "anyStatus": "cualquiera no hecho",
+    "fields": "Campos"
   },
   "profile": {
     "details": "Datos",
@@ -329,5 +330,34 @@
     "tokens": "Tokens personales",
     "tokensHelp": "Úsalos para la API o para conectar un cliente MCP como tú.",
     "tokenName": "Nombre del token"
+  },
+  "fields": {
+    "title": "Campos custom",
+    "help": "Campos extra para los tickets de este proyecto. En RQL se filtran como cf.<key>.",
+    "empty": "Todavía no hay campos custom.",
+    "new": "Nuevo campo",
+    "edit": "Editar campo",
+    "name": "Nombre",
+    "key": "Key",
+    "keyHint": "Se usa como cf.<key> en RQL y en la API. No se puede cambiar.",
+    "type": "Tipo",
+    "options": "Opciones",
+    "optionValue": "Valor",
+    "optionLabel": "Etiqueta",
+    "addOption": "Agregar opción",
+    "appliesToTypes": "Aplica a los tipos",
+    "appliesToAreas": "Aplica a las áreas",
+    "allAreas": "Todas las áreas",
+    "noValue": "—",
+    "removedOption": "opción eliminada",
+    "types": {
+      "text": "Texto",
+      "number": "Número",
+      "date": "Fecha",
+      "select": "Selección",
+      "checkbox": "Casilla",
+      "user": "Persona",
+      "url": "URL"
+    }
   }
 }

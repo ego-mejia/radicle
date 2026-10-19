@@ -19,6 +19,7 @@ export const TICKET: Ticket = {
   due_date: null,
   estimate_hours: 8,
   tags: ['pagos'],
+  custom_fields: { environment: 'staging' },
   checklist: [
     {
       index: 0,
@@ -69,6 +70,35 @@ export const PROJECT: ProjectDetail = {
       kind: 'agent',
       role: 'member',
       is_active: true,
+    },
+  ],
+  custom_fields: [
+    {
+      key: 'environment',
+      name: 'Environment',
+      field_type: 'select',
+      options: [
+        { value: 'prod', label: 'Prod', color: '#DC2626' },
+        { value: 'dev', label: 'Dev', color: null },
+      ],
+      applies_to_types: ['task', 'bug'],
+      applies_to_areas: null,
+      position: 0,
+      archived: false,
+      from_template: false,
+      created_at: '2026-10-18T10:00:00Z',
+    },
+    {
+      key: 'contract',
+      name: 'Contract',
+      field_type: 'url',
+      options: [],
+      applies_to_types: ['task'],
+      applies_to_areas: ['Legal'],
+      position: 1,
+      archived: false,
+      from_template: false,
+      created_at: '2026-10-18T10:00:00Z',
     },
   ],
 };

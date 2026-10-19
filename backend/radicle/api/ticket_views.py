@@ -19,6 +19,7 @@ from radicle.api.schemas.tickets import (
 )
 from radicle.db.models import (
     Area,
+    CustomFieldDefinition,
     Milestone,
     Project,
     Status,
@@ -26,7 +27,7 @@ from radicle.db.models import (
     TicketEvent,
     User,
 )
-from radicle.services import markdown, relations
+from radicle.services import custom_fields, markdown, relations
 from radicle.services.tickets import list_collaborators
 
 
@@ -46,6 +47,17 @@ class TicketContext:
     parents: dict[uuid.UUID, Ticket] = field(default_factory=dict)
     known_handles: set[str] = field(default_factory=set)
     blocked_by: dict[uuid.UUID, list[str]] = field(default_factory=dict)
+    fields: dict[uuid.UUID, list[CustomFieldDefinition]] = field(default_factory=dict)
+    user_handles: dict[str, str] = field(default_factory=dict)
+
+    def custom_fields(self, ticket: Ticket) -> dict[str, object]:
+        return custom_fields.visible_values(
+            self.fields.get(ticket.project_id, []),
+            ticket.custom_fields or {},
+            ticket.type,
+            ticket.area_id,
+            self.user_handles,
+        )
 
     def key(self, ticket: Ticket) -> str:
         return f"{self.project_keys[ticket.project_id]}-{ticket.number}"
@@ -91,6 +103,22 @@ async def load_context(db: AsyncSession, tickets: list[Ticket]) -> TicketContext
             await db.scalars(select(User.handle).where(User.handle.in_(handles)))
         )
     ctx.blocked_by = await relations.blocked_by(db, [t.id for t in tickets])
+    if any(t.custom_fields for t in tickets):
+        definitions = await db.scalars(
+            select(CustomFieldDefinition)
+            .where(
+                CustomFieldDefinition.project_id.in_(project_ids),
+                CustomFieldDefinition.archived_at.is_(None),
+            )
+            .order_by(CustomFieldDefinition.position)
+        )
+        user_fields: set[str] = set()
+        for d in definitions:
+            ctx.fields.setdefault(d.project_id, []).append(d)
+            if d.field_type.value == "user":
+                user_fields.add(d.key)
+        ids = [t.custom_fields[k] for t in tickets for k in user_fields if k in t.custom_fields]
+        ctx.user_handles = await custom_fields.user_handles(db, ids)
     return ctx
 
 
@@ -142,6 +170,7 @@ async def ticket_out(
         due_date=ticket.due_date,
         estimate_hours=_estimate(ticket),
         tags=list(ticket.tags),
+        custom_fields=ctx.custom_fields(ticket),
         checklist=_checklist(ticket, ctx),
         links=[
             LinkOut(id=str(link.id), type=link.type, label=link.label, ticket=ctx_ref(link.other))
@@ -186,6 +215,7 @@ async def summaries_out(db: AsyncSession, tickets: list[Ticket]) -> list[TicketS
                 area=ctx.areas.get(t.area_id) if t.area_id else None,
                 milestone=ctx.milestones.get(t.milestone_id) if t.milestone_id else None,
                 tags=list(t.tags),
+                custom_fields=ctx.custom_fields(t),
                 blocked=bool(ctx.blocked_by.get(t.id)),
                 due_date=t.due_date,
                 estimate_hours=_estimate(t),

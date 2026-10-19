@@ -8,6 +8,7 @@ import {
   type Ticket,
 } from '../../../../services/api/types';
 import type { TicketActions } from '../../hooks/useTicket';
+import { CustomFieldRows } from './components/CustomFieldRows';
 import { FieldRow, InlineInput, InlineSelect } from './components/FieldRow';
 import { PersonChip, PersonSelect } from './components/PeopleField';
 import { TagsField } from './components/TagsField';
@@ -147,6 +148,13 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
           />
         )}
       </FieldRow>
+      <CustomFieldRows
+        ticket={ticket}
+        fields={project?.custom_fields ?? []}
+        people={people}
+        canEdit={canEdit}
+        onChange={(key, value) => patch({ custom_fields: { [key]: value } })}
+      />
       <FieldRow label={t('ticket.fields.created')}>
         <S.Muted title={formatDateTime(ticket.created_at)}>
           {relativeTime(ticket.created_at)}

@@ -120,6 +120,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/jobs/{job_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Job
+         * @description Progress and result of a background job you started.
+         */
+        get: operations["get_job_api_v1_jobs__job_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/links/{link_id}": {
         parameters: {
             query?: never;
@@ -301,6 +321,51 @@ export interface paths {
          * @description Rename, recolor, reorder, or archive and restore with `archived`.
          */
         patch: operations["patch_area_api_v1_projects__key__areas__name__patch"];
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/fields": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Fields
+         * @description Custom fields of the project, in display order.
+         */
+        get: operations["list_fields_api_v1_projects__key__fields_get"];
+        put?: never;
+        /**
+         * Create Field
+         * @description Types: text, number, date, select, checkbox, user, url.
+         */
+        post: operations["create_field_api_v1_projects__key__fields_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/fields/{field_key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Archive Field
+         * @description Archives the field: tickets keep their values but they stop showing.
+         */
+        delete: operations["archive_field_api_v1_projects__key__fields__field_key__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Field */
+        patch: operations["patch_field_api_v1_projects__key__fields__field_key__patch"];
         trace?: never;
     };
     "/api/v1/projects/{key}/members": {
@@ -939,6 +1004,86 @@ export interface components {
             /** Ticket */
             ticket: string;
         };
+        /** CustomFieldCreate */
+        CustomFieldCreate: {
+            /**
+             * Applies To Areas
+             * @description Area names; null = all
+             */
+            applies_to_areas?: string[] | null;
+            /**
+             * Applies To Types
+             * @description null = all
+             */
+            applies_to_types?: components["schemas"]["TicketType"][] | null;
+            field_type: components["schemas"]["CustomFieldType"];
+            /**
+             * Key
+             * @description 2-40 chars: lowercase letter, then letters, digits or _
+             */
+            key: string;
+            /** Name */
+            name: string;
+            /**
+             * Options
+             * @description Only for select
+             */
+            options?: components["schemas"]["FieldOption"][] | null;
+        };
+        /** CustomFieldOut */
+        CustomFieldOut: {
+            /**
+             * Applies To Areas
+             * @description null = every area
+             */
+            applies_to_areas: string[] | null;
+            /** Applies To Types */
+            applies_to_types: components["schemas"]["TicketType"][];
+            /** Archived */
+            archived: boolean;
+            /** Created At */
+            created_at: string;
+            field_type: components["schemas"]["CustomFieldType"];
+            /** From Template */
+            from_template: boolean;
+            /**
+             * Key
+             * @description Use it as cf.<key> in RQL and in custom_fields
+             */
+            key: string;
+            /** Name */
+            name: string;
+            /** Options */
+            options: components["schemas"]["FieldOptionOut"][];
+            /** Position */
+            position: number;
+        };
+        /**
+         * CustomFieldPatch
+         * @description Key and type never change. Changing options keeps the values tickets already have.
+         */
+        CustomFieldPatch: {
+            /**
+             * Applies To Areas
+             * @description null = every area
+             */
+            applies_to_areas?: string[] | null;
+            /** Applies To Types */
+            applies_to_types?: components["schemas"]["TicketType"][] | null;
+            /** Archived */
+            archived?: boolean | null;
+            /** Name */
+            name?: string | null;
+            /** Options */
+            options?: components["schemas"]["FieldOption"][] | null;
+            /** Position */
+            position?: number | null;
+        };
+        /**
+         * CustomFieldType
+         * @enum {string}
+         */
+        CustomFieldType: "text" | "number" | "date" | "select" | "checkbox" | "user" | "url";
         /** EventOut */
         EventOut: {
             actor: components["schemas"]["UserRef"];
@@ -972,6 +1117,27 @@ export interface components {
             /** Values */
             values: string[];
         };
+        /** FieldOption */
+        FieldOption: {
+            /**
+             * Color
+             * @description Hex like #4D7C0F
+             */
+            color?: string | null;
+            /** Label */
+            label?: string | null;
+            /** Value */
+            value: string;
+        };
+        /** FieldOptionOut */
+        FieldOptionOut: {
+            /** Color */
+            color: string | null;
+            /** Label */
+            label: string;
+            /** Value */
+            value: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -984,6 +1150,31 @@ export interface components {
             /** Status */
             status: string;
         };
+        /** JobOut */
+        JobOut: {
+            /** Created At */
+            created_at: string;
+            /** Error */
+            error: string | null;
+            /** Finished At */
+            finished_at: string | null;
+            /** Id */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Progress */
+            progress: number;
+            /** Result */
+            result: unknown;
+            status: components["schemas"]["JobStatus"];
+            /** Total */
+            total: number;
+        };
+        /**
+         * JobStatus
+         * @enum {string}
+         */
+        JobStatus: "pending" | "running" | "succeeded" | "failed";
         /** LinkCreate */
         LinkCreate: {
             /**
@@ -1132,6 +1323,13 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** Page[CustomFieldOut] */
+        Page_CustomFieldOut_: {
+            /** Items */
+            items: components["schemas"]["CustomFieldOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** Page[EventOut] */
         Page_EventOut_: {
             /** Items */
@@ -1209,6 +1407,8 @@ export interface components {
             areas: components["schemas"]["AreaOut"][];
             /** Created At */
             created_at: string;
+            /** Custom Fields */
+            custom_fields: components["schemas"]["CustomFieldOut"][];
             /** Description Md */
             description_md: string;
             /** Key */
@@ -1269,6 +1469,11 @@ export interface components {
         ProjectValues: {
             /** Areas */
             areas: string[];
+            /**
+             * Custom Fields
+             * @description cf.<key> fields of the project
+             */
+            custom_fields: components["schemas"]["FieldInfo"][];
             /** Handles */
             handles: string[];
             /** Milestones */
@@ -1382,6 +1587,13 @@ export interface components {
             /** Collaborators */
             collaborators?: string[];
             /**
+             * Custom Fields
+             * @description By field key, e.g. {"environment": "prod"}
+             */
+            custom_fields?: {
+                [key: string]: unknown;
+            };
+            /**
              * Description Md
              * @default
              */
@@ -1422,6 +1634,13 @@ export interface components {
             comments_count: number;
             /** Created At */
             created_at: string;
+            /**
+             * Custom Fields
+             * @description Values by field key; user fields as handles. Only fields that apply.
+             */
+            custom_fields: {
+                [key: string]: unknown;
+            };
             /**
              * Deleted
              * @default false
@@ -1471,6 +1690,13 @@ export interface components {
             area?: string | null;
             /** Assignee */
             assignee?: string | null;
+            /**
+             * Custom Fields
+             * @description Only the keys you send change; null clears a value
+             */
+            custom_fields?: {
+                [key: string]: unknown;
+            } | null;
             /** Description Md */
             description_md?: string | null;
             /** Due Date */
@@ -1515,6 +1741,10 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            /** Custom Fields */
+            custom_fields: {
+                [key: string]: unknown;
+            };
             /** Due Date */
             due_date: string | null;
             /** Estimate Hours */
@@ -1988,6 +2218,37 @@ export interface operations {
             };
         };
     };
+    get_job_api_v1_jobs__job_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                job_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["JobOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     delete_link_api_v1_links__link_id__delete: {
         parameters: {
             query?: never;
@@ -2434,6 +2695,140 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AreaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_fields_api_v1_projects__key__fields_get: {
+        parameters: {
+            query?: {
+                include_archived?: boolean;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_CustomFieldOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_field_api_v1_projects__key__fields_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CustomFieldCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomFieldOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    archive_field_api_v1_projects__key__fields__field_key__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                field_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_field_api_v1_projects__key__fields__field_key__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                field_key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CustomFieldPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomFieldOut"];
                 };
             };
             /** @description Validation Error */

@@ -1,6 +1,7 @@
 """RQL field catalog: types, operators and sort keys. Also feeds autocompletion."""
 
 import difflib
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 
@@ -36,6 +37,7 @@ class Field:
     empty: bool = False
     description: str = ""
     values: tuple[str, ...] = ()
+    custom: str | None = None  # custom field type for cf.<key>
 
 
 FIELDS: dict[str, Field] = {
@@ -102,7 +104,47 @@ def suggest(word: str, options: list[str] | tuple[str, ...]) -> str:
     return f" Did you mean '{match[0]}'?" if match else ""
 
 
-def lookup(name: str, position: int) -> Field:
+# Custom field type -> (operators, IN, IS EMPTY).
+CUSTOM_OPS: dict[str, tuple[tuple[str, ...], bool, bool]] = {
+    "text": (EQ + MATCH, True, True),
+    "number": (EQ + ORDER, False, True),
+    "date": (EQ + ORDER, False, True),
+    "select": (EQ, True, True),
+    "checkbox": (EQ, False, False),
+    "user": (EQ, True, True),
+    "url": (EQ + MATCH, False, True),
+}
+CUSTOM_PREFIX = "cf."
+
+
+def custom_field(key: str, field_type: str) -> Field:
+    ops, in_list, empty = CUSTOM_OPS[field_type]
+    values = ("true", "false") if field_type == "checkbox" else ()
+    return Field(
+        f"{CUSTOM_PREFIX}{key}",
+        Kind.text,
+        ops,
+        in_list=in_list,
+        empty=empty,
+        description=f"Custom field ({field_type})",
+        values=values,
+        custom=field_type,
+    )
+
+
+def lookup(name: str, position: int, custom: Mapping[str, str] | None = None) -> Field:
+    if name.lower().startswith(CUSTOM_PREFIX):
+        key = name[len(CUSTOM_PREFIX) :].lower()
+        known = custom or {}
+        if key not in known:
+            options = [f"{CUSTOM_PREFIX}{k}" for k in sorted(known)]
+            raise RQLError(
+                f"Unknown custom field '{name}' at {position}."
+                f"{suggest(name, options)} Custom fields: {', '.join(options) or 'none'}.",
+                position=position,
+                expected=options,
+            )
+        return custom_field(key, known[key])
     field = FIELDS.get(name.lower())
     if field is None:
         raise RQLError(

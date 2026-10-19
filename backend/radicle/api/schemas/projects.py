@@ -3,6 +3,7 @@ from datetime import date
 from pydantic import ConfigDict, Field
 
 from radicle.api.schemas.common import Input, Output, UtcDatetime
+from radicle.api.schemas.fields import CustomFieldOut
 from radicle.db.models import (
     MilestoneStatus,
     ProjectRole,
@@ -124,3 +125,4 @@ class ProjectDetail(ProjectOut):
     milestones: list[MilestoneOut]
     workflows: list[WorkflowOut]
     members: list[MemberOut]
+    custom_fields: list[CustomFieldOut]

@@ -31,6 +31,10 @@ class TicketChanges(BaseModel):
     due_date: date | None = None
     estimate_hours: float | None = None
     tags: list[str] | None = None
+    custom_fields: dict[str, Any] | None = Field(
+        default=None,
+        description='By key, e.g. {"environment": "prod"}; null clears one. See get_project.',
+    )
 
 
 def compact(ticket: dict[str, Any]) -> dict[str, Any]:
@@ -204,6 +208,10 @@ def register(server: MCPServer) -> None:
         due_date: date | None = None,
         estimate_hours: float | None = None,
         tags: list[str] | None = None,
+        custom_fields: Annotated[
+            dict[str, Any] | None,
+            Field(description='By key, e.g. {"environment": "prod"}. See get_project.'),
+        ] = None,
     ) -> dict[str, Any]:
         """Create a ticket and return it. Write checklists as `- [ ] item @handle` lines."""
         body = {
@@ -219,6 +227,7 @@ def register(server: MCPServer) -> None:
             "due_date": due_date.isoformat() if due_date else None,
             "estimate_hours": estimate_hours,
             "tags": tags,
+            "custom_fields": custom_fields,
         }
         async with api(ctx) as client:
             ticket = await client.call(
@@ -467,5 +476,16 @@ def project_schema(p: dict[str, Any]) -> dict[str, Any]:
         },
         "members": [
             {"handle": m["handle"], "kind": m["kind"], "role": m["role"]} for m in p["members"]
+        ],
+        "custom_fields": [
+            {
+                "key": f["key"],
+                "name": f["name"],
+                "type": f["field_type"],
+                "options": [o["value"] for o in f["options"]] or None,
+                "applies_to_types": f["applies_to_types"],
+                "applies_to_areas": f["applies_to_areas"],
+            }
+            for f in p.get("custom_fields", [])
         ],
     }
