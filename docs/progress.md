@@ -196,7 +196,7 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 | 2.2 | Templates y editor de workflows | Listo |
 | 2.3 | Reglas de transición | Listo |
 | 2.4 | Screens | Listo |
-| 2.5 | Adjuntos | Pendiente |
+| 2.5 | Adjuntos | Listo |
 | 2.6 | Votos y tiempo real invertido | Pendiente |
 | 2.7 | Clonar, mover y bulk edit | Pendiente |
 | 2.8 | Filtros, ranking, atajos y cmd+k | Pendiente |
@@ -271,3 +271,19 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 - `tests/integration/test_screens.py::test_acceptance_required_custom_field_same_in_api_and_mcp`: un Bug sin Environment falla en la API y en el MCP con el mismo mensaje.
 - El mismo archivo prueba el esquema con y sin screen, solo lectura en edición, la screen de una transición, validaciones y propagación por template.
 - `frontend/src/features/tickets/components/CreateTicketModal/CreateTicketModal.test.tsx`: el formulario sale del esquema y no envía sin los obligatorios.
+
+### 2.5 Adjuntos
+
+**Qué se hizo**
+
+- Migración `0009`: `attachments`. Storage local (volumen compartido por app y worker) o S3 compatible. Decisión: [0013](decisions/0013-adjuntos.md).
+- Subida multipart con límite `RADICLE_MAX_UPLOAD_MB` (413), tipo por contenido, EXIF borrado, orientación corregida y reducción a original, large, medium o small. Variantes `thumb` y `preview` hechas por el worker.
+- `POST /attachments/{id}/resize` reduce una imagen ya subida (nunca la agranda) con evento `attachment_resized`; borrar por quien la subió o un admin. URLs firmadas de 5 minutos; en S3, redirección a URL prefirmada.
+- `GET /tickets/{key}` incluye los adjuntos. MCP: `upload_attachment` (hasta 10 MB), `list_attachments` y `read_attachment` (texto hasta 200 KB).
+- UI: sección Adjuntos con miniaturas, visor de imágenes con flechas, menú Reducir tamaño y borrar; subir con botón o arrastrando. En la descripción y los comentarios se puede pegar o arrastrar archivos, con barra de progreso; al pegar una imagen se elige el tamaño con el default preseleccionado. `![x](attachment:id)` se ve como imagen.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_attachments.py::test_acceptance_screenshot_in_comment_resized_to_medium`: un screenshot en un comentario, preview hecho por el worker, reducido a mediano y su tamaño baja.
+- El mismo archivo prueba presets exactos, EXIF, tipo por contenido, el 413, la expiración de la firma, permisos y borrado. `tests/integration/test_storage_s3.py` prueba S3 contra un servidor real.
+- `frontend/src/features/tickets/components/UploadStatus/UploadStatus.test.tsx`: pegar una imagen pide tamaño y deja el markdown en el editor.

@@ -45,11 +45,15 @@ def postgres() -> Iterator[PostgresContainer]:
 
 
 @pytest.fixture(scope="session")
-def database_url(postgres: PostgresContainer) -> str:
+def database_url(postgres: PostgresContainer, tmp_path_factory: pytest.TempPathFactory) -> str:
+    from radicle.storage import get_storage
+
     url = postgres.get_connection_url()
     run_alembic(url, "upgrade", "head")
     os.environ["RADICLE_DATABASE_URL"] = url
+    os.environ["RADICLE_STORAGE_DIR"] = str(tmp_path_factory.mktemp("attachments"))
     get_settings.cache_clear()
+    get_storage.cache_clear()
     return url
 
 

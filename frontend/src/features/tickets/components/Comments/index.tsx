@@ -1,7 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MarkdownEditor, type MentionOption } from '../../../../components/Markdown/MarkdownEditor';
+import {
+  type EditorApi,
+  MarkdownEditor,
+  type MentionOption,
+} from '../../../../components/Markdown/MarkdownEditor';
 import { Button } from '../../../../components/ui/Button';
 import { ConfirmDialog } from '../../../../components/ui/ConfirmDialog';
 import { PageSpinner } from '../../../../components/ui/Spinner';
@@ -10,6 +14,8 @@ import { useToast } from '../../../../hooks/useToast';
 import * as api from '../../../../services/api/comments';
 import { ticketKeys } from '../../../../services/api/tickets';
 import type { Ticket } from '../../../../services/api/types';
+import { useUploads } from '../../hooks/useUploads';
+import { UploadStatus } from '../UploadStatus';
 import { CommentItem } from './components/CommentItem';
 import * as S from './style';
 
@@ -27,6 +33,8 @@ export function Comments({ ticket, me, canComment, canModerate, mentions }: Prop
   const errorMessage = useErrorMessage();
   const queryClient = useQueryClient();
   const [draft, setDraft] = useState('');
+  const editor = useRef<EditorApi | null>(null);
+  const uploads = useUploads(ticket.key, editor);
   const [deleting, setDeleting] = useState<string | null>(null);
   const key = ticketKeys.comments(ticket.key);
   const { data: comments, isPending } = useQuery({
@@ -88,7 +96,10 @@ export function Comments({ ticket, me, canComment, canModerate, mentions }: Prop
             placeholder={t('comments.placeholder')}
             onSubmit={() => draft.trim() && add.mutate()}
             ariaLabel={t('comments.placeholder')}
+            onFiles={uploads.handleFiles}
+            apiRef={editor}
           />
+          <UploadStatus uploads={uploads} />
           <Button
             variant="primary"
             disabled={!draft.trim() || add.isPending}

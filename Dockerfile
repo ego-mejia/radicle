@@ -21,7 +21,8 @@ RUN uv sync --frozen --no-dev
 
 # --- runtime ---------------------------------------------------------------------------
 FROM python:3.12-slim AS runtime
-RUN groupadd --system radicle && useradd --system --gid radicle --home /app radicle
+RUN groupadd --system radicle && useradd --system --gid radicle --home /app radicle \
+    && mkdir -p /data/attachments && chown -R radicle:radicle /data
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     RADICLE_STATIC_DIR=/app/static

@@ -68,3 +68,7 @@ export type SchemaField = S['SchemaFieldOut'];
 export type ScreenOperation = FormSchema['operation'];
 export type Screen = S['ScreenOut'];
 export type ScreenIn = S['ScreenIn'];
+
+export type Attachment = S['AttachmentOut'];
+export type Limits = S['Limits'];
+export type ImagePreset = 'original' | 'large' | 'medium' | 'small';

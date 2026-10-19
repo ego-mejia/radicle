@@ -28,6 +28,9 @@ TOOLS = {
     "add_collaborator",
     "remove_collaborator",
     "get_history",
+    "upload_attachment",
+    "list_attachments",
+    "read_attachment",
 }
 
 

@@ -183,6 +183,128 @@
         "title": "AreaPatch",
         "type": "object"
       },
+      "AttachmentOut": {
+        "properties": {
+          "comment_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment Id"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "height": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_image": {
+            "title": "Is Image",
+            "type": "boolean"
+          },
+          "markdown": {
+            "description": "Paste it in a description or comment",
+            "title": "Markdown",
+            "type": "string"
+          },
+          "mime_type": {
+            "description": "Detected from the content, not the name",
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "preview_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "1280 px webp, once the worker made it",
+            "title": "Preview Url"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "thumb_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "320 px webp, once the worker made it",
+            "title": "Thumb Url"
+          },
+          "ticket": {
+            "title": "Ticket",
+            "type": "string"
+          },
+          "uploader": {
+            "$ref": "#/components/schemas/UserRef"
+          },
+          "url": {
+            "description": "Signed download URL, valid for 5 minutes",
+            "title": "Url",
+            "type": "string"
+          },
+          "width": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Width"
+          }
+        },
+        "required": [
+          "id",
+          "ticket",
+          "filename",
+          "mime_type",
+          "size_bytes",
+          "is_image",
+          "width",
+          "height",
+          "uploader",
+          "comment_id",
+          "created_at",
+          "url",
+          "thumb_url",
+          "preview_url",
+          "markdown"
+        ],
+        "title": "AttachmentOut",
+        "type": "object"
+      },
       "BlockedPolicy": {
         "enum": [
           "warn",
@@ -190,6 +312,45 @@
         ],
         "title": "BlockedPolicy",
         "type": "string"
+      },
+      "Body_upload_attachment_api_v1_tickets__key__attachments_post": {
+        "properties": {
+          "comment_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comment Id"
+          },
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "description": "The file",
+            "title": "File",
+            "type": "string"
+          },
+          "resize": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Images: original, large, medium or small",
+            "title": "Resize"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_attachment_api_v1_tickets__key__attachments_post",
+        "type": "object"
       },
       "CategoryCounts": {
         "properties": {
@@ -994,6 +1155,41 @@
         "title": "JobStatus",
         "type": "string"
       },
+      "Limits": {
+        "properties": {
+          "image_default_resize": {
+            "description": "original, large, medium or small",
+            "title": "Image Default Resize",
+            "type": "string"
+          },
+          "image_presets": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "description": "Longest side in pixels",
+            "title": "Image Presets",
+            "type": "object"
+          },
+          "max_upload_mb": {
+            "title": "Max Upload Mb",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "max_upload_mb",
+          "image_default_resize",
+          "image_presets"
+        ],
+        "title": "Limits",
+        "type": "object"
+      },
       "LinkCreate": {
         "additionalProperties": false,
         "properties": {
@@ -1446,6 +1642,34 @@
           "next_cursor"
         ],
         "title": "Page[AreaOut]",
+        "type": "object"
+      },
+      "Page_AttachmentOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AttachmentOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[AttachmentOut]",
         "type": "object"
       },
       "Page_CommentOut_": {
@@ -2178,6 +2402,21 @@
           "users"
         ],
         "title": "ReactionOut",
+        "type": "object"
+      },
+      "ResizeIn": {
+        "additionalProperties": false,
+        "properties": {
+          "preset": {
+            "description": "large (2048 px), medium (1280 px) or small (800 px)",
+            "title": "Preset",
+            "type": "string"
+          }
+        },
+        "required": [
+          "preset"
+        ],
+        "title": "ResizeIn",
         "type": "object"
       },
       "Resolution": {
@@ -3284,6 +3523,13 @@
               }
             ]
           },
+          "attachments": {
+            "items": {
+              "$ref": "#/components/schemas/AttachmentOut"
+            },
+            "title": "Attachments",
+            "type": "array"
+          },
           "blocked": {
             "title": "Blocked",
             "type": "boolean"
@@ -3473,6 +3719,7 @@
           "custom_fields",
           "checklist",
           "links",
+          "attachments",
           "children_count",
           "comments_count",
           "blocked",
@@ -4686,6 +4933,182 @@
         ]
       }
     },
+    "/api/v1/attachments/{attachment_id}": {
+      "delete": {
+        "description": "The uploader or a project admin.",
+        "operationId": "delete_attachment_api_v1_attachments__attachment_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attachment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Attachment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Attachment",
+        "tags": [
+          "attachments"
+        ]
+      }
+    },
+    "/api/v1/attachments/{attachment_id}/content": {
+      "get": {
+        "description": "The bytes, with auth or with a valid signature from an attachment's `url`.\nImages are shown inline; everything else downloads.",
+        "operationId": "download_attachment_api_v1_attachments__attachment_id__content_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attachment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Attachment Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "variant",
+            "required": false,
+            "schema": {
+              "default": "original",
+              "pattern": "^(original|thumb|preview)$",
+              "title": "Variant",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "expires",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Expires"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sig",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sig"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Download Attachment",
+        "tags": [
+          "attachments"
+        ]
+      }
+    },
+    "/api/v1/attachments/{attachment_id}/resize": {
+      "post": {
+        "description": "Shrink an image already uploaded. It never gets bigger.",
+        "operationId": "resize_attachment_api_v1_attachments__attachment_id__resize_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "attachment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Attachment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResizeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resize Attachment",
+        "tags": [
+          "attachments"
+        ]
+      }
+    },
     "/api/v1/auth/login": {
       "post": {
         "description": "Sign in with email and password. Agents cannot sign in; they use API tokens.",
@@ -4995,6 +5418,28 @@
         "summary": "Get Job",
         "tags": [
           "jobs"
+        ]
+      }
+    },
+    "/api/v1/limits": {
+      "get": {
+        "description": "Upload limits, so clients can check before sending.",
+        "operationId": "limits_api_v1_limits_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Limits"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Limits",
+        "tags": [
+          "system"
         ]
       }
     },
@@ -7406,6 +7851,99 @@
         "summary": "Patch Ticket",
         "tags": [
           "tickets"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/attachments": {
+      "get": {
+        "operationId": "list_attachments_api_v1_tickets__key__attachments_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_AttachmentOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Attachments",
+        "tags": [
+          "attachments"
+        ]
+      },
+      "post": {
+        "description": "Upload a file (multipart). Images lose their EXIF and are shrunk to `resize`.",
+        "operationId": "upload_attachment_api_v1_tickets__key__attachments_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_attachment_api_v1_tickets__key__attachments_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttachmentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Attachment",
+        "tags": [
+          "attachments"
         ]
       }
     },

@@ -1,6 +1,13 @@
 import styled from 'styled-components';
 
 export const Prose = styled.div`
+  img {
+    max-width: 100%;
+    max-height: 480px;
+    border-radius: ${({ theme }) => theme.radius.md};
+    border: 1px solid ${({ theme }) => theme.color.border};
+  }
+
   line-height: 1.6;
   overflow-wrap: anywhere;
 

@@ -43,6 +43,8 @@ class RadicleAPI:
         json: Any = None,
         params: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
+        files: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
     ) -> Any:
         response = await self._client.request(
             method,
@@ -50,12 +52,20 @@ class RadicleAPI:
             json=json,
             params={k: v for k, v in (params or {}).items() if v is not None},
             headers=headers,
+            files=files,
+            data={k: v for k, v in (data or {}).items() if v is not None} or None,
         )
         if response.status_code >= 400:
             raise APIError(response)
         if response.status_code == 204 or not response.content:
             return None
         return response.json()
+
+    async def raw(self, path: str, params: dict[str, Any] | None = None) -> httpx.Response:
+        response = await self._client.get(path, params=params)
+        if response.status_code >= 400:
+            raise APIError(response)
+        return response
 
 
 class APIError(ToolError):

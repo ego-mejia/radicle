@@ -7,6 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.api.schemas.tickets import (
+    AttachmentOut,
     ChecklistItemOut,
     EventOut,
     LinkOut,
@@ -19,6 +20,7 @@ from radicle.api.schemas.tickets import (
 )
 from radicle.db.models import (
     Area,
+    Attachment,
     CustomFieldDefinition,
     Milestone,
     Project,
@@ -27,7 +29,7 @@ from radicle.db.models import (
     TicketEvent,
     User,
 )
-from radicle.services import custom_fields, markdown, relations
+from radicle.services import attachments, custom_fields, images, markdown, relations
 from radicle.services.tickets import list_collaborators
 
 
@@ -176,6 +178,10 @@ async def ticket_out(
             LinkOut(id=str(link.id), type=link.type, label=link.label, ticket=ctx_ref(link.other))
             for link in links
         ],
+        attachments=[
+            attachment_out(a, ctx.key(ticket))
+            for a in await attachments.list_attachments(db, [ticket.id])
+        ],
         children_count=int(children or 0),
         comments_count=await relations.comments_count(db, ticket.id),
         blocked=bool(ctx.blocked_by.get(ticket.id)),
@@ -226,6 +232,36 @@ async def summaries_out(db: AsyncSession, tickets: list[Ticket]) -> list[TicketS
             )
         )
     return result
+
+
+def _url(attachment: Attachment, variant: str) -> str:
+    query = attachments.signed_query(attachment.id, variant)
+    return f"/api/v1/attachments/{attachment.id}/content?{query}"
+
+
+def attachment_out(attachment: Attachment, key: str) -> AttachmentOut:
+    image = images.is_image(attachment.mime_type)
+    ready = image and bool(attachment.variants)
+    target = f"attachment:{attachment.id}"
+    return AttachmentOut(
+        id=str(attachment.id),
+        ticket=key,
+        filename=attachment.filename,
+        mime_type=attachment.mime_type,
+        size_bytes=attachment.size_bytes,
+        is_image=image,
+        width=attachment.width,
+        height=attachment.height,
+        uploader=user_ref(attachment.uploader),
+        comment_id=str(attachment.comment_id) if attachment.comment_id else None,
+        created_at=attachment.created_at,
+        url=_url(attachment, "original"),
+        thumb_url=_url(attachment, "thumb") if ready else None,
+        preview_url=_url(attachment, "preview") if ready else None,
+        markdown=f"![{attachment.filename}]({target})"
+        if image
+        else f"[{attachment.filename}]({target})",
+    )
 
 
 def event_out(event: TicketEvent) -> EventOut:

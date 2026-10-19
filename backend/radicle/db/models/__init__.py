@@ -1,3 +1,4 @@
+from radicle.db.models.attachments import Attachment
 from radicle.db.models.base import Base, utcnow
 from radicle.db.models.discussion import (
     LINK_LABELS,
@@ -44,6 +45,7 @@ __all__ = [
     "PRIORITY_ORDER",
     "ApiToken",
     "Area",
+    "Attachment",
     "Base",
     "BlockedPolicy",
     "Comment",

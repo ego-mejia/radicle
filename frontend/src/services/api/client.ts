@@ -1,10 +1,10 @@
 import createClient, { type Middleware } from 'openapi-fetch';
 import type { paths } from './schema';
 
-const CSRF_COOKIE = 'radicle_csrf';
+export const CSRF_COOKIE = 'radicle_csrf';
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
-function readCookie(name: string): string | null {
+export function readCookie(name: string): string | null {
   const match = document.cookie.split('; ').find((part) => part.startsWith(`${name}=`));
   return match ? decodeURIComponent(match.slice(name.length + 1)) : null;
 }

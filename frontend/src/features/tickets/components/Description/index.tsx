@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MarkdownEditor, type MentionOption } from '../../../../components/Markdown/MarkdownEditor';
+import {
+  type EditorApi,
+  MarkdownEditor,
+  type MentionOption,
+} from '../../../../components/Markdown/MarkdownEditor';
 import { MarkdownView } from '../../../../components/Markdown/MarkdownView';
 import { Button } from '../../../../components/ui/Button';
 import type { Ticket } from '../../../../services/api/types';
 import type { TicketActions } from '../../hooks/useTicket';
+import { useUploads } from '../../hooks/useUploads';
+import { UploadStatus } from '../UploadStatus';
 import * as S from './style';
 
 type Props = {
@@ -19,6 +25,8 @@ export function Description({ ticket, actions, canEdit, mentions }: Props) {
   const { t } = useTranslation();
   const [draft, setDraft] = useState<string | null>(null);
   const done = ticket.checklist.filter((i) => i.checked).length;
+  const editor = useRef<EditorApi | null>(null);
+  const uploads = useUploads(ticket.key, editor);
 
   const save = () => {
     if (draft === null) return;
@@ -49,7 +57,10 @@ export function Description({ ticket, actions, canEdit, mentions }: Props) {
             onSubmit={save}
             ariaLabel={t('ticket.fields.description')}
             placeholder={t('create.descriptionPlaceholder')}
+            onFiles={uploads.handleFiles}
+            apiRef={editor}
           />
+          <UploadStatus uploads={uploads} />
           <S.Actions>
             <Button variant="primary" size="sm" onClick={save} disabled={actions.patch.isPending}>
               {t('common.save')}

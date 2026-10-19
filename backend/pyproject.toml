@@ -19,6 +19,10 @@ dependencies = [
     "httpx>=0.28",
     "procrastinate>=3.10,<4",
     "psycopg[binary,pool]>=3.2",
+    "pillow>=11",
+    "filetype>=1.2",
+    "boto3>=1.35",
+    "python-multipart>=0.0.18",
 ]
 
 [project.scripts]
@@ -30,7 +34,7 @@ dev = [
     "pytest-asyncio>=0.24",
     "pytest-cov>=6.0",
     "httpx>=0.28",
-    "testcontainers[postgres]>=4.8",
+    "testcontainers[minio,postgres]>=4.8",
     "psycopg[binary]>=3.2",
     "ruff>=0.8",
     "mypy>=1.13",

@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 
 from radicle import __version__
 from radicle.api import (
+    attachments,
     auth,
     discussion,
     fields,
@@ -66,6 +67,7 @@ def create_app() -> FastAPI:
         discussion,
         jobs,
         templates,
+        attachments,
     ):
         api.include_router(module.router)
     app.include_router(api)

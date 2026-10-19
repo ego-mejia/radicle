@@ -8,6 +8,7 @@ import { useMe } from '../../../../hooks/useMe';
 import { projectOf } from '../../../../lib/format';
 import { useProject } from '../../../projects/hooks/useProject';
 import { useTicket, useTicketActions } from '../../hooks/useTicket';
+import { Attachments } from '../Attachments';
 import { Comments } from '../Comments';
 import { Description } from '../Description';
 import { FieldsPanel } from '../FieldsPanel';
@@ -57,6 +58,7 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
           isAdmin={isAdmin && canEdit}
         />
         <Description ticket={ticket} actions={actions} canEdit={canEdit} mentions={mentions} />
+        <Attachments ticket={ticket} canEdit={canEdit} isAdmin={isAdmin} me={me.handle} />
         <Subtickets ticket={ticket} canEdit={canEdit} />
         <Links ticket={ticket} actions={actions} canEdit={canEdit} />
         <S.Activity>

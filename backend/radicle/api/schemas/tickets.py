@@ -46,6 +46,24 @@ class WarningOut(Output):
     by: list[str] | None = None
 
 
+class AttachmentOut(Output):
+    id: str
+    ticket: str
+    filename: str
+    mime_type: str = Field(description="Detected from the content, not the name")
+    size_bytes: int
+    is_image: bool
+    width: int | None
+    height: int | None
+    uploader: UserRef
+    comment_id: str | None
+    created_at: UtcDatetime
+    url: str = Field(description="Signed download URL, valid for 5 minutes")
+    thumb_url: str | None = Field(description="320 px webp, once the worker made it")
+    preview_url: str | None = Field(description="1280 px webp, once the worker made it")
+    markdown: str = Field(description="Paste it in a description or comment")
+
+
 class TicketOut(Output):
     key: str
     project: str
@@ -69,6 +87,7 @@ class TicketOut(Output):
     )
     checklist: list[ChecklistItemOut]
     links: list[LinkOut]
+    attachments: list[AttachmentOut]
     children_count: int
     comments_count: int
     blocked: bool

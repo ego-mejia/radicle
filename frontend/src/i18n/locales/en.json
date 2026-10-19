@@ -545,5 +545,31 @@
     "noFields": "Asks for no fields.",
     "required": "Required",
     "linkedHelp": "Screens come from the template {{template}}."
+  },
+  "attachments": {
+    "title_one": "Attachments ({{count}})",
+    "title_other": "Attachments ({{count}})",
+    "add": "Attach files",
+    "empty": "No files yet. Drop them here or paste them in the description or a comment.",
+    "open": "Open {{name}}",
+    "actions": "Actions for {{name}}",
+    "download": "Download",
+    "shrink": "Reduce size",
+    "resized": "{{name}} is now {{size}}",
+    "uploading": "Uploading {{name}}",
+    "sizeTitle_one": "Image size",
+    "sizeTitle_other": "Size of {{count}} images",
+    "size": "Image size",
+    "upload": "Upload",
+    "upTo": "Up to {{px}} px on the longest side",
+    "noResize": "As it is (metadata removed)",
+    "previous": "Previous image",
+    "next": "Next image",
+    "presets": {
+      "original": "Original",
+      "large": "Large",
+      "medium": "Medium",
+      "small": "Small"
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { Children, isValidElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import ReactMarkdown, { type Components } from 'react-markdown';
-import rehypeSanitize from 'rehype-sanitize';
+import ReactMarkdown, { type Components, defaultUrlTransform } from 'react-markdown';
+import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 import { checklistLines } from '../../../lib/checklist';
 import type { ChecklistItem } from '../../../services/api/types';
@@ -15,6 +15,27 @@ type Props = {
   onToggle?: (index: number, checked: boolean) => void;
   readOnly?: boolean;
 };
+
+// `attachment:<id>` links point at ticket attachments; they survive sanitizing and become
+// URLs the browser loads with the session cookie.
+const SCHEMA = {
+  ...defaultSchema,
+  protocols: {
+    ...defaultSchema.protocols,
+    href: [...(defaultSchema.protocols?.href ?? []), 'attachment'],
+    src: [...(defaultSchema.protocols?.src ?? []), 'attachment'],
+  },
+};
+const ATTACHMENT = /^attachment:([0-9a-f-]{36})$/i;
+
+function urlTransform(url: string, key: string): string {
+  const match = ATTACHMENT.exec(url);
+  if (match) {
+    const variant = key === 'src' ? 'preview' : 'original';
+    return `/api/v1/attachments/${match[1]}/content?variant=${variant}`;
+  }
+  return defaultUrlTransform(url);
+}
 
 const MENTION = /(^|[^\w.@/])@([a-z0-9][a-z0-9_-]{1,31})/gi;
 
@@ -82,13 +103,23 @@ export function MarkdownView({ children, checklist = [], onToggle, readOnly = fa
         {c}
       </a>
     ),
+    img: ({ src, alt }) => (
+      <a
+        href={src?.replace('variant=preview', 'variant=original')}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img src={src} alt={alt ?? ''} loading="lazy" />
+      </a>
+    ),
   };
 
   return (
     <S.Prose>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeSanitize]}
+        rehypePlugins={[[rehypeSanitize, SCHEMA]]}
+        urlTransform={urlTransform}
         components={components}
       >
         {children}

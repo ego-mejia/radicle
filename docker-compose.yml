@@ -8,6 +8,17 @@ services:
       RADICLE_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-radicle}:${POSTGRES_PASSWORD:-radicle}@db:5432/${POSTGRES_DB:-radicle}
       RADICLE_BASE_URL: ${RADICLE_BASE_URL:-http://localhost:8000}
       RADICLE_TIMEZONE: ${RADICLE_TIMEZONE:-UTC}
+      RADICLE_SECRET_KEY: ${RADICLE_SECRET_KEY:-}
+      RADICLE_STORAGE: ${RADICLE_STORAGE:-local}
+      RADICLE_MAX_UPLOAD_MB: ${RADICLE_MAX_UPLOAD_MB:-25}
+      RADICLE_IMAGE_DEFAULT_RESIZE: ${RADICLE_IMAGE_DEFAULT_RESIZE:-large}
+      RADICLE_S3_BUCKET: ${RADICLE_S3_BUCKET:-radicle}
+      RADICLE_S3_ENDPOINT: ${RADICLE_S3_ENDPOINT:-}
+      RADICLE_S3_REGION: ${RADICLE_S3_REGION:-us-east-1}
+      RADICLE_S3_ACCESS_KEY: ${RADICLE_S3_ACCESS_KEY:-}
+      RADICLE_S3_SECRET_KEY: ${RADICLE_S3_SECRET_KEY:-}
+    volumes:
+      - attachments:/data/attachments
     depends_on:
       db:
         condition: service_healthy
@@ -21,6 +32,8 @@ services:
     environment:
       <<: *app-env
       RADICLE_MIGRATE: "false"
+    volumes:
+      - attachments:/data/attachments
     depends_on:
       app:
         condition: service_healthy
@@ -45,3 +58,4 @@ services:
 
 volumes:
   db-data:
+  attachments:

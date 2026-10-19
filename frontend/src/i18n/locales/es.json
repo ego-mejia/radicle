@@ -545,5 +545,31 @@
     "noFields": "No pide campos.",
     "required": "Obligatorio",
     "linkedHelp": "Las screens vienen del template {{template}}."
+  },
+  "attachments": {
+    "title_one": "Adjuntos ({{count}})",
+    "title_other": "Adjuntos ({{count}})",
+    "add": "Adjuntar archivos",
+    "empty": "Sin archivos. Arrástralos aquí o pégalos en la descripción o en un comentario.",
+    "open": "Abrir {{name}}",
+    "actions": "Acciones de {{name}}",
+    "download": "Descargar",
+    "shrink": "Reducir tamaño",
+    "resized": "{{name}} ahora pesa {{size}}",
+    "uploading": "Subiendo {{name}}",
+    "sizeTitle_one": "Tamaño de la imagen",
+    "sizeTitle_other": "Tamaño de {{count}} imágenes",
+    "size": "Tamaño de la imagen",
+    "upload": "Subir",
+    "upTo": "Hasta {{px}} px en el lado mayor",
+    "noResize": "Como está (sin metadatos)",
+    "previous": "Imagen anterior",
+    "next": "Imagen siguiente",
+    "presets": {
+      "original": "Original",
+      "large": "Grande",
+      "medium": "Mediano",
+      "small": "Chico"
+    }
   }
 }

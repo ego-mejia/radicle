@@ -24,6 +24,67 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/attachments/{attachment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Attachment
+         * @description The uploader or a project admin.
+         */
+        delete: operations["delete_attachment_api_v1_attachments__attachment_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attachments/{attachment_id}/content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download Attachment
+         * @description The bytes, with auth or with a valid signature from an attachment's `url`.
+         *     Images are shown inline; everything else downloads.
+         */
+        get: operations["download_attachment_api_v1_attachments__attachment_id__content_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/attachments/{attachment_id}/resize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resize Attachment
+         * @description Shrink an image already uploaded. It never gets bigger.
+         */
+        post: operations["resize_attachment_api_v1_attachments__attachment_id__resize_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -132,6 +193,26 @@ export interface paths {
          * @description Progress and result of a background job you started.
          */
         get: operations["get_job_api_v1_jobs__job_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/limits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Limits
+         * @description Upload limits, so clients can check before sending.
+         */
+        get: operations["limits_api_v1_limits_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -852,6 +933,27 @@ export interface paths {
         patch: operations["patch_ticket_api_v1_tickets__key__patch"];
         trace?: never;
     };
+    "/api/v1/tickets/{key}/attachments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Attachments */
+        get: operations["list_attachments_api_v1_tickets__key__attachments_get"];
+        put?: never;
+        /**
+         * Upload Attachment
+         * @description Upload a file (multipart). Images lose their EXIF and are shrunk to `resize`.
+         */
+        post: operations["upload_attachment_api_v1_tickets__key__attachments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tickets/{key}/checklist/{index}": {
         parameters: {
             query?: never;
@@ -1192,11 +1294,73 @@ export interface components {
             /** Position */
             position?: number | null;
         };
+        /** AttachmentOut */
+        AttachmentOut: {
+            /** Comment Id */
+            comment_id: string | null;
+            /** Created At */
+            created_at: string;
+            /** Filename */
+            filename: string;
+            /** Height */
+            height: number | null;
+            /** Id */
+            id: string;
+            /** Is Image */
+            is_image: boolean;
+            /**
+             * Markdown
+             * @description Paste it in a description or comment
+             */
+            markdown: string;
+            /**
+             * Mime Type
+             * @description Detected from the content, not the name
+             */
+            mime_type: string;
+            /**
+             * Preview Url
+             * @description 1280 px webp, once the worker made it
+             */
+            preview_url: string | null;
+            /** Size Bytes */
+            size_bytes: number;
+            /**
+             * Thumb Url
+             * @description 320 px webp, once the worker made it
+             */
+            thumb_url: string | null;
+            /** Ticket */
+            ticket: string;
+            uploader: components["schemas"]["UserRef"];
+            /**
+             * Url
+             * @description Signed download URL, valid for 5 minutes
+             */
+            url: string;
+            /** Width */
+            width: number | null;
+        };
         /**
          * BlockedPolicy
          * @enum {string}
          */
         BlockedPolicy: "warn" | "enforce";
+        /** Body_upload_attachment_api_v1_tickets__key__attachments_post */
+        Body_upload_attachment_api_v1_tickets__key__attachments_post: {
+            /** Comment Id */
+            comment_id?: string | null;
+            /**
+             * File
+             * @description The file
+             */
+            file: string;
+            /**
+             * Resize
+             * @description Images: original, large, medium or small
+             */
+            resize?: string | null;
+        };
         /** CategoryCounts */
         CategoryCounts: {
             /**
@@ -1469,6 +1633,23 @@ export interface components {
          * @enum {string}
          */
         JobStatus: "pending" | "running" | "succeeded" | "failed";
+        /** Limits */
+        Limits: {
+            /**
+             * Image Default Resize
+             * @description original, large, medium or small
+             */
+            image_default_resize: string;
+            /**
+             * Image Presets
+             * @description Longest side in pixels
+             */
+            image_presets: {
+                [key: string]: number | null;
+            };
+            /** Max Upload Mb */
+            max_upload_mb: number;
+        };
         /** LinkCreate */
         LinkCreate: {
             /**
@@ -1618,6 +1799,13 @@ export interface components {
         Page_AreaOut_: {
             /** Items */
             items: components["schemas"]["AreaOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[AttachmentOut] */
+        Page_AttachmentOut_: {
+            /** Items */
+            items: components["schemas"]["AttachmentOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -1858,6 +2046,14 @@ export interface components {
             emoji: string;
             /** Users */
             users: string[];
+        };
+        /** ResizeIn */
+        ResizeIn: {
+            /**
+             * Preset
+             * @description large (2048 px), medium (1280 px) or small (800 px)
+             */
+            preset: string;
         };
         /**
          * Resolution
@@ -2268,6 +2464,8 @@ export interface components {
             /** Area */
             area: string | null;
             assignee: components["schemas"]["UserRef"] | null;
+            /** Attachments */
+            attachments: components["schemas"]["AttachmentOut"][];
             /** Blocked */
             blocked: boolean;
             /** Checklist */
@@ -2751,6 +2949,105 @@ export interface operations {
             };
         };
     };
+    delete_attachment_api_v1_attachments__attachment_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                attachment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_attachment_api_v1_attachments__attachment_id__content_get: {
+        parameters: {
+            query?: {
+                variant?: string;
+                expires?: number | null;
+                sig?: string | null;
+            };
+            header?: never;
+            path: {
+                attachment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resize_attachment_api_v1_attachments__attachment_id__resize_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                attachment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResizeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttachmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     login_api_v1_auth_login_post: {
         parameters: {
             query?: never;
@@ -2977,6 +3274,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    limits_api_v1_limits_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Limits"];
                 };
             };
         };
@@ -4599,6 +4916,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TicketOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_attachments_api_v1_tickets__key__attachments_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AttachmentOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_attachment_api_v1_tickets__key__attachments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_attachment_api_v1_tickets__key__attachments_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AttachmentOut"];
                 };
             };
             /** @description Validation Error */

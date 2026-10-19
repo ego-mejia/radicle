@@ -13,7 +13,11 @@ from radicle.services import queue
 log = logging.getLogger("radicle.worker")
 
 # Modules that register job handlers with @queue.handler.
-JOB_MODULES: tuple[str, ...] = ("radicle.services.jobs", "radicle.services.templates")
+JOB_MODULES: tuple[str, ...] = (
+    "radicle.services.jobs",
+    "radicle.services.templates",
+    "radicle.services.attachments",
+)
 
 
 def conninfo(database_url: str) -> str:

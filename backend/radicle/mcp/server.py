@@ -96,6 +96,8 @@ def mount(app: FastAPI) -> None:
         # Auth is a bearer header, never a cookie, so DNS rebinding cannot borrow it.
         transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
         host="0.0.0.0",  # noqa: S104 - only disables the localhost-only default
+        # upload_attachment takes up to 10 MB, about 13.4 MB once in base64.
+        max_request_body_size=16 * 1024 * 1024,
     )
     route = starlette_app.routes[0]
     if not isinstance(route, Route):  # pragma: no cover - SDK layout changed

@@ -38,6 +38,7 @@ export const TICKET: Ticket = {
     { index: 2, text: 'Revisar', checked: false, assignee: 'nadie', assignee_unknown: true },
   ],
   links: [],
+  attachments: [],
   children_count: 0,
   comments_count: 0,
   blocked: false,
