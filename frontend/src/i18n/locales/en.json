@@ -247,7 +247,10 @@
     "loginTitle": "Sign in",
     "signIn": "Sign in",
     "invalid": "Invalid email or password.",
-    "rateLimited": "Too many attempts. Try again in {{seconds}} seconds."
+    "rateLimited": "Too many attempts. Try again in {{seconds}} seconds.",
+    "continueWith": "Continue with {{name}}",
+    "or": "or with your password",
+    "emergency": "Instance admin? Sign in with password"
   },
   "projects": {
     "create": "Create project",
@@ -418,7 +421,9 @@
     "deleteGroup": "Delete {{group}}",
     "deleteGroupConfirm": "Its members lose the access the group gave them.",
     "addToGroup": "Add to {{group}}",
-    "removeFromGroup": "Remove @{{handle}} from {{group}}"
+    "removeFromGroup": "Remove @{{handle}} from {{group}}",
+    "sso": "SSO",
+    "settings": "Settings"
   },
   "settings": {
     "general": "General",
@@ -1308,5 +1313,34 @@
     "secret": "Secret key",
     "secretSaved": "Saved (encrypted). Type to replace it.",
     "saved": "Public form saved"
+  },
+  "sso": {
+    "title": "Single sign-on",
+    "help": "OpenID Connect providers (Google, Microsoft Entra ID, Okta, Keycloak, Authentik). Each one is a button on the sign-in page.",
+    "name": "Name",
+    "issuer": "Issuer URL",
+    "issuerHint": "Its discovery document lives under /.well-known/openid-configuration",
+    "clientId": "Client ID",
+    "clientSecret": "Client secret",
+    "secretSaved": "Saved (encrypted). Type to replace it.",
+    "domains": "Allowed email domains",
+    "domainsHint": "Empty: any domain",
+    "groupClaim": "Groups claim",
+    "groupClaimHint": "e.g. groups; leave empty to not sync groups",
+    "mapping": "Group mapping",
+    "mappingHint": "One per line: provider value = Radicle group. Only these groups are added or removed on each sign-in.",
+    "autoCreate": "Create accounts on first sign-in",
+    "enabled": "On",
+    "redirect": "Callback URL to register with the provider:",
+    "off": "Off",
+    "test": "Test {{name}}",
+    "edit": "Edit {{name}}",
+    "delete": "Delete {{name}}",
+    "new": "New provider"
+  },
+  "instance": {
+    "title": "Instance",
+    "passwordLogin": "Sign in with email and password",
+    "emergency": "With it off, only the first instance admin ({{email}}) can still use a password: the way back in if SSO fails."
   }
 }

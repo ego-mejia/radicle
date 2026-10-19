@@ -237,6 +237,9 @@ EXEMPT = {
     "/api/v1/projects/{key}/security-levels",
     "/api/v1/projects/{key}/workflows",
     "/api/v1/projects/{key}/inbox-settings",
+    "/api/v1/auth/options",
+    "/api/v1/admin/sso-providers",
+    "/api/v1/admin/settings",
     "/api/v1/openapi.json",
 }
 

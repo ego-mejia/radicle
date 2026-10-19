@@ -11,7 +11,7 @@ from radicle.api.me import me_out
 from radicle.api.ratelimit import login_limiter
 from radicle.api.schemas.users import LoginIn, MeOut
 from radicle.core.errors import ValidationFailed
-from radicle.services import auth
+from radicle.services import auth, sso
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -24,6 +24,7 @@ async def login(
     ip = request.client.host if request.client else "unknown"
     login_limiter.hit(ip, settings.login_rate_limit_per_minute)
     user = await auth.authenticate_password(db, str(body.email), body.password)
+    await sso.check_password_login(db, user)
     issued = await auth.create_session(
         db,
         user,

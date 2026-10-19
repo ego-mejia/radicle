@@ -1,11 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
 import { Field, FormError } from '../../../../components/ui/Field';
 import { Input } from '../../../../components/ui/Input';
-import { authKeys, login } from '../../../../services/api/auth';
+import { authKeys, fetchAuthOptions, login } from '../../../../services/api/auth';
 import { ApiError } from '../../../../services/api/client';
 import * as S from '../style';
 
@@ -13,7 +13,9 @@ export function LoginView() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { next } = useSearch({ from: '/auth/login' });
+  const { next, sso_error: ssoError } = useSearch({ from: '/auth/login' });
+  const { data: options } = useQuery({ queryKey: ['auth-options'], queryFn: fetchAuthOptions });
+  const [emergency, setEmergency] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const mutation = useMutation({
@@ -30,7 +32,9 @@ export function LoginView() {
     error =
       mutation.error.status === 429
         ? t('auth.rateLimited', { seconds: mutation.error.problem.retry_after ?? 60 })
-        : t('auth.invalid');
+        : mutation.error.status === 403
+          ? mutation.error.message
+          : t('auth.invalid');
   } else if (mutation.error) {
     error = t('common.unknownError');
   }
@@ -45,12 +49,49 @@ export function LoginView() {
       <S.Heading>
         <h1>{t('auth.loginTitle')}</h1>
       </S.Heading>
-      <FormError>{error}</FormError>
+      <FormError>{error ?? ssoError ?? null}</FormError>
+      {(options?.providers ?? []).map((p) => (
+        <S.Sso key={p.id} href={`${p.login_url}${next ? `?next=${encodeURIComponent(next)}` : ''}`}>
+          {t('auth.continueWith', { name: p.name })}
+        </S.Sso>
+      ))}
+      {options && !options.password_login_enabled && !emergency ? (
+        <S.Emergency type="button" onClick={() => setEmergency(true)}>
+          {t('auth.emergency')}
+        </S.Emergency>
+      ) : (
+        <>
+          {(options?.providers.length ?? 0) > 0 && <S.Or>{t('auth.or')}</S.Or>}
+          <PasswordFields
+            email={email}
+            password={password}
+            onEmail={setEmail}
+            onPassword={setPassword}
+            pending={mutation.isPending}
+          />
+        </>
+      )}
+    </S.Form>
+  );
+}
+
+type FieldsProps = {
+  email: string;
+  password: string;
+  onEmail: (v: string) => void;
+  onPassword: (v: string) => void;
+  pending: boolean;
+};
+
+function PasswordFields({ email, password, onEmail, onPassword, pending }: FieldsProps) {
+  const { t } = useTranslation();
+  return (
+    <>
       <Field label={t('auth.email')}>
         <Input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => onEmail(e.target.value)}
           required
           autoFocus
           autoComplete="email"
@@ -60,14 +101,14 @@ export function LoginView() {
         <Input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => onPassword(e.target.value)}
           required
           autoComplete="current-password"
         />
       </Field>
-      <Button type="submit" variant="primary" block disabled={mutation.isPending}>
-        {mutation.isPending ? t('common.loading') : t('auth.signIn')}
+      <Button type="submit" variant="primary" block disabled={pending}>
+        {pending ? t('common.loading') : t('auth.signIn')}
       </Button>
-    </S.Form>
+    </>
   );
 }

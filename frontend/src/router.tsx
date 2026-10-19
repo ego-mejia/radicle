@@ -77,8 +77,9 @@ const loginRoute = createRoute({
   getParentRoute: () => authLayout,
   path: '/login',
   component: LoginView,
-  validateSearch: (search: Record<string, unknown>): { next?: string } => ({
+  validateSearch: (search: Record<string, unknown>): { next?: string; sso_error?: string } => ({
     next: str(search.next),
+    sso_error: str(search.sso_error),
   }),
   beforeLoad: async ({ context }) => {
     if (await needsSetup(context.queryClient)) throw redirect({ to: '/setup' });

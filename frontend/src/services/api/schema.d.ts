@@ -4,6 +4,89 @@
  */
 
 export interface paths {
+    "/api/v1/admin/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Instance Settings */
+        get: operations["get_instance_settings_api_v1_admin_settings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Patch Instance Settings
+         * @description Turning password sign-in off leaves the first instance admin able to use it.
+         */
+        patch: operations["patch_instance_settings_api_v1_admin_settings_patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/sso-providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Providers */
+        get: operations["list_providers_api_v1_admin_sso_providers_get"];
+        put?: never;
+        /**
+         * Create Provider
+         * @description An OpenID Connect provider; register `redirect_uri` with it.
+         */
+        post: operations["create_provider_api_v1_admin_sso_providers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/sso-providers/{provider_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Provider
+         * @description Its users keep their accounts; they sign in another way.
+         */
+        delete: operations["delete_provider_api_v1_admin_sso_providers__provider_id__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Provider */
+        patch: operations["patch_provider_api_v1_admin_sso_providers__provider_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/sso-providers/{provider_id}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test Provider
+         * @description Discovery, signing keys and, when allowed, the client credentials.
+         */
+        post: operations["test_provider_api_v1_admin_sso_providers__provider_id__test_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/agents": {
         parameters: {
             query?: never;
@@ -116,6 +199,26 @@ export interface paths {
         put?: never;
         /** Logout */
         post: operations["logout_api_v1_auth_logout_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auth/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Auth Options
+         * @description What the login page shows: password form and one button per active provider.
+         */
+        get: operations["auth_options_api_v1_auth_options_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -2332,6 +2435,13 @@ export interface components {
             /** Width */
             width: number | null;
         };
+        /** AuthOptions */
+        AuthOptions: {
+            /** Password Login Enabled */
+            password_login_enabled: boolean;
+            /** Providers */
+            providers: components["schemas"]["ProviderButton"][];
+        };
         /** BacklogOut */
         BacklogOut: {
             /** Items */
@@ -3246,6 +3356,21 @@ export interface components {
             /** Title */
             title: string;
         };
+        /** InstanceSettingsIn */
+        InstanceSettingsIn: {
+            /** Password Login Enabled */
+            password_login_enabled?: boolean | null;
+        };
+        /** InstanceSettingsOut */
+        InstanceSettingsOut: {
+            /**
+             * Emergency Admin
+             * @description The first instance admin always keeps password sign-in
+             */
+            emergency_admin: string | null;
+            /** Password Login Enabled */
+            password_login_enabled: boolean;
+        };
         /** JobOut */
         JobOut: {
             /** Created At */
@@ -3370,6 +3495,11 @@ export interface components {
         };
         /** MeOut */
         MeOut: {
+            /**
+             * Auth Source
+             * @default local
+             */
+            auth_source: string;
             /** Created At */
             created_at: string;
             /** Display Name */
@@ -3631,6 +3761,13 @@ export interface components {
         Page_ProjectOut_: {
             /** Items */
             items: components["schemas"]["ProjectOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[ProviderOut] */
+        Page_ProviderOut_: {
+            /** Items */
+            items: components["schemas"]["ProviderOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -3904,6 +4041,84 @@ export interface components {
              * @description Most used tags first
              */
             tags: string[];
+        };
+        /** ProviderButton */
+        ProviderButton: {
+            /** Id */
+            id: string;
+            /** Login Url */
+            login_url: string;
+            /** Name */
+            name: string;
+        };
+        /** ProviderIn */
+        ProviderIn: {
+            /** Allowed Domains */
+            allowed_domains?: string[] | null;
+            /** Auto Create Users */
+            auto_create_users?: boolean | null;
+            /** Client Id */
+            client_id?: string | null;
+            /**
+             * Client Secret
+             * @description Write only
+             */
+            client_secret?: string | null;
+            /** Enabled */
+            enabled?: boolean | null;
+            /** Group Claim */
+            group_claim?: string | null;
+            /**
+             * Group Mapping
+             * @description Claim value -> group name or id
+             */
+            group_mapping?: {
+                [key: string]: string;
+            } | null;
+            /** Issuer Url */
+            issuer_url?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Scopes */
+            scopes?: string[] | null;
+        };
+        /** ProviderOut */
+        ProviderOut: {
+            /** Allowed Domains */
+            allowed_domains: string[];
+            /** Auto Create Users */
+            auto_create_users: boolean;
+            /** Client Id */
+            client_id: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Group Claim */
+            group_claim: string | null;
+            /**
+             * Group Mapping
+             * @description Claim value -> group name
+             */
+            group_mapping: {
+                [key: string]: string;
+            };
+            /**
+             * Has Secret
+             * @description Stored encrypted; never returned
+             */
+            has_secret: boolean;
+            /** Id */
+            id: string;
+            /** Issuer Url */
+            issuer_url: string;
+            /** Name */
+            name: string;
+            /**
+             * Redirect Uri
+             * @description Register this callback URL with the provider
+             */
+            redirect_uri: string;
+            /** Scopes */
+            scopes: string[];
         };
         /** QuickFilterIn */
         QuickFilterIn: {
@@ -4605,6 +4820,22 @@ export interface components {
                 [key: string]: unknown;
             } | null;
         };
+        /** TestCheck */
+        TestCheck: {
+            /** Detail */
+            detail: string;
+            /** Name */
+            name: string;
+            /** Ok */
+            ok: boolean;
+        };
+        /** TestOut */
+        TestOut: {
+            /** Checks */
+            checks: components["schemas"]["TestCheck"][];
+            /** Ok */
+            ok: boolean;
+        };
         /** TicketCreate */
         TicketCreate: {
             /**
@@ -5203,6 +5434,11 @@ export interface components {
         UserKind: "human" | "agent" | "system";
         /** UserOut */
         UserOut: {
+            /**
+             * Auth Source
+             * @default local
+             */
+            auth_source: string;
             /** Created At */
             created_at: string;
             /** Display Name */
@@ -5479,6 +5715,207 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    get_instance_settings_api_v1_admin_settings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InstanceSettingsOut"];
+                };
+            };
+        };
+    };
+    patch_instance_settings_api_v1_admin_settings_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InstanceSettingsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InstanceSettingsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_providers_api_v1_admin_sso_providers_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ProviderOut_"];
+                };
+            };
+        };
+    };
+    create_provider_api_v1_admin_sso_providers_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProviderIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProviderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_provider_api_v1_admin_sso_providers__provider_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_provider_api_v1_admin_sso_providers__provider_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProviderIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProviderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    test_provider_api_v1_admin_sso_providers__provider_id__test_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     create_agent_api_v1_agents_post: {
         parameters: {
             query?: never;
@@ -5659,6 +6096,26 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    auth_options_api_v1_auth_options_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthOptions"];
+                };
             };
         };
     };

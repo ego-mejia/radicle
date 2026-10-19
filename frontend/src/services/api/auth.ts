@@ -47,3 +47,7 @@ export async function createMyToken(name: string) {
 export async function revokeMyToken(id: string) {
   unwrap(await api.DELETE('/api/v1/me/tokens/{token_id}', { params: { path: { token_id: id } } }));
 }
+
+export async function fetchAuthOptions() {
+  return unwrap(await api.GET('/api/v1/auth/options'));
+}

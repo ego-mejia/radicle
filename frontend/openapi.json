@@ -356,6 +356,27 @@
         "title": "AttachmentOut",
         "type": "object"
       },
+      "AuthOptions": {
+        "properties": {
+          "password_login_enabled": {
+            "title": "Password Login Enabled",
+            "type": "boolean"
+          },
+          "providers": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderButton"
+            },
+            "title": "Providers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "password_login_enabled",
+          "providers"
+        ],
+        "title": "AuthOptions",
+        "type": "object"
+      },
       "BacklogOut": {
         "properties": {
           "items": {
@@ -3053,6 +3074,50 @@
         "title": "InboxSettingsOut",
         "type": "object"
       },
+      "InstanceSettingsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "password_login_enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Password Login Enabled"
+          }
+        },
+        "title": "InstanceSettingsIn",
+        "type": "object"
+      },
+      "InstanceSettingsOut": {
+        "properties": {
+          "emergency_admin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The first instance admin always keeps password sign-in",
+            "title": "Emergency Admin"
+          },
+          "password_login_enabled": {
+            "title": "Password Login Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "password_login_enabled",
+          "emergency_admin"
+        ],
+        "title": "InstanceSettingsOut",
+        "type": "object"
+      },
       "JobOut": {
         "properties": {
           "created_at": {
@@ -3355,6 +3420,11 @@
       },
       "MeOut": {
         "properties": {
+          "auth_source": {
+            "default": "local",
+            "title": "Auth Source",
+            "type": "string"
+          },
           "created_at": {
             "title": "Created At",
             "type": "string"
@@ -3404,6 +3474,7 @@
           "email",
           "is_instance_admin",
           "is_active",
+          "auth_source",
           "created_at",
           "projects"
         ],
@@ -4239,6 +4310,34 @@
         "title": "Page[ProjectOut]",
         "type": "object"
       },
+      "Page_ProviderOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProviderOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[ProviderOut]",
+        "type": "object"
+      },
       "Page_QuickFilterOut_": {
         "properties": {
           "items": {
@@ -5039,6 +5138,244 @@
           "custom_fields"
         ],
         "title": "ProjectValues",
+        "type": "object"
+      },
+      "ProviderButton": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "login_url": {
+            "title": "Login Url",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "login_url"
+        ],
+        "title": "ProviderButton",
+        "type": "object"
+      },
+      "ProviderIn": {
+        "additionalProperties": false,
+        "properties": {
+          "allowed_domains": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Domains"
+          },
+          "auto_create_users": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auto Create Users"
+          },
+          "client_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Client Id"
+          },
+          "client_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Write only",
+            "title": "Client Secret"
+          },
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
+          "group_claim": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group Claim"
+          },
+          "group_mapping": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Claim value -> group name or id",
+            "title": "Group Mapping"
+          },
+          "issuer_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issuer Url"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "scopes": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scopes"
+          }
+        },
+        "title": "ProviderIn",
+        "type": "object"
+      },
+      "ProviderOut": {
+        "properties": {
+          "allowed_domains": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Allowed Domains",
+            "type": "array"
+          },
+          "auto_create_users": {
+            "title": "Auto Create Users",
+            "type": "boolean"
+          },
+          "client_id": {
+            "title": "Client Id",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "group_claim": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Group Claim"
+          },
+          "group_mapping": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Claim value -> group name",
+            "title": "Group Mapping",
+            "type": "object"
+          },
+          "has_secret": {
+            "description": "Stored encrypted; never returned",
+            "title": "Has Secret",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "issuer_url": {
+            "title": "Issuer Url",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "redirect_uri": {
+            "description": "Register this callback URL with the provider",
+            "title": "Redirect Uri",
+            "type": "string"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Scopes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "issuer_url",
+          "client_id",
+          "has_secret",
+          "scopes",
+          "allowed_domains",
+          "auto_create_users",
+          "group_claim",
+          "group_mapping",
+          "enabled",
+          "redirect_uri"
+        ],
+        "title": "ProviderOut",
         "type": "object"
       },
       "QuickFilterIn": {
@@ -7076,6 +7413,50 @@
         "title": "TemplatePatch",
         "type": "object"
       },
+      "TestCheck": {
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "ok",
+          "detail"
+        ],
+        "title": "TestCheck",
+        "type": "object"
+      },
+      "TestOut": {
+        "properties": {
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/TestCheck"
+            },
+            "title": "Checks",
+            "type": "array"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ok",
+          "checks"
+        ],
+        "title": "TestOut",
+        "type": "object"
+      },
       "TicketCreate": {
         "additionalProperties": false,
         "properties": {
@@ -8984,6 +9365,11 @@
       },
       "UserOut": {
         "properties": {
+          "auth_source": {
+            "default": "local",
+            "title": "Auth Source",
+            "type": "string"
+          },
           "created_at": {
             "title": "Created At",
             "type": "string"
@@ -9026,6 +9412,7 @@
           "email",
           "is_instance_admin",
           "is_active",
+          "auth_source",
           "created_at"
         ],
         "title": "UserOut",
@@ -9874,6 +10261,260 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/admin/settings": {
+      "get": {
+        "operationId": "get_instance_settings_api_v1_admin_settings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstanceSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Instance Settings",
+        "tags": [
+          "sso"
+        ]
+      },
+      "patch": {
+        "description": "Turning password sign-in off leaves the first instance admin able to use it.",
+        "operationId": "patch_instance_settings_api_v1_admin_settings_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstanceSettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstanceSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Instance Settings",
+        "tags": [
+          "sso"
+        ]
+      }
+    },
+    "/api/v1/admin/sso-providers": {
+      "get": {
+        "operationId": "list_providers_api_v1_admin_sso_providers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_ProviderOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Providers",
+        "tags": [
+          "sso"
+        ]
+      },
+      "post": {
+        "description": "An OpenID Connect provider; register `redirect_uri` with it.",
+        "operationId": "create_provider_api_v1_admin_sso_providers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProviderIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Provider",
+        "tags": [
+          "sso"
+        ]
+      }
+    },
+    "/api/v1/admin/sso-providers/{provider_id}": {
+      "delete": {
+        "description": "Its users keep their accounts; they sign in another way.",
+        "operationId": "delete_provider_api_v1_admin_sso_providers__provider_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Provider Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Provider",
+        "tags": [
+          "sso"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_provider_api_v1_admin_sso_providers__provider_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Provider Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProviderIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Provider",
+        "tags": [
+          "sso"
+        ]
+      }
+    },
+    "/api/v1/admin/sso-providers/{provider_id}/test": {
+      "post": {
+        "description": "Discovery, signing keys and, when allowed, the client credentials.",
+        "operationId": "test_provider_api_v1_admin_sso_providers__provider_id__test_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Provider Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Test Provider",
+        "tags": [
+          "sso"
+        ]
+      }
+    },
     "/api/v1/agents": {
       "post": {
         "description": "Create an agent and its first token. The token value is returned only here.",
@@ -10145,6 +10786,28 @@
         "summary": "Logout",
         "tags": [
           "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/options": {
+      "get": {
+        "description": "What the login page shows: password form and one button per active provider.",
+        "operationId": "auth_options_api_v1_auth_options_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthOptions"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Auth Options",
+        "tags": [
+          "sso"
         ]
       }
     },

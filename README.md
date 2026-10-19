@@ -88,6 +88,10 @@ En **Reportes** están burndown, burnup, velocity, cumulative flow, control char
 
 **Buzón**: cada proyecto puede abrir un formulario público en `/b/{slug}` (Settings → Buzón) para que cualquiera mande quejas, sugerencias o ideas sin cuenta, con ALTCHA contra spam y un código para seguir su envío. Todo llega como Draft al Buzón del proyecto, donde se califica, se aprueba como task o bug, o se descarta.
 
+### SSO
+
+En **Admin → SSO** se agregan proveedores OpenID Connect (Google, Microsoft Entra ID, Okta, Keycloak, Authentik): issuer, client ID y secret, dominios permitidos y mapeo de grupos. Registra en el proveedor la URL de callback que muestra el formulario. En **Admin → Ajustes** se puede apagar la entrada con password; aun así, el primer admin de la instancia siempre puede entrar con su password: es la salida de emergencia si el proveedor falla.
+
 ## Atajos
 
 `?` muestra todos. Los principales: `c` crear ticket, `/` buscar, `⌘K` paleta de comandos, `g p` proyectos, `g m` mis tickets, `j`/`k` moverse en listas y board, y con un ticket abierto `e` título, `a` asignarme, `m` mover, `l` tags, `p` prioridad. Se pueden apagar en el perfil.

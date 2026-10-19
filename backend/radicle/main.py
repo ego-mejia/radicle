@@ -26,6 +26,7 @@ from radicle.api import (
     search,
     security,
     sprints,
+    sso,
     system,
     templates,
     tickets,
@@ -93,6 +94,7 @@ def create_app() -> FastAPI:
         groups,
         security,
         inbox,
+        sso,
     ):
         api.include_router(module.router)
     app.include_router(api)

@@ -43,6 +43,7 @@ class UserOut(Output):
     email: str | None
     is_instance_admin: bool
     is_active: bool
+    auth_source: str = "local"
     created_at: UtcDatetime
 
 

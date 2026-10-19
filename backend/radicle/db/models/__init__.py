@@ -42,6 +42,7 @@ from radicle.db.models.projects import (
     TransitionRule,
 )
 from radicle.db.models.sprints import Sprint, SprintCommitment, SprintState, SprintTicket
+from radicle.db.models.sso import AuthSource, InstanceSetting, SsoProvider
 from radicle.db.models.templates import SyncStatus, Template, TemplateSyncRun
 from radicle.db.models.tickets import (
     PRIORITY_ORDER,
@@ -66,6 +67,7 @@ __all__ = [
     "ApiToken",
     "Area",
     "Attachment",
+    "AuthSource",
     "Base",
     "BlockedPolicy",
     "Board",
@@ -86,6 +88,7 @@ __all__ = [
     "GroupMember",
     "InboxSettings",
     "InboxSubmission",
+    "InstanceSetting",
     "Job",
     "JobStatus",
     "LinkType",
@@ -112,6 +115,7 @@ __all__ = [
     "SprintCommitment",
     "SprintState",
     "SprintTicket",
+    "SsoProvider",
     "Status",
     "StatusCategory",
     "Swimlane",

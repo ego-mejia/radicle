@@ -19,6 +19,7 @@ export const ME: Me = {
   email: 'luis@example.com',
   is_instance_admin: false,
   is_active: true,
+  auth_source: 'local',
   created_at: '2026-10-18T10:00:00Z',
   projects: [{ key: 'PA', name: 'ProyectoA', role: 'member', permissions: MEMBER_PERMISSIONS }],
 };

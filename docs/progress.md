@@ -479,7 +479,7 @@ Los criterios de aceptación de la etapa se verifican así:
 | 4.2 | Tickets restringidos | Listo |
 | 4.3 | Buzón interno | Listo |
 | 4.4 | Formulario público | Listo |
-| 4.5 | SSO | Pendiente |
+| 4.5 | SSO | Listo |
 | 4.6 | Audit log | Pendiente |
 | 4.7 | MCP y UI de la etapa | Pendiente |
 
@@ -534,4 +534,17 @@ Los criterios de aceptación de la etapa se verifican así:
 **Cómo verificarlo**
 
 - `tests/integration/test_public_form.py`: envío sin cuenta con captura que aparece en el Buzón con origen Usuario, seguimiento Recibido, Aceptado y Cerrado con nota y sin datos internos; ALTCHA inválido y reusado, honeypot, tiempo mínimo, links, rate limit del sexto envío, tipos y tamaños de archivos, email obligatorio, escape de HTML y markdown, secretos cifrados y rate limit del seguimiento.
+
+### 4.5 SSO
+
+**Qué se hizo**
+
+- Migración `0021`: `sso_providers`, `instance_settings` e identidad SSO en `users`. Decisión: [0027](decisions/0027-sso.md).
+- OIDC con Authlib y PKCE, varios proveedores, alta automática por dominio, liga por email verificado, sync de grupos mapeados, usuarios desactivados fuera y password apagable con salida de emergencia para el primer admin.
+- API: `/auth/options`, `/auth/sso/{id}/login` y `/callback`, `/admin/sso-providers` (con Probar conexión) y `/admin/settings`.
+- UI: un botón por proveedor en el login, Admin → SSO y Admin → Ajustes.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_sso.py` (marca `slow`, Keycloak en testcontainers): login que crea la cuenta en el grupo mapeado, dominio rechazado, liga por email verificado, sync que agrega y quita solo los mapeados, usuario desactivado rechazado, password apagado con la salida del admin inicial y estado inválido.
 

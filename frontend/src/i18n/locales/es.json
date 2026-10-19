@@ -247,7 +247,10 @@
     "loginTitle": "Inicia sesión",
     "signIn": "Entrar",
     "invalid": "Email o contraseña incorrectos.",
-    "rateLimited": "Demasiados intentos. Intenta de nuevo en {{seconds}} segundos."
+    "rateLimited": "Demasiados intentos. Intenta de nuevo en {{seconds}} segundos.",
+    "continueWith": "Entrar con {{name}}",
+    "or": "o con tu password",
+    "emergency": "¿Admin de la instancia? Entra con password"
   },
   "projects": {
     "create": "Crear proyecto",
@@ -418,7 +421,9 @@
     "deleteGroup": "Borrar {{group}}",
     "deleteGroupConfirm": "Sus integrantes pierden el acceso que les daba el grupo.",
     "addToGroup": "Agregar a {{group}}",
-    "removeFromGroup": "Quitar a @{{handle}} de {{group}}"
+    "removeFromGroup": "Quitar a @{{handle}} de {{group}}",
+    "sso": "SSO",
+    "settings": "Ajustes"
   },
   "settings": {
     "general": "General",
@@ -1308,5 +1313,34 @@
     "secret": "Llave secreta",
     "secretSaved": "Guardada (cifrada). Escribe para reemplazarla.",
     "saved": "Formulario público guardado"
+  },
+  "sso": {
+    "title": "Inicio de sesión único",
+    "help": "Proveedores OpenID Connect (Google, Microsoft Entra ID, Okta, Keycloak, Authentik). Cada uno es un botón en la pantalla de entrada.",
+    "name": "Nombre",
+    "issuer": "URL del issuer",
+    "issuerHint": "Su documento de discovery vive en /.well-known/openid-configuration",
+    "clientId": "Client ID",
+    "clientSecret": "Client secret",
+    "secretSaved": "Guardado (cifrado). Escribe para reemplazarlo.",
+    "domains": "Dominios de email permitidos",
+    "domainsHint": "Vacío: cualquier dominio",
+    "groupClaim": "Claim de grupos",
+    "groupClaimHint": "Ej. groups; vacío para no sincronizar grupos",
+    "mapping": "Mapeo de grupos",
+    "mappingHint": "Uno por línea: valor del proveedor = grupo de Radicle. Solo estos grupos se agregan o quitan en cada entrada.",
+    "autoCreate": "Crear cuentas en la primera entrada",
+    "enabled": "Activo",
+    "redirect": "URL de callback para registrar en el proveedor:",
+    "off": "Apagado",
+    "test": "Probar {{name}}",
+    "edit": "Editar {{name}}",
+    "delete": "Borrar {{name}}",
+    "new": "Nuevo proveedor"
+  },
+  "instance": {
+    "title": "Instancia",
+    "passwordLogin": "Entrar con email y password",
+    "emergency": "Apagado, solo el primer admin de la instancia ({{email}}) puede seguir usando password: la salida de emergencia si falla el SSO."
   }
 }
