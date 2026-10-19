@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { formatDateTime, relativeTime } from '../../../../lib/format';
@@ -7,6 +8,7 @@ import {
   type ProjectDetail,
   type Ticket,
 } from '../../../../services/api/types';
+import { fetchSchema, screenKeys } from '../../../../services/api/screens';
 import type { TicketActions } from '../../hooks/useTicket';
 import { CustomFieldRows } from './components/CustomFieldRows';
 import { FieldRow, InlineInput, InlineSelect } from './components/FieldRow';
@@ -26,6 +28,15 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
   const { t } = useTranslation();
   const people = (project?.members ?? []).filter((m) => m.role !== 'viewer' && m.is_active);
   const patch = actions.patch.mutate;
+  const { data: editSchema } = useQuery({
+    queryKey: screenKeys.schema(ticket.project, ticket.type, 'edit'),
+    queryFn: () => fetchSchema(ticket.project, ticket.type, 'edit'),
+    enabled: canEdit,
+  });
+  const onScreen = new Set(editSchema?.fields.map((f) => f.field) ?? []);
+  // Fields outside the edit screen are read-only, except for project admins.
+  const can = (name: string) =>
+    canEdit && (project?.role === 'admin' || !editSchema?.from_screen || onScreen.has(name));
   const openMilestones = (project?.milestones ?? []).filter(
     (m) => m.status === 'open' || m.name === ticket.milestone,
   );
@@ -47,7 +58,7 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
         <InlineSelect
           label={t('ticket.fields.priority')}
           value={ticket.priority}
-          disabled={!canEdit}
+          disabled={!can('priority')}
           onChange={(value) => patch({ priority: value as Priority })}
           options={PRIORITIES.map((p) => ({ value: p, label: t(`ticket.priorities.${p}`) }))}
         />
@@ -56,7 +67,7 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
         <InlineSelect
           label={t('ticket.fields.area')}
           value={ticket.area ?? ''}
-          disabled={!canEdit}
+          disabled={!can('area')}
           onChange={(value) => patch({ area: value || null })}
           options={[
             ...(ticket.type === 'draft' || !ticket.area
@@ -70,7 +81,7 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
         <InlineSelect
           label={t('ticket.fields.milestone')}
           value={ticket.milestone ?? ''}
-          disabled={!canEdit}
+          disabled={!can('milestone')}
           onChange={(value) => patch({ milestone: value || null })}
           options={[
             { value: '', label: t('ticket.noMilestone') },
@@ -83,7 +94,7 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
           label={t('ticket.fields.assignee')}
           people={people}
           value={ticket.assignee?.handle ?? ''}
-          disabled={!canEdit}
+          disabled={!can('assignee')}
           emptyLabel={t('ticket.unassigned')}
           onChange={(handle) => patch({ assignee: handle || null })}
         />
@@ -93,10 +104,14 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
           <PersonChip
             key={person.handle}
             person={person}
-            onRemove={canEdit ? () => actions.removeCollaborator.mutate(person.handle) : undefined}
+            onRemove={
+              can('collaborators')
+                ? () => actions.removeCollaborator.mutate(person.handle)
+                : undefined
+            }
           />
         ))}
-        {canEdit && notCollaborating.length > 0 && (
+        {can('collaborators') && notCollaborating.length > 0 && (
           <InlineSelect
             label={t('ticket.addCollaborator')}
             value=""
@@ -116,7 +131,7 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
           label={t('ticket.fields.due')}
           type="date"
           value={ticket.due_date ?? ''}
-          disabled={!canEdit}
+          disabled={!can('due_date')}
           onCommit={(value) => patch({ due_date: value || null })}
         />
       </FieldRow>
@@ -125,13 +140,17 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
           label={t('ticket.fields.estimate')}
           type="number"
           value={ticket.estimate_hours?.toString() ?? ''}
-          disabled={!canEdit}
+          disabled={!can('estimate_hours')}
           placeholder="—"
           onCommit={(value) => patch({ estimate_hours: value === '' ? null : Number(value) })}
         />
       </FieldRow>
       <FieldRow label={t('ticket.fields.tags')}>
-        <TagsField tags={ticket.tags} disabled={!canEdit} onChange={(tags) => patch({ tags })} />
+        <TagsField
+          tags={ticket.tags}
+          disabled={!can('tags')}
+          onChange={(tags) => patch({ tags })}
+        />
       </FieldRow>
       <FieldRow label={t('ticket.fields.parent')}>
         {ticket.parent ? (
@@ -142,7 +161,7 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
           <InlineInput
             label={t('ticket.fields.parent')}
             value=""
-            disabled={!canEdit}
+            disabled={!can('parent')}
             placeholder="—"
             onCommit={(value) => value.trim() && patch({ parent: value.trim().toUpperCase() })}
           />
@@ -153,6 +172,7 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
         fields={project?.custom_fields ?? []}
         people={people}
         canEdit={canEdit}
+        canEditField={(key) => can(`cf.${key}`)}
         onChange={(key, value) => patch({ custom_fields: { [key]: value } })}
       />
       <FieldRow label={t('ticket.fields.created')}>

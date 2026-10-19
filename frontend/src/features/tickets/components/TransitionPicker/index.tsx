@@ -1,15 +1,20 @@
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CategoryIcon } from '../../../../components/icons/CategoryIcon';
 import { Button } from '../../../../components/ui/Button';
 import { Textarea } from '../../../../components/ui/Input';
-import type { Resolution, TransitionOption } from '../../../../services/api/types';
+import { type Values, toBody } from '../../../../lib/schemaForm';
+import { fetchSchema, screenKeys } from '../../../../services/api/screens';
+import type { Resolution, TicketType, TransitionOption } from '../../../../services/api/types';
+import { SchemaFields } from '../SchemaFields';
 import * as S from './style';
 
 export type Pick = {
   option: TransitionOption;
   resolution: Resolution | null;
   comment?: string | null;
+  fields?: Record<string, unknown> | null;
 };
 
 type Props = {
@@ -17,24 +22,43 @@ type Props = {
   onPick: (pick: Pick) => void;
   /** Preselect a transition, e.g. after a drop, so only what is missing is asked. */
   initial?: TransitionOption | null;
+  /** Where the ticket lives, to load the fields of transition screens. */
+  projectKey?: string;
+  ticketType?: TicketType;
 };
 
 function needsForm(option: TransitionOption): boolean {
   const resolutions = option.allowed_resolutions ?? [];
-  return option.requires_comment || (option.category === 'done' && resolutions.length > 1);
+  return (
+    option.requires_comment ||
+    option.has_screen ||
+    (option.category === 'done' && resolutions.length > 1)
+  );
 }
 
 /**
  * Lists transitions. Unavailable ones show why. When a transition needs a resolution
  * choice or a comment, a small form asks for it; otherwise one click moves the ticket.
  */
-export function TransitionPicker({ options, onPick, initial = null }: Props) {
+export function TransitionPicker({
+  options,
+  onPick,
+  initial = null,
+  projectKey = '',
+  ticketType = 'task',
+}: Props) {
   const { t } = useTranslation();
   const [pending, setPending] = useState<TransitionOption | null>(
     initial && needsForm(initial) ? initial : null,
   );
   const [resolution, setResolution] = useState<Resolution | null>(null);
   const [comment, setComment] = useState('');
+  const [values, setValues] = useState<Values>({});
+  const { data: screen } = useQuery({
+    queryKey: screenKeys.schema(projectKey, ticketType, 'transition', pending?.name),
+    queryFn: () => fetchSchema(projectKey, ticketType, 'transition', pending!.name),
+    enabled: Boolean(pending?.has_screen && projectKey),
+  });
 
   if (options.length === 0) return <S.Empty>{t('ticket.noTransitions')}</S.Empty>;
 
@@ -76,7 +100,17 @@ export function TransitionPicker({ options, onPick, initial = null }: Props) {
           onSubmit={(e) => {
             e.preventDefault();
             if (missingResolution || missingComment) return;
-            onPick({ option: pending, resolution, comment: comment.trim() || null });
+            const { body, custom } = toBody(values);
+            const fields = {
+              ...body,
+              ...Object.fromEntries(Object.entries(custom).map(([k, v]) => [`cf.${k}`, v])),
+            };
+            onPick({
+              option: pending,
+              resolution,
+              comment: comment.trim() || null,
+              fields: Object.keys(fields).length ? fields : null,
+            });
           }}
         >
           {pending.category === 'done' && resolutions.length > 1 && (
@@ -97,6 +131,13 @@ export function TransitionPicker({ options, onPick, initial = null }: Props) {
                 ))}
               </S.Chips>
             </>
+          )}
+          {screen && (
+            <SchemaFields
+              fields={screen.fields}
+              values={values}
+              onChange={(name, value) => setValues((v) => ({ ...v, [name]: value }))}
+            />
           )}
           <Textarea
             aria-label={t('ticket.moveComment')}

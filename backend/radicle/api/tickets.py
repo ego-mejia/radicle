@@ -177,6 +177,7 @@ async def get_transitions(
             available=v.available,
             reasons=[RuleFailureOut(rule=f.rule, message=f.message) for f in v.failures],
             requires_comment=v.requires_comment,
+            has_screen=v.has_screen,
         )
         for v in views
         if v.available or include_unavailable
@@ -198,6 +199,7 @@ async def transition_ticket(
         transition=body.transition,
         comment=body.comment,
         force=body.force,
+        fields=body.fields,
     )
     return await ticket_out(
         db, ticket, warnings=[WarningOut(code=w.code, message=w.message, by=w.by) for w in warnings]

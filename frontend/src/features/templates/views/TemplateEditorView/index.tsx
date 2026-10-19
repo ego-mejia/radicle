@@ -29,12 +29,13 @@ import {
 import { AreasTagsEditor } from '../../components/AreasTagsEditor';
 import { ConfigFieldsEditor } from '../../components/ConfigFieldsEditor';
 import { MappingDialog, type Removed } from '../../components/MappingDialog';
+import { type ScreenConf, ScreensEditor } from '../../components/ScreensEditor';
 import { SyncRuns } from '../../components/SyncRuns';
 import { WorkflowEditor } from '../../components/WorkflowEditor';
 import * as S from './style';
 
-type Tab = 'general' | 'workflows' | 'fields' | 'sync';
-const TABS: Tab[] = ['general', 'workflows', 'fields', 'sync'];
+type Tab = 'general' | 'workflows' | 'fields' | 'screens' | 'sync';
+const TABS: Tab[] = ['general', 'workflows', 'fields', 'screens', 'sync'];
 
 export function TemplateEditorView() {
   const { t } = useTranslation();
@@ -193,6 +194,23 @@ function Editor({ template }: { template: TemplateDetail }) {
               fields={config.custom_fields ?? []}
               readOnly={readOnly}
               onChange={(custom_fields) => setConfig({ ...config, custom_fields })}
+            />
+          </S.Panel>
+        )}
+        {current === 'screens' && (
+          <S.Panel>
+            <ScreensEditor
+              screens={(config.screens ?? []) as ScreenConf[]}
+              workflows={config.workflows}
+              customFields={(config.custom_fields ?? []).map((f) => ({
+                key: f.key,
+                name: f.name,
+                types: f.applies_to_types ?? [...TICKET_TYPES],
+              }))}
+              readOnly={readOnly}
+              onChange={(screens) =>
+                setConfig({ ...config, screens: screens as TemplateConfig['screens'] })
+              }
             />
           </S.Panel>
         )}

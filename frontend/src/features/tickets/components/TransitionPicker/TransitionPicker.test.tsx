@@ -6,7 +6,7 @@ import type { TransitionOption } from '../../../../services/api/types';
 import { renderWithProviders } from '../../../../test/renderWithProviders';
 import { TransitionPicker } from '.';
 
-const BASE = { available: true, reasons: [], requires_comment: false };
+const BASE = { available: true, reasons: [], requires_comment: false, has_screen: false };
 const OPTIONS: TransitionOption[] = [
   {
     ...BASE,
@@ -57,6 +57,7 @@ describe('TransitionPicker', () => {
       option: OPTIONS[1],
       resolution: 'duplicate',
       comment: 'Dup of PA-2',
+      fields: null,
     });
   });
 
@@ -97,6 +98,7 @@ describe('TransitionPicker', () => {
       option: options[1],
       resolution: null,
       comment: 'Sin alcance',
+      fields: null,
     });
   });
 

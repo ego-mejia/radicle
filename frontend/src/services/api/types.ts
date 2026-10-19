@@ -62,3 +62,9 @@ export type FieldConf = S['FieldConf'];
 export type SyncRun = S['SyncRunOut'];
 export type BlockedPolicy = ProjectDetail['blocked_policy'];
 export const RESOLUTIONS: Resolution[] = ['done', 'wont_do', 'duplicate', 'cannot_reproduce'];
+
+export type FormSchema = S['FormSchemaOut'];
+export type SchemaField = S['SchemaFieldOut'];
+export type ScreenOperation = FormSchema['operation'];
+export type Screen = S['ScreenOut'];
+export type ScreenIn = S['ScreenIn'];

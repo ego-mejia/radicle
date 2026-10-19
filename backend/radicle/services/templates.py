@@ -23,7 +23,7 @@ from radicle.db.models import (
     UserKind,
     utcnow,
 )
-from radicle.services import queue
+from radicle.services import queue, screens
 from radicle.services.access import ProjectAccess
 from radicle.services.projects import check_description, normalize_name
 from radicle.services.template_config import (
@@ -31,6 +31,8 @@ from radicle.services.template_config import (
     FieldConf,
     FieldOptionConf,
     RuleConf,
+    ScreenConf,
+    ScreenFieldConf,
     SettingsConf,
     StatusConf,
     TemplateConfig,
@@ -508,7 +510,23 @@ async def config_from_project(db: AsyncSession, project: Project) -> TemplateCon
         )
         .order_by(CustomFieldDefinition.position)
     )
+    transition_refs_by_id: dict[uuid.UUID, str] = {}
+    for ticket_type, wf in workflow_confs.items():
+        project_wf = workflows[ticket_type]
+        for t, conf in zip(project_wf.transitions, wf.transitions, strict=True):
+            transition_refs_by_id[t.id] = conf.ref
+    screen_confs = [
+        ScreenConf(
+            type=s.ticket_type,
+            operation=s.operation.value,
+            transition=transition_refs_by_id.get(s.transition_id) if s.transition_id else None,
+            fields=[ScreenFieldConf(**f) for f in s.fields],
+        )
+        for s in await screens.list_screens(db, project.id)
+        if s.transition_id is None or s.transition_id in transition_refs_by_id
+    ]
     return TemplateConfig(
+        screens=screen_confs,
         areas=[AreaConf(name=a.name, color=a.color) for a in area_list],
         tags=list(project.suggested_tags or []),
         custom_fields=[

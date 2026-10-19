@@ -65,6 +65,7 @@ async def test_get_transitions(client: AsyncClient, board: Team) -> None:
             "available": True,
             "reasons": [],
             "requires_comment": False,
+            "has_screen": False,
         },
         {
             "name": "Close",
@@ -74,6 +75,7 @@ async def test_get_transitions(client: AsyncClient, board: Team) -> None:
             "available": True,
             "reasons": [],
             "requires_comment": False,
+            "has_screen": False,
         },
     ]
 

@@ -103,7 +103,7 @@ export function BoardView() {
     if (options.length === 0) return;
     const only = options[0]!;
     const resolutions = only.allowed_resolutions ?? [];
-    const simple = only.available && !only.requires_comment;
+    const simple = only.available && !only.requires_comment && !only.has_screen;
     if (options.length === 1 && simple && (only.category !== 'done' || resolutions.length <= 1)) {
       move.mutate({
         key: current.ticket.key,
@@ -169,15 +169,17 @@ export function BoardView() {
       {pending && (
         <DropResolver
           ticketKey={pending.ticket.key}
+          ticketType={pending.ticket.type}
           options={pending.options}
           onCancel={() => setPending(null)}
-          onPick={({ option, resolution, comment }) => {
+          onPick={({ option, resolution, comment, fields }) => {
             move.mutate({
               key: pending.ticket.key,
               to: option.to_status,
               resolution,
               transition: option.name,
               comment,
+              fields,
             });
             setPending(null);
           }}

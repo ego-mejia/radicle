@@ -170,7 +170,8 @@
     "created": "{{key}} created",
     "submit": "Create",
     "titlePlaceholder": "What needs doing?",
-    "descriptionPlaceholder": "Markdown. Checklists: - [ ] item @handle"
+    "descriptionPlaceholder": "Markdown. Checklists: - [ ] item @handle",
+    "required": "Required"
   },
   "comments": {
     "placeholder": "Write a comment. Markdown and @mentions work.",
@@ -325,7 +326,8 @@
     "anyStatus": "any not done",
     "fields": "Fields",
     "workflowsEditHelp": "Statuses and transitions per type. Removing a status asks where its tickets go.",
-    "workflowsLinkedHelp": "These come from the template {{template}}. Edit them there, or detach the project."
+    "workflowsLinkedHelp": "These come from the template {{template}}. Edit them there, or detach the project.",
+    "screens": "Screens"
   },
   "profile": {
     "details": "Details",
@@ -418,7 +420,8 @@
       "general": "General",
       "workflows": "Workflows",
       "fields": "Custom fields",
-      "sync": "Propagation"
+      "sync": "Propagation",
+      "screens": "Screens"
     },
     "areasHint": "Added to linked projects; projects can keep extra areas of their own.",
     "tags": "Tags",
@@ -525,7 +528,22 @@
       "due_date": "Due date",
       "estimate_hours": "Estimate",
       "description_md": "Description",
-      "parent": "Parent"
+      "parent": "Parent",
+      "title": "Title",
+      "collaborators": "Collaborators",
+      "tags": "Tags"
     }
+  },
+  "screens": {
+    "title": "Screens",
+    "help": "Choose the fields each form asks for and which are required. Without a custom screen the defaults apply: area is required for tasks and bugs.",
+    "create": "Create",
+    "edit": "Edit",
+    "transition": "Transition: {{name}}",
+    "custom": "Custom screen",
+    "defaults": "Default fields.",
+    "noFields": "Asks for no fields.",
+    "required": "Required",
+    "linkedHelp": "Screens come from the template {{template}}."
   }
 }

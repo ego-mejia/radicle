@@ -14,6 +14,7 @@ TOOLS = {
     "search_tickets",
     "my_tickets",
     "get_ticket",
+    "get_ticket_schema",
     "create_ticket",
     "update_ticket",
     "get_transitions",

@@ -274,6 +274,35 @@ def register(server: MCPServer) -> None:
         raise APIErrorMessage("Could not update the ticket.")  # pragma: no cover
 
     @server.tool()
+    async def get_ticket_schema(
+        ctx: Context,
+        project: Annotated[str, Field(description="Project key, e.g. PA")],
+        type: TicketType,
+        operation: Literal["create", "edit", "transition"] = "create",
+        transition: Annotated[
+            str | None, Field(description="Transition name, for operation=transition")
+        ] = None,
+    ) -> dict[str, Any]:
+        """Fields a form needs before you create, edit or move a ticket: which are
+        required and their valid options. Call it before create_ticket when unsure."""
+        async with api(ctx) as client:
+            schema = await client.call(
+                "GET",
+                f"/projects/{project}/schema",
+                params={"type": type, "operation": operation, "transition": transition},
+            )
+        return {
+            "type": schema["type"],
+            "operation": schema["operation"],
+            "transition": schema["transition"],
+            "fields": [
+                {k: v for k, v in f.items() if v is not None and k != "label"}
+                | {"label": f["label"]}
+                for f in schema["fields"]
+            ],
+        }
+
+    @server.tool()
     async def get_transitions(ctx: Context, key: Key) -> list[dict[str, Any]]:
         """Statuses this ticket can move to now, and the resolutions each one accepts."""
         async with api(ctx) as client:
@@ -292,6 +321,13 @@ def register(server: MCPServer) -> None:
             str | None,
             Field(description="Saved as a comment; some transitions require one"),
         ] = None,
+        fields: Annotated[
+            dict[str, Any] | None,
+            Field(
+                description="Values the transition's screen asks for, e.g. "
+                '{"cf.environment": "prod"}. See get_ticket_schema.'
+            ),
+        ] = None,
     ) -> dict[str, Any]:
         """Move a ticket through its workflow. The result includes `warnings`, e.g. when
         the ticket is still blocked by unfinished tickets. If the transition has rules
@@ -299,6 +335,8 @@ def register(server: MCPServer) -> None:
         body: dict[str, Any] = {"to_status": to_status, "resolution": resolution}
         if comment:
             body["comment"] = comment
+        if fields:
+            body["fields"] = fields
         async with api(ctx) as client:
             ticket = await client.call("POST", f"/tickets/{key}/transitions", json=body)
         out = compact(ticket)

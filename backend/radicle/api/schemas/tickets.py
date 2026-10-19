@@ -174,6 +174,10 @@ class TransitionOption(Output):
         default_factory=list, description="Conditions that fail for you"
     )
     requires_comment: bool = False
+    has_screen: bool = Field(
+        default=False,
+        description="Asks for fields: see /projects/{key}/schema?operation=transition",
+    )
 
 
 class TransitionIn(Input):
@@ -187,6 +191,10 @@ class TransitionIn(Input):
     )
     force: bool = Field(
         default=False, description="Admins only: move a blocked ticket despite policy enforce"
+    )
+    fields: dict[str, Any] | None = Field(
+        default=None,
+        description='Values for the transition\'s screen, e.g. {"cf.environment": "prod"}',
     )
 
 

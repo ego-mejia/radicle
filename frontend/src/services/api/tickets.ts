@@ -69,6 +69,7 @@ export type Move = {
   transition?: string;
   comment?: string | null;
   force?: boolean;
+  fields?: Record<string, unknown> | null;
 };
 
 export async function transitionTicket(key: string, move: Move) {
@@ -81,6 +82,7 @@ export async function transitionTicket(key: string, move: Move) {
         transition: move.transition ?? null,
         comment: move.comment || null,
         force: move.force ?? false,
+        fields: move.fields ?? null,
       },
     }),
   );

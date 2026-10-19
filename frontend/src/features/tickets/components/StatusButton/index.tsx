@@ -42,13 +42,16 @@ export function StatusButton({ ticket, actions, canEdit }: Props) {
           ) : (
             <TransitionPicker
               options={options ?? []}
-              onPick={({ option, resolution, comment }) => {
+              projectKey={ticket.project}
+              ticketType={ticket.type}
+              onPick={({ option, resolution, comment, fields }) => {
                 setOpen(false);
                 actions.transition.mutate({
                   to: option.to_status,
                   resolution,
                   transition: option.name,
                   comment,
+                  fields,
                 });
               }}
             />

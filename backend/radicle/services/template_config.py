@@ -18,6 +18,7 @@ from radicle.db.models import (
     TicketType,
 )
 from radicle.services.rule_catalog import check_rule
+from radicle.services.screens import check_fields
 from radicle.services.workflows import DEFAULT_WORKFLOWS
 
 REF_RE = re.compile(r"^[a-z0-9][a-z0-9_]{0,59}$")
@@ -140,16 +141,33 @@ def parse(raw: Any) -> TemplateConfig:
     _unique([a.name.lower() for a in config.areas], "config.areas", "area")
     for f in config.custom_fields:
         _check_ref(f.ref, "config.custom_fields")
-    for screen in config.screens:
+    check_screens(config.screens, config.workflows, "config.screens")
+    return config
+
+
+def check_screens(
+    screens: list["ScreenConf"], workflows: dict[TicketType, WorkflowConf], path: str
+) -> None:
+    seen: set[tuple[str, str, str | None]] = set()
+    for screen in screens:
+        if screen.operation not in ("create", "edit", "transition"):
+            raise _fail(path, "Screen operation must be create, edit or transition.")
+        if (screen.operation == "transition") != (screen.transition is not None):
+            raise _fail(path, "Only transition screens name a transition, and they must.")
         if screen.transition is not None:
-            refs = {t.ref for t in config.workflows[screen.type].transitions}
+            refs = {t.ref for t in workflows[screen.type].transitions}
             if screen.transition not in refs:
                 raise _fail(
-                    "config.screens",
+                    path,
                     f"Screen for {screen.type.value} uses unknown transition "
                     f"'{screen.transition}'.",
                 )
-    return config
+        key = (screen.type.value, screen.operation, screen.transition)
+        if key in seen:
+            raise _fail(path, f"Two screens for {screen.type.value} {screen.operation}.")
+        seen.add(key)
+        checked = check_fields([f.model_dump() for f in screen.fields], path)
+        screen.fields = [ScreenFieldConf(**f) for f in checked]
 
 
 def check_workflow(workflow: WorkflowConf, ticket_type: TicketType, path: str) -> None:

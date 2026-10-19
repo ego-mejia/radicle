@@ -846,6 +846,48 @@
         "title": "FieldOptionOut",
         "type": "object"
       },
+      "FormSchemaOut": {
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/SchemaFieldOut"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "from_screen": {
+            "description": "False means the stage 1 defaults apply",
+            "title": "From Screen",
+            "type": "boolean"
+          },
+          "operation": {
+            "$ref": "#/components/schemas/ScreenOperation"
+          },
+          "transition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transition"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TicketType"
+          }
+        },
+        "required": [
+          "type",
+          "operation",
+          "transition",
+          "from_screen",
+          "fields"
+        ],
+        "title": "FormSchemaOut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1574,6 +1616,34 @@
         "title": "Page[ProjectOut]",
         "type": "object"
       },
+      "Page_ScreenOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[ScreenOut]",
+        "type": "object"
+      },
       "Page_SyncRunOut_": {
         "properties": {
           "items": {
@@ -2206,6 +2276,66 @@
         "title": "SaveAsTemplateIn",
         "type": "object"
       },
+      "SchemaFieldOut": {
+        "properties": {
+          "areas": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Custom fields shown only for these areas",
+            "title": "Areas"
+          },
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "kind": {
+            "description": "text, markdown, enum, area, milestone, user, users, ...",
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "field",
+          "label",
+          "kind",
+          "required",
+          "options",
+          "areas"
+        ],
+        "title": "SchemaFieldOut",
+        "type": "object"
+      },
       "ScreenConf": {
         "additionalProperties": false,
         "properties": {
@@ -2259,6 +2389,156 @@
           "field"
         ],
         "title": "ScreenFieldConf",
+        "type": "object"
+      },
+      "ScreenFieldIn": {
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "description": "title, area, ... or cf.<key>",
+            "title": "Field",
+            "type": "string"
+          },
+          "required": {
+            "default": false,
+            "title": "Required",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "field"
+        ],
+        "title": "ScreenFieldIn",
+        "type": "object"
+      },
+      "ScreenFieldOut": {
+        "properties": {
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "field",
+          "required"
+        ],
+        "title": "ScreenFieldOut",
+        "type": "object"
+      },
+      "ScreenIn": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenFieldIn"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "operation": {
+            "$ref": "#/components/schemas/ScreenOperation"
+          },
+          "transition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Transition ref or name; only for operation = transition",
+            "title": "Transition"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TicketType"
+          }
+        },
+        "required": [
+          "type",
+          "operation",
+          "fields"
+        ],
+        "title": "ScreenIn",
+        "type": "object"
+      },
+      "ScreenOperation": {
+        "enum": [
+          "create",
+          "edit",
+          "transition"
+        ],
+        "title": "ScreenOperation",
+        "type": "string"
+      },
+      "ScreenOut": {
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenFieldOut"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "operation": {
+            "$ref": "#/components/schemas/ScreenOperation"
+          },
+          "transition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Transition ref",
+            "title": "Transition"
+          },
+          "transition_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transition Name"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TicketType"
+          }
+        },
+        "required": [
+          "type",
+          "operation",
+          "transition",
+          "transition_name",
+          "fields"
+        ],
+        "title": "ScreenOut",
+        "type": "object"
+      },
+      "ScreensPut": {
+        "additionalProperties": false,
+        "properties": {
+          "screens": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenIn"
+            },
+            "title": "Screens",
+            "type": "array"
+          }
+        },
+        "required": [
+          "screens"
+        ],
+        "title": "ScreensPut",
         "type": "object"
       },
       "SearchFields": {
@@ -3762,6 +4042,19 @@
             "description": "Saved as a comment; required by comment_required rules",
             "title": "Comment"
           },
+          "fields": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Values for the transition's screen, e.g. {\"cf.environment\": \"prod\"}",
+            "title": "Fields"
+          },
           "force": {
             "default": false,
             "description": "Admins only: move a blocked ticket despite policy enforce",
@@ -3828,6 +4121,12 @@
           "category": {
             "$ref": "#/components/schemas/StatusCategory"
           },
+          "has_screen": {
+            "default": false,
+            "description": "Asks for fields: see /projects/{key}/schema?operation=transition",
+            "title": "Has Screen",
+            "type": "boolean"
+          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -3857,7 +4156,8 @@
           "allowed_resolutions",
           "available",
           "reasons",
-          "requires_comment"
+          "requires_comment",
+          "has_screen"
         ],
         "title": "TransitionOption",
         "type": "object"
@@ -5987,6 +6287,176 @@
         "summary": "Save As Template",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/schema": {
+      "get": {
+        "description": "Fields for a create, edit or transition form: kind, whether required, options.",
+        "operationId": "form_schema_api_v1_projects__key__schema_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/TicketType"
+            }
+          },
+          {
+            "in": "query",
+            "name": "operation",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ScreenOperation",
+              "default": "create"
+            }
+          },
+          {
+            "in": "query",
+            "name": "transition",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Transition"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormSchemaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Form Schema",
+        "tags": [
+          "screens"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/screens": {
+      "get": {
+        "description": "Screens defined in the project. Operations without one use the defaults.",
+        "operationId": "list_screens_api_v1_projects__key__screens_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_ScreenOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Screens",
+        "tags": [
+          "screens"
+        ]
+      },
+      "put": {
+        "description": "Replace every screen of an independent project.",
+        "operationId": "put_screens_api_v1_projects__key__screens_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreensPut"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_ScreenOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Screens",
+        "tags": [
+          "screens"
         ]
       }
     },

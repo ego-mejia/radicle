@@ -195,7 +195,7 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 | 2.1 | Worker y campos custom | Listo |
 | 2.2 | Templates y editor de workflows | Listo |
 | 2.3 | Reglas de transición | Listo |
-| 2.4 | Screens | Pendiente |
+| 2.4 | Screens | Listo |
 | 2.5 | Adjuntos | Pendiente |
 | 2.6 | Votos y tiempo real invertido | Pendiente |
 | 2.7 | Clonar, mover y bulk edit | Pendiente |
@@ -254,3 +254,20 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 
 - `tests/integration/test_transition_rules.py::test_acceptance_checklist_complete_blocks_complete`: con `checklist_complete` en Complete, un ticket con dos items abiertos no pasa y el error los nombra.
 - El mismo archivo prueba cada regla con caso que pasa y que falla, el orden de ejecución, el rollback de una post-function fallida, `warn` y `enforce` con `force`, y que las reglas viajan con el template.
+
+### 2.4 Screens
+
+**Qué se hizo**
+
+- Migración `0008`: `screens` por proyecto, tipo de ticket y operación (create, edit o una transición).
+- `GET` y `PUT /projects/{key}/screens` (editar solo en proyectos independientes) y `GET /projects/{key}/schema?type&operation&transition` con tipo, obligatorio y opciones de cada campo. Decisión: [0012](decisions/0012-screens.md).
+- Validación en el servicio: obligatorios al crear, campos de solo lectura y obligatorios al editar, y campos de la screen al transicionar (se pueden mandar en `fields`). Mismo mensaje en UI, API y MCP.
+- Las screens viajan en el template y se propagan a los proyectos ligados.
+- MCP: tool `get_ticket_schema`; `transition_ticket` acepta `fields`.
+- UI: crear ticket se arma con el esquema (obligatorios marcados con * y validados antes de enviar, opcionales en "Más campos"); el panel del ticket deja en solo lectura lo que no está en la screen de edición; al transicionar se piden los campos de su screen. Editor de screens en el template y en Settings del proyecto.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_screens.py::test_acceptance_required_custom_field_same_in_api_and_mcp`: un Bug sin Environment falla en la API y en el MCP con el mismo mensaje.
+- El mismo archivo prueba el esquema con y sin screen, solo lectura en edición, la screen de una transición, validaciones y propagación por template.
+- `frontend/src/features/tickets/components/CreateTicketModal/CreateTicketModal.test.tsx`: el formulario sale del esquema y no envía sin los obligatorios.

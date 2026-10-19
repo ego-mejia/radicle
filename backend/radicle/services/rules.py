@@ -6,7 +6,6 @@ the same transaction, so a failing post-function undoes the whole transition.
 """
 
 from dataclasses import dataclass, field
-from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,6 +22,7 @@ from radicle.db.models import (
 )
 from radicle.services import markdown
 from radicle.services.access import ProjectAccess
+from radicle.services.screens import ticket_has
 
 
 @dataclass(frozen=True)
@@ -91,7 +91,7 @@ async def failed_validators(
                 failures.append(
                     RuleFailure(kind, f"{len(pending)} checklist items are still open: {listed}.")
                 )
-        elif kind == "field_required" and not await _has_value(db, ticket, rule.config["field"]):
+        elif kind == "field_required" and not await ticket_has(db, ticket, rule.config["field"]):
             failures.append(
                 RuleFailure(kind, f"{rule.config['field']} must have a value before this move.")
             )
@@ -112,23 +112,6 @@ async def failed_validators(
         elif kind == "comment_required" and not (ctx.comment or "").strip():
             failures.append(RuleFailure(kind, "This move needs a comment saying why."))
     return failures
-
-
-async def _has_value(db: AsyncSession, ticket: Ticket, name: str) -> bool:
-    if name.startswith("cf."):
-        value = (ticket.custom_fields or {}).get(name[3:])
-        return value is not None and value != ""
-    columns: dict[str, Any] = {
-        "priority": ticket.priority,
-        "area": ticket.area_id,
-        "milestone": ticket.milestone_id,
-        "assignee": ticket.assignee_id,
-        "due_date": ticket.due_date,
-        "estimate_hours": ticket.estimate_hours,
-        "description_md": (ticket.description_md or "").strip() or None,
-        "parent": ticket.parent_id,
-    }
-    return columns.get(name) is not None
 
 
 async def _open_children(db: AsyncSession, ticket: Ticket) -> list[str]:

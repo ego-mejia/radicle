@@ -24,6 +24,7 @@ from radicle.db.models import (
     EventType,
     Project,
     Resolution,
+    ScreenOperation,
     Status,
     StatusCategory,
     Ticket,
@@ -33,7 +34,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
-from radicle.services import custom_fields, history
+from radicle.services import custom_fields, history, screens
 from radicle.services.template_config import (
     FieldConf,
     TemplateConfig,
@@ -75,6 +76,7 @@ async def apply_config(
             report=report,
         )
     await apply_fields(db, project, config.custom_fields, report)
+    await apply_screens(db, project, config)
     project.blocked_policy = config.settings.blocked_policy
     await db.flush()
     return report
@@ -273,6 +275,29 @@ async def _apply_rules(
                 )
             )
     await db.flush()
+
+
+async def apply_screens(db: AsyncSession, project: Project, config: TemplateConfig) -> None:
+    rows = await db.execute(
+        select(Transition.ticket_type, Transition.template_ref, Transition.id).where(
+            Transition.project_id == project.id
+        )
+    )
+    transitions = {(t, ref): tid for t, ref, tid in rows.all()}
+    wanted: list[screens.ScreenRow] = []
+    for screen in config.screens:
+        transition_id = (
+            transitions.get((screen.type, screen.transition)) if screen.transition else None
+        )
+        wanted.append(
+            (
+                screen.type,
+                ScreenOperation(screen.operation),
+                transition_id,
+                [f.model_dump() for f in screen.fields],
+            )
+        )
+    await screens.replace_screens(db, project, wanted)
 
 
 async def apply_fields(

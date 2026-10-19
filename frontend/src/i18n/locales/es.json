@@ -170,7 +170,8 @@
     "created": "{{key}} creado",
     "submit": "Crear",
     "titlePlaceholder": "¿Qué hay que hacer?",
-    "descriptionPlaceholder": "Markdown. Checklists: - [ ] item @handle"
+    "descriptionPlaceholder": "Markdown. Checklists: - [ ] item @handle",
+    "required": "Obligatorio"
   },
   "comments": {
     "placeholder": "Escribe un comentario. Funcionan markdown y @menciones.",
@@ -325,7 +326,8 @@
     "anyStatus": "cualquiera no hecho",
     "fields": "Campos",
     "workflowsEditHelp": "Estados y transiciones por tipo. Al quitar un estado se pregunta a dónde van sus tickets.",
-    "workflowsLinkedHelp": "Vienen del template {{template}}. Edítalos ahí o desliga el proyecto."
+    "workflowsLinkedHelp": "Vienen del template {{template}}. Edítalos ahí o desliga el proyecto.",
+    "screens": "Screens"
   },
   "profile": {
     "details": "Datos",
@@ -418,7 +420,8 @@
       "general": "General",
       "workflows": "Workflows",
       "fields": "Campos custom",
-      "sync": "Propagación"
+      "sync": "Propagación",
+      "screens": "Screens"
     },
     "areasHint": "Se agregan a los proyectos ligados; cada proyecto puede tener áreas extra propias.",
     "tags": "Tags",
@@ -525,7 +528,22 @@
       "due_date": "Fecha límite",
       "estimate_hours": "Estimación",
       "description_md": "Descripción",
-      "parent": "Padre"
+      "parent": "Padre",
+      "title": "Título",
+      "collaborators": "Colaboradores",
+      "tags": "Tags"
     }
+  },
+  "screens": {
+    "title": "Screens",
+    "help": "Elige qué campos pide cada formulario y cuáles son obligatorios. Sin una screen propia aplican los defaults: el área es obligatoria en tasks y bugs.",
+    "create": "Crear",
+    "edit": "Editar",
+    "transition": "Transición: {{name}}",
+    "custom": "Screen propia",
+    "defaults": "Campos por default.",
+    "noFields": "No pide campos.",
+    "required": "Obligatorio",
+    "linkedHelp": "Las screens vienen del template {{template}}."
   }
 }

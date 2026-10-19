@@ -12,11 +12,19 @@ type Props = {
   fields: CustomField[];
   people: Person[];
   canEdit: boolean;
+  canEditField?: (key: string) => boolean;
   onChange: (key: string, value: Value) => void;
 };
 
 /** Custom fields that apply to the ticket's type and area, editable in place. */
-export function CustomFieldRows({ ticket, fields, people, canEdit, onChange }: Props) {
+export function CustomFieldRows({
+  ticket,
+  fields,
+  people,
+  canEdit,
+  canEditField = () => canEdit,
+  onChange,
+}: Props) {
   const { t } = useTranslation();
   const visible = fields.filter((f) => appliesTo(f, ticket));
   if (!visible.length) return null;
@@ -29,7 +37,7 @@ export function CustomFieldRows({ ticket, fields, people, canEdit, onChange }: P
             field={field}
             value={(ticket.custom_fields[field.key] ?? null) as Value}
             people={people}
-            disabled={!canEdit}
+            disabled={!canEdit || !canEditField(field.key)}
             emptyLabel={t('fields.noValue')}
             removedLabel={t('fields.removedOption')}
             onChange={(value) => onChange(field.key, value)}

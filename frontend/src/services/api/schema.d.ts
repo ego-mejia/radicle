@@ -492,6 +492,50 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{key}/schema": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Form Schema
+         * @description Fields for a create, edit or transition form: kind, whether required, options.
+         */
+        get: operations["form_schema_api_v1_projects__key__schema_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/screens": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Screens
+         * @description Screens defined in the project. Operations without one use the defaults.
+         */
+        get: operations["list_screens_api_v1_projects__key__screens_get"];
+        /**
+         * Put Screens
+         * @description Replace every screen of an independent project.
+         */
+        put: operations["put_screens_api_v1_projects__key__screens_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{key}/settings": {
         parameters: {
             query?: never;
@@ -1374,6 +1418,20 @@ export interface components {
             /** Value */
             value: string;
         };
+        /** FormSchemaOut */
+        FormSchemaOut: {
+            /** Fields */
+            fields: components["schemas"]["SchemaFieldOut"][];
+            /**
+             * From Screen
+             * @description False means the stage 1 defaults apply
+             */
+            from_screen: boolean;
+            operation: components["schemas"]["ScreenOperation"];
+            /** Transition */
+            transition: string | null;
+            type: components["schemas"]["TicketType"];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -1602,6 +1660,13 @@ export interface components {
         Page_ProjectOut_: {
             /** Items */
             items: components["schemas"]["ProjectOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[ScreenOut] */
+        Page_ScreenOut_: {
+            /** Items */
+            items: components["schemas"]["ScreenOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -1841,6 +1906,27 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** SchemaFieldOut */
+        SchemaFieldOut: {
+            /**
+             * Areas
+             * @description Custom fields shown only for these areas
+             */
+            areas: string[] | null;
+            /** Field */
+            field: string;
+            /**
+             * Kind
+             * @description text, markdown, enum, area, milestone, user, users, ...
+             */
+            kind: string;
+            /** Label */
+            label: string;
+            /** Options */
+            options: string[] | null;
+            /** Required */
+            required: boolean;
+        };
         /** ScreenConf */
         ScreenConf: {
             /** Fields */
@@ -1860,6 +1946,62 @@ export interface components {
              * @default false
              */
             required?: boolean;
+        };
+        /** ScreenFieldIn */
+        ScreenFieldIn: {
+            /**
+             * Field
+             * @description title, area, ... or cf.<key>
+             */
+            field: string;
+            /**
+             * Required
+             * @default false
+             */
+            required?: boolean;
+        };
+        /** ScreenFieldOut */
+        ScreenFieldOut: {
+            /** Field */
+            field: string;
+            /** Required */
+            required: boolean;
+        };
+        /** ScreenIn */
+        ScreenIn: {
+            /** Fields */
+            fields: components["schemas"]["ScreenFieldIn"][];
+            operation: components["schemas"]["ScreenOperation"];
+            /**
+             * Transition
+             * @description Transition ref or name; only for operation = transition
+             */
+            transition?: string | null;
+            type: components["schemas"]["TicketType"];
+        };
+        /**
+         * ScreenOperation
+         * @enum {string}
+         */
+        ScreenOperation: "create" | "edit" | "transition";
+        /** ScreenOut */
+        ScreenOut: {
+            /** Fields */
+            fields: components["schemas"]["ScreenFieldOut"][];
+            operation: components["schemas"]["ScreenOperation"];
+            /**
+             * Transition
+             * @description Transition ref
+             */
+            transition: string | null;
+            /** Transition Name */
+            transition_name: string | null;
+            type: components["schemas"]["TicketType"];
+        };
+        /** ScreensPut */
+        ScreensPut: {
+            /** Screens */
+            screens: components["schemas"]["ScreenIn"][];
         };
         /** SearchFields */
         SearchFields: {
@@ -2350,6 +2492,13 @@ export interface components {
              */
             comment?: string | null;
             /**
+             * Fields
+             * @description Values for the transition's screen, e.g. {"cf.environment": "prod"}
+             */
+            fields?: {
+                [key: string]: unknown;
+            } | null;
+            /**
              * Force
              * @description Admins only: move a blocked ticket despite policy enforce
              * @default false
@@ -2381,6 +2530,12 @@ export interface components {
              */
             available: boolean;
             category: components["schemas"]["StatusCategory"];
+            /**
+             * Has Screen
+             * @description Asks for fields: see /projects/{key}/schema?operation=transition
+             * @default false
+             */
+            has_screen: boolean;
             /** Name */
             name: string;
             /**
@@ -3705,6 +3860,107 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TemplateDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    form_schema_api_v1_projects__key__schema_get: {
+        parameters: {
+            query: {
+                type: components["schemas"]["TicketType"];
+                operation?: components["schemas"]["ScreenOperation"];
+                transition?: string | null;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FormSchemaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_screens_api_v1_projects__key__screens_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ScreenOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_screens_api_v1_projects__key__screens_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScreensPut"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ScreenOut_"];
                 };
             };
             /** @description Validation Error */

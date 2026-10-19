@@ -1,7 +1,7 @@
 """Ticket lifecycle: create, read, edit, soft delete, collaborators and checklist."""
 
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from datetime import date
 from decimal import Decimal
 from typing import Any
@@ -24,7 +24,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
-from radicle.services import custom_fields, history, markdown, rank
+from radicle.services import custom_fields, history, markdown, rank, screens
 from radicle.services import ticket_fields as fields
 from radicle.services.access import ProjectAccess, project_access
 from radicle.services.workflows import load_workflows
@@ -120,7 +120,8 @@ async def create_ticket(db: AsyncSession, access: ProjectAccess, data: NewTicket
     title = fields.normalize_title(data.title)
     description = fields.check_description(data.description_md)
     area = await fields.resolve_area(db, project, data.area) if data.area else None
-    fields.require_area(data.type, area)
+    if not await screens.check_create(db, project, data.type, asdict(data)):
+        fields.require_area(data.type, area)
     milestone = (
         await fields.resolve_milestone(db, project, data.milestone) if data.milestone else None
     )
@@ -202,10 +203,12 @@ async def update_ticket(
     changes: dict[str, Any],
     *,
     expected_version: int | None,
+    enforce_screen: bool = True,
 ) -> Ticket:
     """Apply only the fields present in `changes`; None clears a field.
 
-    One `field_changed` event per field that actually changed.
+    One `field_changed` event per field that actually changed. The edit screen limits
+    which fields people can change; post-functions skip it (`enforce_screen=False`).
     """
     unknown = set(changes) - set(UPDATABLE)
     if unknown:
@@ -213,6 +216,8 @@ async def update_ticket(
     if expected_version is not None and expected_version != ticket.version:
         raise VersionConflict(f"{access.project.key}-{ticket.number}", ticket, expected_version)
     project = access.project
+    if enforce_screen:
+        await screens.check_edit(db, project, access.role, ticket, changes)
     diffs: list[tuple[str, Any, Any]] = []
 
     if "title" in changes:

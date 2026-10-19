@@ -62,6 +62,12 @@ class RuleKind(enum.StrEnum):
     post_function = "post_function"
 
 
+class ScreenOperation(enum.StrEnum):
+    create = "create"
+    edit = "edit"
+    transition = "transition"
+
+
 class MilestoneStatus(enum.StrEnum):
     open = "open"
     closed = "closed"
@@ -79,6 +85,7 @@ milestone_status_enum = _enum(MilestoneStatus, "milestone_status")
 template_mode_enum = _enum(TemplateMode, "template_mode")
 blocked_policy_enum = _enum(BlockedPolicy, "blocked_policy")
 rule_kind_enum = _enum(RuleKind, "rule_kind")
+screen_operation_enum = _enum(ScreenOperation, "screen_operation")
 
 
 class Project(Base):
@@ -241,3 +248,20 @@ class TransitionRule(Base):
     rule_type: Mapped[str] = mapped_column(Text)
     config: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, server_default="{}")
     position: Mapped[int] = mapped_column(Integer)
+
+
+class Screen(Base):
+    """Fields asked for one ticket type and operation: [{"field": "area", "required": true}]."""
+
+    __tablename__ = "screens"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    project_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("projects.id", ondelete="CASCADE"), index=True
+    )
+    ticket_type: Mapped[TicketType] = mapped_column(ticket_type_enum)
+    operation: Mapped[ScreenOperation] = mapped_column(screen_operation_enum)
+    transition_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("transitions.id", ondelete="CASCADE")
+    )
+    fields: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, default=list, server_default="[]")

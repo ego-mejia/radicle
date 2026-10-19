@@ -9,13 +9,14 @@ import { AreasSection } from '../../components/AreasSection';
 import { CustomFieldsSection } from '../../components/CustomFieldsSection';
 import { GeneralSection } from '../../components/GeneralSection';
 import { MembersSection } from '../../components/MembersSection';
+import { ScreensSection } from '../../components/ScreensSection';
 import { TemplateBanner } from '../../components/TemplateBanner';
 import { WorkflowsSection } from '../../components/WorkflowsSection';
 import { MilestonesList } from '../../../milestones/components/MilestonesList';
 import * as S from './style';
 
-type Tab = 'general' | 'members' | 'areas' | 'milestones' | 'workflows' | 'fields';
-const TABS: Tab[] = ['general', 'members', 'areas', 'milestones', 'workflows', 'fields'];
+type Tab = 'general' | 'members' | 'areas' | 'milestones' | 'workflows' | 'fields' | 'screens';
+const TABS: Tab[] = ['general', 'members', 'areas', 'milestones', 'workflows', 'fields', 'screens'];
 
 export function SettingsView() {
   const { t } = useTranslation();
@@ -47,6 +48,7 @@ export function SettingsView() {
           <MilestonesList project={project} renderHeader={(addButton) => addButton} />
         )}
         {current === 'workflows' && <WorkflowsSection project={project} isAdmin={isAdmin} />}
+        {current === 'screens' && <ScreensSection project={project} isAdmin={isAdmin} />}
         {current === 'fields' && (
           <CustomFieldsSection
             project={project}

@@ -13,13 +13,14 @@ from radicle.db.models import (
     EventType,
     ProjectRole,
     Resolution,
+    ScreenOperation,
     StatusCategory,
     Ticket,
     TicketType,
     TransitionRule,
     utcnow,
 )
-from radicle.services import comments, history, relations, tickets, workflow_engine
+from radicle.services import comments, history, relations, screens, tickets, workflow_engine
 from radicle.services import ticket_fields as fields
 from radicle.services.access import ProjectAccess
 from radicle.services.rules import (
@@ -47,6 +48,7 @@ class OptionView:
     option: workflow_engine.Option
     failures: list[RuleFailure]
     requires_comment: bool
+    has_screen: bool = False
 
     @property
     def available(self) -> bool:
@@ -72,11 +74,15 @@ async def transition_options(
     views = []
     for option in workflow_engine.available(workflow, workflow.status_by_id(ticket.status_id)):
         rules = workflow.rules_for(option.transition)
+        screen = await screens.find_screen(
+            db, ticket.project_id, ticket.type, ScreenOperation.transition, option.transition.id
+        )
         views.append(
             OptionView(
                 option=option,
                 failures=failed_conditions(rules, ctx),
                 requires_comment=any(r.rule_type == "comment_required" for r in rules),
+                has_screen=screen is not None and bool(screen.fields),
             )
         )
     return views
@@ -92,6 +98,7 @@ async def transition_ticket(
     transition: str | None = None,
     comment: str | None = None,
     force: bool = False,
+    fields: dict[str, Any] | None = None,
 ) -> list[TicketWarning]:
     """Conditions, blocked policy, validators, the move itself and post-functions,
     in that order. Anything that fails raises and nothing is saved."""
@@ -165,7 +172,7 @@ async def transition_ticket(
                 )
             )
 
-    await before_validators(db, access, ticket, decision.option)
+    await apply_screen(db, access, ticket, decision.option, fields or {})
     failures = await failed_validators(db, rules, ctx)
     if failures:
         raise Conflict(
@@ -206,11 +213,36 @@ async def transition_ticket(
     return warnings
 
 
-async def before_validators(
-    db: AsyncSession, access: ProjectAccess, ticket: Ticket, option: workflow_engine.Option
+async def apply_screen(
+    db: AsyncSession,
+    access: ProjectAccess,
+    ticket: Ticket,
+    option: workflow_engine.Option,
+    values: dict[str, Any],
 ) -> None:
-    """Screen checks for the transition (stage 2.4)."""
-    return None
+    """Fields sent with the move are saved first (only those on the transition's screen),
+    then every required field of that screen must have a value."""
+    schema = await screens.form_schema(
+        db, access.project, ticket.type, ScreenOperation.transition, option.transition
+    )
+    extra = [name for name in values if name not in schema.names()]
+    if extra:
+        raise ValidationFailed(
+            f"'{option.transition.name}' does not take these fields: {', '.join(extra)}. "
+            f"It takes: {', '.join(sorted(schema.names())) or 'none'}.",
+            errors=[{"field": name, "message": "not on this screen"} for name in extra],
+        )
+    if values:
+        changes: dict[str, Any] = {k: v for k, v in values.items() if not k.startswith("cf.")}
+        custom = {k[3:]: v for k, v in values.items() if k.startswith("cf.")}
+        if custom:
+            changes["custom_fields"] = custom
+        if isinstance(changes.get("due_date"), str):
+            changes["due_date"] = date.fromisoformat(changes["due_date"])
+        await tickets.update_ticket(
+            db, access, ticket, changes, expected_version=None, enforce_screen=False
+        )
+    await screens.check_ticket(db, access.project, ticket, schema)
 
 
 class _Blank(dict[str, str]):
@@ -253,7 +285,9 @@ async def run_post_functions(
             body = config["template"].format_map(values)
             await comments.add_comment(db, access, ticket, body)
         if changes is not None:
-            await tickets.update_ticket(db, access, ticket, changes, expected_version=None)
+            await tickets.update_ticket(
+                db, access, ticket, changes, expected_version=None, enforce_screen=False
+            )
 
 
 async def change_type(
