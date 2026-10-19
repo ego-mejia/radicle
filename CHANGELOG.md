@@ -13,6 +13,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - 1.5: links entre tickets con su inverso y aviso de bloqueado, comentarios markdown con menciones y reacciones.
 - 1.6: lenguaje de queries RQL con full-text en inglés y español, errores con posición, autocompletado y seed de 10,000 tickets.
 - 1.7: servidor MCP en `/mcp` con 19 tools, guía de RQL como recurso y autenticación por token de agente.
+- 4.7: E2E de la etapa 4 (formulario público → Buzón → seguimiento, permisos, restringidos). Fixed: celdas de la matriz de impacto, calificaciones seguidas que chocaban por versión, slug default de keys de dos letras.
 - 4.6: audit log inmutable con 39 acciones, antes y después, visor con filtros, CSV y retención configurable.
 - 4.5: SSO con OpenID Connect (Authlib, PKCE), alta por dominio, liga por email verificado, sync de grupos y password apagable con salida de emergencia.
 - 4.4: formulario público sin cuenta con ALTCHA, anti-spam, adjuntos y página de seguimiento; `RADICLE_SECRET_KEY` obligatoria para cifrar secretos.

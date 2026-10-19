@@ -64,6 +64,8 @@ export function InboxView() {
   const refresh = () => queryClient.invalidateQueries({ queryKey: ticketKeys.all });
   const onError = (e: unknown) => toast(errorMessage(e), 'error');
   const score = useMutation({
+    // One at a time: each save reads the version the previous one wrote.
+    scope: { id: `inbox-score-${projectKey}` },
     mutationFn: (v: { key: string; impact?: number | null; effort?: number | null }) =>
       scoreItem(v.key, { impact: v.impact, effort: v.effort }),
     onSuccess: refresh,

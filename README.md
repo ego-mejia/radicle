@@ -2,7 +2,7 @@
 
 Ticket tracker open source y self-hosted con servidor MCP desde el día 1: personas y agentes trabajan el mismo proyecto.
 
-> Estado: etapas 1, 2 y 3 completas; etapa 4 en curso. Ver [docs/progress.md](docs/progress.md).
+> Estado: etapas 1 a 4 completas. Ver [docs/progress.md](docs/progress.md).
 
 ## Instalar
 
@@ -62,7 +62,7 @@ Clientes que solo hablan stdio usan [`mcp-remote`](https://www.npmjs.com/package
 }
 ```
 
-Tools: `whoami`, `list_projects`, `get_project`, `search_tickets`, `my_tickets`, `get_ticket`, `create_ticket`, `update_ticket`, `get_transitions`, `transition_ticket`, `change_ticket_type`, `set_checklist_item`, `add_comment`, `list_comments`, `link_tickets`, `unlink_tickets`, `add_collaborator`, `remove_collaborator`, `get_history`. Recursos: `radicle://guide/rql` y `radicle://projects/{key}/schema`.
+Tools (48): `whoami`, `list_projects`, `get_project`, `search_tickets`, `my_tickets`, `get_ticket`, `create_ticket`, `update_ticket`, `get_ticket_schema`, `get_transitions`, `transition_ticket`, `change_ticket_type`, `set_checklist_item`, `add_comment`, `list_comments`, `link_tickets`, `unlink_tickets`, `add_collaborator`, `remove_collaborator`, `get_history`, `upload_attachment`, `list_attachments`, `read_attachment`, `log_work`, `list_worklogs`, `clone_ticket`, `move_ticket`, `bulk_update`, `next_ticket`, `rank_ticket`, `list_filters`, `run_filter`, `save_filter`, `list_boards`, `get_board`, `get_milestone_progress`, `get_report`, `list_sprints`, `get_sprint`, `add_to_sprint`, `remove_from_sprint`, `start_sprint`, `complete_sprint`, `list_inbox`, `score_inbox_item`, `approve_inbox_item`, `discard_inbox_item`, `mark_inbox_duplicate`. Recursos: `radicle://guide/rql` y `radicle://projects/{key}/schema`.
 
 ## Configuración
 
@@ -88,6 +88,12 @@ En **Reportes** están burndown, burnup, velocity, cumulative flow, control char
 **Dashboards** junta widgets (conteos, distribuciones, progreso de milestone, burndown, bloqueados...) en una cuadrícula que se arma arrastrando. Cada proyecto tiene su **Resumen**; los demás se comparten contigo, con un proyecto o con todos, y cada quien ve solo los tickets que puede ver.
 
 **Buzón**: cada proyecto puede abrir un formulario público en `/b/{slug}` (Settings → Buzón) para que cualquiera mande quejas, sugerencias o ideas sin cuenta, con ALTCHA contra spam y un código para seguir su envío. Todo llega como Draft al Buzón del proyecto, donde se califica, se aprueba como task o bug, o se descarta.
+
+### Permisos y acceso
+
+Cada proyecto tiene roles admin, member y viewer, directos o vía **grupos** (Admin → Grupos); vale el rol más alto. En **Settings → Permisos** se prende o apaga cada permiso para member y viewer, y aplica igual en la UI, la API y el MCP. Los **niveles de seguridad** (Settings → Niveles) restringen un ticket a ciertos grupos o personas: para los demás no existe en ninguna búsqueda, board, reporte ni tool.
+
+**Audit log** (Admin → Audit log, o Settings → Audit log para admins de proyecto) registra los cambios administrativos con quién, cuándo, IP y el antes y después; se filtra, se exporta a CSV y nadie lo puede modificar.
 
 ### SSO
 

@@ -227,6 +227,11 @@ async def test_captcha_secrets_are_encrypted(
         f"{API}/projects/PA/inbox-settings", headers=form.admin.headers, json={"public_slug": "A B"}
     )
     assert r.status_code == 422
+    # The default slug of a two-letter key is valid too.
+    r = await client.put(
+        f"{API}/projects/PA/inbox-settings", headers=form.admin.headers, json={"public_slug": "pa"}
+    )
+    assert r.status_code == 200, r.text
 
 
 def test_tracking_codes_are_50_bits() -> None:

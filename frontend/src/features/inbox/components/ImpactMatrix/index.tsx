@@ -63,6 +63,7 @@ function Cell({
       ref={setNodeRef}
       $quadrant={quadrant(impact, effort)}
       $over={isOver}
+      style={{ gridRow: LEVELS.length + 1 - impact, gridColumn: effort }}
       data-testid={`cell-${impact}-${effort}`}
     >
       {items.map((ticket) => (

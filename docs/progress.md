@@ -481,7 +481,7 @@ Los criterios de aceptación de la etapa se verifican así:
 | 4.4 | Formulario público | Listo |
 | 4.5 | SSO | Listo |
 | 4.6 | Audit log | Listo |
-| 4.7 | MCP y UI de la etapa | Pendiente |
+| 4.7 | MCP y UI de la etapa | Listo |
 
 ### 4.1 Grupos y permisos por rol
 
@@ -561,3 +561,33 @@ Los criterios de aceptación de la etapa se verifican así:
 **Cómo verificarlo**
 
 - `tests/integration/test_audit.py`: cada acción del catálogo deja su entrada, filtros y CSV, admin de proyecto filtrado y member con 403, `UPDATE`/`DELETE`/`TRUNCATE` fallan, la retención borra solo lo vencido.
+
+### 4.7 MCP y UI de la etapa
+
+**Qué se hizo**
+
+- Tools MCP del Buzón (`list_inbox`, `score_inbox_item`, `approve_inbox_item`, `discard_inbox_item`, `mark_inbox_duplicate`); el MCP queda con 48 tools que siguen la matriz de permisos y los niveles de seguridad.
+- Pantallas: Settings → Permisos, Grupos con rol, Niveles de seguridad y Buzón; Admin → Grupos, SSO, Audit log y Ajustes; Buzón con tabla y matriz; login con SSO; página pública y seguimiento.
+- Correcciones que salieron del E2E: la matriz de impacto acomodaba mal las celdas (las etiquetas de cuadrante ocupaban su lugar), calificar impacto y esfuerzo seguidos perdía uno por choque de versión (ahora se guardan en orden), y el slug default de un proyecto con key de dos letras no pasaba la validación (ahora 2 a 40 caracteres).
+
+**Cómo verificarlo**
+
+- E2E `frontend/e2e/stage4.spec.ts`: queja con screenshot desde un navegador sin sesión, aparece en el Buzón con origen Usuario, se califica y aparece en la matriz, se aprueba como Bug en Backend y el seguimiento dice Accepted; quitar `comment.create` a member esconde el botón de comentar; un ticket restringido no se ve ni se encuentra para otro member. Los 25 E2E de las etapas 1 a 4 pasan.
+
+### Aceptación de la etapa 4
+
+| Criterio | Dónde |
+| --- | --- |
+| Grupo equipo-legal en ProyectoA como member, sus integrantes trabajan sin agregarlos uno por uno | `test_group_only_members_see_the_project`, `test_effective_role_is_the_highest` |
+| Quitar `ticket.transition` a member lo bloquea en UI, API y MCP | `test_permission` (matriz parametrizada), `test_mcp_follows_the_matrix`; E2E con `comment.create` |
+| Nivel "Legal confidencial": nadie más lo ve, ni por key, links, reportes o MCP | `test_nothing_leaks_through_get_routes` (enumera todas las rutas GET), `test_mcp_tools_do_not_leak`, `test_next_ticket_bulk_and_aliases_skip_it`; E2E |
+| Buzón activo, queja con screenshot en incógnito y código de seguimiento | `test_acceptance_send_a_complaint_and_track_it`; E2E |
+| Origen Usuario, matriz, aprobar como Bug en Backend conservando votos, comentarios y origen | `test_acceptance_approve_and_convert`; E2E |
+| Seguimiento dice Aceptado sin nada interno | `test_acceptance_send_a_complaint_and_track_it`, `test_discarded_shows_the_public_note`; E2E |
+| Duplicado pasa sus votantes al original | `test_discard_and_duplicate` |
+| El sexto envío en una hora desde la misma IP se bloquea | `test_sixth_submission_in_an_hour_is_blocked` |
+| Entrar con Keycloak crea la cuenta en el grupo mapeado | `test_acceptance_login_creates_the_user_in_the_mapped_group` (marca `slow`) |
+| Todo queda en el audit log y no se puede modificar | `test_every_action_of_the_catalog_is_logged`, `test_the_log_cannot_be_changed` |
+| Un agente lista el Buzón, califica un Draft y descarta otro por MCP | `test_mcp_inbox_tools` |
+| Reglas generales del documento de control | CI: ruff, mypy estricto, cobertura, migraciones up/down/up y `alembic check`, E2E |
+

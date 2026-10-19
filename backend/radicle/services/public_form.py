@@ -38,7 +38,7 @@ from radicle.services import ticket_fields as fields
 
 INBOX_USER_ID = uuid.UUID("00000000-0000-0000-0000-000000000003")
 PUBLIC_CLASSIFICATIONS = (Classification.complaint, Classification.suggestion, Classification.idea)
-SLUG_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]{1,38}[a-z0-9])$")
+SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9-]{0,38}[a-z0-9]$")
 CODE_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"  # Crockford base32: no I, L, O, U
 CODE_LENGTH = 10  # 50 bits
 PER_HOUR, PER_DAY = 5, 20
@@ -106,7 +106,7 @@ async def save_settings(
     if "public_slug" in changes and changes["public_slug"] is not None:
         slug = str(changes["public_slug"]).strip().lower()
         if not SLUG_RE.match(slug):
-            raise _fail("public_slug", "The slug is 3 to 40 lowercase letters, digits or dashes.")
+            raise _fail("public_slug", "The slug is 2 to 40 lowercase letters, digits or dashes.")
         taken = await db.scalar(
             select(InboxSettings.project_id).where(
                 InboxSettings.public_slug == slug, InboxSettings.project_id != project.id
