@@ -1,0 +1,265 @@
+{
+  "areas": [],
+  "tags": [],
+  "custom_fields": [],
+  "workflows": {
+    "task": {
+      "statuses": [
+        {
+          "ref": "to_do",
+          "name": "To Do",
+          "category": "todo",
+          "is_initial": true
+        },
+        {
+          "ref": "in_progress",
+          "name": "In Progress",
+          "category": "in_progress",
+          "is_initial": false
+        },
+        {
+          "ref": "in_review",
+          "name": "In Review",
+          "category": "in_progress",
+          "is_initial": false
+        },
+        {
+          "ref": "done",
+          "name": "Done",
+          "category": "done",
+          "is_initial": false
+        }
+      ],
+      "transitions": [
+        {
+          "ref": "start",
+          "name": "Start",
+          "from": "to_do",
+          "to": "in_progress",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "stop",
+          "name": "Stop",
+          "from": "in_progress",
+          "to": "to_do",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "send_to_review",
+          "name": "Send to review",
+          "from": "in_progress",
+          "to": "in_review",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "request_changes",
+          "name": "Request changes",
+          "from": "in_review",
+          "to": "in_progress",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "complete",
+          "name": "Complete",
+          "from": "in_review",
+          "to": "done",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "close",
+          "name": "Close",
+          "from": null,
+          "to": "done",
+          "allowed_resolutions": [
+            "wont_do",
+            "duplicate"
+          ],
+          "rules": []
+        },
+        {
+          "ref": "reopen",
+          "name": "Reopen",
+          "from": "done",
+          "to": "to_do",
+          "allowed_resolutions": null,
+          "rules": []
+        }
+      ]
+    },
+    "bug": {
+      "statuses": [
+        {
+          "ref": "reported",
+          "name": "Reported",
+          "category": "todo",
+          "is_initial": true
+        },
+        {
+          "ref": "in_progress",
+          "name": "In Progress",
+          "category": "in_progress",
+          "is_initial": false
+        },
+        {
+          "ref": "qa_verified",
+          "name": "QA Verified",
+          "category": "in_progress",
+          "is_initial": false
+        },
+        {
+          "ref": "done",
+          "name": "Done",
+          "category": "done",
+          "is_initial": false
+        }
+      ],
+      "transitions": [
+        {
+          "ref": "start",
+          "name": "Start",
+          "from": "reported",
+          "to": "in_progress",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "stop",
+          "name": "Stop",
+          "from": "in_progress",
+          "to": "reported",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "send_to_qa",
+          "name": "Send to QA",
+          "from": "in_progress",
+          "to": "qa_verified",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "qa_failed",
+          "name": "QA failed",
+          "from": "qa_verified",
+          "to": "in_progress",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "complete",
+          "name": "Complete",
+          "from": "qa_verified",
+          "to": "done",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "close",
+          "name": "Close",
+          "from": null,
+          "to": "done",
+          "allowed_resolutions": [
+            "wont_do",
+            "duplicate",
+            "cannot_reproduce"
+          ],
+          "rules": []
+        },
+        {
+          "ref": "reopen",
+          "name": "Reopen",
+          "from": "done",
+          "to": "reported",
+          "allowed_resolutions": null,
+          "rules": []
+        }
+      ]
+    },
+    "draft": {
+      "statuses": [
+        {
+          "ref": "new",
+          "name": "New",
+          "category": "todo",
+          "is_initial": true
+        },
+        {
+          "ref": "in_review",
+          "name": "In Review",
+          "category": "in_progress",
+          "is_initial": false
+        },
+        {
+          "ref": "approved",
+          "name": "Approved",
+          "category": "done",
+          "is_initial": false
+        },
+        {
+          "ref": "discarded",
+          "name": "Discarded",
+          "category": "done",
+          "is_initial": false
+        }
+      ],
+      "transitions": [
+        {
+          "ref": "review",
+          "name": "Review",
+          "from": "new",
+          "to": "in_review",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "approve",
+          "name": "Approve",
+          "from": "in_review",
+          "to": "approved",
+          "allowed_resolutions": [
+            "done"
+          ],
+          "rules": []
+        },
+        {
+          "ref": "discard",
+          "name": "Discard",
+          "from": null,
+          "to": "discarded",
+          "allowed_resolutions": [
+            "wont_do",
+            "duplicate"
+          ],
+          "rules": []
+        },
+        {
+          "ref": "reopen",
+          "name": "Reopen",
+          "from": "approved",
+          "to": "new",
+          "allowed_resolutions": null,
+          "rules": []
+        },
+        {
+          "ref": "reopen_discarded",
+          "name": "Reopen",
+          "from": "discarded",
+          "to": "new",
+          "allowed_resolutions": null,
+          "rules": []
+        }
+      ]
+    }
+  },
+  "screens": [],
+  "settings": {
+    "blocked_policy": "warn"
+  }
+}

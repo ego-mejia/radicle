@@ -10,6 +10,7 @@ from radicle.db.models.fields import CustomFieldDefinition, CustomFieldType
 from radicle.db.models.jobs import Job, JobStatus
 from radicle.db.models.projects import (
     Area,
+    BlockedPolicy,
     Milestone,
     MilestoneStatus,
     Project,
@@ -18,9 +19,11 @@ from radicle.db.models.projects import (
     Resolution,
     Status,
     StatusCategory,
+    TemplateMode,
     TicketType,
     Transition,
 )
+from radicle.db.models.templates import SyncStatus, Template, TemplateSyncRun
 from radicle.db.models.tickets import (
     PRIORITY_ORDER,
     EventType,
@@ -38,6 +41,7 @@ __all__ = [
     "ApiToken",
     "Area",
     "Base",
+    "BlockedPolicy",
     "Comment",
     "CommentReaction",
     "CustomFieldDefinition",
@@ -57,6 +61,10 @@ __all__ = [
     "Session",
     "Status",
     "StatusCategory",
+    "SyncStatus",
+    "Template",
+    "TemplateMode",
+    "TemplateSyncRun",
     "Ticket",
     "TicketCollaborator",
     "TicketEvent",

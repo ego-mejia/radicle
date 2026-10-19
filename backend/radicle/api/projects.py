@@ -10,10 +10,18 @@ from radicle.api.schemas.projects import (
     ProjectDetail,
     ProjectOut,
     ProjectPatch,
+    ProjectSettingsPut,
     WorkflowOut,
 )
-from radicle.db.models import ProjectRole
-from radicle.services import projects, stats
+from radicle.api.schemas.templates import (
+    SaveAsTemplateIn,
+    TemplateDetail,
+    WorkflowPut,
+    WorkflowPutOut,
+)
+from radicle.api.templates import template_detail
+from radicle.db.models import ProjectRole, TicketType, utcnow
+from radicle.services import projects, stats, templates
 from radicle.services.access import project_access
 from radicle.services.workflows import load_workflows
 
@@ -34,9 +42,15 @@ async def list_projects(
 
 @router.post("", response_model=ProjectDetail, status_code=201)
 async def create_project(body: ProjectCreate, principal: CurrentPrincipal, db: Db) -> ProjectDetail:
-    """Create a project, seed the Task, Bug and Draft workflows, and make you its admin."""
+    """Create a project from a template (Radicle default if none) and make you its admin."""
     project = await projects.create_project(
-        db, principal.user, key=body.key, name=body.name, description_md=body.description_md
+        db,
+        principal.user,
+        key=body.key,
+        name=body.name,
+        description_md=body.description_md,
+        template_id=body.template_id,
+        template_mode=body.template_mode,
     )
     return await out.project_detail(db, project, ProjectRole.admin)
 
@@ -103,3 +117,53 @@ async def delete_member(key: str, handle: str, principal: CurrentPrincipal, db: 
     access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
     await projects.remove_member(db, access, handle)
     return Response(status_code=204)
+
+
+@router.post("/{key}/save-as-template", response_model=TemplateDetail, status_code=201)
+async def save_as_template(
+    key: str, body: SaveAsTemplateIn, principal: CurrentPrincipal, db: Db
+) -> TemplateDetail:
+    """New template with this project's workflows, fields, areas, tags and settings.
+    Tickets, milestones and members are not copied."""
+    access = await project_access(db, principal.user, key, need=ProjectRole.admin)
+    change = await templates.save_as_template(
+        db, access, name=body.name, description_md=body.description_md
+    )
+    return await template_detail(db, change.template, change.warnings)
+
+
+@router.post("/{key}/detach", response_model=ProjectDetail)
+async def detach_project(key: str, principal: CurrentPrincipal, db: Db) -> ProjectDetail:
+    """Stop following the template. The project keeps its configuration and can edit it."""
+    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    templates.detach(access)
+    return await out.project_detail(db, access.project, access.role)
+
+
+@router.put("/{key}/workflows/{ticket_type}", response_model=WorkflowPutOut)
+async def put_workflow(
+    key: str, ticket_type: TicketType, body: WorkflowPut, principal: CurrentPrincipal, db: Db
+) -> WorkflowPutOut:
+    """Replace one workflow (independent projects only). Statuses keep their `ref`;
+    tickets in removed statuses need `status_mappings`."""
+    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    warnings = await templates.put_workflow(
+        db,
+        access,
+        ticket_type,
+        body.workflow.model_dump(mode="json", by_alias=True),
+        body.status_mappings,
+    )
+    return WorkflowPutOut(warnings=warnings)
+
+
+@router.put("/{key}/settings", response_model=ProjectDetail)
+async def put_settings(
+    key: str, body: ProjectSettingsPut, principal: CurrentPrincipal, db: Db
+) -> ProjectDetail:
+    """Blocked policy: warn lets blocked tickets move with a warning, enforce stops them."""
+    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    await templates.ensure_editable(db, access.project)
+    access.project.blocked_policy = body.blocked_policy
+    access.project.updated_at = utcnow()
+    return await out.project_detail(db, access.project, access.role)

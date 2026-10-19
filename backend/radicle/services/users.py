@@ -27,7 +27,9 @@ class UserChanges:
 
 
 async def needs_setup(db: AsyncSession) -> bool:
-    count = await db.scalar(select(func.count()).select_from(User))
+    count = await db.scalar(
+        select(func.count()).select_from(User).where(User.kind != UserKind.system)
+    )
     return count == 0
 
 
@@ -128,7 +130,12 @@ async def get_by_handle(db: AsyncSession, handle: str) -> User:
 async def list_users(
     db: AsyncSession, *, limit: int, after: tuple[datetime, str] | None
 ) -> list[User]:
-    query = select(User).order_by(User.created_at, User.id).limit(limit)
+    query = (
+        select(User)
+        .where(User.kind != UserKind.system)
+        .order_by(User.created_at, User.id)
+        .limit(limit)
+    )
     if after is not None:
         query = query.where(tuple_(User.created_at, User.id) > after)
     return list(await db.scalars(query))

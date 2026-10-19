@@ -45,6 +45,16 @@ class Resolution(enum.StrEnum):
     cannot_reproduce = "cannot_reproduce"
 
 
+class TemplateMode(enum.StrEnum):
+    linked = "linked"
+    detached = "detached"
+
+
+class BlockedPolicy(enum.StrEnum):
+    warn = "warn"
+    enforce = "enforce"
+
+
 class MilestoneStatus(enum.StrEnum):
     open = "open"
     closed = "closed"
@@ -59,6 +69,8 @@ ticket_type_enum = _enum(TicketType, "ticket_type")
 status_category_enum = _enum(StatusCategory, "status_category")
 resolution_enum = _enum(Resolution, "resolution")
 milestone_status_enum = _enum(MilestoneStatus, "milestone_status")
+template_mode_enum = _enum(TemplateMode, "template_mode")
+blocked_policy_enum = _enum(BlockedPolicy, "blocked_policy")
 
 
 class Project(Base):
@@ -77,6 +89,18 @@ class Project(Base):
         DateTime(timezone=True), default=utcnow, server_default=func.now(), onupdate=utcnow
     )
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    template_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("templates.id", ondelete="SET NULL")
+    )
+    template_mode: Mapped[TemplateMode | None] = mapped_column(template_mode_enum)
+    template_version: Mapped[int | None] = mapped_column(Integer)
+    blocked_policy: Mapped[BlockedPolicy] = mapped_column(
+        blocked_policy_enum, default=BlockedPolicy.warn, server_default="warn"
+    )
+    # Tags offered by autocompletion; templates add to it.
+    suggested_tags: Mapped[list[str]] = mapped_column(
+        ARRAY(Text), default=list, server_default="{}"
+    )
 
 
 class ProjectMember(Base):
@@ -166,6 +190,8 @@ class Status(Base):
     category: Mapped[StatusCategory] = mapped_column(status_category_enum)
     position: Mapped[int] = mapped_column(Integer)
     is_initial: Mapped[bool] = mapped_column(Boolean, default=False)
+    # Stable slug shared with the template, so a rename is still the same status.
+    template_ref: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, server_default=func.now()
     )
@@ -188,6 +214,7 @@ class Transition(Base):
     # None means every resolution; only relevant when the target is a done status.
     allowed_resolutions: Mapped[list[Resolution] | None] = mapped_column(ARRAY(resolution_enum))
     position: Mapped[int] = mapped_column(Integer)
+    template_ref: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, server_default=func.now()
     )

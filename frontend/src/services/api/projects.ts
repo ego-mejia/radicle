@@ -20,7 +20,13 @@ export async function fetchProject(key: string) {
   return unwrap(await api.GET('/api/v1/projects/{key}', path(key)));
 }
 
-export async function createProject(body: { key: string; name: string; description_md?: string }) {
+export async function createProject(body: {
+  key: string;
+  name: string;
+  description_md?: string;
+  template_id?: string | null;
+  template_mode?: 'linked' | 'detached';
+}) {
   return unwrap(await api.POST('/api/v1/projects', { body }));
 }
 

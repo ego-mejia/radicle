@@ -72,6 +72,15 @@ export const PROJECT: ProjectDetail = {
       is_active: true,
     },
   ],
+  template: {
+    id: '00000000-0000-0000-0000-000000000002',
+    name: 'Radicle default',
+    mode: 'linked',
+    version: 1,
+    applied_version: 1,
+  },
+  blocked_policy: 'warn',
+  suggested_tags: [],
   custom_fields: [
     {
       key: 'environment',

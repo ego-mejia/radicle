@@ -3,6 +3,15 @@ from httpx import AsyncClient
 
 from tests.conftest import Team, new_ticket, patch_ticket
 
+
+@pytest.fixture
+async def board(client: AsyncClient, board: Team) -> Team:
+    """PA detached from Radicle default, so its fields can be edited here."""
+    r = await client.post("/api/v1/projects/PA/detach", headers=board.instance.headers)
+    assert r.status_code == 200, r.text
+    return board
+
+
 API = "/api/v1"
 FIELDS = f"{API}/projects/PA/fields"
 

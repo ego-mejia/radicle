@@ -171,6 +171,7 @@ class EventType(enum.StrEnum):
     deleted = "deleted"
     restored = "restored"
     custom_field_changed = "custom_field_changed"
+    status_remapped = "status_remapped"
 
 
 class TicketEvent(Base):

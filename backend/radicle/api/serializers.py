@@ -12,6 +12,7 @@ from radicle.api.schemas.projects import (
     MilestoneOut,
     ProjectDetail,
     ProjectOut,
+    ProjectTemplateOut,
     StatusOut,
     TransitionOut,
     WorkflowOut,
@@ -23,6 +24,7 @@ from radicle.db.models import (
     Project,
     ProjectMember,
     ProjectRole,
+    Template,
 )
 from radicle.services import custom_fields, planning, projects, stats
 from radicle.services.workflows import Workflow, load_workflows
@@ -80,14 +82,18 @@ def member_out(member: ProjectMember) -> MemberOut:
 
 def workflow_out(workflow: Workflow) -> WorkflowOut:
     names = {s.id: s.name for s in workflow.statuses}
+    refs = {s.id: s.template_ref for s in workflow.statuses}
     return WorkflowOut(
         type=workflow.ticket_type,
         statuses=[
-            StatusOut(name=s.name, category=s.category, is_initial=s.is_initial)
+            StatusOut(ref=s.template_ref, name=s.name, category=s.category, is_initial=s.is_initial)
             for s in workflow.statuses
         ],
         transitions=[
             TransitionOut(
+                ref=t.template_ref,
+                from_ref=refs[t.from_status_id] if t.from_status_id else None,
+                to_ref=refs[t.to_status_id] or "",
                 name=t.name,
                 from_status=names[t.from_status_id] if t.from_status_id else None,
                 to_status=names[t.to_status_id],
@@ -133,4 +139,22 @@ async def project_detail(db: AsyncSession, project: Project, role: ProjectRole) 
         workflows=[workflow_out(w) for w in workflows.values()],
         members=[member_out(m) for m in await projects.list_members(db, project)],
         custom_fields=await fields_out(db, await custom_fields.list_fields(db, project.id)),
+        template=await _template_ref(db, project),
+        blocked_policy=project.blocked_policy,
+        suggested_tags=list(project.suggested_tags or []),
+    )
+
+
+async def _template_ref(db: AsyncSession, project: Project) -> ProjectTemplateOut | None:
+    if project.template_id is None or project.template_mode is None:
+        return None
+    template = await db.get(Template, project.template_id)
+    if template is None:  # pragma: no cover - FK sets the id to null on delete
+        return None
+    return ProjectTemplateOut(
+        id=str(template.id),
+        name=template.name,
+        mode=project.template_mode,
+        version=template.version,
+        applied_version=project.template_version,
     )

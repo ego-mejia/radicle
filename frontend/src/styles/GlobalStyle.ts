@@ -5,6 +5,11 @@ export const GlobalStyle = createGlobalStyle`
 
   html, body, #root { height: 100%; }
 
+  input[type='radio'],
+  input[type='checkbox'] {
+    accent-color: ${({ theme }) => theme.color.accent};
+  }
+
   body {
     margin: 0;
     background: ${({ theme }) => theme.color.bg};

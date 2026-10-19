@@ -16,6 +16,7 @@ import { MyTicketsView } from './features/mytickets/views/MyTicketsView';
 import { ProfileView } from './features/profile/views/ProfileView';
 import { ProjectsView } from './features/projects/views/ProjectsView';
 import { SettingsView } from './features/settings/views/SettingsView';
+import { TemplateEditorView } from './features/templates/views/TemplateEditorView';
 import { TicketPageView } from './features/tickets/views/TicketPageView';
 import { AppPage } from './pages/AppPage';
 import { AuthPage } from './pages/AuthPage';
@@ -159,6 +160,16 @@ const adminRoute = createRoute({
   validateSearch: (search: Record<string, unknown>): { tab?: string } => ({ tab: str(search.tab) }),
 });
 
+const templateRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/admin/templates/$id',
+  component: TemplateEditorView,
+  validateSearch: (search: Record<string, unknown>): { tab?: string; type?: string } => ({
+    tab: str(search.tab),
+    type: str(search.type),
+  }),
+});
+
 const routeTree = rootRoute.addChildren([
   authLayout.addChildren([setupRoute, loginRoute]),
   appLayout.addChildren([
@@ -171,6 +182,7 @@ const routeTree = rootRoute.addChildren([
     myTicketsRoute,
     profileRoute,
     adminRoute,
+    templateRoute,
   ]),
 ]);
 

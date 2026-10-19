@@ -46,6 +46,31 @@
         "title": "AgentCreated",
         "type": "object"
       },
+      "AreaConf": {
+        "additionalProperties": false,
+        "properties": {
+          "color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Color"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "AreaConf",
+        "type": "object"
+      },
       "AreaCreate": {
         "additionalProperties": false,
         "properties": {
@@ -157,6 +182,14 @@
         },
         "title": "AreaPatch",
         "type": "object"
+      },
+      "BlockedPolicy": {
+        "enum": [
+          "warn",
+          "enforce"
+        ],
+        "title": "BlockedPolicy",
+        "type": "string"
       },
       "CategoryCounts": {
         "properties": {
@@ -598,6 +631,69 @@
         "title": "EventOut",
         "type": "object"
       },
+      "FieldConf": {
+        "additionalProperties": false,
+        "properties": {
+          "applies_to_areas": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applies To Areas"
+          },
+          "applies_to_types": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/TicketType"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Applies To Types"
+          },
+          "field_type": {
+            "$ref": "#/components/schemas/CustomFieldType"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "$ref": "#/components/schemas/FieldOptionConf"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "key",
+          "name",
+          "field_type"
+        ],
+        "title": "FieldConf",
+        "type": "object"
+      },
       "FieldInfo": {
         "properties": {
           "description": {
@@ -682,6 +778,42 @@
           "value"
         ],
         "title": "FieldOption",
+        "type": "object"
+      },
+      "FieldOptionConf": {
+        "additionalProperties": false,
+        "properties": {
+          "color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Color"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "title": "FieldOptionConf",
         "type": "object"
       },
       "FieldOptionOut": {
@@ -867,6 +999,41 @@
           "ticket"
         ],
         "title": "LinkOut",
+        "type": "object"
+      },
+      "LinkedProjectOut": {
+        "properties": {
+          "in_sync": {
+            "title": "In Sync",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "template_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Template Version"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "template_version",
+          "in_sync"
+        ],
+        "title": "LinkedProjectOut",
         "type": "object"
       },
       "LoginIn": {
@@ -1407,6 +1574,62 @@
         "title": "Page[ProjectOut]",
         "type": "object"
       },
+      "Page_SyncRunOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SyncRunOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[SyncRunOut]",
+        "type": "object"
+      },
+      "Page_TemplateOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TemplateOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[TemplateOut]",
+        "type": "object"
+      },
       "Page_TicketSummary_": {
         "properties": {
           "items": {
@@ -1518,6 +1741,24 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "template_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Template to copy the configuration from; default Radicle default",
+            "title": "Template Id"
+          },
+          "template_mode": {
+            "$ref": "#/components/schemas/TemplateMode",
+            "default": "linked",
+            "description": "linked: template changes reach the project; detached: edit it freely"
           }
         },
         "required": [
@@ -1539,6 +1780,9 @@
             },
             "title": "Areas",
             "type": "array"
+          },
+          "blocked_policy": {
+            "$ref": "#/components/schemas/BlockedPolicy"
           },
           "created_at": {
             "title": "Created At",
@@ -1586,6 +1830,23 @@
             "$ref": "#/components/schemas/ProjectRole",
             "description": "Your role in the project"
           },
+          "suggested_tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Suggested Tags",
+            "type": "array"
+          },
+          "template": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectTemplateOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "updated_at": {
             "title": "Updated At",
             "type": "string"
@@ -1611,7 +1872,10 @@
           "milestones",
           "workflows",
           "members",
-          "custom_fields"
+          "custom_fields",
+          "template",
+          "blocked_policy",
+          "suggested_tags"
         ],
         "title": "ProjectDetail",
         "type": "object"
@@ -1702,6 +1966,60 @@
         ],
         "title": "ProjectRole",
         "type": "string"
+      },
+      "ProjectSettingsPut": {
+        "additionalProperties": false,
+        "properties": {
+          "blocked_policy": {
+            "$ref": "#/components/schemas/BlockedPolicy"
+          }
+        },
+        "required": [
+          "blocked_policy"
+        ],
+        "title": "ProjectSettingsPut",
+        "type": "object"
+      },
+      "ProjectTemplateOut": {
+        "properties": {
+          "applied_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Version this project has",
+            "title": "Applied Version"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/TemplateMode"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "version": {
+            "description": "Latest template version",
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "mode",
+          "version",
+          "applied_version"
+        ],
+        "title": "ProjectTemplateOut",
+        "type": "object"
       },
       "ProjectValues": {
         "properties": {
@@ -1801,6 +2119,104 @@
         ],
         "title": "Resolution",
         "type": "string"
+      },
+      "RuleConf": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "title": "Config",
+            "type": "object"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "rule_type": {
+            "title": "Rule Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "rule_type"
+        ],
+        "title": "RuleConf",
+        "type": "object"
+      },
+      "SaveAsTemplateIn": {
+        "additionalProperties": false,
+        "properties": {
+          "description_md": {
+            "default": "",
+            "title": "Description Md",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "SaveAsTemplateIn",
+        "type": "object"
+      },
+      "ScreenConf": {
+        "additionalProperties": false,
+        "properties": {
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenFieldConf"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "operation": {
+            "title": "Operation",
+            "type": "string"
+          },
+          "transition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transition"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TicketType"
+          }
+        },
+        "required": [
+          "type",
+          "operation"
+        ],
+        "title": "ScreenConf",
+        "type": "object"
+      },
+      "ScreenFieldConf": {
+        "additionalProperties": false,
+        "properties": {
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "required": {
+            "default": false,
+            "title": "Required",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "field"
+        ],
+        "title": "ScreenFieldConf",
+        "type": "object"
       },
       "SearchFields": {
         "properties": {
@@ -1917,6 +2333,17 @@
         "title": "SearchWarningOut",
         "type": "object"
       },
+      "SettingsConf": {
+        "additionalProperties": false,
+        "properties": {
+          "blocked_policy": {
+            "$ref": "#/components/schemas/BlockedPolicy",
+            "default": "warn"
+          }
+        },
+        "title": "SettingsConf",
+        "type": "object"
+      },
       "SetupIn": {
         "additionalProperties": false,
         "properties": {
@@ -1969,6 +2396,34 @@
         "title": "StatusCategory",
         "type": "string"
       },
+      "StatusConf": {
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/StatusCategory"
+          },
+          "is_initial": {
+            "default": false,
+            "title": "Is Initial",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "name",
+          "category"
+        ],
+        "title": "StatusConf",
+        "type": "object"
+      },
       "StatusOut": {
         "properties": {
           "category": {
@@ -1981,9 +2436,22 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Stable slug; renames keep it",
+            "title": "Ref"
           }
         },
         "required": [
+          "ref",
           "name",
           "category",
           "is_initial"
@@ -2006,6 +2474,351 @@
           "category"
         ],
         "title": "StatusRef",
+        "type": "object"
+      },
+      "SyncRunOut": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "project": {
+            "title": "Project",
+            "type": "string"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SyncStatus"
+          },
+          "template_version": {
+            "title": "Template Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "project",
+          "template_version",
+          "status",
+          "error",
+          "created_at",
+          "started_at",
+          "finished_at"
+        ],
+        "title": "SyncRunOut",
+        "type": "object"
+      },
+      "SyncStatus": {
+        "enum": [
+          "pending",
+          "running",
+          "succeeded",
+          "failed"
+        ],
+        "title": "SyncStatus",
+        "type": "string"
+      },
+      "TemplateConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "areas": {
+            "items": {
+              "$ref": "#/components/schemas/AreaConf"
+            },
+            "title": "Areas",
+            "type": "array"
+          },
+          "custom_fields": {
+            "items": {
+              "$ref": "#/components/schemas/FieldConf"
+            },
+            "title": "Custom Fields",
+            "type": "array"
+          },
+          "screens": {
+            "items": {
+              "$ref": "#/components/schemas/ScreenConf"
+            },
+            "title": "Screens",
+            "type": "array"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/SettingsConf"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "workflows": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WorkflowConf"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/TicketType"
+            },
+            "title": "Workflows",
+            "type": "object"
+          }
+        },
+        "required": [
+          "workflows"
+        ],
+        "title": "TemplateConfig",
+        "type": "object"
+      },
+      "TemplateCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemplateConfig"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Default: Radicle default"
+          },
+          "description_md": {
+            "default": "",
+            "title": "Description Md",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "TemplateCreate",
+        "type": "object"
+      },
+      "TemplateDetail": {
+        "properties": {
+          "archived": {
+            "title": "Archived",
+            "type": "boolean"
+          },
+          "config": {
+            "$ref": "#/components/schemas/TemplateConfig"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "description_md": {
+            "title": "Description Md",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_default": {
+            "title": "Is Default",
+            "type": "boolean"
+          },
+          "linked_projects": {
+            "items": {
+              "$ref": "#/components/schemas/LinkedProjectOut"
+            },
+            "title": "Linked Projects",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          },
+          "warnings": {
+            "description": "e.g. unreachable statuses",
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description_md",
+          "version",
+          "archived",
+          "is_default",
+          "linked_projects",
+          "created_at",
+          "updated_at",
+          "config",
+          "warnings"
+        ],
+        "title": "TemplateDetail",
+        "type": "object"
+      },
+      "TemplateMode": {
+        "enum": [
+          "linked",
+          "detached"
+        ],
+        "title": "TemplateMode",
+        "type": "string"
+      },
+      "TemplateOut": {
+        "properties": {
+          "archived": {
+            "title": "Archived",
+            "type": "boolean"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "description_md": {
+            "title": "Description Md",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_default": {
+            "title": "Is Default",
+            "type": "boolean"
+          },
+          "linked_projects": {
+            "items": {
+              "$ref": "#/components/schemas/LinkedProjectOut"
+            },
+            "title": "Linked Projects",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description_md",
+          "version",
+          "archived",
+          "is_default",
+          "linked_projects",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "TemplateOut",
+        "type": "object"
+      },
+      "TemplatePatch": {
+        "additionalProperties": false,
+        "description": "Sending `config` replaces it, bumps the version and syncs every linked project.",
+        "properties": {
+          "config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TemplateConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description_md": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description Md"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "status_mappings": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Where tickets of removed statuses go, by ref: {\"in_review\": \"in_progress\"} for every type, or {\"task\": {\"in_review\": \"in_progress\"}} per type",
+            "title": "Status Mappings"
+          }
+        },
+        "title": "TemplatePatch",
         "type": "object"
       },
       "TicketCreate": {
@@ -2835,6 +3648,62 @@
         "title": "TokenOut",
         "type": "object"
       },
+      "TransitionConf": {
+        "additionalProperties": false,
+        "properties": {
+          "allowed_resolutions": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Resolution"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Resolutions"
+          },
+          "from": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ref": {
+            "title": "Ref",
+            "type": "string"
+          },
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleConf"
+            },
+            "title": "Rules",
+            "type": "array"
+          },
+          "to": {
+            "title": "To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "name",
+          "to"
+        ],
+        "title": "TransitionConf",
+        "type": "object"
+      },
       "TransitionIn": {
         "additionalProperties": false,
         "properties": {
@@ -2927,6 +3796,17 @@
             "description": "Only for done targets; null = all resolutions",
             "title": "Allowed Resolutions"
           },
+          "from_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Ref"
+          },
           "from_status": {
             "anyOf": [
               {
@@ -2943,12 +3823,30 @@
             "title": "Name",
             "type": "string"
           },
+          "ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ref"
+          },
+          "to_ref": {
+            "title": "To Ref",
+            "type": "string"
+          },
           "to_status": {
             "title": "To Status",
             "type": "string"
           }
         },
         "required": [
+          "ref",
+          "from_ref",
+          "to_ref",
           "name",
           "from_status",
           "to_status",
@@ -3021,7 +3919,8 @@
       "UserKind": {
         "enum": [
           "human",
-          "agent"
+          "agent",
+          "system"
         ],
         "title": "UserKind",
         "type": "string"
@@ -3251,6 +4150,30 @@
         "title": "WarningOut",
         "type": "object"
       },
+      "WorkflowConf": {
+        "additionalProperties": false,
+        "properties": {
+          "statuses": {
+            "items": {
+              "$ref": "#/components/schemas/StatusConf"
+            },
+            "title": "Statuses",
+            "type": "array"
+          },
+          "transitions": {
+            "items": {
+              "$ref": "#/components/schemas/TransitionConf"
+            },
+            "title": "Transitions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "statuses"
+        ],
+        "title": "WorkflowConf",
+        "type": "object"
+      },
       "WorkflowOut": {
         "properties": {
           "statuses": {
@@ -3277,6 +4200,48 @@
           "transitions"
         ],
         "title": "WorkflowOut",
+        "type": "object"
+      },
+      "WorkflowPut": {
+        "additionalProperties": false,
+        "properties": {
+          "status_mappings": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Where tickets of removed statuses go, by ref: {\"in_review\": \"in_progress\"} for every type, or {\"task\": {\"in_review\": \"in_progress\"}} per type",
+            "title": "Status Mappings"
+          },
+          "workflow": {
+            "$ref": "#/components/schemas/WorkflowConf"
+          }
+        },
+        "required": [
+          "workflow"
+        ],
+        "title": "WorkflowPut",
+        "type": "object"
+      },
+      "WorkflowPutOut": {
+        "properties": {
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "warnings"
+        ],
+        "title": "WorkflowPutOut",
         "type": "object"
       }
     }
@@ -3880,7 +4845,7 @@
         ]
       },
       "post": {
-        "description": "Create a project, seed the Task, Bug and Draft workflows, and make you its admin.",
+        "description": "Create a project from a template (Radicle default if none) and make you its admin.",
         "operationId": "create_project_api_v1_projects_post",
         "requestBody": {
           "content": {
@@ -4260,6 +5225,49 @@
         "summary": "Patch Area",
         "tags": [
           "areas and milestones"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/detach": {
+      "post": {
+        "description": "Stop following the template. The project keeps its configuration and can edit it.",
+        "operationId": "detach_project_api_v1_projects__key__detach_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Detach Project",
+        "tags": [
+          "projects"
         ]
       }
     },
@@ -4838,6 +5846,112 @@
         ]
       }
     },
+    "/api/v1/projects/{key}/save-as-template": {
+      "post": {
+        "description": "New template with this project's workflows, fields, areas, tags and settings.\nTickets, milestones and members are not copied.",
+        "operationId": "save_as_template_api_v1_projects__key__save_as_template_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveAsTemplateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save As Template",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/settings": {
+      "put": {
+        "description": "Blocked policy: warn lets blocked tickets move with a warning, enforce stops them.",
+        "operationId": "put_settings_api_v1_projects__key__settings_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectSettingsPut"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Settings",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
     "/api/v1/projects/{key}/tickets": {
       "post": {
         "description": "Create a Task, Bug or Draft. Area is required except for drafts.",
@@ -4980,6 +6094,67 @@
         ]
       }
     },
+    "/api/v1/projects/{key}/workflows/{ticket_type}": {
+      "put": {
+        "description": "Replace one workflow (independent projects only). Statuses keep their `ref`;\ntickets in removed statuses need `status_mappings`.",
+        "operationId": "put_workflow_api_v1_projects__key__workflows__ticket_type__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "ticket_type",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/TicketType"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkflowPut"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowPutOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Workflow",
+        "tags": [
+          "projects"
+        ]
+      }
+    },
     "/api/v1/search/fields": {
       "get": {
         "description": "RQL fields and operators; with `project`, also its statuses, areas, people and tags.",
@@ -5090,6 +6265,368 @@
         "summary": "Setup Status",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/api/v1/templates": {
+      "get": {
+        "description": "Templates to create projects from, with the projects linked to each.",
+        "operationId": "list_templates_api_v1_templates_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include_archived",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Archived",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_TemplateOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Templates",
+        "tags": [
+          "templates"
+        ]
+      },
+      "post": {
+        "operationId": "create_template_api_v1_templates_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Template",
+        "tags": [
+          "templates"
+        ]
+      }
+    },
+    "/api/v1/templates/{template_id}": {
+      "get": {
+        "operationId": "get_template_api_v1_templates__template_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Template",
+        "tags": [
+          "templates"
+        ]
+      },
+      "patch": {
+        "description": "Removing a status that still has tickets in linked projects needs `status_mappings`.",
+        "operationId": "patch_template_api_v1_templates__template_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Template",
+        "tags": [
+          "templates"
+        ]
+      }
+    },
+    "/api/v1/templates/{template_id}/archive": {
+      "post": {
+        "description": "Archived templates cannot create projects; linked projects keep their configuration.",
+        "operationId": "archive_template_api_v1_templates__template_id__archive_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Archive Template",
+        "tags": [
+          "templates"
+        ]
+      }
+    },
+    "/api/v1/templates/{template_id}/sync-runs": {
+      "get": {
+        "description": "Propagation progress: one run per linked project and version, newest first.",
+        "operationId": "list_sync_runs_api_v1_templates__template_id__sync_runs_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_SyncRunOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Sync Runs",
+        "tags": [
+          "templates"
+        ]
+      }
+    },
+    "/api/v1/templates/{template_id}/sync-runs/{run_id}/retry": {
+      "post": {
+        "operationId": "retry_sync_run_api_v1_templates__template_id__sync_runs__run_id__retry_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncRunOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retry Sync Run",
+        "tags": [
+          "templates"
+        ]
+      }
+    },
+    "/api/v1/templates/{template_id}/unarchive": {
+      "post": {
+        "operationId": "unarchive_template_api_v1_templates__template_id__unarchive_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Template Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unarchive Template",
+        "tags": [
+          "templates"
         ]
       }
     },

@@ -1,14 +1,17 @@
 from datetime import date
+from uuid import UUID
 
 from pydantic import ConfigDict, Field
 
 from radicle.api.schemas.common import Input, Output, UtcDatetime
 from radicle.api.schemas.fields import CustomFieldOut
 from radicle.db.models import (
+    BlockedPolicy,
     MilestoneStatus,
     ProjectRole,
     Resolution,
     StatusCategory,
+    TemplateMode,
     TicketType,
     UserKind,
 )
@@ -35,6 +38,13 @@ class ProjectCreate(Input):
     key: str = Field(description="2-10 chars, uppercase letter then letters/digits. Immutable.")
     name: str
     description_md: str = ""
+    template_id: UUID | None = Field(
+        default=None, description="Template to copy the configuration from; default Radicle default"
+    )
+    template_mode: TemplateMode = Field(
+        default=TemplateMode.linked,
+        description="linked: template changes reach the project; detached: edit it freely",
+    )
 
 
 class ProjectPatch(Input):
@@ -100,12 +110,16 @@ class MemberPut(Input):
 
 
 class StatusOut(Output):
+    ref: str | None = Field(description="Stable slug; renames keep it")
     name: str
     category: StatusCategory
     is_initial: bool
 
 
 class TransitionOut(Output):
+    ref: str | None
+    from_ref: str | None
+    to_ref: str
     name: str
     from_status: str | None = Field(description="null = from any status not in done")
     to_status: str
@@ -120,9 +134,24 @@ class WorkflowOut(Output):
     transitions: list[TransitionOut]
 
 
+class ProjectTemplateOut(Output):
+    id: str
+    name: str
+    mode: TemplateMode
+    version: int = Field(description="Latest template version")
+    applied_version: int | None = Field(description="Version this project has")
+
+
+class ProjectSettingsPut(Input):
+    blocked_policy: BlockedPolicy
+
+
 class ProjectDetail(ProjectOut):
     areas: list[AreaOut]
     milestones: list[MilestoneOut]
     workflows: list[WorkflowOut]
     members: list[MemberOut]
     custom_fields: list[CustomFieldOut]
+    template: ProjectTemplateOut | None
+    blocked_policy: BlockedPolicy
+    suggested_tags: list[str]

@@ -4,13 +4,31 @@ import { TypeIcon } from '../../../../components/icons/TypeIcon';
 import { Badge } from '../../../../components/ui/Badge';
 import type { ProjectDetail } from '../../../../services/api/types';
 import { SettingsCard } from '../../../../components/ui/SettingsCard';
+import { WorkflowForm } from './components/WorkflowForm';
 import * as S from './style';
 
-/** Read-only in stage 1; editing workflows arrives with templates. */
-export function WorkflowsSection({ project }: { project: ProjectDetail }) {
+type Props = { project: ProjectDetail; isAdmin: boolean };
+
+/** Editable in independent projects; linked projects show their template's workflows. */
+export function WorkflowsSection({ project, isAdmin }: Props) {
   const { t } = useTranslation();
+  const editable = isAdmin && !project.archived && project.template?.mode !== 'linked';
+  if (editable) {
+    return (
+      <SettingsCard title={t('settings.workflows')} help={t('settings.workflowsEditHelp')}>
+        <WorkflowForm project={project} />
+      </SettingsCard>
+    );
+  }
   return (
-    <SettingsCard title={t('settings.workflows')} help={t('settings.workflowsHelp')}>
+    <SettingsCard
+      title={t('settings.workflows')}
+      help={
+        project.template?.mode === 'linked'
+          ? t('settings.workflowsLinkedHelp', { template: project.template.name })
+          : t('settings.workflowsHelp')
+      }
+    >
       <S.Grid>
         {project.workflows.map((wf) => (
           <S.Workflow key={wf.type}>

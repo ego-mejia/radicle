@@ -231,7 +231,7 @@ export interface paths {
         put?: never;
         /**
          * Create Project
-         * @description Create a project, seed the Task, Bug and Draft workflows, and make you its admin.
+         * @description Create a project from a template (Radicle default if none) and make you its admin.
          */
         post: operations["create_project_api_v1_projects_post"];
         delete?: never;
@@ -321,6 +321,26 @@ export interface paths {
          * @description Rename, recolor, reorder, or archive and restore with `archived`.
          */
         patch: operations["patch_area_api_v1_projects__key__areas__name__patch"];
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/detach": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Detach Project
+         * @description Stop following the template. The project keeps its configuration and can edit it.
+         */
+        post: operations["detach_project_api_v1_projects__key__detach_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/projects/{key}/fields": {
@@ -451,6 +471,47 @@ export interface paths {
         patch: operations["patch_milestone_api_v1_projects__key__milestones__name__patch"];
         trace?: never;
     };
+    "/api/v1/projects/{key}/save-as-template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Save As Template
+         * @description New template with this project's workflows, fields, areas, tags and settings.
+         *     Tickets, milestones and members are not copied.
+         */
+        post: operations["save_as_template_api_v1_projects__key__save_as_template_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Settings
+         * @description Blocked policy: warn lets blocked tickets move with a warning, enforce stops them.
+         */
+        put: operations["put_settings_api_v1_projects__key__settings_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{key}/tickets": {
         parameters: {
             query?: never;
@@ -501,6 +562,27 @@ export interface paths {
          */
         get: operations["get_workflows_api_v1_projects__key__workflows_get"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/workflows/{ticket_type}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Workflow
+         * @description Replace one workflow (independent projects only). Statuses keep their `ref`;
+         *     tickets in removed statuses need `status_mappings`.
+         */
+        put: operations["put_workflow_api_v1_projects__key__workflows__ticket_type__put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -559,6 +641,122 @@ export interface paths {
         get: operations["setup_status_api_v1_setup_status_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Templates
+         * @description Templates to create projects from, with the projects linked to each.
+         */
+        get: operations["list_templates_api_v1_templates_get"];
+        put?: never;
+        /** Create Template */
+        post: operations["create_template_api_v1_templates_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/templates/{template_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Template */
+        get: operations["get_template_api_v1_templates__template_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Patch Template
+         * @description Removing a status that still has tickets in linked projects needs `status_mappings`.
+         */
+        patch: operations["patch_template_api_v1_templates__template_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/templates/{template_id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archive Template
+         * @description Archived templates cannot create projects; linked projects keep their configuration.
+         */
+        post: operations["archive_template_api_v1_templates__template_id__archive_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/templates/{template_id}/sync-runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Sync Runs
+         * @description Propagation progress: one run per linked project and version, newest first.
+         */
+        get: operations["list_sync_runs_api_v1_templates__template_id__sync_runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/templates/{template_id}/sync-runs/{run_id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retry Sync Run */
+        post: operations["retry_sync_run_api_v1_templates__template_id__sync_runs__run_id__retry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/templates/{template_id}/unarchive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Unarchive Template */
+        post: operations["unarchive_template_api_v1_templates__template_id__unarchive_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -910,6 +1108,13 @@ export interface components {
             mcp_url: string;
             token: components["schemas"]["TokenCreated"];
         };
+        /** AreaConf */
+        AreaConf: {
+            /** Color */
+            color?: string | null;
+            /** Name */
+            name: string;
+        };
         /** AreaCreate */
         AreaCreate: {
             /** Color */
@@ -942,6 +1147,11 @@ export interface components {
             /** Position */
             position?: number | null;
         };
+        /**
+         * BlockedPolicy
+         * @enum {string}
+         */
+        BlockedPolicy: "warn" | "enforce";
         /** CategoryCounts */
         CategoryCounts: {
             /**
@@ -1100,6 +1310,22 @@ export interface components {
             /** Old Value */
             old_value: unknown;
         };
+        /** FieldConf */
+        FieldConf: {
+            /** Applies To Areas */
+            applies_to_areas?: string[] | null;
+            /** Applies To Types */
+            applies_to_types?: components["schemas"]["TicketType"][] | null;
+            field_type: components["schemas"]["CustomFieldType"];
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            /** Options */
+            options?: components["schemas"]["FieldOptionConf"][];
+            /** Ref */
+            ref: string;
+        };
         /** FieldInfo */
         FieldInfo: {
             /** Description */
@@ -1123,6 +1349,15 @@ export interface components {
              * Color
              * @description Hex like #4D7C0F
              */
+            color?: string | null;
+            /** Label */
+            label?: string | null;
+            /** Value */
+            value: string;
+        };
+        /** FieldOptionConf */
+        FieldOptionConf: {
+            /** Color */
             color?: string | null;
             /** Label */
             label?: string | null;
@@ -1200,6 +1435,17 @@ export interface components {
             ticket: components["schemas"]["TicketRef"];
             /** Type */
             type: string;
+        };
+        /** LinkedProjectOut */
+        LinkedProjectOut: {
+            /** In Sync */
+            in_sync: boolean;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            /** Template Version */
+            template_version: number | null;
         };
         /** LoginIn */
         LoginIn: {
@@ -1358,6 +1604,20 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** Page[SyncRunOut] */
+        Page_SyncRunOut_: {
+            /** Items */
+            items: components["schemas"]["SyncRunOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[TemplateOut] */
+        Page_TemplateOut_: {
+            /** Items */
+            items: components["schemas"]["TemplateOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** Page[TicketSummary] */
         Page_TicketSummary_: {
             /** Items */
@@ -1398,6 +1658,16 @@ export interface components {
             key: string;
             /** Name */
             name: string;
+            /**
+             * Template Id
+             * @description Template to copy the configuration from; default Radicle default
+             */
+            template_id?: string | null;
+            /**
+             * @description linked: template changes reach the project; detached: edit it freely
+             * @default linked
+             */
+            template_mode?: components["schemas"]["TemplateMode"];
         };
         /** ProjectDetail */
         ProjectDetail: {
@@ -1405,6 +1675,7 @@ export interface components {
             archived: boolean;
             /** Areas */
             areas: components["schemas"]["AreaOut"][];
+            blocked_policy: components["schemas"]["BlockedPolicy"];
             /** Created At */
             created_at: string;
             /** Custom Fields */
@@ -1426,6 +1697,9 @@ export interface components {
             open_tickets: number;
             /** @description Your role in the project */
             role: components["schemas"]["ProjectRole"];
+            /** Suggested Tags */
+            suggested_tags: string[];
+            template: components["schemas"]["ProjectTemplateOut"] | null;
             /** Updated At */
             updated_at: string;
             /** Workflows */
@@ -1465,6 +1739,28 @@ export interface components {
          * @enum {string}
          */
         ProjectRole: "admin" | "member" | "viewer";
+        /** ProjectSettingsPut */
+        ProjectSettingsPut: {
+            blocked_policy: components["schemas"]["BlockedPolicy"];
+        };
+        /** ProjectTemplateOut */
+        ProjectTemplateOut: {
+            /**
+             * Applied Version
+             * @description Version this project has
+             */
+            applied_version: number | null;
+            /** Id */
+            id: string;
+            mode: components["schemas"]["TemplateMode"];
+            /** Name */
+            name: string;
+            /**
+             * Version
+             * @description Latest template version
+             */
+            version: number;
+        };
         /** ProjectValues */
         ProjectValues: {
             /** Areas */
@@ -1502,6 +1798,47 @@ export interface components {
          * @enum {string}
          */
         Resolution: "done" | "wont_do" | "duplicate" | "cannot_reproduce";
+        /** RuleConf */
+        RuleConf: {
+            /** Config */
+            config?: {
+                [key: string]: unknown;
+            };
+            /** Kind */
+            kind: string;
+            /** Rule Type */
+            rule_type: string;
+        };
+        /** SaveAsTemplateIn */
+        SaveAsTemplateIn: {
+            /**
+             * Description Md
+             * @default
+             */
+            description_md?: string;
+            /** Name */
+            name: string;
+        };
+        /** ScreenConf */
+        ScreenConf: {
+            /** Fields */
+            fields?: components["schemas"]["ScreenFieldConf"][];
+            /** Operation */
+            operation: string;
+            /** Transition */
+            transition?: string | null;
+            type: components["schemas"]["TicketType"];
+        };
+        /** ScreenFieldConf */
+        ScreenFieldConf: {
+            /** Field */
+            field: string;
+            /**
+             * Required
+             * @default false
+             */
+            required?: boolean;
+        };
         /** SearchFields */
         SearchFields: {
             /** Fields */
@@ -1534,6 +1871,11 @@ export interface components {
             /** Position */
             position: number;
         };
+        /** SettingsConf */
+        SettingsConf: {
+            /** @default warn */
+            blocked_policy?: components["schemas"]["BlockedPolicy"];
+        };
         /** SetupIn */
         SetupIn: {
             /** Display Name */
@@ -1558,6 +1900,19 @@ export interface components {
          * @enum {string}
          */
         StatusCategory: "todo" | "in_progress" | "done";
+        /** StatusConf */
+        StatusConf: {
+            category: components["schemas"]["StatusCategory"];
+            /**
+             * Is Initial
+             * @default false
+             */
+            is_initial?: boolean;
+            /** Name */
+            name: string;
+            /** Ref */
+            ref: string;
+        };
         /** StatusOut */
         StatusOut: {
             category: components["schemas"]["StatusCategory"];
@@ -1565,12 +1920,139 @@ export interface components {
             is_initial: boolean;
             /** Name */
             name: string;
+            /**
+             * Ref
+             * @description Stable slug; renames keep it
+             */
+            ref: string | null;
         };
         /** StatusRef */
         StatusRef: {
             category: components["schemas"]["StatusCategory"];
             /** Name */
             name: string;
+        };
+        /** SyncRunOut */
+        SyncRunOut: {
+            /** Created At */
+            created_at: string;
+            /** Error */
+            error: string | null;
+            /** Finished At */
+            finished_at: string | null;
+            /** Id */
+            id: string;
+            /** Project */
+            project: string;
+            /** Started At */
+            started_at: string | null;
+            status: components["schemas"]["SyncStatus"];
+            /** Template Version */
+            template_version: number;
+        };
+        /**
+         * SyncStatus
+         * @enum {string}
+         */
+        SyncStatus: "pending" | "running" | "succeeded" | "failed";
+        /** TemplateConfig */
+        TemplateConfig: {
+            /** Areas */
+            areas?: components["schemas"]["AreaConf"][];
+            /** Custom Fields */
+            custom_fields?: components["schemas"]["FieldConf"][];
+            /** Screens */
+            screens?: components["schemas"]["ScreenConf"][];
+            settings?: components["schemas"]["SettingsConf"];
+            /** Tags */
+            tags?: string[];
+            /** Workflows */
+            workflows: {
+                [key: string]: components["schemas"]["WorkflowConf"];
+            };
+        };
+        /** TemplateCreate */
+        TemplateCreate: {
+            /** @description Default: Radicle default */
+            config?: components["schemas"]["TemplateConfig"] | null;
+            /**
+             * Description Md
+             * @default
+             */
+            description_md?: string;
+            /** Name */
+            name: string;
+        };
+        /** TemplateDetail */
+        TemplateDetail: {
+            /** Archived */
+            archived: boolean;
+            config: components["schemas"]["TemplateConfig"];
+            /** Created At */
+            created_at: string;
+            /** Description Md */
+            description_md: string;
+            /** Id */
+            id: string;
+            /** Is Default */
+            is_default: boolean;
+            /** Linked Projects */
+            linked_projects: components["schemas"]["LinkedProjectOut"][];
+            /** Name */
+            name: string;
+            /** Updated At */
+            updated_at: string;
+            /** Version */
+            version: number;
+            /**
+             * Warnings
+             * @description e.g. unreachable statuses
+             */
+            warnings: string[];
+        };
+        /**
+         * TemplateMode
+         * @enum {string}
+         */
+        TemplateMode: "linked" | "detached";
+        /** TemplateOut */
+        TemplateOut: {
+            /** Archived */
+            archived: boolean;
+            /** Created At */
+            created_at: string;
+            /** Description Md */
+            description_md: string;
+            /** Id */
+            id: string;
+            /** Is Default */
+            is_default: boolean;
+            /** Linked Projects */
+            linked_projects: components["schemas"]["LinkedProjectOut"][];
+            /** Name */
+            name: string;
+            /** Updated At */
+            updated_at: string;
+            /** Version */
+            version: number;
+        };
+        /**
+         * TemplatePatch
+         * @description Sending `config` replaces it, bumps the version and syncs every linked project.
+         */
+        TemplatePatch: {
+            config?: components["schemas"]["TemplateConfig"] | null;
+            /** Description Md */
+            description_md?: string | null;
+            /** Name */
+            name?: string | null;
+            /**
+             * Status Mappings
+             * @description Where tickets of removed statuses go, by ref: {"in_review": "in_progress"} for every type, or {"task": {"in_review": "in_progress"}} per type
+             */
+            status_mappings?: {
+                [key: string]: unknown;
+            } | null;
         };
         /** TicketCreate */
         TicketCreate: {
@@ -1823,6 +2305,21 @@ export interface components {
             /** Revoked At */
             revoked_at: string | null;
         };
+        /** TransitionConf */
+        TransitionConf: {
+            /** Allowed Resolutions */
+            allowed_resolutions?: components["schemas"]["Resolution"][] | null;
+            /** From */
+            from?: string | null;
+            /** Name */
+            name: string;
+            /** Ref */
+            ref: string;
+            /** Rules */
+            rules?: components["schemas"]["RuleConf"][];
+            /** To */
+            to: string;
+        };
         /** TransitionIn */
         TransitionIn: {
             resolution?: components["schemas"]["Resolution"] | null;
@@ -1857,6 +2354,8 @@ export interface components {
              * @description Only for done targets; null = all resolutions
              */
             allowed_resolutions: components["schemas"]["Resolution"][] | null;
+            /** From Ref */
+            from_ref: string | null;
             /**
              * From Status
              * @description null = from any status not in done
@@ -1864,6 +2363,10 @@ export interface components {
             from_status: string | null;
             /** Name */
             name: string;
+            /** Ref */
+            ref: string | null;
+            /** To Ref */
+            to_ref: string;
             /** To Status */
             to_status: string;
         };
@@ -1902,7 +2405,7 @@ export interface components {
          * UserKind
          * @enum {string}
          */
-        UserKind: "human" | "agent";
+        UserKind: "human" | "agent" | "system";
         /** UserOut */
         UserOut: {
             /** Created At */
@@ -1969,6 +2472,13 @@ export interface components {
             /** Message */
             message: string;
         };
+        /** WorkflowConf */
+        WorkflowConf: {
+            /** Statuses */
+            statuses: components["schemas"]["StatusConf"][];
+            /** Transitions */
+            transitions?: components["schemas"]["TransitionConf"][];
+        };
         /** WorkflowOut */
         WorkflowOut: {
             /** Statuses */
@@ -1976,6 +2486,22 @@ export interface components {
             /** Transitions */
             transitions: components["schemas"]["TransitionOut"][];
             type: components["schemas"]["TicketType"];
+        };
+        /** WorkflowPut */
+        WorkflowPut: {
+            /**
+             * Status Mappings
+             * @description Where tickets of removed statuses go, by ref: {"in_review": "in_progress"} for every type, or {"task": {"in_review": "in_progress"}} per type
+             */
+            status_mappings?: {
+                [key: string]: unknown;
+            } | null;
+            workflow: components["schemas"]["WorkflowConf"];
+        };
+        /** WorkflowPutOut */
+        WorkflowPutOut: {
+            /** Warnings */
+            warnings: string[];
         };
     };
     responses: never;
@@ -2708,6 +3234,37 @@ export interface operations {
             };
         };
     };
+    detach_project_api_v1_projects__key__detach_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_fields_api_v1_projects__key__fields_get: {
         parameters: {
             query?: {
@@ -3075,6 +3632,76 @@ export interface operations {
             };
         };
     };
+    save_as_template_api_v1_projects__key__save_as_template_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveAsTemplateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_settings_api_v1_projects__key__settings_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProjectSettingsPut"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     create_ticket_api_v1_projects__key__tickets_post: {
         parameters: {
             query?: never;
@@ -3172,6 +3799,42 @@ export interface operations {
             };
         };
     };
+    put_workflow_api_v1_projects__key__workflows__ticket_type__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                ticket_type: components["schemas"]["TicketType"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WorkflowPut"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WorkflowPutOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     search_fields_api_v1_search_fields_get: {
         parameters: {
             query?: {
@@ -3252,6 +3915,261 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SetupStatus"];
+                };
+            };
+        };
+    };
+    list_templates_api_v1_templates_get: {
+        parameters: {
+            query?: {
+                include_archived?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_TemplateOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_template_api_v1_templates_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TemplateCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_template_api_v1_templates__template_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_template_api_v1_templates__template_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TemplatePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    archive_template_api_v1_templates__template_id__archive_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_sync_runs_api_v1_templates__template_id__sync_runs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_SyncRunOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retry_sync_run_api_v1_templates__template_id__sync_runs__run_id__retry_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SyncRunOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unarchive_template_api_v1_templates__template_id__unarchive_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TemplateDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

@@ -295,7 +295,8 @@
     "revoked": "Revocado",
     "lastUsed": "usado {{when}}",
     "neverUsed": "nunca usado",
-    "forbidden": "Solo los admins de instancia pueden abrir esta página."
+    "forbidden": "Solo los admins de instancia pueden abrir esta página.",
+    "templates": "Templates"
   },
   "settings": {
     "general": "General",
@@ -316,7 +317,9 @@
     "newArea": "Nueva área",
     "workflowsHelp": "Estados y transiciones por tipo.",
     "anyStatus": "cualquiera no hecho",
-    "fields": "Campos"
+    "fields": "Campos",
+    "workflowsEditHelp": "Estados y transiciones por tipo. Al quitar un estado se pregunta a dónde van sus tickets.",
+    "workflowsLinkedHelp": "Vienen del template {{template}}. Edítalos ahí o desliga el proyecto."
   },
   "profile": {
     "details": "Datos",
@@ -358,6 +361,100 @@
       "checkbox": "Casilla",
       "user": "Persona",
       "url": "URL"
+    },
+    "lockedHelp": "Los campos vienen del template {{template}}. Edítalos ahí o desliga el proyecto.",
+    "optionsCsv": "Opciones separadas por comas"
+  },
+  "workflow": {
+    "statuses": "Estados",
+    "transitions": "Transiciones",
+    "preview": "Vista previa",
+    "diagram": "Diagrama del workflow",
+    "diagramFailed": "No se pudo dibujar el diagrama.",
+    "newStatus": "Nuevo estado",
+    "addStatus": "Agregar estado",
+    "statusName": "Nombre del estado",
+    "category": "Categoría",
+    "initial": "Inicial",
+    "refHint": "Referencia estable: renombrar la conserva, así el template sabe que es el mismo estado.",
+    "reorder": "Arrastra para reordenar {{name}}",
+    "removeStatus": "Quitar {{name}}",
+    "fromTo": "Desde \\ Hacia",
+    "addTransition": "Agregar transición de {{from}} a {{to}}",
+    "transitionName": "Nombre de la transición",
+    "resolutions": "Resolutions permitidas",
+    "resolutionsHint": "El destino es un estado Done, así que el ticket necesita una de estas.",
+    "deleteTransition": "Borrar transición",
+    "unreachable": "Ninguna transición llega a: {{names}}.",
+    "mappingTitle": "¿A dónde van sus tickets?",
+    "mappingHelp": "Quitaste estados. Los tickets que estén en ellos pasan al estado que elijas, con historial.",
+    "mappingFor": "{{status}} ({{type}}) pasa a",
+    "mappingConfirm": "Guardar y mover tickets",
+    "errors": {
+      "initial": "Debe haber exactamente un estado inicial (ahora hay {{count}}).",
+      "done": "Al menos un estado debe estar en la categoría Done.",
+      "repeated": "Dos estados se llaman \"{{name}}\".",
+      "emptyName": "Todos los estados necesitan nombre."
+    }
+  },
+  "templates": {
+    "help": "Un template guarda workflows, campos custom, áreas y tags. Los proyectos ligados siguen sus cambios.",
+    "create": "Crear template",
+    "newName": "Nombre del nuevo template",
+    "default": "Default",
+    "noLinked": "Sin proyectos ligados",
+    "linkedTo": "Proyectos ligados: {{projects}}",
+    "notFound": "No se encontró el template",
+    "editor": "Editor de template",
+    "discard": "Descartar cambios",
+    "savedVersion": "Guardado como versión {{version}}. Los proyectos ligados se están actualizando.",
+    "tabs": {
+      "general": "General",
+      "workflows": "Workflows",
+      "fields": "Campos custom",
+      "sync": "Propagación"
+    },
+    "areasHint": "Se agregan a los proyectos ligados; cada proyecto puede tener áreas extra propias.",
+    "tags": "Tags",
+    "tagsHint": "Se sugieren en los proyectos ligados.",
+    "newTag": "Nuevo tag",
+    "blockedPolicy": "Cuando un ticket está bloqueado",
+    "blockedPolicyHint": "Avisar lo deja moverse con un aviso; impedir no lo deja empezar ni terminar.",
+    "policyFromTemplate": "Lo define el template mientras el proyecto esté ligado.",
+    "policy": {
+      "warn": "Avisar",
+      "enforce": "Impedir"
+    },
+    "noRuns": "Todavía no hay propagaciones. Guardar un cambio sincroniza cada proyecto ligado.",
+    "project": "Proyecto",
+    "version": "Versión",
+    "status": "Estado",
+    "when": "Cuándo",
+    "retry": "Reintentar",
+    "runStatus": {
+      "pending": "Pendiente",
+      "running": "Corriendo",
+      "succeeded": "Listo",
+      "failed": "Falló"
+    },
+    "bannerLinked": "Ligado a",
+    "bannerLinkedHelp": "Workflows, campos y la política de bloqueo vienen del template.",
+    "bannerDetached": "Proyecto independiente, creado desde",
+    "bannerDetachedHelp": "Los cambios del template ya no le llegan; su configuración se edita aquí.",
+    "syncing": "actualizando a v{{version}}",
+    "detach": "Desligar",
+    "detachTitle": "¿Desligar {{key}} de su template?",
+    "detachMessage": "{{template}} dejará de actualizar este proyecto. Conserva su configuración actual y la puedes editar aquí. Volver a ligarlo todavía no se puede.",
+    "saveAs": "Guardar como template",
+    "saveAsHelp": "Copia workflows, campos custom, áreas, tags y settings. No copia tickets, milestones ni miembros.",
+    "template": "Template",
+    "preview": "Vista previa del template",
+    "mode": "Actualizaciones",
+    "modes": {
+      "linked": "Ligado",
+      "linkedHelp": "Los cambios del template llegan a este proyecto.",
+      "detached": "Independiente",
+      "detachedHelp": "Copia la configuración una vez y la editas libremente."
     }
   }
 }

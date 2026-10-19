@@ -1,10 +1,10 @@
-import { Bot } from 'lucide-react';
+import { Bot, Sprout } from 'lucide-react';
 import { Circle } from './style';
 
 type Props = {
   handle: string;
   name?: string;
-  kind?: 'human' | 'agent';
+  kind?: 'human' | 'agent' | 'system';
   size?: number;
 };
 
@@ -14,7 +14,7 @@ function hue(text: string): number {
   return hash;
 }
 
-/** Initials for people, a bot icon for agents. */
+/** Initials for people, a bot for agents and a sprout for Radicle itself (system). */
 export function Avatar({ handle, name, kind = 'human', size = 22 }: Props) {
   const label = name ? `${name} (@${handle})` : `@${handle}`;
   const initials = (name || handle)
@@ -26,12 +26,18 @@ export function Avatar({ handle, name, kind = 'human', size = 22 }: Props) {
     <Circle
       $size={size}
       $hue={hue(handle)}
-      $agent={kind === 'agent'}
+      $agent={kind !== 'human'}
       title={label}
       aria-label={label}
       role="img"
     >
-      {kind === 'agent' ? <Bot aria-hidden /> : initials}
+      {kind === 'agent' ? (
+        <Bot aria-hidden />
+      ) : kind === 'system' ? (
+        <Sprout aria-hidden />
+      ) : (
+        initials
+      )}
     </Circle>
   );
 }

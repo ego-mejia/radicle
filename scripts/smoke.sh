@@ -80,4 +80,24 @@ done
 [ "$(docker compose ps --status running --services | grep -c '^worker$')" = "1" ] \
   || fail "worker not running"
 
+echo "==> template change reaches a linked project through the worker"
+TEMPLATE="$(curl -fsS -b "$JAR" -H "X-CSRF-Token: $CSRF" -H 'Content-Type: application/json' \
+  "$BASE_URL/api/v1/templates" -d '{"name":"Smoke"}')"
+TEMPLATE_ID="$(echo "$TEMPLATE" | json "['id']")"
+curl -fsS -b "$JAR" -H "X-CSRF-Token: $CSRF" -H 'Content-Type: application/json' \
+  "$BASE_URL/api/v1/projects" -d "{\"key\":\"PS\",\"name\":\"Smoke\",\"template_id\":\"$TEMPLATE_ID\"}" \
+  >/dev/null || fail "project from template"
+CONFIG="$(echo "$TEMPLATE" | python3 -c "
+import json, sys
+config = json.load(sys.stdin)['config']
+config['areas'].append({'name': 'Smoke area'})
+print(json.dumps({'config': config}))")"
+curl -fsS -b "$JAR" -H "X-CSRF-Token: $CSRF" -H 'Content-Type: application/json' -X PATCH \
+  "$BASE_URL/api/v1/templates/$TEMPLATE_ID" -d "$CONFIG" >/dev/null || fail "template patch"
+for _ in $(seq 1 30); do
+  if curl -fsS -b "$JAR" "$BASE_URL/api/v1/projects/PS" | grep -q 'Smoke area'; then break; fi
+  sleep 1
+done
+curl -fsS -b "$JAR" "$BASE_URL/api/v1/projects/PS" | grep -q 'Smoke area' || fail "template sync"
+
 echo "SMOKE OK"

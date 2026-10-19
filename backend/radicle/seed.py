@@ -29,7 +29,7 @@ from radicle.db.models import (
     utcnow,
 )
 from radicle.services import rank
-from radicle.services.workflows import seed_default_workflows
+from radicle.services.templates import instantiate
 
 AREAS = ["Legal", "Marketing", "Backend", "Frontend", "Mobile", "Data", "Infra", "Design"]
 WORDS = (
@@ -83,7 +83,7 @@ async def seed(
     project = Project(key=project_key, name=f"Proyecto {project_key}", created_by=users[0].id)
     db.add(project)
     await db.flush()
-    await seed_default_workflows(db, project)
+    await instantiate(db, project, users[0], template_id=None)
     for i, user in enumerate(users):
         role = (
             ProjectRole.admin

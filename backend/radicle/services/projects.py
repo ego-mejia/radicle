@@ -1,16 +1,16 @@
 """Projects and their members."""
 
 import re
+import uuid
 from dataclasses import dataclass
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import Conflict, Forbidden, ValidationFailed
-from radicle.db.models import Project, ProjectMember, ProjectRole, User, utcnow
+from radicle.db.models import Project, ProjectMember, ProjectRole, TemplateMode, User, utcnow
 from radicle.services import users as users_service
 from radicle.services.access import ProjectAccess
-from radicle.services.workflows import seed_default_workflows
 
 KEY_RE = re.compile(r"^[A-Z][A-Z0-9]{1,9}$")
 NAME_MAX = 100
@@ -56,8 +56,18 @@ class ProjectSummary:
 
 
 async def create_project(
-    db: AsyncSession, creator: User, *, key: str, name: str, description_md: str = ""
+    db: AsyncSession,
+    creator: User,
+    *,
+    key: str,
+    name: str,
+    description_md: str = "",
+    template_id: uuid.UUID | None = None,
+    template_mode: TemplateMode = TemplateMode.linked,
 ) -> Project:
+    """Create a project with the configuration of a template (Radicle default if none)."""
+    from radicle.services import templates
+
     if not creator.is_instance_admin:
         raise Forbidden("Only instance admins can create projects.")
     key = normalize_key(key)
@@ -76,7 +86,7 @@ async def create_project(
     db.add(project)
     await db.flush()
     db.add(ProjectMember(project_id=project.id, user_id=creator.id, role=ProjectRole.admin))
-    await seed_default_workflows(db, project)
+    await templates.instantiate(db, project, creator, template_id=template_id, mode=template_mode)
     return project
 
 

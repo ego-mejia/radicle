@@ -51,3 +51,14 @@ export const CUSTOM_FIELD_TYPES: CustomFieldType[] = [
   'user',
   'url',
 ];
+
+export type Template = S['TemplateOut'];
+export type TemplateDetail = S['TemplateDetail'];
+export type TemplateConfig = S['TemplateConfig'];
+export type WorkflowConf = S['WorkflowConf'];
+export type StatusConf = S['StatusConf'];
+export type TransitionConf = S['TransitionConf'];
+export type FieldConf = S['FieldConf'];
+export type SyncRun = S['SyncRunOut'];
+export type BlockedPolicy = ProjectDetail['blocked_policy'];
+export const RESOLUTIONS: Resolution[] = ['done', 'wont_do', 'duplicate', 'cannot_reproduce'];

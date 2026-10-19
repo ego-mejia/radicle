@@ -10,7 +10,7 @@ from radicle.api.schemas.fields import (
 )
 from radicle.api.serializers import fields_out
 from radicle.db.models import ProjectRole
-from radicle.services import custom_fields
+from radicle.services import custom_fields, templates
 from radicle.services.access import project_access
 
 router = APIRouter(prefix="/projects/{key}/fields", tags=["custom fields"])
@@ -36,7 +36,7 @@ async def create_field(
 ) -> CustomFieldOut:
     """Types: text, number, date, select, checkbox, user, url."""
     access = await project_access(db, principal.user, key, need=ADMIN, write=True)
-    await custom_fields.ensure_editable(db, access.project)
+    await templates.ensure_editable(db, access.project)
     field = await custom_fields.create_field(
         db,
         access.project,
@@ -57,7 +57,7 @@ async def patch_field(
     key: str, field_key: str, body: CustomFieldPatch, principal: CurrentPrincipal, db: Db
 ) -> CustomFieldOut:
     access = await project_access(db, principal.user, key, need=ADMIN, write=True)
-    await custom_fields.ensure_editable(db, access.project)
+    await templates.ensure_editable(db, access.project)
     field = await custom_fields.get_field(db, access.project, field_key)
     changes = custom_fields.FieldChanges(
         name=body.name,
@@ -76,7 +76,7 @@ async def patch_field(
 async def archive_field(key: str, field_key: str, principal: CurrentPrincipal, db: Db) -> Response:
     """Archives the field: tickets keep their values but they stop showing."""
     access = await project_access(db, principal.user, key, need=ADMIN, write=True)
-    await custom_fields.ensure_editable(db, access.project)
+    await templates.ensure_editable(db, access.project)
     field = await custom_fields.get_field(db, access.project, field_key)
     await custom_fields.update_field(
         db, access.project, field, custom_fields.FieldChanges(archived=True)

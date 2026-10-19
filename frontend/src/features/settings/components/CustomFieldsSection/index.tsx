@@ -11,7 +11,7 @@ import { useSettingsMutation } from '../../hooks/useSettingsMutation';
 import { FieldModal } from './components/FieldModal';
 import * as S from './style';
 
-type Props = { project: ProjectDetail; isAdmin: boolean; locked?: React.ReactNode };
+type Props = { project: ProjectDetail; isAdmin: boolean; locked?: boolean };
 
 /** Custom fields of a project: list, create, edit, archive and restore. */
 export function CustomFieldsSection({ project, isAdmin, locked }: Props) {
@@ -29,8 +29,14 @@ export function CustomFieldsSection({ project, isAdmin, locked }: Props) {
   const editable = isAdmin && !project.archived && !locked;
 
   return (
-    <SettingsCard title={t('fields.title')} help={t('fields.help')}>
-      {locked}
+    <SettingsCard
+      title={t('fields.title')}
+      help={
+        locked
+          ? t('fields.lockedHelp', { template: project.template?.name ?? '' })
+          : t('fields.help')
+      }
+    >
       {fields.length === 0 ? (
         <S.Empty>{t('fields.empty')}</S.Empty>
       ) : (

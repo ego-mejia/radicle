@@ -453,6 +453,16 @@ def project_schema(p: dict[str, Any]) -> dict[str, Any]:
         "name": p["name"],
         "your_role": p["role"],
         "archived": p["archived"],
+        "template": (
+            {
+                "name": p["template"]["name"],
+                "mode": p["template"]["mode"],
+                "version": p["template"]["applied_version"],
+            }
+            if p.get("template")
+            else None
+        ),
+        "blocked_policy": p.get("blocked_policy"),
         "areas": [a["name"] for a in p["areas"]],
         "milestones": [
             {"name": m["name"], "target_date": m["target_date"], "counts": m["counts"]}

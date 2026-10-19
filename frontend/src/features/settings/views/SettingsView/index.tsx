@@ -9,6 +9,7 @@ import { AreasSection } from '../../components/AreasSection';
 import { CustomFieldsSection } from '../../components/CustomFieldsSection';
 import { GeneralSection } from '../../components/GeneralSection';
 import { MembersSection } from '../../components/MembersSection';
+import { TemplateBanner } from '../../components/TemplateBanner';
 import { WorkflowsSection } from '../../components/WorkflowsSection';
 import { MilestonesList } from '../../../milestones/components/MilestonesList';
 import * as S from './style';
@@ -32,6 +33,7 @@ export function SettingsView() {
     <>
       <ProjectHeader project={project} />
       <S.Stack>
+        <TemplateBanner project={project} isAdmin={isAdmin} />
         <SettingsTabs
           current={current}
           onChange={(next) => void navigate({ search: { tab: next } })}
@@ -44,8 +46,14 @@ export function SettingsView() {
         {current === 'milestones' && (
           <MilestonesList project={project} renderHeader={(addButton) => addButton} />
         )}
-        {current === 'workflows' && <WorkflowsSection project={project} />}
-        {current === 'fields' && <CustomFieldsSection project={project} isAdmin={isAdmin} />}
+        {current === 'workflows' && <WorkflowsSection project={project} isAdmin={isAdmin} />}
+        {current === 'fields' && (
+          <CustomFieldsSection
+            project={project}
+            isAdmin={isAdmin}
+            locked={project.template?.mode === 'linked'}
+          />
+        )}
       </S.Stack>
     </>
   );

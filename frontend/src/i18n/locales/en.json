@@ -295,7 +295,8 @@
     "revoked": "Revoked",
     "lastUsed": "used {{when}}",
     "neverUsed": "never used",
-    "forbidden": "Only instance admins can open this page."
+    "forbidden": "Only instance admins can open this page.",
+    "templates": "Templates"
   },
   "settings": {
     "general": "General",
@@ -316,7 +317,9 @@
     "newArea": "New area",
     "workflowsHelp": "Statuses and transitions per type.",
     "anyStatus": "any not done",
-    "fields": "Fields"
+    "fields": "Fields",
+    "workflowsEditHelp": "Statuses and transitions per type. Removing a status asks where its tickets go.",
+    "workflowsLinkedHelp": "These come from the template {{template}}. Edit them there, or detach the project."
   },
   "profile": {
     "details": "Details",
@@ -358,6 +361,100 @@
       "checkbox": "Checkbox",
       "user": "Person",
       "url": "URL"
+    },
+    "lockedHelp": "Fields come from the template {{template}}. Edit them there, or detach the project.",
+    "optionsCsv": "Options, separated by commas"
+  },
+  "workflow": {
+    "statuses": "Statuses",
+    "transitions": "Transitions",
+    "preview": "Preview",
+    "diagram": "Workflow diagram",
+    "diagramFailed": "The diagram could not be drawn.",
+    "newStatus": "New status",
+    "addStatus": "Add status",
+    "statusName": "Status name",
+    "category": "Category",
+    "initial": "Initial",
+    "refHint": "Stable reference: renaming keeps it, so templates know it is the same status.",
+    "reorder": "Drag to reorder {{name}}",
+    "removeStatus": "Remove {{name}}",
+    "fromTo": "From \\ To",
+    "addTransition": "Add transition from {{from}} to {{to}}",
+    "transitionName": "Transition name",
+    "resolutions": "Allowed resolutions",
+    "resolutionsHint": "The target is a done status, so the ticket needs one of these.",
+    "deleteTransition": "Delete transition",
+    "unreachable": "No transition reaches: {{names}}.",
+    "mappingTitle": "Where do their tickets go?",
+    "mappingHelp": "You removed statuses. Tickets that are in them move to the status you pick, with history.",
+    "mappingFor": "{{status}} ({{type}}) goes to",
+    "mappingConfirm": "Save and move tickets",
+    "errors": {
+      "initial": "There must be exactly one initial status (now {{count}}).",
+      "done": "At least one status must be in the Done category.",
+      "repeated": "Two statuses are called \"{{name}}\".",
+      "emptyName": "Every status needs a name."
+    }
+  },
+  "templates": {
+    "help": "A template holds workflows, custom fields, areas and tags. Linked projects follow its changes.",
+    "create": "Create template",
+    "newName": "New template name",
+    "default": "Default",
+    "noLinked": "No linked projects",
+    "linkedTo": "Linked projects: {{projects}}",
+    "notFound": "Template not found",
+    "editor": "Template editor",
+    "discard": "Discard changes",
+    "savedVersion": "Saved as version {{version}}. Linked projects are updating.",
+    "tabs": {
+      "general": "General",
+      "workflows": "Workflows",
+      "fields": "Custom fields",
+      "sync": "Propagation"
+    },
+    "areasHint": "Added to linked projects; projects can keep extra areas of their own.",
+    "tags": "Tags",
+    "tagsHint": "Suggested in linked projects.",
+    "newTag": "New tag",
+    "blockedPolicy": "When a ticket is blocked",
+    "blockedPolicyHint": "Warn lets it move with a warning; enforce stops it from starting or finishing.",
+    "policyFromTemplate": "Set by the template while the project is linked.",
+    "policy": {
+      "warn": "Warn",
+      "enforce": "Enforce"
+    },
+    "noRuns": "No propagation yet. Saving a change syncs every linked project.",
+    "project": "Project",
+    "version": "Version",
+    "status": "Status",
+    "when": "When",
+    "retry": "Retry",
+    "runStatus": {
+      "pending": "Pending",
+      "running": "Running",
+      "succeeded": "Done",
+      "failed": "Failed"
+    },
+    "bannerLinked": "Linked to",
+    "bannerLinkedHelp": "Workflows, fields and the blocked policy come from the template.",
+    "bannerDetached": "Independent project, created from",
+    "bannerDetachedHelp": "Template changes no longer reach it; edit its configuration here.",
+    "syncing": "updating to v{{version}}",
+    "detach": "Detach",
+    "detachTitle": "Detach {{key}} from its template?",
+    "detachMessage": "{{template}} will stop updating this project. It keeps its current configuration and you can edit it here. Linking it again is not possible yet.",
+    "saveAs": "Save as template",
+    "saveAsHelp": "Copies workflows, custom fields, areas, tags and settings. Tickets, milestones and members are not copied.",
+    "template": "Template",
+    "preview": "Template preview",
+    "mode": "Updates",
+    "modes": {
+      "linked": "Linked",
+      "linkedHelp": "Template changes reach this project.",
+      "detached": "Independent",
+      "detachedHelp": "Copy the configuration once and edit it freely."
     }
   }
 }

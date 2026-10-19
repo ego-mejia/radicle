@@ -6,11 +6,12 @@ import { Tabs } from '../../../../components/ui/Tabs';
 import { useMe } from '../../../../hooks/useMe';
 import { AgentsTab } from '../../components/AgentsTab';
 import { ProjectsTab } from '../../components/ProjectsTab';
+import { TemplatesTab } from '../../components/TemplatesTab';
 import { UsersTab } from '../../components/UsersTab';
 import * as S from './style';
 
-type Tab = 'users' | 'agents' | 'projects';
-const TABS: Tab[] = ['users', 'agents', 'projects'];
+type Tab = 'users' | 'agents' | 'projects' | 'templates';
+const TABS: Tab[] = ['users', 'agents', 'projects', 'templates'];
 
 export function AdminView() {
   const { t } = useTranslation();
@@ -34,6 +35,7 @@ export function AdminView() {
         {current === 'users' && <UsersTab />}
         {current === 'agents' && <AgentsTab />}
         {current === 'projects' && <ProjectsTab />}
+        {current === 'templates' && <TemplatesTab />}
       </S.Stack>
     </>
   );

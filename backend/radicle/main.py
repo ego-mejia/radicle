@@ -17,6 +17,7 @@ from radicle.api import (
     projects,
     search,
     system,
+    templates,
     tickets,
     users,
 )
@@ -62,6 +63,7 @@ def create_app() -> FastAPI:
         tickets,
         discussion,
         jobs,
+        templates,
     ):
         api.include_router(module.router)
     app.include_router(api)

@@ -144,11 +144,6 @@ async def _area_ids(
     return ids
 
 
-async def ensure_editable(db: AsyncSession, project: Project) -> None:
-    """Projects linked to a template get their fields from it (see templates)."""
-    return None
-
-
 async def list_fields(
     db: AsyncSession, project_id: uuid.UUID, *, include_archived: bool = False
 ) -> list[FieldDef]:

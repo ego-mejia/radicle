@@ -12,6 +12,7 @@ from radicle.db.models.base import Base, utcnow
 class UserKind(enum.StrEnum):
     human = "human"
     agent = "agent"
+    system = "system"  # the one built-in user that signs automatic changes
 
 
 class User(Base):

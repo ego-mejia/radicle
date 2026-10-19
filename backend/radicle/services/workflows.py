@@ -7,7 +7,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.db.models import (
-    Project,
     Resolution,
     Status,
     StatusCategory,
@@ -84,38 +83,6 @@ DEFAULT_WORKFLOWS: dict[TicketType, WorkflowSpec] = {
         ),
     ),
 }
-
-
-async def seed_default_workflows(db: AsyncSession, project: Project) -> None:
-    for ticket_type, spec in DEFAULT_WORKFLOWS.items():
-        ids: dict[str, uuid.UUID] = {}
-        for position, (name, category) in enumerate(spec.statuses):
-            status = Status(
-                id=uuid.uuid4(),
-                project_id=project.id,
-                ticket_type=ticket_type,
-                name=name,
-                category=category,
-                position=position,
-                is_initial=position == 0,
-            )
-            db.add(status)
-            ids[name] = status.id
-        for position, t in enumerate(spec.transitions):
-            db.add(
-                Transition(
-                    project_id=project.id,
-                    ticket_type=ticket_type,
-                    name=t.name,
-                    from_status_id=ids[t.from_status] if t.from_status else None,
-                    to_status_id=ids[t.to_status],
-                    allowed_resolutions=(
-                        list(t.allowed_resolutions) if t.allowed_resolutions else None
-                    ),
-                    position=position,
-                )
-            )
-    await db.flush()
 
 
 @dataclass

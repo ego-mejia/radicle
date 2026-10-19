@@ -193,7 +193,7 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 | # | Entregable | Estado |
 | --- | --- | --- |
 | 2.1 | Worker y campos custom | Listo |
-| 2.2 | Templates y editor de workflows | Pendiente |
+| 2.2 | Templates y editor de workflows | Listo |
 | 2.3 | Reglas de transición | Pendiente |
 | 2.4 | Screens | Pendiente |
 | 2.5 | Adjuntos | Pendiente |
@@ -220,3 +220,21 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 - `tests/integration/test_custom_fields.py`: validación por tipo, campo que no aplica, opción eliminada, archivar y restaurar, operadores RQL de cada tipo y permisos.
 - `tests/integration/test_jobs.py`: el job encolado desaparece con un rollback y `queueing_lock` evita duplicados.
 - `scripts/smoke.sh` comprueba que el contenedor `worker` está corriendo.
+
+### 2.2 Templates y editor de workflows
+
+**Qué se hizo**
+
+- Migración `0006`: `templates`, `template_sync_runs`, `template_ref` en estados y transiciones, columnas de template y `blocked_policy` en proyectos, y el usuario `system`. Crea el template "Radicle default" con los workflows de la etapa 1 y liga a él los proyectos existentes. Decisión: [0010](decisions/0010-templates-y-propagacion.md).
+- `/templates`: listar, crear, ver, editar (con `status_mappings`), archivar y restaurar; progreso de la propagación y reintento por proyecto.
+- Proyectos: crear desde template (ligado o independiente), guardar como template, desligar, reemplazar un workflow (`PUT /projects/{key}/workflows/{type}`) y `blocked_policy` (`PUT /projects/{key}/settings`), estos dos solo en proyectos independientes. Editar campos, workflows o settings de un proyecto ligado regresa 409 con el nombre del template.
+- Propagación en el worker por proyecto: agrega, renombra, reordena y quita estados y transiciones; agrega, actualiza y archiva campos custom; agrega áreas y tags. Los tickets de un estado borrado pasan al estado mapeado con evento `status_remapped` firmado por `system`.
+- MCP: `get_project` incluye template, modo y política de bloqueo.
+- UI: pestaña Templates en Admin; editor de template con pestañas General (nombre, áreas, tags, política), Workflows (estados con drag, matriz de transiciones, resolutions y diagrama Mermaid), Campos custom y Propagación (estado por proyecto con reintento). Diálogo de mapeo obligatorio al guardar con estados borrados. En el proyecto: banner "Ligado a Radicle default v1" con Desligar, editor de workflows si es independiente, campos en solo lectura si está ligado, "Guardar como template" y selector de template con vista previa al crear proyecto.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_templates.py::test_acceptance_template_propagates_to_linked_projects_only`: "Producto digital" desde PA, PB ligado y PC desligado; agregar "Blocked" al template llega a PB y no a PC.
+- `test_removing_a_status_needs_a_mapping_and_moves_tickets`: quitar In Review sin mapeo da 422 con los tickets afectados; con mapeo el ticket pasa a In Progress con `status_remapped` por `system`.
+- `test_rename_reorder_and_fields_by_ref`, `test_failed_sync_does_not_stop_others_and_can_be_retried`, `test_independent_project_workflow_editor` y validaciones de configuración.
+- `scripts/smoke.sh`: un cambio al template llega a un proyecto ligado a través del contenedor `worker`.

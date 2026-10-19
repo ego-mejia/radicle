@@ -5,7 +5,7 @@ import type { UserRef } from '../../../../../../services/api/types';
 import { InlineSelect } from '../FieldRow';
 import * as S from './style';
 
-export type Person = { handle: string; display_name: string; kind: 'human' | 'agent' };
+export type Person = { handle: string; display_name: string; kind: 'human' | 'agent' | 'system' };
 
 export function PersonChip({ person, onRemove }: { person: UserRef; onRemove?: () => void }) {
   const { t } = useTranslation();
