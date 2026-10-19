@@ -423,7 +423,8 @@
     "addToGroup": "Agregar a {{group}}",
     "removeFromGroup": "Quitar a @{{handle}} de {{group}}",
     "sso": "SSO",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "audit": "Audit log"
   },
   "settings": {
     "general": "General",
@@ -462,7 +463,8 @@
     "viaGroups": "por {{groups}}",
     "effectiveRole": "Rol efectivo",
     "levels": "Niveles",
-    "inbox": "Buzón"
+    "inbox": "Buzón",
+    "audit": "Audit log"
   },
   "profile": {
     "details": "Datos",
@@ -1342,5 +1344,18 @@
     "title": "Instancia",
     "passwordLogin": "Entrar con email y password",
     "emergency": "Apagado, solo el primer admin de la instancia ({{email}}) puede seguir usando password: la salida de emergencia si falla el SSO."
+  },
+  "audit": {
+    "actor": "Quién",
+    "action": "Acción",
+    "allActions": "Todas las acciones",
+    "project": "Proyecto",
+    "when": "Cuándo",
+    "target": "Sobre",
+    "empty": "No hay entradas con estos filtros.",
+    "before": "Antes",
+    "after": "Después",
+    "more": "Detalles",
+    "loadMore": "Cargar más"
   }
 }

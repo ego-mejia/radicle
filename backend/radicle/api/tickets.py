@@ -21,7 +21,7 @@ from radicle.api.schemas.tickets import (
 from radicle.api.ticket_views import event_out, summaries_out, ticket_out
 from radicle.core.errors import ValidationFailed
 from radicle.db.models import ProjectRole
-from radicle.services import history, security, tickets, transitions
+from radicle.services import audit, history, security, tickets, transitions
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["tickets"])
@@ -93,7 +93,18 @@ async def patch_ticket(
     try:
         await tickets.update_ticket(db, access, ticket, changes, expected_version=expected)
         if level is not ...:
-            await security.set_ticket_level(db, access, ticket, level)
+            changed = await security.set_ticket_level(db, access, ticket, level)
+            if changed:
+                audit.record(
+                    db,
+                    principal.user,
+                    "ticket.security_change",
+                    target_type="ticket",
+                    target_id=key.upper(),
+                    project_id=access.project.id,
+                    before={"security_level": changed[0]},
+                    after={"security_level": changed[1]},
+                )
     except tickets.VersionConflict as exc:
         exc.extra["current"] = (await ticket_out(db, exc.ticket, viewer=principal.user)).model_dump(
             mode="json"
@@ -109,6 +120,15 @@ async def delete_ticket(key: str, principal: CurrentPrincipal, db: Db) -> Respon
         db, principal.user, key, write=True, permission="ticket.delete"
     )
     await tickets.delete_ticket(db, access, ticket)
+    audit.record(
+        db,
+        principal.user,
+        "ticket.delete",
+        target_type="ticket",
+        target_id=key.upper(),
+        project_id=access.project.id,
+        title=ticket.title,
+    )
     return Response(status_code=204)
 
 
@@ -118,6 +138,14 @@ async def restore_ticket(key: str, principal: CurrentPrincipal, db: Db) -> Ticke
         db, principal.user, key, write=True, permission="ticket.delete", include_deleted=True
     )
     await tickets.restore_ticket(db, access, ticket)
+    audit.record(
+        db,
+        principal.user,
+        "ticket.restore",
+        target_type="ticket",
+        target_id=key.upper(),
+        project_id=access.project.id,
+    )
     return await ticket_out(db, ticket, viewer=principal.user)
 
 

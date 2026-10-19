@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from radicle import __version__
 from radicle.api import (
     attachments,
+    audit,
     auth,
     boards,
     bulk,
@@ -41,6 +42,7 @@ from radicle.core.errors import NotFound, install_error_handlers
 from radicle.db.session import dispose_engine
 from radicle.mcp import server as mcp_server
 from radicle.public.router import router as public_router
+from radicle.services.audit import RequestInfoMiddleware
 
 API_PREFIX = "/api/v1"
 
@@ -65,6 +67,8 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     install_error_handlers(app)
+    # The audit log records where each action came from.
+    app.add_middleware(RequestInfoMiddleware)
 
     api = APIRouter(prefix=API_PREFIX)
     # search goes before tickets so GET /tickets is not shadowed by /tickets/{key}.
@@ -95,6 +99,7 @@ def create_app() -> FastAPI:
         security,
         inbox,
         sso,
+        audit,
     ):
         api.include_router(module.router)
     app.include_router(api)

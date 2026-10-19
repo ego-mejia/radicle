@@ -6,7 +6,7 @@ from radicle.api.schemas.common import Input, Output
 from radicle.api.schemas.tickets import TicketOut, TicketSummary
 from radicle.api.ticket_views import summaries_out, ticket_out
 from radicle.db.models import Classification, Origin, Priority, ProjectRole, TicketType
-from radicle.services import inbox, public_form, tickets
+from radicle.services import audit, inbox, public_form, tickets
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["inbox"])
@@ -149,5 +149,17 @@ async def put_inbox_settings(
 ) -> InboxSettingsOut:
     """The public form at /b/{slug}: turn it on, texts, kinds, email, files, captcha."""
     access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
-    _, _, after = await public_form.save_settings(db, access, body.model_dump(exclude_unset=True))
+    _, before, after = await public_form.save_settings(
+        db, access, body.model_dump(exclude_unset=True)
+    )
+    audit.record(
+        db,
+        principal.user,
+        "inbox.settings_change",
+        target_type="inbox_settings",
+        target_id=access.project.key,
+        project_id=access.project.id,
+        before=before,
+        after=after,
+    )
     return _settings_out(after, settings.base_url)

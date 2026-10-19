@@ -194,6 +194,12 @@ async def member_rows(db: AsyncSession, project: Project) -> list[MemberRow]:
     return sorted(rows, key=lambda r: r.user.handle)
 
 
+async def direct_role(db: AsyncSession, project: Project, handle: str) -> ProjectRole | None:
+    user = await users_service.get_by_handle(db, handle)
+    member = await db.get(ProjectMember, (project.id, user.id))
+    return member.role if member else None
+
+
 async def set_member(
     db: AsyncSession, access: ProjectAccess, handle: str, role: ProjectRole
 ) -> ProjectMember:

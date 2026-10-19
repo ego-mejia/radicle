@@ -10,8 +10,8 @@ from radicle.api.deps import (
 from radicle.api.me import me_out
 from radicle.api.ratelimit import login_limiter
 from radicle.api.schemas.users import LoginIn, MeOut
-from radicle.core.errors import ValidationFailed
-from radicle.services import auth, sso
+from radicle.core.errors import ProblemError, ValidationFailed
+from radicle.services import audit, auth, sso
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -23,8 +23,24 @@ async def login(
     """Sign in with email and password. Agents cannot sign in; they use API tokens."""
     ip = request.client.host if request.client else "unknown"
     login_limiter.hit(ip, settings.login_rate_limit_per_minute)
-    user = await auth.authenticate_password(db, str(body.email), body.password)
-    await sso.check_password_login(db, user)
+    try:
+        user = await auth.authenticate_password(db, str(body.email), body.password)
+        await sso.check_password_login(db, user)
+    except ProblemError as exc:
+        # Kept even though the request fails.
+        audit.record(
+            db,
+            None,
+            "user.login_failed",
+            target_type="user",
+            target_id=str(body.email).lower(),
+            reason=exc.code,
+        )
+        await db.commit()
+        raise
+    audit.record(
+        db, user, "user.login", target_type="user", target_id=user.handle, method="password"
+    )
     issued = await auth.create_session(
         db,
         user,

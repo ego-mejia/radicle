@@ -11,7 +11,7 @@ from radicle.api.schemas.security import (
     SecurityLevelPatch,
 )
 from radicle.db.models import ProjectRole, SecurityLevel
-from radicle.services import security
+from radicle.services import audit, security
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["security levels"])
@@ -54,6 +54,15 @@ async def create_level(
         description=body.description,
         include_participants=body.include_participants,
     )
+    audit.record(
+        db,
+        principal.user,
+        "security_level.create",
+        target_type="security_level",
+        target_id=level.id,
+        project_id=access.project.id,
+        after={"name": level.name, "include_participants": level.include_participants},
+    )
     return await _out(db, level, 0)
 
 
@@ -62,6 +71,7 @@ async def patch_level(
     level_id: UUID, body: SecurityLevelPatch, principal: CurrentPrincipal, db: Db
 ) -> SecurityLevelOut:
     access, level = await security.load_level(db, principal.user, level_id, admin=True)
+    before = {"name": level.name, "include_participants": level.include_participants}
     await security.update_level(
         db,
         level,
@@ -70,14 +80,33 @@ async def patch_level(
         description=body.description,
         include_participants=body.include_participants,
     )
+    audit.record(
+        db,
+        principal.user,
+        "security_level.update",
+        target_type="security_level",
+        target_id=level.id,
+        project_id=access.project.id,
+        before=before,
+        after={"name": level.name, "include_participants": level.include_participants},
+    )
     return await _out(db, level)
 
 
 @router.delete("/security-levels/{level_id}", status_code=204)
 async def delete_level(level_id: UUID, principal: CurrentPrincipal, db: Db) -> Response:
     """Only levels no ticket uses."""
-    _, level = await security.load_level(db, principal.user, level_id, admin=True)
+    access, level = await security.load_level(db, principal.user, level_id, admin=True)
     await security.delete_level(db, level)
+    audit.record(
+        db,
+        principal.user,
+        "security_level.delete",
+        target_type="security_level",
+        target_id=level_id,
+        project_id=access.project.id,
+        before={"name": level.name},
+    )
     return Response(status_code=204)
 
 
@@ -86,6 +115,17 @@ async def put_grants(
     level_id: UUID, body: GrantsPut, principal: CurrentPrincipal, db: Db
 ) -> SecurityLevelOut:
     """Replace who may see the level's tickets (groups and users)."""
-    _, level = await security.load_level(db, principal.user, level_id, admin=True)
-    await security.set_grants(db, level, groups=body.groups, users=body.users)
+    access, level = await security.load_level(db, principal.user, level_id, admin=True)
+    before = await security.grants(db, level)
+    after = await security.set_grants(db, level, groups=body.groups, users=body.users)
+    audit.record(
+        db,
+        principal.user,
+        "security_level.update",
+        target_type="security_level",
+        target_id=level.id,
+        project_id=access.project.id,
+        before={"groups": before.groups, "users": before.users},
+        after={"groups": after.groups, "users": after.users},
+    )
     return await _out(db, level)

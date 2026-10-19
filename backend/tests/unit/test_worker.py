@@ -22,8 +22,8 @@ def test_cli_requires_a_command(capsys) -> None:  # type: ignore[no-untyped-def]
     assert "worker" in capsys.readouterr().err
 
 
-def test_periodic_snapshot_is_scheduled() -> None:
+def test_periodic_jobs_are_scheduled() -> None:
     app = worker_app.build_app()
     assert "daily_snapshot" in app.tasks
     periodic = [t.task.name for t in app.periodic_registry.periodic_tasks.values()]
-    assert periodic == ["daily_snapshot"]
+    assert sorted(periodic) == ["audit_retention", "daily_snapshot"]

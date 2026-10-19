@@ -17,7 +17,7 @@ from radicle.api.schemas.users import (
 from radicle.core.errors import ValidationFailed
 from radicle.core.permissions import permissions_for
 from radicle.db.models import User
-from radicle.services import auth, projects, users
+from radicle.services import audit, auth, projects, users
 
 router = APIRouter(prefix="/me", tags=["me"])
 
@@ -71,10 +71,22 @@ async def list_my_tokens(user: HumanUser, db: Db) -> Page[TokenOut]:
 async def create_my_token(body: TokenCreate, user: HumanUser, db: Db) -> TokenCreated:
     """Create a personal token. Its value is returned only in this response."""
     issued = await auth.issue_token(db, user, body.name, body.expires_at)
+    audit.record(
+        db,
+        user,
+        "token.create",
+        target_type="token",
+        target_id=issued.record.id,
+        owner=user.handle,
+        name=body.name,
+    )
     return TokenCreated.from_issued(issued)
 
 
 @router.delete("/tokens/{token_id}", status_code=204)
 async def revoke_my_token(token_id: UUID, user: HumanUser, db: Db) -> Response:
     await auth.revoke_token(db, user, token_id)
+    audit.record(
+        db, user, "token.revoke", target_type="token", target_id=token_id, owner=user.handle
+    )
     return Response(status_code=204)

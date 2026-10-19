@@ -423,7 +423,8 @@
     "addToGroup": "Add to {{group}}",
     "removeFromGroup": "Remove @{{handle}} from {{group}}",
     "sso": "SSO",
-    "settings": "Settings"
+    "settings": "Settings",
+    "audit": "Audit log"
   },
   "settings": {
     "general": "General",
@@ -462,7 +463,8 @@
     "viaGroups": "via {{groups}}",
     "effectiveRole": "Effective role",
     "levels": "Levels",
-    "inbox": "Inbox"
+    "inbox": "Inbox",
+    "audit": "Audit log"
   },
   "profile": {
     "details": "Details",
@@ -1342,5 +1344,18 @@
     "title": "Instance",
     "passwordLogin": "Sign in with email and password",
     "emergency": "With it off, only the first instance admin ({{email}}) can still use a password: the way back in if SSO fails."
+  },
+  "audit": {
+    "actor": "Who",
+    "action": "Action",
+    "allActions": "All actions",
+    "project": "Project",
+    "when": "When",
+    "target": "On",
+    "empty": "No entries for these filters.",
+    "before": "Before",
+    "after": "After",
+    "more": "Details",
+    "loadMore": "Load more"
   }
 }

@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     timezone: str = "UTC"
     # Working days for burndowns, e.g. "mon,tue,wed,thu,fri".
     workdays: str = "mon,tue,wed,thu,fri"
+    audit_retention_days: int = 730
     # None means auto: Secure cookies when base_url is https.
     cookie_secure: bool | None = None
     session_days: int = 14

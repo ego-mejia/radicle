@@ -480,7 +480,7 @@ Los criterios de aceptación de la etapa se verifican así:
 | 4.3 | Buzón interno | Listo |
 | 4.4 | Formulario público | Listo |
 | 4.5 | SSO | Listo |
-| 4.6 | Audit log | Pendiente |
+| 4.6 | Audit log | Listo |
 | 4.7 | MCP y UI de la etapa | Pendiente |
 
 ### 4.1 Grupos y permisos por rol
@@ -548,3 +548,16 @@ Los criterios de aceptación de la etapa se verifican así:
 
 - `tests/integration/test_sso.py` (marca `slow`, Keycloak en testcontainers): login que crea la cuenta en el grupo mapeado, dominio rechazado, liga por email verificado, sync que agrega y quita solo los mapeados, usuario desactivado rechazado, password apagado con la salida del admin inicial y estado inválido.
 
+### 4.6 Audit log
+
+**Qué se hizo**
+
+- Migración `0022`: `audit_log` con trigger que rechaza `UPDATE`, `DELETE` y `TRUNCATE`, y el rol `radicle_audit_retention` para la retención. Decisión: [0028](decisions/0028-audit-log.md).
+- Catálogo de 39 acciones (usuarios, tokens, agentes, proyectos, miembros, grupos, permisos, niveles de seguridad, tickets, templates, workflows, Buzón, SSO y ajustes) registradas con antes y después, IP y user agent.
+- API: `GET /audit` y `GET /audit.csv` con filtros por actor, acción, proyecto y fechas; admins de proyecto ven solo sus proyectos.
+- Job diario `audit_retention` con `RADICLE_AUDIT_RETENTION_DAYS` (730).
+- UI: Admin → Audit log y Configuración del proyecto → Audit log, con filtros, detalle antes/después y CSV.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_audit.py`: cada acción del catálogo deja su entrada, filtros y CSV, admin de proyecto filtrado y member con 403, `UPDATE`/`DELETE`/`TRUNCATE` fallan, la retención borra solo lo vencido.

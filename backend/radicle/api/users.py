@@ -16,8 +16,8 @@ from radicle.api.schemas.users import (
     UserPatch,
 )
 from radicle.core.errors import ValidationFailed
-from radicle.db.models import UserKind
-from radicle.services import auth, users
+from radicle.db.models import User, UserKind
+from radicle.services import audit, auth, users
 
 router = APIRouter(tags=["users"])
 
@@ -38,7 +38,7 @@ async def list_users(
 
 
 @router.post("/users", response_model=UserOut, status_code=201)
-async def create_user(body: UserCreate, _: InstanceAdmin, db: Db) -> UserOut:
+async def create_user(body: UserCreate, admin: InstanceAdmin, db: Db) -> UserOut:
     user = await users.create_human(
         db,
         handle=body.handle,
@@ -47,16 +47,48 @@ async def create_user(body: UserCreate, _: InstanceAdmin, db: Db) -> UserOut:
         password=body.password,
         is_instance_admin=body.is_instance_admin,
     )
+    audit.record(
+        db, admin, "user.create", target_type="user", target_id=user.handle, after=_user_view(user)
+    )
+    if user.is_instance_admin:
+        audit.record(db, admin, "user.make_admin", target_type="user", target_id=user.handle)
     return UserOut.model_validate(user)
+
+
+def _user_view(user: User) -> dict[str, object]:
+    return {
+        "handle": user.handle,
+        "display_name": user.display_name,
+        "email": user.email,
+        "is_instance_admin": user.is_instance_admin,
+        "is_active": user.is_active,
+    }
 
 
 @router.post("/agents", response_model=AgentCreated, status_code=201)
 async def create_agent(
-    body: AgentCreate, _: InstanceAdmin, db: Db, settings: AppSettings
+    body: AgentCreate, admin: InstanceAdmin, db: Db, settings: AppSettings
 ) -> AgentCreated:
     """Create an agent and its first token. The token value is returned only here."""
     agent, issued = await users.create_agent(
         db, handle=body.handle, display_name=body.display_name, token_name=body.token_name
+    )
+    audit.record(
+        db,
+        admin,
+        "agent.create",
+        target_type="user",
+        target_id=agent.handle,
+        after=_user_view(agent),
+    )
+    audit.record(
+        db,
+        admin,
+        "token.create",
+        target_type="token",
+        target_id=issued.record.id,
+        owner=agent.handle,
+        name=body.token_name,
     )
     return AgentCreated(
         agent=UserOut.model_validate(agent),
@@ -71,8 +103,9 @@ async def get_user(handle: str, _: InstanceAdmin, db: Db) -> UserOut:
 
 
 @router.patch("/users/{handle}", response_model=UserOut)
-async def patch_user(handle: str, body: UserPatch, _: InstanceAdmin, db: Db) -> UserOut:
+async def patch_user(handle: str, body: UserPatch, admin: InstanceAdmin, db: Db) -> UserOut:
     user = await users.get_by_handle(db, handle)
+    before = _user_view(user)
     changes = users.UserChanges(
         display_name=body.display_name,
         email=str(body.email) if body.email is not None else None,
@@ -80,7 +113,24 @@ async def patch_user(handle: str, body: UserPatch, _: InstanceAdmin, db: Db) -> 
         is_active=body.is_active,
         is_instance_admin=body.is_instance_admin,
     )
-    return UserOut.model_validate(await users.update_user(db, user, changes))
+    await users.update_user(db, user, changes)
+    after = _user_view(user)
+    kind = "agent.update" if user.kind is UserKind.agent else "user.update"
+    audit.record(
+        db,
+        admin,
+        kind,
+        target_type="user",
+        target_id=user.handle,
+        before=before,
+        after=after,
+        password_changed=body.password is not None,
+    )
+    if before["is_active"] and not after["is_active"]:
+        audit.record(db, admin, "user.deactivate", target_type="user", target_id=user.handle)
+    if not before["is_instance_admin"] and after["is_instance_admin"]:
+        audit.record(db, admin, "user.make_admin", target_type="user", target_id=user.handle)
+    return UserOut.model_validate(user)
 
 
 @router.get("/users/{handle}/tokens", response_model=Page[TokenOut])
@@ -91,7 +141,7 @@ async def list_user_tokens(handle: str, _: InstanceAdmin, db: Db) -> Page[TokenO
 
 @router.post("/users/{handle}/tokens", response_model=TokenCreated, status_code=201)
 async def create_agent_token(
-    handle: str, body: TokenCreate, _: InstanceAdmin, db: Db
+    handle: str, body: TokenCreate, admin: InstanceAdmin, db: Db
 ) -> TokenCreated:
     """New token for an agent. Humans create their own tokens from /me/tokens."""
     user = await users.get_by_handle(db, handle)
@@ -100,11 +150,24 @@ async def create_agent_token(
             f"@{user.handle} is a human; personal tokens are created by their owner at /me/tokens.",
             code="not_an_agent",
         )
-    return _token_created(await auth.issue_token(db, user, body.name, body.expires_at))
+    issued = await auth.issue_token(db, user, body.name, body.expires_at)
+    audit.record(
+        db,
+        admin,
+        "token.create",
+        target_type="token",
+        target_id=issued.record.id,
+        owner=user.handle,
+        name=body.name,
+    )
+    return _token_created(issued)
 
 
 @router.delete("/users/{handle}/tokens/{token_id}", status_code=204)
-async def revoke_user_token(handle: str, token_id: UUID, _: InstanceAdmin, db: Db) -> Response:
+async def revoke_user_token(handle: str, token_id: UUID, admin: InstanceAdmin, db: Db) -> Response:
     user = await users.get_by_handle(db, handle)
     await auth.revoke_token(db, user, token_id)
+    audit.record(
+        db, admin, "token.revoke", target_type="token", target_id=token_id, owner=user.handle
+    )
     return Response(status_code=204)

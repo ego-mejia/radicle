@@ -7,6 +7,7 @@ from radicle.db.models.access import (
     SecurityLevelGrant,
 )
 from radicle.db.models.attachments import Attachment
+from radicle.db.models.audit import AuditEntry
 from radicle.db.models.base import Base, utcnow
 from radicle.db.models.boards import Board, BoardKind, BoardQuickFilter, Swimlane, WipMode
 from radicle.db.models.dashboards import Dashboard, DashboardWidget
@@ -67,6 +68,7 @@ __all__ = [
     "ApiToken",
     "Area",
     "Attachment",
+    "AuditEntry",
     "AuthSource",
     "Base",
     "BlockedPolicy",

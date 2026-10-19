@@ -7,7 +7,7 @@ from radicle.api.deps import AppSettings, Db, set_session_cookies
 from radicle.api.schemas.common import Output
 from radicle.api.schemas.users import Health, SetupIn, SetupStatus, UserOut, Version
 from radicle.core.errors import ProblemError
-from radicle.services import auth, images, users
+from radicle.services import audit, auth, images, users
 
 router = APIRouter(tags=["system"])
 
@@ -59,6 +59,10 @@ async def setup(
         email=str(body.email),
         password=body.password,
     )
+    audit.record(
+        db, user, "user.create", target_type="user", target_id=user.handle, first_admin=True
+    )
+    audit.record(db, user, "user.make_admin", target_type="user", target_id=user.handle)
     issued = await auth.create_session(
         db,
         user,

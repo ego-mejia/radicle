@@ -10,7 +10,7 @@ from radicle.api.deps import AppSettings, Db, InstanceAdmin, set_session_cookies
 from radicle.api.schemas.common import Input, Output, Page
 from radicle.core.errors import ProblemError, Unauthorized
 from radicle.db.models import Group, SsoProvider, User
-from radicle.services import auth, sso
+from radicle.services import audit, auth, sso
 
 router = APIRouter(tags=["sso"])
 STATE_COOKIE = "radicle_sso"
@@ -145,9 +145,59 @@ async def sso_callback(
         outcome = await sso.resolve_user(db, provider, who)
     except ProblemError as exc:
         await db.rollback()
+        audit.record(
+            db,
+            None,
+            "user.login_failed",
+            target_type="sso_provider",
+            target_id=provider_id,
+            reason=exc.detail[:300],
+            method="sso",
+        )
+        await db.commit()
         response = RedirectResponse(f"/login?sso_error={quote(exc.detail)}", status_code=302)
         response.delete_cookie(STATE_COOKIE, path="/api/v1/auth/sso")
         return response
+    if outcome.created:
+        audit.record(
+            db,
+            outcome.user,
+            "user.create",
+            target_type="user",
+            target_id=outcome.user.handle,
+            method="sso",
+            provider=provider.name,
+        )
+    for group in outcome.groups_added:
+        audit.record(
+            db,
+            None,
+            "group.member_add",
+            target_type="group",
+            target_id=group,
+            member=outcome.user.handle,
+            source="sso",
+        )
+    for group in outcome.groups_removed:
+        audit.record(
+            db,
+            None,
+            "group.member_remove",
+            target_type="group",
+            target_id=group,
+            member=outcome.user.handle,
+            source="sso",
+        )
+    audit.record(
+        db,
+        outcome.user,
+        "user.login",
+        target_type="user",
+        target_id=outcome.user.handle,
+        method="sso",
+        provider=provider.name,
+        linked=outcome.linked,
+    )
     ip = request.client.host if request.client else None
     issued = await auth.create_session(
         db,
@@ -169,24 +219,54 @@ async def list_providers(_: InstanceAdmin, db: Db) -> Page[ProviderOut]:
 
 
 @router.post("/admin/sso-providers", response_model=ProviderOut, status_code=201)
-async def create_provider(body: ProviderIn, _: InstanceAdmin, db: Db) -> ProviderOut:
+async def create_provider(body: ProviderIn, admin: InstanceAdmin, db: Db) -> ProviderOut:
     """An OpenID Connect provider; register `redirect_uri` with it."""
-    return await _out(db, await sso.save_provider(db, body.model_dump(exclude_unset=True)))
+    provider = await sso.save_provider(db, body.model_dump(exclude_unset=True))
+    audit.record(
+        db,
+        admin,
+        "sso.create",
+        target_type="sso_provider",
+        target_id=provider.id,
+        after=sso.provider_view(provider),
+    )
+    return await _out(db, provider)
 
 
 @router.patch("/admin/sso-providers/{provider_id}", response_model=ProviderOut)
 async def patch_provider(
-    provider_id: UUID, body: ProviderIn, _: InstanceAdmin, db: Db
+    provider_id: UUID, body: ProviderIn, admin: InstanceAdmin, db: Db
 ) -> ProviderOut:
     provider = await sso.get_provider(db, provider_id)
+    before = sso.provider_view(provider)
     saved = await sso.save_provider(db, body.model_dump(exclude_unset=True), provider)
+    audit.record(
+        db,
+        admin,
+        "sso.update",
+        target_type="sso_provider",
+        target_id=provider.id,
+        before=before,
+        after=sso.provider_view(saved),
+        secret_changed=bool(body.client_secret),
+    )
     return await _out(db, saved)
 
 
 @router.delete("/admin/sso-providers/{provider_id}", status_code=204)
-async def delete_provider(provider_id: UUID, _: InstanceAdmin, db: Db) -> Response:
+async def delete_provider(provider_id: UUID, admin: InstanceAdmin, db: Db) -> Response:
     """Its users keep their accounts; they sign in another way."""
-    await db.delete(await sso.get_provider(db, provider_id))
+    provider = await sso.get_provider(db, provider_id)
+    audit.record(
+        db,
+        admin,
+        "sso.update",
+        target_type="sso_provider",
+        target_id=provider.id,
+        before=sso.provider_view(provider),
+        deleted=True,
+    )
+    await db.delete(provider)
     return Response(status_code=204)
 
 
@@ -215,9 +295,19 @@ async def get_instance_settings(_: InstanceAdmin, db: Db) -> InstanceSettingsOut
 
 @router.patch("/admin/settings", response_model=InstanceSettingsOut)
 async def patch_instance_settings(
-    body: InstanceSettingsIn, _: InstanceAdmin, db: Db
+    body: InstanceSettingsIn, admin: InstanceAdmin, db: Db
 ) -> InstanceSettingsOut:
     """Turning password sign-in off leaves the first instance admin able to use it."""
     if body.password_login_enabled is not None:
+        old = await sso.get_setting(db, "password_login_enabled", True)
+        audit.record(
+            db,
+            admin,
+            "settings.change",
+            target_type="instance",
+            target_id="password_login_enabled",
+            before={"value": old},
+            after={"value": body.password_login_enabled},
+        )
         await sso.set_setting(db, "password_login_enabled", body.password_login_enabled)
     return await _settings(db)

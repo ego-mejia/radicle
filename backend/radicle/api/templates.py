@@ -14,7 +14,7 @@ from radicle.api.schemas.templates import (
     config_dict,
 )
 from radicle.db.models import Project, Template, TemplateSyncRun
-from radicle.services import templates
+from radicle.services import audit, templates
 from radicle.services.template_config import parse
 
 router = APIRouter(prefix="/templates", tags=["templates"])
@@ -110,6 +110,7 @@ async def patch_template(
 ) -> TemplateDetail:
     """Removing a status that still has tickets in linked projects needs `status_mappings`."""
     template = await templates.get_template(db, template_id, lock=True)
+    before = {"name": template.name, "version": template.version}
     change = await templates.update_template(
         db,
         user,
@@ -118,6 +119,16 @@ async def patch_template(
         description_md=body.description_md,
         config=config_dict(body.config),
         status_mappings=body.status_mappings,
+    )
+    audit.record(
+        db,
+        user,
+        "template.update",
+        target_type="template",
+        target_id=template.id,
+        before=before,
+        after={"name": template.name, "version": template.version},
+        config_changed=body.config is not None,
     )
     return await template_detail(db, template, change.warnings)
 

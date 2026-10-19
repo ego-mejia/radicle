@@ -68,7 +68,8 @@ Tools: `whoami`, `list_projects`, `get_project`, `search_tickets`, `my_tickets`,
 
 Todo se configura con variables de entorno (ver `.env.example`). Las más importantes:
 
-- `RADICLE_SECRET_KEY`: firma los links de los adjuntos. Usa un valor largo y aleatorio en producción.
+- `RADICLE_SECRET_KEY` (obligatoria): firma los links de los adjuntos y la cookie del SSO, y cifra los secretos guardados (client secret del SSO, secret del captcha). Usa un valor largo y aleatorio (`openssl rand -hex 32`) y no la cambies después.
+- `RADICLE_AUDIT_RETENTION_DAYS` (730): cuántos días se guarda el audit log; un job diario borra lo más viejo.
 - `RADICLE_STORAGE`: `local` guarda los adjuntos en el volumen `attachments`; `s3` usa cualquier S3 compatible (AWS, MinIO, R2) con `RADICLE_S3_*`.
 - `RADICLE_MAX_UPLOAD_MB` (25) y `RADICLE_IMAGE_DEFAULT_RESIZE` (`large`): tamaño máximo por archivo y tamaño default de las imágenes.
 

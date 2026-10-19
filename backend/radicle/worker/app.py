@@ -20,9 +20,10 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.services.bulk",
     "radicle.services.ranking",
     "radicle.services.periods",
+    "radicle.services.audit",
 )
 # Jobs the worker defers on a schedule (cron in UTC).
-PERIODIC: dict[str, str] = {"daily_snapshot": "5 * * * *"}
+PERIODIC: dict[str, str] = {"daily_snapshot": "5 * * * *", "audit_retention": "30 3 * * *"}
 
 
 def conninfo(database_url: str) -> str:

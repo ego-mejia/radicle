@@ -240,6 +240,8 @@ EXEMPT = {
     "/api/v1/auth/options",
     "/api/v1/admin/sso-providers",
     "/api/v1/admin/settings",
+    "/api/v1/audit",
+    "/api/v1/audit.csv",
     "/api/v1/openapi.json",
 }
 

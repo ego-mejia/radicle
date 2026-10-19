@@ -8,7 +8,7 @@ from radicle.api.jobs import JobOut, job_out
 from radicle.api.schemas.common import Input, Output
 from radicle.api.schemas.tickets import TicketOut
 from radicle.api.ticket_views import ticket_out
-from radicle.services import bulk, moving, tickets
+from radicle.services import audit, bulk, moving, tickets
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["clone, move and bulk"])
@@ -103,6 +103,16 @@ async def move_ticket(key: str, body: MoveIn, principal: CurrentPrincipal, db: D
     )
     out = await ticket_out(db, ticket, viewer=principal.user)
     out.moved_from = key.strip().upper()
+    audit.record(
+        db,
+        principal.user,
+        "ticket.move",
+        target_type="ticket",
+        target_id=out.moved_from,
+        project_id=access.project.id,
+        before={"key": out.moved_from},
+        after={"key": out.key},
+    )
     return out
 
 
@@ -121,6 +131,18 @@ async def bulk_update(
         dry_run=body.dry_run,
         timezone=settings.timezone,
     )
+    if not result.dry_run:
+        audit.record(
+            db,
+            principal.user,
+            "ticket.bulk_edit",
+            target_type="tickets",
+            target_id=body.query or ",".join(body.keys or [])[:500],
+            operations=body.operations,
+            total=result.total,
+            succeeded=result.succeeded,
+            job=bool(result.job),
+        )
     if result.job is not None:
         response.status_code = 202
     return BulkOut(

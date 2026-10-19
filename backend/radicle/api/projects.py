@@ -21,7 +21,7 @@ from radicle.api.schemas.templates import (
 )
 from radicle.api.templates import template_detail
 from radicle.db.models import ProjectRole, TicketType, utcnow
-from radicle.services import projects, stats, templates
+from radicle.services import audit, projects, stats, templates
 from radicle.services.access import project_access
 from radicle.services.workflows import load_workflows
 
@@ -52,6 +52,15 @@ async def create_project(body: ProjectCreate, principal: CurrentPrincipal, db: D
         template_id=body.template_id,
         template_mode=body.template_mode,
     )
+    audit.record(
+        db,
+        principal.user,
+        "project.create",
+        target_type="project",
+        target_id=project.key,
+        project_id=project.id,
+        after={"key": project.key, "name": project.name},
+    )
     return await out.project_detail(db, project, ProjectRole.admin)
 
 
@@ -69,7 +78,18 @@ async def patch_project(
     access = await project_access(
         db, principal.user, key, write=True, permission="project.settings"
     )
+    before = {"name": access.project.name, "description_md": access.project.description_md}
     await projects.update_project(access, name=body.name, description_md=body.description_md)
+    audit.record(
+        db,
+        principal.user,
+        "project.update",
+        target_type="project",
+        target_id=access.project.key,
+        project_id=access.project.id,
+        before=before,
+        after={"name": access.project.name, "description_md": access.project.description_md},
+    )
     return await out.project_detail(db, access.project, access.role)
 
 
@@ -78,6 +98,14 @@ async def archive_project(key: str, principal: CurrentPrincipal, db: Db) -> Proj
     """Archived projects stay visible but become read-only."""
     access = await project_access(db, principal.user, key, need=ProjectRole.admin)
     projects.set_archived(access, True)
+    audit.record(
+        db,
+        principal.user,
+        "project.archive",
+        target_type="project",
+        target_id=access.project.key,
+        project_id=access.project.id,
+    )
     return await out.project_detail(db, access.project, access.role)
 
 
@@ -85,6 +113,14 @@ async def archive_project(key: str, principal: CurrentPrincipal, db: Db) -> Proj
 async def unarchive_project(key: str, principal: CurrentPrincipal, db: Db) -> ProjectDetail:
     access = await project_access(db, principal.user, key, need=ProjectRole.admin)
     projects.set_archived(access, False)
+    audit.record(
+        db,
+        principal.user,
+        "project.unarchive",
+        target_type="project",
+        target_id=access.project.key,
+        project_id=access.project.id,
+    )
     return await out.project_detail(db, access.project, access.role)
 
 
@@ -109,7 +145,29 @@ async def put_member(
 ) -> MemberOut:
     """Add a user or agent to the project, or change their role."""
     access = await project_access(db, principal.user, key, write=True, permission="members.manage")
+    previous = await projects.direct_role(db, access.project, handle)
     member = await projects.set_member(db, access, handle, body.role)
+    if previous is None:
+        audit.record(
+            db,
+            principal.user,
+            "member.add",
+            target_type="user",
+            target_id=member.user.handle,
+            project_id=access.project.id,
+            after={"role": body.role.value},
+        )
+    elif previous is not body.role:
+        audit.record(
+            db,
+            principal.user,
+            "member.role_change",
+            target_type="user",
+            target_id=member.user.handle,
+            project_id=access.project.id,
+            before={"role": previous.value},
+            after={"role": body.role.value},
+        )
     return out.member_out(member)
 
 
@@ -117,7 +175,17 @@ async def put_member(
 async def delete_member(key: str, handle: str, principal: CurrentPrincipal, db: Db) -> Response:
     """Remove a member. A project can never be left without an admin."""
     access = await project_access(db, principal.user, key, write=True, permission="members.manage")
+    previous = await projects.direct_role(db, access.project, handle)
     await projects.remove_member(db, access, handle)
+    audit.record(
+        db,
+        principal.user,
+        "member.remove",
+        target_type="user",
+        target_id=handle,
+        project_id=access.project.id,
+        before={"role": previous.value if previous else None},
+    )
     return Response(status_code=204)
 
 
@@ -160,6 +228,16 @@ async def put_workflow(
         body.workflow.model_dump(mode="json", by_alias=True),
         body.status_mappings,
     )
+    audit.record(
+        db,
+        principal.user,
+        "workflow.change",
+        target_type="workflow",
+        target_id=ticket_type.value,
+        project_id=access.project.id,
+        after=body.workflow.model_dump(mode="json", by_alias=True),
+        status_mappings=body.status_mappings,
+    )
     return WorkflowPutOut(warnings=warnings)
 
 
@@ -172,6 +250,16 @@ async def put_settings(
         db, principal.user, key, write=True, permission="project.settings"
     )
     await templates.ensure_editable(db, access.project)
+    audit.record(
+        db,
+        principal.user,
+        "settings.change",
+        target_type="project",
+        target_id=access.project.key,
+        project_id=access.project.id,
+        before={"blocked_policy": access.project.blocked_policy.value},
+        after={"blocked_policy": body.blocked_policy.value},
+    )
     access.project.blocked_policy = body.blocked_policy
     access.project.updated_at = utcnow()
     return await out.project_detail(db, access.project, access.role)

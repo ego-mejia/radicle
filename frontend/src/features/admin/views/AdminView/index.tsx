@@ -4,6 +4,7 @@ import { EmptyState } from '../../../../components/ui/EmptyState';
 import { PageTitle } from '../../../../components/ui/PageTitle';
 import { Tabs } from '../../../../components/ui/Tabs';
 import { useMe } from '../../../../hooks/useMe';
+import { AuditLog } from '../../../audit/components/AuditLog';
 import { AgentsTab } from '../../components/AgentsTab';
 import { GroupsTab } from '../../components/GroupsTab';
 import { InstanceSettingsTab } from '../../components/InstanceSettingsTab';
@@ -13,8 +14,17 @@ import { TemplatesTab } from '../../components/TemplatesTab';
 import { UsersTab } from '../../components/UsersTab';
 import * as S from './style';
 
-type Tab = 'users' | 'agents' | 'groups' | 'projects' | 'templates' | 'sso' | 'settings';
-const TABS: Tab[] = ['users', 'agents', 'groups', 'projects', 'templates', 'sso', 'settings'];
+type Tab = 'users' | 'agents' | 'groups' | 'projects' | 'templates' | 'sso' | 'audit' | 'settings';
+const TABS: Tab[] = [
+  'users',
+  'agents',
+  'groups',
+  'projects',
+  'templates',
+  'sso',
+  'audit',
+  'settings',
+];
 
 export function AdminView() {
   const { t } = useTranslation();
@@ -41,6 +51,7 @@ export function AdminView() {
         {current === 'projects' && <ProjectsTab />}
         {current === 'templates' && <TemplatesTab />}
         {current === 'sso' && <SsoTab />}
+        {current === 'audit' && <AuditLog />}
         {current === 'settings' && <InstanceSettingsTab />}
       </S.Stack>
     </>

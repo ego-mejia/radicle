@@ -168,6 +168,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Audit
+         * @description Newest first. Instance admins see everything; project admins, their projects.
+         */
+        get: operations["list_audit_api_v1_audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/audit.csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Audit Csv
+         * @description The same filters, every matching entry (up to 50,000).
+         */
+        get: operations["audit_csv_api_v1_audit_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -2435,6 +2475,33 @@ export interface components {
             /** Width */
             width: number | null;
         };
+        /** AuditOut */
+        AuditOut: {
+            /** Action */
+            action: string;
+            /** Actor */
+            actor: string | null;
+            /** Actor Kind */
+            actor_kind: string;
+            /** Created At */
+            created_at: string;
+            /** Details */
+            details: {
+                [key: string]: unknown;
+            };
+            /** Id */
+            id: number;
+            /** Ip */
+            ip: string | null;
+            /** Project */
+            project: string | null;
+            /** Target Id */
+            target_id: string | null;
+            /** Target Type */
+            target_type: string;
+            /** User Agent */
+            user_agent: string | null;
+        };
         /** AuthOptions */
         AuthOptions: {
             /** Password Login Enabled */
@@ -3684,6 +3751,13 @@ export interface components {
         Page_AttachmentOut_: {
             /** Items */
             items: components["schemas"]["AttachmentOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[AuditOut] */
+        Page_AuditOut_: {
+            /** Items */
+            items: components["schemas"]["AuditOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -6036,6 +6110,77 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["AttachmentOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_audit_api_v1_audit_get: {
+        parameters: {
+            query?: {
+                /** @description Handle */
+                actor?: string | null;
+                /** @description e.g. user.login or a group: user */
+                action?: string | null;
+                project?: string | null;
+                from?: string | null;
+                to?: string | null;
+                cursor?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_AuditOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    audit_csv_api_v1_audit_csv_get: {
+        parameters: {
+            query?: {
+                actor?: string | null;
+                action?: string | null;
+                project?: string | null;
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
