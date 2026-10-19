@@ -21,7 +21,7 @@ QUERIES = [
     "project = PERF AND type = bug AND priority >= high AND milestone = V1 AND tag != backlog",
     "assignee = currentUser() AND category != done ORDER BY priority DESC, due ASC",
     "#backlog AND area = Legal",
-    'text ~ "pagos" AND updated >= -30d',
+    'text ~ "payments" AND updated >= -30d',
     "blocked = true AND milestone = V1",
     "category = done ORDER BY updated DESC",
     "title ~ login OR title ~ checkout",

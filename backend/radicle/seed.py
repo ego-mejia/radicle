@@ -34,12 +34,78 @@ from radicle.services import periods, rank
 from radicle.services.templates import instantiate
 
 AREAS = ["Legal", "Marketing", "Backend", "Frontend", "Mobile", "Data", "Infra", "Design"]
-WORDS = (
-    "pagos login checkout api webhook factura reporte usuario búsqueda tablero perfil correo "
-    "notificación permisos exportar importar móvil carrito envío inventario contrato términos "
-    "onboarding métricas caché sesión token archivo imagen calendario"
-).split()
-TAGS = ["backlog", "pagos", "ux", "tech-debt", "security", "perf", "mobile", "copy", "infra"]
+THINGS = [
+    "checkout flow",
+    "login page",
+    "invoice export",
+    "search results",
+    "payment webhooks",
+    "push notifications",
+    "profile settings",
+    "cart totals",
+    "password reset",
+    "CSV import",
+    "order history",
+    "shipping rates",
+    "coupon codes",
+    "onboarding emails",
+    "admin reports",
+    "product images",
+    "session tokens",
+    "inventory sync",
+    "refunds",
+    "two-factor login",
+    "pricing page",
+    "user permissions",
+    "API rate limits",
+    "calendar view",
+    "file uploads",
+]
+TASK_TITLES = [
+    "Add pagination to {t}",
+    "Improve loading time of {t}",
+    "Refactor {t} module",
+    "Add tests for {t}",
+    "Redesign {t}",
+    "Support dark mode in {t}",
+    "Track metrics for {t}",
+    "Document {t}",
+    "Translate {t} to Spanish",
+    "Cache {t}",
+]
+BUG_TITLES = [
+    "{T}: crash on Safari",
+    "{T}: wrong totals",
+    "{T}: timeout under load",
+    "{T}: ignores the user's timezone",
+    "Typo in {t}",
+    "{T}: breaks with long names",
+    "{T}: duplicate entries",
+    "{T}: fails after the session expires",
+]
+DRAFT_TITLES = [
+    "Idea: {t} on mobile",
+    "Make {t} faster",
+    "Simplify {t}",
+    "Show {t} in the weekly email",
+    "A/B test a new {t}",
+]
+DESCRIPTION = (
+    "Customers reported this while using the {t}. Steps, expected behavior and screenshots "
+    "are in the linked conversation.\n\n- [x] Reproduce it\n- [ ] Ship the fix"
+)
+TAGS = ["backlog", "payments", "ux", "tech-debt", "security", "perf", "mobile", "copy", "infra"]
+
+
+def _title(rng: random.Random, ticket_type: TicketType) -> tuple[str, str]:
+    thing = rng.choice(THINGS)
+    pool = {TicketType.bug: BUG_TITLES, TicketType.draft: DRAFT_TITLES}.get(
+        ticket_type, TASK_TITLES
+    )
+    title = rng.choice(pool).format(t=thing, T=thing[0].upper() + thing[1:])
+    return title, DESCRIPTION.format(t=thing)
+
+
 HUMANS = ["fernando", "ana", "luis", "vera", "marta", "jorge"]
 AGENTS = ["agent-backend", "agent-frontend", "agent-qa"]
 
@@ -97,7 +163,11 @@ async def seed(
     db.add_all(users)
     await db.flush()
 
-    project = Project(key=project_key, name=f"Proyecto {project_key}", created_by=users[0].id)
+    project = Project(
+        key=project_key,
+        name="Acme Store" if project_key == "PA" else f"Project {project_key}",
+        created_by=users[0].id,
+    )
     db.add(project)
     await db.flush()
     await instantiate(db, project, users[0], template_id=None)
@@ -144,15 +214,15 @@ async def seed(
         ticket_id = uuid.uuid4()
         ids.append(ticket_id)
         reporter = rng.choice(assignable)
+        title, description = _title(rng, ticket_type)
         rows.append(
             {
                 "id": ticket_id,
                 "project_id": project.id,
                 "number": number,
                 "type": ticket_type,
-                "title": " ".join(rng.sample(WORDS, 3)).capitalize(),
-                "description_md": " ".join(rng.choices(WORDS, k=25))
-                + "\n\n- [x] Primer paso\n- [ ] Segundo paso",
+                "title": title,
+                "description_md": description,
                 "status_id": status.id,
                 "resolution": (
                     Resolution.wont_do
