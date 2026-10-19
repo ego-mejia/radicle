@@ -22,6 +22,9 @@ type Props = {
   hasMore: boolean;
   loadingMore: boolean;
   onLoadMore: () => void;
+  /** With a selection, each row gets a checkbox for bulk actions. */
+  selected?: Set<string>;
+  onSelect?: (keys: string[], selected: boolean) => void;
 };
 
 const COLUMNS: { id: string; sort?: string }[] = [
@@ -48,6 +51,8 @@ export function TicketTable({
   hasMore,
   loadingMore,
   onLoadMore,
+  selected,
+  onSelect,
 }: Props) {
   const { t } = useTranslation();
   const sentinel = useRef<HTMLDivElement>(null);
@@ -67,6 +72,21 @@ export function TicketTable({
       <S.Table>
         <thead>
           <tr>
+            {selected && onSelect && (
+              <S.CheckCell>
+                <input
+                  type="checkbox"
+                  aria-label={t('bulk.selectAll')}
+                  checked={tickets.length > 0 && tickets.every((x) => selected.has(x.key))}
+                  onChange={(e) =>
+                    onSelect(
+                      tickets.map((x) => x.key),
+                      e.target.checked,
+                    )
+                  }
+                />
+              </S.CheckCell>
+            )}
             {COLUMNS.map((col) => {
               const label = t(`ticket.fields.${col.id}`);
               const sorted = sort?.field === col.sort;
@@ -95,7 +115,18 @@ export function TicketTable({
               tabIndex={0}
               onClick={() => onOpen(ticket.key)}
               onKeyDown={(e) => e.key === 'Enter' && onOpen(ticket.key)}
+              aria-selected={selected?.has(ticket.key) || undefined}
             >
+              {selected && onSelect && (
+                <S.CheckCell onClick={(e) => e.stopPropagation()}>
+                  <input
+                    type="checkbox"
+                    aria-label={t('bulk.select', { key: ticket.key })}
+                    checked={selected.has(ticket.key)}
+                    onChange={(e) => onSelect([ticket.key], e.target.checked)}
+                  />
+                </S.CheckCell>
+              )}
               <td>
                 <TicketKey>{ticket.key}</TicketKey>
               </td>

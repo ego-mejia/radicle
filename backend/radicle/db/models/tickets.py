@@ -17,7 +17,7 @@ from sqlalchemy import (
     UniqueConstraint,
     func,
 )
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB, TSVECTOR, UUID
+from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, JSONB, TSVECTOR, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from radicle.db.models.base import Base, utcnow
@@ -196,6 +196,9 @@ class EventType(enum.StrEnum):
     worklog_added = "worklog_added"
     worklog_updated = "worklog_updated"
     worklog_deleted = "worklog_deleted"
+    cloned_from = "cloned_from"
+    moved = "moved"
+    rank_changed = "rank_changed"
 
 
 class TicketEvent(Base):
@@ -254,3 +257,14 @@ class Worklog(Base):
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     user: Mapped[User] = relationship(lazy="joined")
+
+
+class TicketKeyAlias(Base):
+    """Old key of a ticket that moved to another project; GET with it still works."""
+
+    __tablename__ = "ticket_key_aliases"
+
+    old_key: Mapped[str] = mapped_column(CITEXT, primary_key=True)
+    ticket_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("tickets.id", ondelete="CASCADE"), index=True
+    )

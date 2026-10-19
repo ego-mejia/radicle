@@ -10,6 +10,7 @@ from radicle import __version__
 from radicle.api import (
     attachments,
     auth,
+    bulk,
     discussion,
     fields,
     jobs,
@@ -61,6 +62,7 @@ def create_app() -> FastAPI:
         users,
         projects,
         planning,
+        bulk,
         fields,
         screens,
         search,

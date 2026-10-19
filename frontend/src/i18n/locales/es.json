@@ -137,7 +137,9 @@
       "changeType": "Cambiar tipo",
       "copyLink": "Copiar link",
       "delete": "Borrar ticket",
-      "linkCopied": "Link copiado"
+      "linkCopied": "Link copiado",
+      "clone": "Clonar",
+      "move": "Mover a proyecto"
     },
     "deleteConfirm": "¿Borrar {{key}}? Desaparece de las listas pero su historial se conserva. Un admin lo puede restaurar.",
     "changeTypeTitle": "Cambiar tipo de {{key}}",
@@ -600,5 +602,71 @@
     "description": "Qué se hizo",
     "empty": "Todavía no hay tiempo registrado.",
     "deleteLog": "Borrar registro"
+  },
+  "clone": {
+    "title": "Clonar {{key}}",
+    "project": "En el proyecto",
+    "include": "Copiar también",
+    "submit": "Clonar",
+    "help": "El clon empieza en el primer estado, sin assignee, contigo como reporter y ligado al original. Sin “estado del checklist” sus items empiezan sin marcar.",
+    "includes": {
+      "description": "Descripción",
+      "checklist_state": "Estado del checklist",
+      "tags": "Tags",
+      "custom_fields": "Campos custom",
+      "collaborators": "Colaboradores",
+      "attachments": "Adjuntos",
+      "children": "Subtickets"
+    }
+  },
+  "move": {
+    "title": "Mover {{key}}",
+    "project": "Al proyecto",
+    "areaFor": "Área para “{{area}}”",
+    "statusFor": "Estado para “{{status}}”",
+    "automatic": "Automático",
+    "sameStatus": "Automático conserva el mismo estado.",
+    "initialStatus": "Ese estado no existe allá; automático usa el primero.",
+    "children": "Mover también los subtickets",
+    "submit": "Mover",
+    "help": "Recibe una key nueva; el link viejo sigue funcionando. Comentarios, adjuntos, tiempo e historial se van con él.",
+    "noTargets": "No eres miembro de otro proyecto al que se pueda mover."
+  },
+  "bulk": {
+    "toolbar": "Acciones masivas",
+    "selectAll": "Seleccionar todos",
+    "select": "Seleccionar {{key}}",
+    "selected_one": "{{count}} seleccionado",
+    "selected_other": "{{count}} seleccionados",
+    "clear": "Quitar selección",
+    "actions": {
+      "field": "Editar campo",
+      "tags": "Tags",
+      "status": "Mover estado",
+      "assign": "Asignar"
+    },
+    "titles": {
+      "field_one": "Editar un campo en {{count}} ticket",
+      "field_other": "Editar un campo en {{count}} tickets",
+      "tags_one": "Tags en {{count}} ticket",
+      "tags_other": "Tags en {{count}} tickets",
+      "status_one": "Mover {{count}} ticket",
+      "status_other": "Mover {{count}} tickets",
+      "assign_one": "Asignar {{count}} ticket",
+      "assign_other": "Asignar {{count}} tickets"
+    },
+    "field": "Campo",
+    "value": "Valor nuevo",
+    "emptyClears": "Vacío limpia el campo.",
+    "tagMode": "Acción",
+    "addTag": "Agregar tag",
+    "removeTag": "Quitar tag",
+    "toStatus": "Al estado",
+    "preview": "Vista previa",
+    "apply_one": "Aplicar a {{count}} ticket",
+    "apply_other": "Aplicar a {{count}} tickets",
+    "previewSummary": "{{ok}} cambiarían, {{failed}} fallarían:",
+    "doneSummary": "{{ok}} cambiaron, {{failed}} fallaron.",
+    "jobProgress": "Corriendo en segundo plano: {{done}} de {{total}}"
   }
 }

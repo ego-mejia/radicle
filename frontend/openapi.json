@@ -352,6 +352,135 @@
         "title": "Body_upload_attachment_api_v1_tickets__key__attachments_post",
         "type": "object"
       },
+      "BulkIn": {
+        "additionalProperties": false,
+        "properties": {
+          "dry_run": {
+            "default": false,
+            "title": "Dry Run",
+            "type": "boolean"
+          },
+          "keys": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Keys"
+          },
+          "operations": {
+            "description": "set_field, clear_field, add_tag, remove_tag, transition, assign, add_collaborator",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Operations",
+            "type": "array"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "RQL",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "operations"
+        ],
+        "title": "BulkIn",
+        "type": "object"
+      },
+      "BulkOut": {
+        "properties": {
+          "dry_run": {
+            "title": "Dry Run",
+            "type": "boolean"
+          },
+          "failed": {
+            "title": "Failed",
+            "type": "integer"
+          },
+          "job": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/JobOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set when more than 100 tickets run in the background"
+          },
+          "results": {
+            "description": "Empty when it runs as a job",
+            "items": {
+              "$ref": "#/components/schemas/BulkTicketResult"
+            },
+            "title": "Results",
+            "type": "array"
+          },
+          "succeeded": {
+            "title": "Succeeded",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "total",
+          "dry_run",
+          "succeeded",
+          "failed",
+          "results",
+          "job"
+        ],
+        "title": "BulkOut",
+        "type": "object"
+      },
+      "BulkTicketResult": {
+        "properties": {
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "ok",
+          "error"
+        ],
+        "title": "BulkTicketResult",
+        "type": "object"
+      },
       "CategoryCounts": {
         "properties": {
           "done": {
@@ -431,6 +560,41 @@
           "checked"
         ],
         "title": "ChecklistPatch",
+        "type": "object"
+      },
+      "CloneIn": {
+        "additionalProperties": false,
+        "properties": {
+          "area_mapping": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "{\"Legal\": \"Compliance\"} when areas differ",
+            "title": "Area Mapping",
+            "type": "object"
+          },
+          "include": {
+            "description": "description, checklist_state, tags, custom_fields, collaborators, attachments, children",
+            "items": {
+              "type": "string"
+            },
+            "title": "Include",
+            "type": "array"
+          },
+          "target_project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Default: same project",
+            "title": "Target Project"
+          }
+        },
+        "title": "CloneIn",
         "type": "object"
       },
       "CommentIn": {
@@ -1615,6 +1779,51 @@
         ],
         "title": "MilestoneStatus",
         "type": "string"
+      },
+      "MoveIn": {
+        "additionalProperties": false,
+        "properties": {
+          "area_mapping": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Area Mapping",
+            "type": "object"
+          },
+          "include_children": {
+            "default": true,
+            "title": "Include Children",
+            "type": "boolean"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milestone"
+          },
+          "status_mapping": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "{\"In Review\": \"QA\"}; by name otherwise, else initial",
+            "title": "Status Mapping",
+            "type": "object"
+          },
+          "target_project": {
+            "title": "Target Project",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_project"
+        ],
+        "title": "MoveIn",
+        "type": "object"
       },
       "Page_AreaOut_": {
         "properties": {
@@ -3684,6 +3893,18 @@
             ],
             "title": "Milestone"
           },
+          "moved_from": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set when you asked for an old key of a moved ticket",
+            "title": "Moved From"
+          },
           "original_estimate_hours": {
             "anyOf": [
               {
@@ -3838,6 +4059,7 @@
           "updated_at",
           "resolved_at",
           "deleted",
+          "moved_from",
           "warnings"
         ],
         "title": "TicketOut",
@@ -8025,6 +8247,48 @@
         ]
       }
     },
+    "/api/v1/tickets/bulk": {
+      "post": {
+        "description": "Same operations on up to 500 tickets (by keys or RQL). `dry_run` shows what would\nhappen without changing anything. More than 100 tickets run as a job: 202 + job.",
+        "operationId": "bulk_update_api_v1_tickets_bulk_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Bulk Update",
+        "tags": [
+          "clone, move and bulk"
+        ]
+      }
+    },
     "/api/v1/tickets/{key}": {
       "delete": {
         "description": "Soft delete. The ticket disappears from lists but its history stays.",
@@ -8061,6 +8325,7 @@
         ]
       },
       "get": {
+        "description": "A ticket. An old key of a moved ticket answers with the new one and `moved_from`.",
         "operationId": "get_ticket_api_v1_tickets__key__get",
         "parameters": [
           {
@@ -8362,6 +8627,59 @@
         "summary": "List Children",
         "tags": [
           "tickets"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/clone": {
+      "post": {
+        "description": "Copy a ticket into its project or another one. The clone starts in the initial\nstatus, unassigned, with a `clones` link to the original.",
+        "operationId": "clone_ticket_api_v1_tickets__key__clone_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloneIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Clone Ticket",
+        "tags": [
+          "clone, move and bulk"
         ]
       }
     },
@@ -8774,6 +9092,59 @@
         "summary": "Create Link",
         "tags": [
           "links and comments"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/move": {
+      "post": {
+        "description": "Move to another project (admin here, member there). The ticket gets a new key;\nthe old one keeps resolving to it.",
+        "operationId": "move_ticket_api_v1_tickets__key__move_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Move Ticket",
+        "tags": [
+          "clone, move and bulk"
         ]
       }
     },

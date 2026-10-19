@@ -17,6 +17,7 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.services.jobs",
     "radicle.services.templates",
     "radicle.services.attachments",
+    "radicle.services.bulk",
 )
 
 

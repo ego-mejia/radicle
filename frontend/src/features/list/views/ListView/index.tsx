@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TicketTable } from '../../../../components/TicketTable';
 import { EmptyState } from '../../../../components/ui/EmptyState';
@@ -11,6 +12,8 @@ import { fetchSearchFields, projectKeys } from '../../../../services/api/project
 import { ProjectHeader } from '../../../projects/components/ProjectHeader';
 import { useProject } from '../../../projects/hooks/useProject';
 import { TicketPanel } from '../../../tickets/components/TicketPanel';
+import { ticketKeys } from '../../../../services/api/tickets';
+import { BulkBar } from '../../components/BulkBar';
 import { RqlBar } from '../../components/RqlBar';
 import { useTicketSearch } from '../../hooks/useTicketSearch';
 
@@ -27,6 +30,18 @@ export function ListView() {
     queryFn: () => fetchSearchFields(projectKey),
   });
   const search = useTicketSearch(query);
+  const queryClient = useQueryClient();
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const select = useCallback((keys: string[], on: boolean) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      for (const k of keys) {
+        if (on) next.add(k);
+        else next.delete(k);
+      }
+      return next;
+    });
+  }, []);
   const { fetchNextPage, hasNextPage, isFetchingNextPage } = search;
   const loadMore = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
@@ -51,6 +66,17 @@ export function ListView() {
         error={error}
         warnings={search.warnings.map((w) => w.message)}
       />
+      {project.role !== 'viewer' && (
+        <BulkBar
+          project={project}
+          keys={[...selected]}
+          onClear={() => setSelected(new Set())}
+          onDone={() => {
+            setSelected(new Set());
+            void queryClient.invalidateQueries({ queryKey: ticketKeys.all });
+          }}
+        />
+      )}
       {search.isPending ? (
         <PageSpinner />
       ) : error ? null : search.items.length === 0 ? (
@@ -65,6 +91,8 @@ export function ListView() {
           hasMore={!!hasNextPage}
           loadingMore={isFetchingNextPage}
           onLoadMore={loadMore}
+          selected={project.role !== 'viewer' ? selected : undefined}
+          onSelect={select}
         />
       )}
       <TicketPanel

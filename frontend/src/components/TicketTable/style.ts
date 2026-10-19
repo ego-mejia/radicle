@@ -41,6 +41,10 @@ export const Table = styled.table`
     outline: none;
   }
 
+  tbody tr[aria-selected='true'] {
+    background: ${({ theme }) => theme.color.accentSoft};
+  }
+
   tbody tr:last-child td {
     border-bottom: 0;
   }
@@ -89,4 +93,14 @@ export const Footer = styled.div`
   text-align: center;
   color: ${({ theme }) => theme.color.textMuted};
   font-size: ${({ theme }) => theme.fontSize.sm};
+`;
+
+export const CheckCell = styled.td`
+  width: 32px;
+
+  input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
 `;

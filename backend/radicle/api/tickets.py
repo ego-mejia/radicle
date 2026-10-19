@@ -42,8 +42,13 @@ async def create_ticket(
 
 @router.get("/tickets/{key}", response_model=TicketOut)
 async def get_ticket(key: str, principal: CurrentPrincipal, db: Db) -> TicketOut:
+    """A ticket. An old key of a moved ticket answers with the new one and `moved_from`."""
     _, ticket = await tickets.load_ticket(db, principal.user, key)
-    return await ticket_out(db, ticket, viewer=principal.user)
+    out = await ticket_out(db, ticket, viewer=principal.user)
+    asked = key.strip().upper()
+    if out.key.upper() != asked:
+        out.moved_from = asked
+    return out
 
 
 def _expected_version(body_version: int | None, if_match: str | None) -> int:

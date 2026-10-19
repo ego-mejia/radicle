@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Link2, MoreHorizontal, Repeat, Trash2 } from 'lucide-react';
+import { Copy, FolderInput, Link2, MoreHorizontal, Repeat, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TypeIcon } from '../../../../components/icons/TypeIcon';
@@ -14,6 +14,8 @@ import { deleteTicket, ticketKeys } from '../../../../services/api/tickets';
 import type { Ticket } from '../../../../services/api/types';
 import type { TicketActions } from '../../hooks/useTicket';
 import { ChangeTypeModal } from '../ChangeTypeModal';
+import { CloneModal } from '../CloneModal';
+import { MoveModal } from '../MoveModal';
 import { StatusButton } from '../StatusButton';
 import { VoteButton } from '../VoteButton';
 import * as S from './style';
@@ -30,6 +32,7 @@ export function TicketHeader({ ticket, actions, canEdit, isAdmin }: Props) {
   const [title, setTitle] = useState(ticket.title);
   const [changingType, setChangingType] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [dialog, setDialog] = useState<'clone' | 'move' | null>(null);
   const remove = useMutation({
     mutationFn: () => deleteTicket(ticket.key),
     onSuccess: async () => {
@@ -75,6 +78,23 @@ export function TicketHeader({ ticket, actions, canEdit, isAdmin }: Props) {
               disabled: !canEdit,
               onSelect: () => setChangingType(true),
             },
+            {
+              key: 'clone',
+              label: t('ticket.menu.clone'),
+              icon: <Copy />,
+              disabled: !canEdit,
+              onSelect: () => setDialog('clone'),
+            },
+            ...(isAdmin
+              ? [
+                  {
+                    key: 'move',
+                    label: t('ticket.menu.move'),
+                    icon: <FolderInput />,
+                    onSelect: () => setDialog('move'),
+                  },
+                ]
+              : []),
             {
               key: 'copy',
               label: t('ticket.menu.copyLink'),
@@ -132,6 +152,8 @@ export function TicketHeader({ ticket, actions, canEdit, isAdmin }: Props) {
           remove.mutate();
         }}
       />
+      {dialog === 'clone' && <CloneModal ticket={ticket} onClose={() => setDialog(null)} />}
+      {dialog === 'move' && <MoveModal ticket={ticket} onClose={() => setDialog(null)} />}
       {changingType && (
         <ChangeTypeModal ticket={ticket} actions={actions} onClose={() => setChangingType(false)} />
       )}

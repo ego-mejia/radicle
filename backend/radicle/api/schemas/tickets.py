@@ -110,6 +110,9 @@ class TicketOut(Output):
     updated_at: UtcDatetime
     resolved_at: UtcDatetime | None
     deleted: bool = False
+    moved_from: str | None = Field(
+        default=None, description="Set when you asked for an old key of a moved ticket"
+    )
     warnings: list[WarningOut] = Field(default_factory=list)
 
 

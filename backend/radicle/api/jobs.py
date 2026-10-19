@@ -5,7 +5,7 @@ from fastapi import APIRouter
 
 from radicle.api.deps import CurrentPrincipal, Db
 from radicle.api.schemas.common import Output, UtcDatetime
-from radicle.db.models import JobStatus
+from radicle.db.models import Job, JobStatus
 from radicle.services import jobs
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
@@ -23,10 +23,7 @@ class JobOut(Output):
     finished_at: UtcDatetime | None
 
 
-@router.get("/{job_id}", response_model=JobOut)
-async def get_job(job_id: UUID, principal: CurrentPrincipal, db: Db) -> JobOut:
-    """Progress and result of a background job you started."""
-    job = await jobs.get_job(db, principal.user, job_id)
+def job_out(job: Job) -> JobOut:
     return JobOut(
         id=str(job.id),
         kind=job.kind,
@@ -38,3 +35,9 @@ async def get_job(job_id: UUID, principal: CurrentPrincipal, db: Db) -> JobOut:
         created_at=job.created_at,
         finished_at=job.finished_at,
     )
+
+
+@router.get("/{job_id}", response_model=JobOut)
+async def get_job(job_id: UUID, principal: CurrentPrincipal, db: Db) -> JobOut:
+    """Progress and result of a background job you started."""
+    return job_out(await jobs.get_job(db, principal.user, job_id))

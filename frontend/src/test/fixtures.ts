@@ -54,6 +54,7 @@ export const TICKET: Ticket = {
   updated_at: '2026-10-18T11:00:00Z',
   resolved_at: null,
   deleted: false,
+  moved_from: null,
   warnings: [],
 };
 

@@ -198,7 +198,7 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 | 2.4 | Screens | Listo |
 | 2.5 | Adjuntos | Listo |
 | 2.6 | Votos y tiempo real invertido | Listo |
-| 2.7 | Clonar, mover y bulk edit | Pendiente |
+| 2.7 | Clonar, mover y bulk edit | Listo |
 | 2.8 | Filtros, ranking, atajos y cmd+k | Pendiente |
 
 ### 2.1 Worker y campos custom
@@ -303,3 +303,20 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 
 - `tests/integration/test_votes_time.py::test_acceptance_agent_logs_two_hours`: el agente registra 2 h por MCP y el restante baja de 5 a 3.
 - `test_votes_and_backlog_by_votes`: el backlog se ordena por votos. `tests/integration/test_concurrency.py::test_parallel_votes_keep_vote_count_exact`: 8 personas votando 3 veces a la vez dejan `vote_count = 8`.
+
+### 2.7 Clonar, mover y bulk edit
+
+**Qué se hizo**
+
+- Migración `0011`: `ticket_key_aliases`. Decisión: [0015](decisions/0015-clonar-mover-bulk.md).
+- `POST /tickets/{key}/clone` con proyecto destino, mapeo de áreas e `include` (descripción, estado del checklist, tags, campos custom, colaboradores, adjuntos, subtickets con su árbol). Link `clones` y evento `cloned_from`.
+- `POST /tickets/{key}/move` (admin en origen, member en destino) con mapeo de áreas y estados, milestone y subtickets; la key vieja sigue resolviendo en API, MCP y UI.
+- `POST /tickets/bulk` por keys o RQL, hasta 500 tickets, con `dry_run`; arriba de 100 corre como job con progreso en `GET /jobs/{id}` y resultado por ticket.
+- MCP: `clone_ticket`, `move_ticket` y `bulk_update` (dry run por default).
+- UI: Clonar y Mover en el menú del ticket con sus opciones y mapeos; la URL vieja redirige a la nueva; en la lista, checkbox por fila y barra de acciones (Editar campo, Tags, Mover estado, Asignar) con vista previa y progreso.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_clone_move_bulk.py::test_acceptance_move_keeps_old_key`: PA-7 pasa a PB como PB-15 y `GET /tickets/PA-7` regresa PB-15 con `moved_from`.
+- `test_acceptance_bulk_120_runs_as_job`: quitar #backlog y poner V1 a 120 tickets, con vista previa, corre como job y reporta por ticket.
+- `frontend/src/features/list/components/BulkBar/BulkBar.test.tsx`: vista previa y aplicar.

@@ -38,6 +38,7 @@ from radicle.db.models.tickets import (
     Ticket,
     TicketCollaborator,
     TicketEvent,
+    TicketKeyAlias,
     TicketVote,
     Worklog,
 )
@@ -81,6 +82,7 @@ __all__ = [
     "Ticket",
     "TicketCollaborator",
     "TicketEvent",
+    "TicketKeyAlias",
     "TicketLink",
     "TicketType",
     "TicketVote",

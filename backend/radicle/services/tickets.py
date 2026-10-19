@@ -21,6 +21,7 @@ from radicle.db.models import (
     RemainingMode,
     Ticket,
     TicketCollaborator,
+    TicketKeyAlias,
     TicketType,
     User,
     utcnow,
@@ -99,6 +100,9 @@ async def load_ticket(
     Writes lock the row so concurrent edits serialise and the version check holds.
     """
     project_key, number = fields.parse_key(key)
+    current = await resolve_alias(db, project_key, number)
+    if current is not None:
+        project_key, number = current
     try:
         access = await project_access(db, user, project_key, need=need, write=write)
     except NotFound as exc:
@@ -110,6 +114,26 @@ async def load_ticket(
     if ticket is None or (ticket.deleted_at is not None and not include_deleted):
         raise _ticket_not_found(key)
     return access, ticket
+
+
+async def resolve_alias(db: AsyncSession, project_key: str, number: int) -> tuple[str, int] | None:
+    """Where a moved ticket lives now, if `project_key-number` is an old key of it."""
+    exists = await db.scalar(
+        select(Ticket.id)
+        .join(Project, Project.id == Ticket.project_id)
+        .where(Project.key == project_key, Ticket.number == number)
+    )
+    if exists is not None:
+        return None
+    row = (
+        await db.execute(
+            select(Project.key, Ticket.number)
+            .join(Ticket, Ticket.project_id == Project.id)
+            .join(TicketKeyAlias, TicketKeyAlias.ticket_id == Ticket.id)
+            .where(TicketKeyAlias.old_key == f"{project_key}-{number}")
+        )
+    ).first()
+    return (row[0], row[1]) if row else None
 
 
 def _ticket_not_found(key: str) -> NotFound:

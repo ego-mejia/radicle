@@ -33,6 +33,9 @@ TOOLS = {
     "read_attachment",
     "log_work",
     "list_worklogs",
+    "clone_ticket",
+    "move_ticket",
+    "bulk_update",
 }
 
 

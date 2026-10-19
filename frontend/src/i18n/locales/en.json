@@ -137,7 +137,9 @@
       "changeType": "Change type",
       "copyLink": "Copy link",
       "delete": "Delete ticket",
-      "linkCopied": "Link copied"
+      "linkCopied": "Link copied",
+      "clone": "Clone",
+      "move": "Move to project"
     },
     "deleteConfirm": "Delete {{key}}? It disappears from lists but its history is kept. An admin can restore it.",
     "changeTypeTitle": "Change type of {{key}}",
@@ -600,5 +602,71 @@
     "description": "What was done",
     "empty": "No time logged yet.",
     "deleteLog": "Delete worklog"
+  },
+  "clone": {
+    "title": "Clone {{key}}",
+    "project": "Into project",
+    "include": "Copy also",
+    "submit": "Clone",
+    "help": "The clone starts in the first status, unassigned, with you as reporter and a link to the original. Without “checklist state” its items start unchecked.",
+    "includes": {
+      "description": "Description",
+      "checklist_state": "Checklist state",
+      "tags": "Tags",
+      "custom_fields": "Custom fields",
+      "collaborators": "Collaborators",
+      "attachments": "Attachments",
+      "children": "Subtickets"
+    }
+  },
+  "move": {
+    "title": "Move {{key}}",
+    "project": "To project",
+    "areaFor": "Area for “{{area}}”",
+    "statusFor": "Status for “{{status}}”",
+    "automatic": "Automatic",
+    "sameStatus": "Automatic keeps the same status.",
+    "initialStatus": "That status does not exist there; automatic uses the first one.",
+    "children": "Move subtickets too",
+    "submit": "Move",
+    "help": "It gets a new key; the old link keeps working. Comments, attachments, time and history go with it.",
+    "noTargets": "You are not a member of another project where you can move it."
+  },
+  "bulk": {
+    "toolbar": "Bulk actions",
+    "selectAll": "Select all",
+    "select": "Select {{key}}",
+    "selected_one": "{{count}} selected",
+    "selected_other": "{{count}} selected",
+    "clear": "Clear selection",
+    "actions": {
+      "field": "Edit field",
+      "tags": "Tags",
+      "status": "Move status",
+      "assign": "Assign"
+    },
+    "titles": {
+      "field_one": "Edit a field on {{count}} ticket",
+      "field_other": "Edit a field on {{count}} tickets",
+      "tags_one": "Tags on {{count}} ticket",
+      "tags_other": "Tags on {{count}} tickets",
+      "status_one": "Move {{count}} ticket",
+      "status_other": "Move {{count}} tickets",
+      "assign_one": "Assign {{count}} ticket",
+      "assign_other": "Assign {{count}} tickets"
+    },
+    "field": "Field",
+    "value": "New value",
+    "emptyClears": "Empty clears the field.",
+    "tagMode": "Action",
+    "addTag": "Add tag",
+    "removeTag": "Remove tag",
+    "toStatus": "To status",
+    "preview": "Preview",
+    "apply_one": "Apply to {{count}} ticket",
+    "apply_other": "Apply to {{count}} tickets",
+    "previewSummary": "{{ok}} would change, {{failed}} would fail:",
+    "doneSummary": "{{ok}} changed, {{failed}} failed.",
+    "jobProgress": "Running in the background: {{done}} of {{total}}"
   }
 }

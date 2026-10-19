@@ -908,6 +908,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tickets/bulk": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Bulk Update
+         * @description Same operations on up to 500 tickets (by keys or RQL). `dry_run` shows what would
+         *     happen without changing anything. More than 100 tickets run as a job: 202 + job.
+         */
+        post: operations["bulk_update_api_v1_tickets_bulk_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tickets/{key}": {
         parameters: {
             query?: never;
@@ -915,7 +936,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get Ticket */
+        /**
+         * Get Ticket
+         * @description A ticket. An old key of a moved ticket answers with the new one and `moved_from`.
+         */
         get: operations["get_ticket_api_v1_tickets__key__get"];
         put?: never;
         post?: never;
@@ -985,6 +1009,27 @@ export interface paths {
         get: operations["list_children_api_v1_tickets__key__children_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{key}/clone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Clone Ticket
+         * @description Copy a ticket into its project or another one. The clone starts in the initial
+         *     status, unassigned, with a `clones` link to the original.
+         */
+        post: operations["clone_ticket_api_v1_tickets__key__clone_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1070,6 +1115,27 @@ export interface paths {
          *     Returns the ticket's links after the change.
          */
         post: operations["create_link_api_v1_tickets__key__links_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{key}/move": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Move Ticket
+         * @description Move to another project (admin here, member there). The ticket gets a new key;
+         *     the old one keeps resolving to it.
+         */
+        post: operations["move_ticket_api_v1_tickets__key__move_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1444,6 +1510,55 @@ export interface components {
              */
             resize?: string | null;
         };
+        /** BulkIn */
+        BulkIn: {
+            /**
+             * Dry Run
+             * @default false
+             */
+            dry_run?: boolean;
+            /** Keys */
+            keys?: string[] | null;
+            /**
+             * Operations
+             * @description set_field, clear_field, add_tag, remove_tag, transition, assign, add_collaborator
+             */
+            operations: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Query
+             * @description RQL
+             */
+            query?: string | null;
+        };
+        /** BulkOut */
+        BulkOut: {
+            /** Dry Run */
+            dry_run: boolean;
+            /** Failed */
+            failed: number;
+            /** @description Set when more than 100 tickets run in the background */
+            job: components["schemas"]["JobOut"] | null;
+            /**
+             * Results
+             * @description Empty when it runs as a job
+             */
+            results: components["schemas"]["BulkTicketResult"][];
+            /** Succeeded */
+            succeeded: number;
+            /** Total */
+            total: number;
+        };
+        /** BulkTicketResult */
+        BulkTicketResult: {
+            /** Error */
+            error: string | null;
+            /** Key */
+            key: string;
+            /** Ok */
+            ok: boolean;
+        };
         /** CategoryCounts */
         CategoryCounts: {
             /**
@@ -1482,6 +1597,26 @@ export interface components {
         ChecklistPatch: {
             /** Checked */
             checked: boolean;
+        };
+        /** CloneIn */
+        CloneIn: {
+            /**
+             * Area Mapping
+             * @description {"Legal": "Compliance"} when areas differ
+             */
+            area_mapping?: {
+                [key: string]: string;
+            };
+            /**
+             * Include
+             * @description description, checklist_state, tags, custom_fields, collaborators, attachments, children
+             */
+            include?: string[];
+            /**
+             * Target Project
+             * @description Default: same project
+             */
+            target_project?: string | null;
         };
         /** CommentIn */
         CommentIn: {
@@ -1878,6 +2013,29 @@ export interface components {
          * @enum {string}
          */
         MilestoneStatus: "open" | "closed";
+        /** MoveIn */
+        MoveIn: {
+            /** Area Mapping */
+            area_mapping?: {
+                [key: string]: string;
+            };
+            /**
+             * Include Children
+             * @default true
+             */
+            include_children?: boolean;
+            /** Milestone */
+            milestone?: string | null;
+            /**
+             * Status Mapping
+             * @description {"In Review": "QA"}; by name otherwise, else initial
+             */
+            status_mapping?: {
+                [key: string]: string;
+            };
+            /** Target Project */
+            target_project: string;
+        };
         /** Page[AreaOut] */
         Page_AreaOut_: {
             /** Items */
@@ -2604,6 +2762,11 @@ export interface components {
             links: components["schemas"]["LinkOut"][];
             /** Milestone */
             milestone: string | null;
+            /**
+             * Moved From
+             * @description Set when you asked for an old key of a moved ticket
+             */
+            moved_from: string | null;
             /**
              * Original Estimate Hours
              * @description The first estimate; never changes
@@ -5017,6 +5180,39 @@ export interface operations {
             };
         };
     };
+    bulk_update_api_v1_tickets_bulk_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BulkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BulkOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_ticket_api_v1_tickets__key__get: {
         parameters: {
             query?: never;
@@ -5234,6 +5430,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_TicketSummary_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    clone_ticket_api_v1_tickets__key__clone_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CloneIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketOut"];
                 };
             };
             /** @description Validation Error */
@@ -5470,6 +5701,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LinkOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    move_ticket_api_v1_tickets__key__move_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MoveIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketOut"];
                 };
             };
             /** @description Validation Error */
