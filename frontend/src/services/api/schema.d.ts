@@ -538,6 +538,50 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tickets/{key}/transitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Transitions
+         * @description Transitions available from the ticket's current status.
+         */
+        get: operations["get_transitions_api_v1_tickets__key__transitions_get"];
+        put?: never;
+        /**
+         * Transition Ticket
+         * @description Move the ticket. Done statuses need a resolution; the response may carry warnings.
+         */
+        post: operations["transition_ticket_api_v1_tickets__key__transitions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{key}/type": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Change Type
+         * @description Change the type, e.g. Draft to Task. The ticket goes to the new initial status.
+         */
+        post: operations["change_type_api_v1_tickets__key__type_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users": {
         parameters: {
             query?: never;
@@ -1284,6 +1328,33 @@ export interface components {
             /** Revoked At */
             revoked_at: string | null;
         };
+        /** TransitionIn */
+        TransitionIn: {
+            resolution?: components["schemas"]["Resolution"] | null;
+            /**
+             * To Status
+             * @description Target status name, e.g. 'In Progress'
+             */
+            to_status: string;
+            /**
+             * Transition
+             * @description Transition name, only needed when several reach the target
+             */
+            transition?: string | null;
+        };
+        /** TransitionOption */
+        TransitionOption: {
+            /**
+             * Allowed Resolutions
+             * @description Set when the target is a done status; pick one of these
+             */
+            allowed_resolutions: components["schemas"]["Resolution"][] | null;
+            category: components["schemas"]["StatusCategory"];
+            /** Name */
+            name: string;
+            /** To Status */
+            to_status: string;
+        };
         /** TransitionOut */
         TransitionOut: {
             /**
@@ -1300,6 +1371,15 @@ export interface components {
             name: string;
             /** To Status */
             to_status: string;
+        };
+        /** TypeChangeIn */
+        TypeChangeIn: {
+            /**
+             * Area
+             * @description Required when moving to task or bug without an area
+             */
+            area?: string | null;
+            type: components["schemas"]["TicketType"];
         };
         /** UserCreate */
         UserCreate: {
@@ -2601,6 +2681,107 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_transitions_api_v1_tickets__key__transitions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransitionOption"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    transition_ticket_api_v1_tickets__key__transitions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransitionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_type_api_v1_tickets__key__type_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TypeChangeIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

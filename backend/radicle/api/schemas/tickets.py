@@ -145,3 +145,27 @@ class TicketSummary(BaseModel):
     checklist_total: int
     rank: str
     updated_at: UtcDatetime
+
+
+class TransitionOption(BaseModel):
+    name: str
+    to_status: str
+    category: StatusCategory
+    allowed_resolutions: list[Resolution] | None = Field(
+        description="Set when the target is a done status; pick one of these"
+    )
+
+
+class TransitionIn(Input):
+    to_status: str = Field(description="Target status name, e.g. 'In Progress'")
+    resolution: Resolution | None = None
+    transition: str | None = Field(
+        default=None, description="Transition name, only needed when several reach the target"
+    )
+
+
+class TypeChangeIn(Input):
+    type: TicketType
+    area: str | None = Field(
+        default=None, description="Required when moving to task or bug without an area"
+    )

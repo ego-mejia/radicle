@@ -1992,6 +1992,81 @@
         "title": "TokenOut",
         "type": "object"
       },
+      "TransitionIn": {
+        "additionalProperties": false,
+        "properties": {
+          "resolution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Resolution"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "to_status": {
+            "description": "Target status name, e.g. 'In Progress'",
+            "title": "To Status",
+            "type": "string"
+          },
+          "transition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Transition name, only needed when several reach the target",
+            "title": "Transition"
+          }
+        },
+        "required": [
+          "to_status"
+        ],
+        "title": "TransitionIn",
+        "type": "object"
+      },
+      "TransitionOption": {
+        "properties": {
+          "allowed_resolutions": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Resolution"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set when the target is a done status; pick one of these",
+            "title": "Allowed Resolutions"
+          },
+          "category": {
+            "$ref": "#/components/schemas/StatusCategory"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "to_status": {
+            "title": "To Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "to_status",
+          "category",
+          "allowed_resolutions"
+        ],
+        "title": "TransitionOption",
+        "type": "object"
+      },
       "TransitionOut": {
         "properties": {
           "allowed_resolutions": {
@@ -2037,6 +2112,31 @@
           "allowed_resolutions"
         ],
         "title": "TransitionOut",
+        "type": "object"
+      },
+      "TypeChangeIn": {
+        "additionalProperties": false,
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Required when moving to task or bug without an area",
+            "title": "Area"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TicketType"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "TypeChangeIn",
         "type": "object"
       },
       "UserCreate": {
@@ -4077,6 +4177,157 @@
           }
         },
         "summary": "Restore Ticket",
+        "tags": [
+          "tickets"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/transitions": {
+      "get": {
+        "description": "Transitions available from the ticket's current status.",
+        "operationId": "get_transitions_api_v1_tickets__key__transitions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TransitionOption"
+                  },
+                  "title": "Response Get Transitions Api V1 Tickets  Key  Transitions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Transitions",
+        "tags": [
+          "tickets"
+        ]
+      },
+      "post": {
+        "description": "Move the ticket. Done statuses need a resolution; the response may carry warnings.",
+        "operationId": "transition_ticket_api_v1_tickets__key__transitions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransitionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Transition Ticket",
+        "tags": [
+          "tickets"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/type": {
+      "post": {
+        "description": "Change the type, e.g. Draft to Task. The ticket goes to the new initial status.",
+        "operationId": "change_type_api_v1_tickets__key__type_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TypeChangeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change Type",
         "tags": [
           "tickets"
         ]

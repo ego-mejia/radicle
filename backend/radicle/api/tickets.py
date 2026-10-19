@@ -12,11 +12,15 @@ from radicle.api.schemas.tickets import (
     TicketOut,
     TicketPatch,
     TicketSummary,
+    TransitionIn,
+    TransitionOption,
+    TypeChangeIn,
+    WarningOut,
 )
 from radicle.api.ticket_views import event_out, summaries_out, ticket_out
 from radicle.core.errors import ValidationFailed
 from radicle.db.models import ProjectRole
-from radicle.services import history, tickets
+from radicle.services import history, tickets, transitions
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["tickets"])
@@ -153,3 +157,48 @@ def _int_cursor(cursor: str | None) -> int | None:
     if not cursor.isdigit():
         raise ValidationFailed("Invalid cursor. Use next_cursor from the previous page.")
     return int(cursor)
+
+
+@router.get("/tickets/{key}/transitions", response_model=list[TransitionOption])
+async def get_transitions(key: str, principal: CurrentPrincipal, db: Db) -> list[TransitionOption]:
+    """Transitions available from the ticket's current status."""
+    _, ticket = await tickets.load_ticket(db, principal.user, key)
+    options = await transitions.available_transitions(db, ticket)
+    return [
+        TransitionOption(
+            name=o.transition.name,
+            to_status=o.to_status.name,
+            category=o.to_status.category,
+            allowed_resolutions=list(o.resolutions) or None,
+        )
+        for o in options
+    ]
+
+
+@router.post("/tickets/{key}/transitions", response_model=TicketOut)
+async def transition_ticket(
+    key: str, body: TransitionIn, principal: CurrentPrincipal, db: Db
+) -> TicketOut:
+    """Move the ticket. Done statuses need a resolution; the response may carry warnings."""
+    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    warnings = await transitions.transition_ticket(
+        db,
+        access,
+        ticket,
+        to_status=body.to_status,
+        resolution=body.resolution,
+        transition=body.transition,
+    )
+    return await ticket_out(
+        db, ticket, warnings=[WarningOut(code=w.code, message=w.message, by=w.by) for w in warnings]
+    )
+
+
+@router.post("/tickets/{key}/type", response_model=TicketOut)
+async def change_type(
+    key: str, body: TypeChangeIn, principal: CurrentPrincipal, db: Db
+) -> TicketOut:
+    """Change the type, e.g. Draft to Task. The ticket goes to the new initial status."""
+    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    await transitions.change_type(db, access, ticket, body.type, body.area)
+    return await ticket_out(db, ticket)

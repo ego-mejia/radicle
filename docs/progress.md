@@ -9,7 +9,7 @@ Estado de cada entregable. Se actualiza al cerrar cada uno.
 | 1.1 | Base, auth y usuarios | Aceptado |
 | 1.2 | Proyectos, miembros, áreas y milestones | Listo |
 | 1.3 | Tickets e historial | Listo |
-| 1.4 | Workflows y transiciones | Pendiente |
+| 1.4 | Workflows y transiciones | Listo |
 | 1.5 | Links, comentarios y reacciones | Pendiente |
 | 1.6 | RQL y búsqueda | Pendiente |
 | 1.7 | Servidor MCP | Pendiente |
@@ -93,3 +93,20 @@ curl -H "Authorization: Bearer rdc_..." localhost:8000/api/v1/me
 - `tests/integration/test_history_integrity.py`: `UPDATE`, `DELETE` y `TRUNCATE` sobre el historial fallan.
 - `tests/integration/test_tickets.py::test_patch_fields_and_history`: cada cambio con valor anterior y nuevo.
 - `tests/integration/test_ticket_permissions.py`: matriz de 8 acciones por 6 roles.
+
+### 1.4 Workflows y transiciones
+
+**Qué se hizo**
+
+- Motor de transiciones en `services/workflow_engine.py` (lógica pura, probada sin base de datos).
+- `GET /tickets/{key}/transitions` con destino, categoría y resolutions permitidas.
+- `POST /tickets/{key}/transitions` con `to_status`, `resolution` y opcionalmente `transition` cuando varias llegan al mismo destino (gana la que sale del estado actual sobre la de "cualquier estado").
+- Transición inexistente: 409 con la lista de válidas en el mensaje y en `valid_transitions`. Done sin resolution o con una no permitida: 422 con `allowed_resolutions`. Una sola resolution permitida se pone sola (Draft Approve).
+- Entrar a done llena `resolved_at`; salir limpia `resolution` y `resolved_at`.
+- `POST /tickets/{key}/type`: estado inicial del nuevo workflow, limpia la resolution, pide `area` al pasar a Task o Bug sin área; eventos `type_changed`, `status_changed` y `field_changed` de área.
+- Aviso `blocked` en transiciones a in_progress o done; se prueba en 1.5, cuando existen los links.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_transitions.py::test_acceptance_task_lifecycle`: To Do a Done solo por Close con wont_do o duplicate, Complete pide resolution, Reopen la limpia.
+- `tests/unit/test_workflow_engine.py`: 13 casos del motor.
