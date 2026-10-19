@@ -133,10 +133,10 @@ radicle/
 
 **Convenciones**
 
-- Código, API, base de datos, comentarios y commits en inglés. Docs en español.
+- Código, API, base de datos, comentarios y commits en inglés. Docs internos en español; `README.md` y `CONTRIBUTING.md` en inglés, con `README.es.md` como traducción ([0029](decisions/0029-proyecto-comunitario.md)).
 - JSON de la API en `snake_case`. Fechas en UTC con ISO 8601; fechas sin hora como `YYYY-MM-DD`.
 - IDs internos UUID. Hacia afuera los tickets se identifican por key (`PA-12`), los usuarios por handle y áreas y milestones por nombre.
-- Commits con Conventional Commits (`feat:`, `fix:`, `test:`...). Ramas `feat/1.3-tickets`.
+- Commits con Conventional Commits (`feat:`, `fix:`, `test:`...). Ramas `tipo/descripcion` (`feat/`, `minor/`, `fix/`, `refactor/`, `docs/`) y PRs de una sola cosa con menos de 500 líneas y 100 archivos ([0029](decisions/0029-proyecto-comunitario.md)).
 - La lógica vive en `services/`. Routers y tools del MCP solo validan entrada y llaman servicios.
 - Si algo se desvía del spec, se documenta en `docs/decisions/` antes de hacerlo.
 - Al cerrar cada entregable se actualiza `docs/progress.md` con qué se hizo y cómo verificarlo.
@@ -178,7 +178,7 @@ Decisiones que tomé al escribir los specs y que no se discutieron. Marca las qu
 
 **Antes de la etapa 1**
 
-- [ ] **Licencia AGPL-3.0.** Evita que alguien lo venda como SaaS cerrado sin compartir cambios. Alternativa: MIT o Apache 2.0.
+- [x] **Licencia AGPL-3.0.** Evita que alguien lo venda como SaaS cerrado sin compartir cambios. Confirmada en [0029](decisions/0029-proyecto-comunitario.md).
 - [ ] **Idioma.** Código, API y nombres default de estados en inglés; UI en inglés y español.
 - [ ] **Estados default por tipo.** Task: To Do, In Progress, In Review, Done. Bug: Reported, In Progress, QA Verified, Done. Draft: New, In Review, Approved, Discarded.
 - [ ] **Cierre anticipado.** No se puede ir de To Do a Done por el camino normal, pero sí existe una transición "Close" desde cualquier estado que solo acepta resolution Won't Do o Duplicate (y Cannot Reproduce en Bugs).
