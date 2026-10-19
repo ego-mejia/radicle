@@ -1,0 +1,16 @@
+{
+  "app": { "name": "Radicle", "tagline": "Tickets that grow with your team" },
+  "status": {
+    "title": "Radicle is running",
+    "checking": "Checking the server…",
+    "healthy": "Server and database are healthy.",
+    "unhealthy": "The server is not reachable.",
+    "needsSetup": "No admin yet. The setup screen arrives with the web UI.",
+    "ready": "Setup is done. The full web UI is on its way.",
+    "theme": "Theme",
+    "language": "Language",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  }
+}

@@ -1,0 +1,56 @@
+# Progreso
+
+Estado de cada entregable. Se actualiza al cerrar cada uno.
+
+## Etapa 1: Core + MCP
+
+| # | Entregable | Estado |
+| --- | --- | --- |
+| 1.1 | Base, auth y usuarios | Listo para aceptación |
+| 1.2 | Proyectos, miembros, áreas y milestones | Pendiente |
+| 1.3 | Tickets e historial | Pendiente |
+| 1.4 | Workflows y transiciones | Pendiente |
+| 1.5 | Links, comentarios y reacciones | Pendiente |
+| 1.6 | RQL y búsqueda | Pendiente |
+| 1.7 | Servidor MCP | Pendiente |
+| 1.8 | UI web | Pendiente |
+
+### 1.1 Base, auth y usuarios
+
+**Qué se hizo**
+
+- Monorepo `backend/` (FastAPI, SQLAlchemy async, Alembic) y `frontend/` (React 18, Vite, styled-components, i18n en/es, tema lima claro y oscuro).
+- Migración `0001`: `users`, `api_tokens`, `sessions` con extensiones `citext` y `pg_trgm`.
+- `/health`, `/api/v1/health`, `/api/v1/version`, `/api/v1/setup/status`, `/api/v1/setup`.
+- Login con email y password (argon2id), sesión en cookie HttpOnly de 14 días deslizantes, CSRF, rate limit de 10 intentos por minuto por IP, logout.
+- `/me` (GET, PATCH), tokens personales `/me/tokens`.
+- Admin de instancia: `/users`, `/agents`, `/users/{handle}`, tokens de agente.
+- Tokens `rdc_` + 40 base62, guardados como sha256, mostrados una sola vez; revocables y con expiración opcional.
+- Errores RFC 9457 en toda la API.
+- Dockerfile multi-stage (SPA + API en una imagen), `docker-compose.yml` con `app` y `db`, migraciones al arrancar.
+- CI: lint, tipos, tests con cobertura, migraciones up/down/up, cliente OpenAPI al día, build de imagen y smoke.
+- Pantalla temporal de estado en `/` (salud del servidor, setup pendiente, tema e idioma). La reemplaza la UI de 1.8.
+- Decisiones: [0001](decisions/0001-frontend-styled-components.md), [0002](decisions/0002-cookies-secure-automatico.md), [0003](decisions/0003-csrf-y-endpoints-de-admin.md).
+
+**Cómo verificarlo**
+
+```bash
+scripts/smoke.sh                       # levanta todo, hace setup, crea agente y usa su token
+cd backend && uv run pytest --cov      # 109 tests contra Postgres real (requiere Docker)
+cd frontend && pnpm check && pnpm build
+```
+
+A mano, con `docker compose up`:
+
+```bash
+curl -c jar -H 'Content-Type: application/json' localhost:8000/api/v1/setup \
+  -d '{"handle":"fernando","display_name":"Fernando","email":"f@example.com","password":"cambia-esto"}'
+CSRF=$(awk '$6=="radicle_csrf"{print $7}' jar)
+curl -b jar -H "X-CSRF-Token: $CSRF" -H 'Content-Type: application/json' \
+  localhost:8000/api/v1/agents -d '{"handle":"agent-backend","display_name":"Backend agent"}'
+curl -H "Authorization: Bearer rdc_..." localhost:8000/api/v1/me
+```
+
+**Cobertura al cerrar:** 93% total; `services/` entre 90% y 100%.
+
+**Pendiente para entregables siguientes:** `/me` regresa `projects: []` hasta 1.2; el smoke agrega MCP en 1.7.

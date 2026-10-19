@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    image: radicle:latest
+    ports:
+      - "${RADICLE_PORT:-8000}:8000"
+    environment:
+      RADICLE_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-radicle}:${POSTGRES_PASSWORD:-radicle}@db:5432/${POSTGRES_DB:-radicle}
+      RADICLE_BASE_URL: ${RADICLE_BASE_URL:-http://localhost:8000}
+      RADICLE_TIMEZONE: ${RADICLE_TIMEZONE:-UTC}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-radicle}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-radicle}
+      POSTGRES_DB: ${POSTGRES_DB:-radicle}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  db-data:
