@@ -40,6 +40,21 @@ describe('boards', () => {
     expect(optionsFor(board, 9, options, 'task')).toEqual([]);
   });
 
+  it('puts a status in the first column that holds it', () => {
+    const first = {
+      ...board,
+      columns: [
+        board.columns[1]!,
+        { name: 'Doing', categories: ['in_progress'], status_ids: [], wip_limit: null },
+      ],
+    } as unknown as Board;
+    const options = [
+      option('Review', 'In Review', 'in_progress'),
+      option('Start', 'Doing', 'in_progress'),
+    ];
+    expect(optionsFor(first, 1, options, 'task').map((o) => o.name)).toEqual(['Start']);
+  });
+
   it('picks an icon category for mixed columns', () => {
     expect(columnCategory(board, board.columns[0]!)).toBe('todo');
     expect(columnCategory(board, board.columns[2]!)).toBe('in_progress');

@@ -326,3 +326,28 @@ async def test_several_transitions_ask_which(
         resolution="done",
     )
     assert r.json()["ticket"]["resolution"] == "done"
+
+
+async def test_a_status_shows_in_the_first_column_that_holds_it(
+    client: AsyncClient, board: Team
+) -> None:
+    main = await main_board(client, board)
+    review = {"name": "Review", "status_ids": status_ids(main, "In Review")}
+    by_category = [{"name": c["name"], "categories": c["categories"]} for c in main["columns"]]
+    await new_ticket(client, board.member)
+    await to_review(client, board, "PA-1")
+
+    async def where_is(columns: list) -> list[str]:  # type: ignore[type-arg]
+        r = await client.patch(
+            f"{API}/boards/{main['id']}", headers=board.admin.headers, json={"columns": columns}
+        )
+        assert r.status_code == 200, r.text
+        result = await data(client, board.viewer, main)
+        return [c["name"] for c in result["columns"] if c["tickets"]]
+
+    # Review first: it takes In Review away from the In Progress category column.
+    assert await where_is([by_category[0], review, *by_category[1:]]) == ["Review"]
+    # Review after In Progress: the category column got it first.
+    assert await where_is([*by_category, review]) == ["In Progress"]
+    r = await client.get(f"{API}/boards/{main['id']}", headers=board.viewer.headers)
+    assert r.json()["unmapped_statuses"] == []

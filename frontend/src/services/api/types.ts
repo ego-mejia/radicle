@@ -109,3 +109,7 @@ export type Sprint = S['SprintOut'];
 export type SprintDetail = S['SprintDetail'];
 export type SprintReport = S['SprintReport'];
 export type SprintState = Sprint['state'];
+
+export type Timeline = S['TimelineOut'];
+export type TimelineTicket = S['TimelineTicket'];
+export type TimelineGroup = S['TimelineGroup'];

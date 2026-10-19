@@ -223,6 +223,7 @@ test('bulk-tag two tickets with a preview, then save the filter', async () => {
 
 test('daily work with the keyboard only', async () => {
   await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
   await page.keyboard.press('g');
   await page.keyboard.press('m');
   await expect(page).toHaveURL(/\/me\/tickets/);

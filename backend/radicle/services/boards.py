@@ -314,8 +314,13 @@ class Column:
     wip_limit: int | None
     done_only: bool
     categories: set[StatusCategory] = field(default_factory=set)
+    # A status sits in the first column that holds it: what earlier columns took.
+    taken_ids: set[uuid.UUID] = field(default_factory=set)
+    taken_categories: set[StatusCategory] = field(default_factory=set)
 
     def holds(self, status: Status) -> bool:
+        if status.id in self.taken_ids or status.category in self.taken_categories:
+            return False
         return status.id in self.status_ids or status.category in self.categories
 
     tickets: list[Ticket] = field(default_factory=list)
@@ -337,10 +342,18 @@ class BoardData:
 
 def resolve_columns(board: Board, statuses: list[Status]) -> list[Column]:
     columns = []
+    taken_ids: set[uuid.UUID] = set()
+    taken_categories: set[StatusCategory] = set()
     for index, raw in enumerate(board.columns):
+        categories = {StatusCategory(c) for c in raw.get("categories") or []}
         ids = {uuid.UUID(i) for i in raw.get("status_ids") or []}
-        categories = set(raw.get("categories") or [])
-        ids |= {s.id for s in statuses if s.category.value in categories}
+        ids |= {s.id for s in statuses if s.category in categories}
+        ids = {
+            i
+            for i in ids
+            if i not in taken_ids
+            and not any(s.id == i and s.category in taken_categories for s in statuses)
+        }
         in_column = [s for s in statuses if s.id in ids]
         done_only = bool(in_column) and all(s.category is StatusCategory.done for s in in_column)
         columns.append(
@@ -350,9 +363,13 @@ def resolve_columns(board: Board, statuses: list[Status]) -> list[Column]:
                 ids,
                 raw.get("wip_limit"),
                 done_only,
-                {StatusCategory(c) for c in categories},
+                categories - taken_categories,
+                set(taken_ids),
+                set(taken_categories),
             )
         )
+        taken_ids |= ids
+        taken_categories |= categories
     return columns
 
 
@@ -380,9 +397,14 @@ async def _base_where(
 
 def _column_where(column: Column, window_days: int | None) -> ColumnElement[bool]:
     # Categories match statuses of any project the source reaches, not only this one's.
+    by_category: ColumnElement[bool] = (
+        Status.category.in_(column.categories) if column.categories else false()
+    )
+    if column.categories and column.taken_ids:
+        by_category = and_(by_category, Ticket.status_id.not_in(column.taken_ids))
     where: ColumnElement[bool] = or_(
         Ticket.status_id.in_(column.status_ids) if column.status_ids else false(),
-        Status.category.in_(column.categories) if column.categories else false(),
+        by_category,
     )
     if column.done_only and window_days is not None:
         since = utcnow() - timedelta(days=window_days)

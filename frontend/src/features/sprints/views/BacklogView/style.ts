@@ -5,14 +5,10 @@ export const Bar = styled.div`
   flex-wrap: wrap;
   align-items: center;
   gap: ${({ theme }) => theme.space.sm};
-  padding: 0 ${({ theme }) => theme.space.xl} ${({ theme }) => theme.space.md};
+  padding: 0 0 ${({ theme }) => theme.space.md};
 
   select {
     width: auto;
-  }
-
-  @media (max-width: 640px) {
-    padding: 0 ${({ theme }) => theme.space.lg} ${({ theme }) => theme.space.md};
   }
 `;
 
@@ -31,10 +27,6 @@ export const Lists = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.space.xl};
-  padding: 0 ${({ theme }) => theme.space.xl} ${({ theme }) => theme.space.xl};
+  padding: 0 0 ${({ theme }) => theme.space.xl};
   max-width: 1100px;
-
-  @media (max-width: 640px) {
-    padding: 0 ${({ theme }) => theme.space.lg} ${({ theme }) => theme.space.lg};
-  }
 `;

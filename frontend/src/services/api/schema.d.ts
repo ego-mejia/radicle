@@ -879,6 +879,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{key}/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Timeline
+         * @description Tickets by start_date and due_date, grouped by milestone (with target and forecast)
+         *     or area, and Blocks dependencies with conflicts marked.
+         */
+        get: operations["get_timeline_api_v1_projects__key__timeline_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{key}/unarchive": {
         parameters: {
             query?: never;
@@ -2337,6 +2358,21 @@ export interface components {
          * @enum {string}
          */
         CustomFieldType: "text" | "number" | "date" | "select" | "checkbox" | "user" | "url";
+        /** DependencyOut */
+        DependencyOut: {
+            /** Blocked */
+            blocked: string;
+            /**
+             * Blocker
+             * @description Key of the ticket that blocks
+             */
+            blocker: string;
+            /**
+             * Conflict
+             * @description The blocker ends after the blocked ticket begins
+             */
+            conflict: boolean;
+        };
         /** EventOut */
         EventOut: {
             actor: components["schemas"]["UserRef"];
@@ -2649,6 +2685,22 @@ export interface components {
             name: string;
             /** Target Date */
             target_date?: string | null;
+        };
+        /** MilestoneMarker */
+        MilestoneMarker: {
+            /** Forecast Date */
+            forecast_date: string | null;
+            /** Name */
+            name: string;
+            /** Percent By Hours */
+            percent_by_hours: number;
+            /**
+             * State
+             * @description on_track, at_risk, no_forecast or done
+             */
+            state: string;
+            /** Target Date */
+            target_date: string | null;
         };
         /** MilestoneOut */
         MilestoneOut: {
@@ -3903,6 +3955,85 @@ export interface components {
          * @enum {string}
          */
         TicketType: "task" | "bug" | "draft";
+        /** TimelineGroup */
+        TimelineGroup: {
+            /**
+             * Key
+             * @description Milestone or area id; empty for tickets without one
+             */
+            key: string;
+            /** Label */
+            label: string;
+            milestone: components["schemas"]["MilestoneMarker"] | null;
+            /** Tickets */
+            tickets: components["schemas"]["TimelineTicket"][];
+        };
+        /** TimelineOut */
+        TimelineOut: {
+            /** Dependencies */
+            dependencies: components["schemas"]["DependencyOut"][];
+            /** Group By */
+            group_by: string;
+            /** Groups */
+            groups: components["schemas"]["TimelineGroup"][];
+            /**
+             * Truncated
+             * @description More than 2,000 tickets: narrow the query
+             */
+            truncated: boolean;
+            /**
+             * Undated
+             * @description Tickets without start or due date
+             */
+            undated: components["schemas"]["TimelineTicket"][];
+        };
+        /** TimelineTicket */
+        TimelineTicket: {
+            /** Area */
+            area: string | null;
+            assignee: components["schemas"]["UserRef"] | null;
+            /** Blocked */
+            blocked: boolean;
+            /** Checklist Done */
+            checklist_done: number;
+            /** Checklist Total */
+            checklist_total: number;
+            /** Custom Fields */
+            custom_fields: {
+                [key: string]: unknown;
+            };
+            /** Due Date */
+            due_date: string | null;
+            /** Estimate Hours */
+            estimate_hours: number | null;
+            /** Key */
+            key: string;
+            /** Milestone */
+            milestone: string | null;
+            priority: components["schemas"]["Priority"];
+            /** Rank */
+            rank: string;
+            resolution: components["schemas"]["Resolution"] | null;
+            /** Spent Hours */
+            spent_hours: number;
+            /** Start Date */
+            start_date: string | null;
+            status: components["schemas"]["StatusRef"];
+            /** Tags */
+            tags: string[];
+            /** Title */
+            title: string;
+            type: components["schemas"]["TicketType"];
+            /** Updated At */
+            updated_at: string;
+            /**
+             * Version
+             * @description Send it as If-Match when changing the dates
+             */
+            version: number;
+            /** Vote Count */
+            vote_count: number;
+        };
         /** TokenCreate */
         TokenCreate: {
             /** Expires At */
@@ -6348,6 +6479,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TicketOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_timeline_api_v1_projects__key__timeline_get: {
+        parameters: {
+            query?: {
+                group_by?: "milestone" | "area";
+                /** @description Extra RQL, combined with AND */
+                q?: string | null;
+                from?: string | null;
+                to?: string | null;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimelineOut"];
                 };
             };
             /** @description Validation Error */

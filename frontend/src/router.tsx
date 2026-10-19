@@ -12,6 +12,7 @@ import { SetupView } from './features/auth/views/SetupView';
 import { BoardSettingsView } from './features/board/views/BoardSettingsView';
 import { BoardView } from './features/board/views/BoardView';
 import { BacklogView } from './features/sprints/views/BacklogView';
+import { TimelineView } from './features/timeline/views/TimelineView';
 import { ListView } from './features/list/views/ListView';
 import { MilestonesView } from './features/milestones/views/MilestonesView';
 import { MyTicketsView } from './features/mytickets/views/MyTicketsView';
@@ -135,6 +136,20 @@ const backlogRoute = createRoute({
   }),
 });
 
+const timelineRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/p/$key/timeline',
+  component: TimelineView,
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { q?: string; group?: string; zoom?: string; t?: string } => ({
+    q: str(search.q),
+    group: str(search.group),
+    zoom: str(search.zoom),
+    t: str(search.t),
+  }),
+});
+
 const listRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/p/$key/list',
@@ -201,6 +216,7 @@ const routeTree = rootRoute.addChildren([
     boardRoute,
     boardSettingsRoute,
     backlogRoute,
+    timelineRoute,
     listRoute,
     milestonesRoute,
     settingsRoute,

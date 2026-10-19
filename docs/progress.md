@@ -366,7 +366,7 @@ Los criterios de aceptación de la etapa se verifican así:
 | 3.1 | Periodos de estado y snapshots | Listo |
 | 3.2 | Boards configurables | Listo |
 | 3.3 | Scrum | Listo |
-| 3.4 | Timeline | Pendiente |
+| 3.4 | Timeline | Listo |
 | 3.5 | Reportes agile | Pendiente |
 | 3.6 | Reportes generales | Pendiente |
 | 3.7 | Dashboards | Pendiente |
@@ -413,4 +413,18 @@ Los criterios de aceptación de la etapa se verifican así:
 
 - `tests/integration/test_sprints.py::test_acceptance_full_sprint`: planear con capacidad, iniciar, agregar a mitad (cambio de alcance), cerrar mandando lo pendiente a #backlog; el reporte guardado no cambia después.
 - Mismo archivo: máquina de estados, un solo activo, un ticket en un solo sprint abierto, traspaso al siguiente sprint, permisos, RQL `start` y `sprint`, snapshot por sprint y las tools del MCP.
+
+### 3.4 Timeline
+
+**Qué se hizo**
+
+- `GET /projects/{key}/timeline` con grupos por milestone (objetivo y pronóstico) o área, tickets sin fechas aparte y dependencias Blocks con conflicto marcado. Decisión: [0020](decisions/0020-timeline.md).
+- Pronóstico de milestone en `services/forecast.py` (lo reutiliza 3.6).
+- UI `/p/{key}/timeline`: Gantt en SVG con zoom semana, mes y trimestre, línea de hoy, rombo de milestone y marcador de pronóstico, barras por categoría, drag de barra y bordes, panel "Sin fechas" con drag al timeline, flechas en rojo con conflicto, filas virtualizadas y barra RQL.
+- Corrección en boards: un estado aparece solo en la primera columna que lo tiene, también cuando una columna toma la categoría completa.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_timeline.py`: grupos, sin fechas, conflicto que se resuelve al mover fechas, historial de fechas y pronóstico "en riesgo"/"en tiempo"/"sin pronóstico".
+- E2E `drag a bar on the timeline and see a dependency in red`.
 

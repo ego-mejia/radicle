@@ -5,7 +5,7 @@ export const Wrapper = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.space.sm};
   overflow-x: auto;
-  padding: 0 ${({ theme }) => theme.space.xl} ${({ theme }) => theme.space.md};
+  padding: 0 0 ${({ theme }) => theme.space.md};
 `;
 
 export const Header = styled.div`

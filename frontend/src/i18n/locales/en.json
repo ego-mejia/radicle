@@ -44,7 +44,8 @@
     "mainNav": "Main navigation",
     "breadcrumb": "Breadcrumb",
     "skip": "Skip to content",
-    "backlog": "Backlog"
+    "backlog": "Backlog",
+    "timeline": "Timeline"
   },
   "theme": {
     "label": "Theme",
@@ -886,5 +887,32 @@
     "goBacklog": "Go to backlog",
     "daysLeft_one": "{{count}} day left",
     "daysLeft_other": "{{count}} days left"
+  },
+  "timeline": {
+    "ticket": "Ticket",
+    "noGroup": "Without milestone",
+    "chart": "Timeline",
+    "today": "Today",
+    "target": "{{name}}: target {{date}}",
+    "forecast": {
+      "on_track": "Forecast {{date}}: on track",
+      "at_risk": "Forecast {{date}}: at risk",
+      "no_forecast": "No forecast",
+      "done": "Done"
+    },
+    "conflict": "{{blocker}} blocks {{blocked}} but ends after it starts",
+    "blocks": "{{blocker}} blocks {{blocked}}",
+    "undated": "Without dates",
+    "undatedHelp": "Drag a ticket onto the timeline to give it dates.",
+    "groupBy": "Group by",
+    "byMilestone": "By milestone",
+    "byArea": "By area",
+    "zoom": "Zoom",
+    "zooms": {
+      "week": "Week",
+      "month": "Month",
+      "quarter": "Quarter"
+    },
+    "truncated": "Showing the first 2,000 tickets. Narrow the query."
   }
 }

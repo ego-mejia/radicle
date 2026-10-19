@@ -19,6 +19,15 @@ export function columnHolds(
   return Boolean(match && (column.status_ids ?? []).includes(match.id));
 }
 
+/** The column a status shows in: the first one that holds it, or -1. */
+export function columnIndexOf(
+  board: Board,
+  status: { name: string; category: Category },
+  type: TicketType,
+): number {
+  return board.columns.findIndex((column) => columnHolds(board, column, status, type));
+}
+
 /** Transitions of a ticket that land in `column`. */
 export function optionsFor(
   board: Board,
@@ -26,10 +35,9 @@ export function optionsFor(
   options: TransitionOption[],
   type: TicketType,
 ): TransitionOption[] {
-  const column = board.columns[columnIndex];
-  if (!column) return [];
-  return options.filter((o) =>
-    columnHolds(board, column, { name: o.to_status, category: o.category }, type),
+  if (!board.columns[columnIndex]) return [];
+  return options.filter(
+    (o) => columnIndexOf(board, { name: o.to_status, category: o.category }, type) === columnIndex,
   );
 }
 

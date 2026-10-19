@@ -44,7 +44,8 @@
     "mainNav": "Navegación principal",
     "breadcrumb": "Ruta",
     "skip": "Saltar al contenido",
-    "backlog": "Backlog"
+    "backlog": "Backlog",
+    "timeline": "Timeline"
   },
   "theme": {
     "label": "Tema",
@@ -886,5 +887,32 @@
     "goBacklog": "Ir al backlog",
     "daysLeft_one": "Queda {{count}} día",
     "daysLeft_other": "Quedan {{count}} días"
+  },
+  "timeline": {
+    "ticket": "Ticket",
+    "noGroup": "Sin milestone",
+    "chart": "Timeline",
+    "today": "Hoy",
+    "target": "{{name}}: objetivo {{date}}",
+    "forecast": {
+      "on_track": "Pronóstico {{date}}: en tiempo",
+      "at_risk": "Pronóstico {{date}}: en riesgo",
+      "no_forecast": "Sin pronóstico",
+      "done": "Terminado"
+    },
+    "conflict": "{{blocker}} bloquea a {{blocked}} pero termina después de que empieza",
+    "blocks": "{{blocker}} bloquea a {{blocked}}",
+    "undated": "Sin fechas",
+    "undatedHelp": "Arrastra un ticket al timeline para darle fechas.",
+    "groupBy": "Agrupar por",
+    "byMilestone": "Por milestone",
+    "byArea": "Por área",
+    "zoom": "Zoom",
+    "zooms": {
+      "week": "Semana",
+      "month": "Mes",
+      "quarter": "Trimestre"
+    },
+    "truncated": "Se muestran los primeros 2,000 tickets. Acota la consulta."
   }
 }

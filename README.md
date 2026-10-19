@@ -80,6 +80,8 @@ Cada proyecto empieza con un board Kanban "Main". Los admins crean más desde el
 
 Los boards Scrum tienen sprints. En la pestaña **Backlog** se planean arrastrando tickets a cada sprint (con barra de capacidad), se inicia el sprint con fechas y meta, y al cerrarlo lo pendiente pasa al siguiente sprint o regresa a `#backlog`.
 
+La pestaña **Timeline** muestra los tickets en el tiempo por milestone o área: arrastra una barra para cambiar sus fechas, o un ticket del panel "Sin fechas" para dárselas. Las dependencias imposibles se marcan en rojo.
+
 ## Atajos
 
 `?` muestra todos. Los principales: `c` crear ticket, `/` buscar, `⌘K` paleta de comandos, `g p` proyectos, `g m` mis tickets, `j`/`k` moverse en listas y board, y con un ticket abierto `e` título, `a` asignarme, `m` mover, `l` tags, `p` prioridad. Se pueden apagar en el perfil.

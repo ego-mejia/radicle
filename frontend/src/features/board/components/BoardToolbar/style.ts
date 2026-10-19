@@ -5,14 +5,10 @@ export const Bar = styled.div`
   flex-wrap: wrap;
   align-items: center;
   gap: ${({ theme }) => theme.space.sm};
-  padding: 0 ${({ theme }) => theme.space.xl} ${({ theme }) => theme.space.sm};
+  padding: 0 0 ${({ theme }) => theme.space.sm};
 
   select {
     width: auto;
-  }
-
-  @media (max-width: 640px) {
-    padding: 0 ${({ theme }) => theme.space.lg} ${({ theme }) => theme.space.sm};
   }
 `;
 

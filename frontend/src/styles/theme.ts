@@ -24,7 +24,10 @@ type Palette = Record<
   | 'onAccent'
   | 'accentSoft'
   | 'danger'
-  | 'warning',
+  | 'warning'
+  | 'catTodo'
+  | 'catProgress'
+  | 'catDone',
   string
 >;
 
@@ -52,6 +55,10 @@ export const lightTheme: Theme = {
     accentSoft: '#ECF8C8',
     danger: '#DC2626',
     warning: '#B45309',
+    // Status categories in charts: grey to do, lime in progress, dark green done.
+    catTodo: '#9CA3AF',
+    catProgress: '#C6F432',
+    catDone: '#4D7C0F',
   },
   fonts,
   space,
@@ -75,6 +82,9 @@ export const darkTheme: Theme = {
     accentSoft: '#2A3311',
     danger: '#F87171',
     warning: '#F5A524',
+    catTodo: '#4B5563',
+    catProgress: '#C6F432',
+    catDone: '#65A30D',
   },
 };
 

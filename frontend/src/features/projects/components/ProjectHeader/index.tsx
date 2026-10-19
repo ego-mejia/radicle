@@ -1,5 +1,5 @@
 import { createLink } from '@tanstack/react-router';
-import { Columns3, Flag, List, ListTodo, Settings } from 'lucide-react';
+import { CalendarRange, Columns3, Flag, List, ListTodo, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Badge, TicketKey } from '../../../../components/ui/Badge';
 import type { ProjectDetail } from '../../../../services/api/types';
@@ -43,6 +43,15 @@ export function ProjectHeader({ project, actions }: Props) {
         <Tab to="/p/$key/list" params={params} search={{}} activeOptions={{ includeSearch: false }}>
           <List />
           {t('nav.list')}
+        </Tab>
+        <Tab
+          to="/p/$key/timeline"
+          params={params}
+          search={{}}
+          activeOptions={{ includeSearch: false }}
+        >
+          <CalendarRange />
+          {t('nav.timeline')}
         </Tab>
         <Tab to="/p/$key/milestones" params={params}>
           <Flag />

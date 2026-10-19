@@ -1717,6 +1717,31 @@
         "title": "CustomFieldType",
         "type": "string"
       },
+      "DependencyOut": {
+        "properties": {
+          "blocked": {
+            "title": "Blocked",
+            "type": "string"
+          },
+          "blocker": {
+            "description": "Key of the ticket that blocks",
+            "title": "Blocker",
+            "type": "string"
+          },
+          "conflict": {
+            "description": "The blocker ends after the blocked ticket begins",
+            "title": "Conflict",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "blocker",
+          "blocked",
+          "conflict"
+        ],
+        "title": "DependencyOut",
+        "type": "object"
+      },
       "EventOut": {
         "properties": {
           "actor": {
@@ -2633,6 +2658,56 @@
           "name"
         ],
         "title": "MilestoneCreate",
+        "type": "object"
+      },
+      "MilestoneMarker": {
+        "properties": {
+          "forecast_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Date"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "percent_by_hours": {
+            "title": "Percent By Hours",
+            "type": "number"
+          },
+          "state": {
+            "description": "on_track, at_risk, no_forecast or done",
+            "title": "State",
+            "type": "string"
+          },
+          "target_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Date"
+          }
+        },
+        "required": [
+          "name",
+          "target_date",
+          "forecast_date",
+          "state",
+          "percent_by_hours"
+        ],
+        "title": "MilestoneMarker",
         "type": "object"
       },
       "MilestoneOut": {
@@ -6532,6 +6607,257 @@
         ],
         "title": "TicketType",
         "type": "string"
+      },
+      "TimelineGroup": {
+        "properties": {
+          "key": {
+            "description": "Milestone or area id; empty for tickets without one",
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MilestoneMarker"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tickets": {
+            "items": {
+              "$ref": "#/components/schemas/TimelineTicket"
+            },
+            "title": "Tickets",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "milestone",
+          "tickets"
+        ],
+        "title": "TimelineGroup",
+        "type": "object"
+      },
+      "TimelineOut": {
+        "properties": {
+          "dependencies": {
+            "items": {
+              "$ref": "#/components/schemas/DependencyOut"
+            },
+            "title": "Dependencies",
+            "type": "array"
+          },
+          "group_by": {
+            "title": "Group By",
+            "type": "string"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/TimelineGroup"
+            },
+            "title": "Groups",
+            "type": "array"
+          },
+          "truncated": {
+            "description": "More than 2,000 tickets: narrow the query",
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "undated": {
+            "description": "Tickets without start or due date",
+            "items": {
+              "$ref": "#/components/schemas/TimelineTicket"
+            },
+            "title": "Undated",
+            "type": "array"
+          }
+        },
+        "required": [
+          "group_by",
+          "groups",
+          "undated",
+          "dependencies",
+          "truncated"
+        ],
+        "title": "TimelineOut",
+        "type": "object"
+      },
+      "TimelineTicket": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "assignee": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "blocked": {
+            "title": "Blocked",
+            "type": "boolean"
+          },
+          "checklist_done": {
+            "title": "Checklist Done",
+            "type": "integer"
+          },
+          "checklist_total": {
+            "title": "Checklist Total",
+            "type": "integer"
+          },
+          "custom_fields": {
+            "additionalProperties": true,
+            "title": "Custom Fields",
+            "type": "object"
+          },
+          "due_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due Date"
+          },
+          "estimate_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimate Hours"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milestone"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/Priority"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "string"
+          },
+          "resolution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Resolution"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "spent_hours": {
+            "title": "Spent Hours",
+            "type": "number"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
+          "status": {
+            "$ref": "#/components/schemas/StatusRef"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TicketType"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "description": "Send it as If-Match when changing the dates",
+            "title": "Version",
+            "type": "integer"
+          },
+          "vote_count": {
+            "title": "Vote Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "title",
+          "type",
+          "status",
+          "resolution",
+          "priority",
+          "assignee",
+          "area",
+          "milestone",
+          "tags",
+          "custom_fields",
+          "blocked",
+          "start_date",
+          "due_date",
+          "estimate_hours",
+          "spent_hours",
+          "vote_count",
+          "checklist_done",
+          "checklist_total",
+          "rank",
+          "updated_at",
+          "version"
+        ],
+        "title": "TimelineTicket",
+        "type": "object"
       },
       "TokenCreate": {
         "additionalProperties": false,
@@ -10704,6 +11030,115 @@
         "summary": "Create Ticket",
         "tags": [
           "tickets"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/timeline": {
+      "get": {
+        "description": "Tickets by start_date and due_date, grouped by milestone (with target and forecast)\nor area, and Blocks dependencies with conflicts marked.",
+        "operationId": "get_timeline_api_v1_projects__key__timeline_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "group_by",
+            "required": false,
+            "schema": {
+              "default": "milestone",
+              "enum": [
+                "milestone",
+                "area"
+              ],
+              "title": "Group By",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Extra RQL, combined with AND",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Extra RQL, combined with AND",
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimelineOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Timeline",
+        "tags": [
+          "timeline"
         ]
       }
     },

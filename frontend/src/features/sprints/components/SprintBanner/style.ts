@@ -5,7 +5,7 @@ export const Banner = styled.div`
   flex-wrap: wrap;
   align-items: center;
   gap: ${({ theme }) => theme.space.md};
-  margin: 0 ${({ theme }) => theme.space.xl} ${({ theme }) => theme.space.md};
+  margin: 0 0 ${({ theme }) => theme.space.md};
   padding: ${({ theme }) => theme.space.sm} ${({ theme }) => theme.space.md};
   border: 1px solid ${({ theme }) => theme.color.border};
   border-left: 3px solid ${({ theme }) => theme.color.accent};
@@ -19,10 +19,6 @@ export const Banner = styled.div`
 
   a {
     margin-left: auto;
-  }
-
-  @media (max-width: 640px) {
-    margin: 0 ${({ theme }) => theme.space.lg} ${({ theme }) => theme.space.md};
   }
 `;
 
