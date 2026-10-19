@@ -9,9 +9,10 @@ Ticket tracker self-hosted con MCP. Antes de programar lee `docs/Radicle Documen
 - Todo cambio de esquema: migración Alembic con upgrade y downgrade. `tests/integration/test_migrations.py` corre up/down/up y `alembic check`.
 - Cada endpoint: test feliz, de error y de permisos. Tests contra Postgres real (testcontainers).
 - Cobertura: 85% en `services/` y `query/`, 70% total. mypy estricto en `services/` y `query/`.
-- Código, API y commits en inglés (Conventional Commits, ramas `feat/1.x-nombre`). Docs en español.
+- Código, API y commits en inglés (Conventional Commits). Docs internos (`docs/`) en español; `README.md` y `CONTRIBUTING.md` en inglés, con `README.es.md` en español.
+- Ramas `tipo/descripcion` (`feat/`, `minor/`, `fix/`, `refactor/`, `docs/`). Un PR hace una sola cosa, con tests, menos de 500 líneas y menos de 100 archivos (`scripts/pr-size.sh`). Ver `CONTRIBUTING.md`.
 - Si algo se desvía del spec, primero un ADR en `docs/decisions/`.
-- Al cerrar un entregable: `docs/progress.md`, `CHANGELOG.md` y README.
+- Al cerrar un entregable: `docs/progress.md`, `CHANGELOG.md` y README (inglés y español).
 
 ## Frontend
 

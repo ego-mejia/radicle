@@ -4,8 +4,18 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- Licencia AGPL-3.0-only confirmada y archivo `LICENSE` agregado.
+- Los datos de demo (`scripts/seed.py`) ahora son en inglés.
+
+### Fixed
+
+- La gráfica de barras horizontal (Open by area) mostraba solo una etiqueta de cada dos.
+
 ### Added
 
+- README en inglés con guía de cada función, screenshots y diagramas; `README.es.md`; `CONTRIBUTING.md`; plantillas de PR e issues; check `PR size` (rama `tipo/descripcion`, menos de 500 líneas y 100 archivos).
 - 1.1: base del monorepo, Docker Compose, CI, setup inicial, login con sesión y CSRF, usuarios, agentes, tokens personales y de agente, errores RFC 9457, pantalla de estado con tema lima e idiomas inglés y español.
 - 1.2: proyectos con key, workflows default sembrados, miembros con rol, áreas y milestones, permisos por rol con 404 para no miembros.
 - 1.3: tickets Task, Bug y Draft con campos fijos, checklist, menciones, colaboradores, ticket padre, versionado optimista, soft delete e historial inmutable.
