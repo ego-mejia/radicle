@@ -19,7 +19,6 @@ from radicle.core.errors import Forbidden, NotFound, ValidationFailed
 from radicle.db.models import (
     EventType,
     Project,
-    ProjectRole,
     Ticket,
     TicketVote,
     User,
@@ -28,7 +27,7 @@ from radicle.db.models import (
     utcnow,
 )
 from radicle.services import history
-from radicle.services.access import ProjectAccess, check_access, role_in
+from radicle.services.access import ProjectAccess, access_for
 from radicle.services.remaining import recompute_remaining
 from radicle.services.ticket_fields import estimate_json
 from radicle.services.tickets import bump
@@ -214,15 +213,11 @@ async def load_worklog(db: AsyncSession, user: User, worklog_id: uuid.UUID) -> W
     project = await db.get(Project, ticket.project_id) if ticket else None
     if ticket is None or project is None or ticket.deleted_at is not None:
         raise not_found
-    role = await role_in(db, user, project)
-    if role is None:
-        raise not_found
-    access = check_access(project, role, user, need=ProjectRole.member, write=True)
-    if worklog.user_id != user.id and not access.at_least(ProjectRole.admin):
-        raise Forbidden(
-            "You can only change your own worklogs (admins can change any).",
-            code="not_your_worklog",
-        )
+    try:
+        access = await access_for(db, user, project, write=True)
+    except NotFound:
+        raise not_found from None
+    access.require("worklog.create" if worklog.user_id == user.id else "worklog.edit_any")
     return WorklogAccess(access, ticket, worklog)
 
 

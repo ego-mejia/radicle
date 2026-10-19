@@ -280,7 +280,9 @@ async def move_ticket(
 ) -> Ticket:
     """Give the ticket (and its subtickets) a new number in another project. The old key
     keeps working. Links, comments, attachments, worklogs and history stay."""
-    target = await project_access(db, access.user, target_key, need=ProjectRole.member, write=True)
+    target = await project_access(
+        db, access.user, target_key, write=True, permission="ticket.create"
+    )
     if target.project.id == access.project.id:
         raise ValidationFailed(
             f"{_key(access.project, ticket)} is already in {target.project.key}.",

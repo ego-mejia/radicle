@@ -22,7 +22,7 @@ export function MoveModal({ ticket, onClose }: { ticket: Ticket; onClose: () => 
   const queryClient = useQueryClient();
   const errorMessage = useErrorMessage();
   const targets = (me.projects ?? []).filter(
-    (p) => p.key !== ticket.project && p.role !== 'viewer',
+    (p) => p.key !== ticket.project && p.permissions.includes('ticket.create'),
   );
   const [target, setTarget] = useState(targets[0]?.key ?? '');
   const [area, setArea] = useState('');

@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.config import get_settings
-from radicle.core.errors import Conflict, Forbidden, NotFound, ProblemError, ValidationFailed
+from radicle.core.errors import Conflict, NotFound, ProblemError, ValidationFailed
 from radicle.db.models import (
     Attachment,
     Comment,
@@ -22,7 +22,7 @@ from radicle.db.models import (
     utcnow,
 )
 from radicle.services import history, images, queue
-from radicle.services.access import ProjectAccess, check_access, role_in
+from radicle.services.access import ProjectAccess, access_for
 from radicle.services.tickets import bump
 from radicle.storage import get_storage
 
@@ -157,6 +157,7 @@ async def load(
     *,
     need: ProjectRole = ProjectRole.viewer,
     write: bool = False,
+    permission: str | None = None,
 ) -> AttachmentAccess:
     """The attachment if the user may see its ticket; 404 otherwise, like tickets."""
     attachment = await db.get(Attachment, attachment_id)
@@ -169,10 +170,10 @@ async def load(
     project = await db.get(Project, ticket.project_id)
     if project is None:  # pragma: no cover - foreign key
         raise not_found
-    role = await role_in(db, user, project)
-    if role is None:
-        raise not_found
-    access = check_access(project, role, user, need=need, write=write)
+    try:
+        access = await access_for(db, user, project, need=need, write=write, permission=permission)
+    except NotFound:
+        raise not_found from None
     return AttachmentAccess(access, ticket, attachment)
 
 
@@ -221,11 +222,8 @@ async def resize(db: AsyncSession, aa: AttachmentAccess, preset: str) -> Attachm
 async def delete(db: AsyncSession, aa: AttachmentAccess) -> None:
     """Uploader or project admin. The record stays (history), the bytes go."""
     attachment = aa.attachment
-    if attachment.uploader_id != aa.access.user.id and not aa.access.at_least(ProjectRole.admin):
-        raise Forbidden(
-            "Only whoever uploaded it or a project admin can delete this attachment.",
-            code="not_uploader",
-        )
+    own = attachment.uploader_id == aa.access.user.id
+    aa.access.require("attachment.upload" if own else "attachment.delete_any")
     attachment.deleted_at = utcnow()
     history.record(
         db,

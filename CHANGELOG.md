@@ -13,6 +13,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - 1.5: links entre tickets con su inverso y aviso de bloqueado, comentarios markdown con menciones y reacciones.
 - 1.6: lenguaje de queries RQL con full-text en inglés y español, errores con posición, autocompletado y seed de 10,000 tickets.
 - 1.7: servidor MCP en `/mcp` con 19 tools, guía de RQL como recurso y autenticación por token de agente.
+- 4.1: grupos, rol efectivo por grupo y matriz de permisos por proyecto con una sola función de autorización en API, MCP y UI.
 - 3.7: dashboards con diez widgets, visibilidad privada, de proyecto o de instancia, datos con los permisos de quien ve, modo edición con drag y resize, y un Resumen por proyecto.
 - 3.5 y 3.6: reportes agile y generales con gráficas, tabla, CSV y tools MCP `get_report` y `get_milestone_progress`; pronóstico en milestones.
 - 3.4: timeline (Gantt) con milestones, pronóstico, drag de fechas, dependencias en rojo y tickets sin fechas; `start_date` editable.

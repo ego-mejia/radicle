@@ -1,3 +1,4 @@
+import { can } from '../../../../lib/permissions';
 import {
   DndContext,
   DragOverlay,
@@ -76,8 +77,8 @@ export function BoardView() {
   if (loadingProject) return <PageSpinner />;
   if (isError || !project) return <EmptyState plant="seed" title={t('board.notFound')} />;
 
-  const canDrag = project.role !== 'viewer' && !project.archived;
-  const isAdmin = project.role === 'admin';
+  const canDrag = can(project, 'ticket.transition');
+  const isAdmin = can(project, 'board.manage');
   const go = (next: Partial<typeof search>) => void navigate({ search: { ...search, ...next } });
   const setFilters = (next: Filters) =>
     void navigate({ search: { ...next, t: openKey, board: boardParam, qf, lane } });

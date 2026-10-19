@@ -8,15 +8,35 @@ import { useProject } from '../../../projects/hooks/useProject';
 import { AreasSection } from '../../components/AreasSection';
 import { CustomFieldsSection } from '../../components/CustomFieldsSection';
 import { GeneralSection } from '../../components/GeneralSection';
+import { GroupRolesSection } from '../../components/GroupRolesSection';
 import { MembersSection } from '../../components/MembersSection';
+import { PermissionsSection } from '../../components/PermissionsSection';
 import { ScreensSection } from '../../components/ScreensSection';
 import { TemplateBanner } from '../../components/TemplateBanner';
 import { WorkflowsSection } from '../../components/WorkflowsSection';
 import { MilestonesList } from '../../../milestones/components/MilestonesList';
+import { can } from '../../../../lib/permissions';
 import * as S from './style';
 
-type Tab = 'general' | 'members' | 'areas' | 'milestones' | 'workflows' | 'fields' | 'screens';
-const TABS: Tab[] = ['general', 'members', 'areas', 'milestones', 'workflows', 'fields', 'screens'];
+type Tab =
+  | 'general'
+  | 'members'
+  | 'permissions'
+  | 'areas'
+  | 'milestones'
+  | 'workflows'
+  | 'fields'
+  | 'screens';
+const TABS: Tab[] = [
+  'general',
+  'members',
+  'permissions',
+  'areas',
+  'milestones',
+  'workflows',
+  'fields',
+  'screens',
+];
 
 export function SettingsView() {
   const { t } = useTranslation();
@@ -28,7 +48,8 @@ export function SettingsView() {
 
   if (isPending) return <PageSpinner />;
   if (!project) return <EmptyState plant="seed" title={t('board.notFound')} />;
-  const isAdmin = project.role === 'admin';
+  const isAdmin = can(project, 'project.settings');
+  const manageMembers = can(project, 'members.manage');
 
   return (
     <>
@@ -42,7 +63,18 @@ export function SettingsView() {
         {current === 'general' && (
           <GeneralSection key={project.key} project={project} isAdmin={isAdmin} />
         )}
-        {current === 'members' && <MembersSection project={project} isAdmin={isAdmin} />}
+        {current === 'members' && (
+          <>
+            <MembersSection project={project} isAdmin={manageMembers} />
+            <GroupRolesSection project={project} editable={manageMembers} />
+          </>
+        )}
+        {current === 'permissions' && (
+          <PermissionsSection
+            project={project}
+            editable={project.role === 'admin' && !project.archived}
+          />
+        )}
         {current === 'areas' && <AreasSection project={project} isAdmin={isAdmin} />}
         {current === 'milestones' && (
           <MilestonesList project={project} renderHeader={(addButton) => addButton} />

@@ -102,7 +102,9 @@ class MemberOut(Output):
     handle: str
     display_name: str
     kind: UserKind
-    role: ProjectRole
+    role: ProjectRole | None = Field(description="Direct role; null when only through groups")
+    effective_role: ProjectRole = Field(description="Highest of the direct and group roles")
+    groups: list[str] = Field(default_factory=list, description="Groups that bring them in")
     is_active: bool
 
 
@@ -163,3 +165,6 @@ class ProjectDetail(ProjectOut):
     template: ProjectTemplateOut | None
     blocked_policy: BlockedPolicy
     suggested_tags: list[str]
+    permissions: list[str] = Field(
+        default_factory=list, description="What you may do here, from the permission matrix"
+    )

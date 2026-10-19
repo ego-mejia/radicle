@@ -49,7 +49,9 @@ async def create_link(
 
     Returns the ticket's links after the change.
     """
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="link.manage"
+    )
     await relations.add_link(db, access, ticket, _link_type(body.type), body.target)
     return await list_links(key, principal, db)
 
@@ -104,7 +106,9 @@ async def create_comment(
     key: str, body: CommentIn, principal: CurrentPrincipal, db: Db
 ) -> CommentOut:
     """Comment in markdown. @handles outside code are recorded as mentions."""
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="comment.create"
+    )
     comment = await comments.add_comment(db, access, ticket, body.body_md)
     return (await _comments_out(db, key.upper(), [comment]))[0]
 
@@ -118,7 +122,7 @@ async def edit_comment(
     comment_id: UUID, body: CommentIn, principal: CurrentPrincipal, db: Db
 ) -> CommentOut:
     """Only the author can edit."""
-    ca = await comments.load_comment(db, principal.user, comment_id, need=MEMBER)
+    ca = await comments.load_comment(db, principal.user, comment_id, permission="comment.create")
     comment = await comments.edit_comment(db, ca, body.body_md)
     return (await _comments_out(db, await _comment_key(db, ca), [comment]))[0]
 
@@ -126,7 +130,7 @@ async def edit_comment(
 @router.delete("/comments/{comment_id}", status_code=204)
 async def delete_comment(comment_id: UUID, principal: CurrentPrincipal, db: Db) -> Response:
     """The author or a project admin can delete. History records 'comment deleted'."""
-    ca = await comments.load_comment(db, principal.user, comment_id, need=MEMBER)
+    ca = await comments.load_comment(db, principal.user, comment_id, write=True)
     await comments.delete_comment(db, ca)
     return Response(status_code=204)
 
@@ -135,7 +139,7 @@ async def delete_comment(comment_id: UUID, principal: CurrentPrincipal, db: Db) 
 async def add_reaction(
     comment_id: UUID, emoji: str, principal: CurrentPrincipal, db: Db
 ) -> CommentOut:
-    ca = await comments.load_comment(db, principal.user, comment_id, need=MEMBER)
+    ca = await comments.load_comment(db, principal.user, comment_id, permission="comment.create")
     await comments.set_reaction(db, ca, emoji, True)
     return (await _comments_out(db, await _comment_key(db, ca), [ca.comment]))[0]
 
@@ -144,6 +148,6 @@ async def add_reaction(
 async def remove_reaction(
     comment_id: UUID, emoji: str, principal: CurrentPrincipal, db: Db
 ) -> CommentOut:
-    ca = await comments.load_comment(db, principal.user, comment_id, need=MEMBER)
+    ca = await comments.load_comment(db, principal.user, comment_id, permission="comment.create")
     await comments.set_reaction(db, ca, emoji, False)
     return (await _comments_out(db, await _comment_key(db, ca), [ca.comment]))[0]

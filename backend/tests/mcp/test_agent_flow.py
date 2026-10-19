@@ -21,7 +21,9 @@ async def test_agent_flow_end_to_end(client: AsyncClient, board: Team, mcp_for: 
     async with mcp_for(board.agent) as mcp:
         me = payload(await mcp.call_tool("whoami"))
         assert me["handle"] == "agent-backend" and me["kind"] == "agent"
-        assert me["projects"] == [{"key": "PA", "name": "ProyectoA", "role": "member"}]
+        assert [(p["key"], p["role"]) for p in me["projects"]] == [("PA", "member")]
+        assert "ticket.transition" in me["projects"][0]["permissions"]
+        assert "ticket.delete" not in me["projects"][0]["permissions"]
 
         mine = payload(await mcp.call_tool("my_tickets"))
         assert [t["key"] for t in mine["items"]] == ["PA-4"]

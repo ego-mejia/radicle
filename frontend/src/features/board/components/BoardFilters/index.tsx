@@ -61,7 +61,7 @@ export function BoardFilters({ project, tags, value, onChange }: Props) {
         <option value="me">{t('board.me')}</option>
         <option value="-">{t('ticket.unassigned')}</option>
         {project.members
-          .filter((m) => m.role !== 'viewer')
+          .filter((m) => m.effective_role !== 'viewer')
           .map((m) => (
             <option key={m.handle} value={m.handle}>
               @{m.handle}

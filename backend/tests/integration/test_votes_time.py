@@ -14,9 +14,13 @@ async def ticket(client: AsyncClient, team: Team, key: str = "PA-1") -> dict:
 async def test_votes_and_backlog_by_votes(client: AsyncClient, board: Team) -> None:
     for title in ("Poco", "Mucho", "Nada"):
         await new_ticket(client, board.member, title=title, tags=["backlog"])
-    for actor in (board.member, board.admin, board.viewer):
+    for actor in (board.member, board.admin):
         r = await client.put(f"{API}/tickets/PA-2/vote", headers=actor.headers)
-        assert r.status_code == (403 if actor is board.viewer else 200)
+        assert r.status_code == 200
+    # Viewers vote too: the 'vote' permission is on for them by default.
+    r = await client.put(f"{API}/tickets/PA-3/vote", headers=board.viewer.headers)
+    assert r.status_code == 200
+    await client.delete(f"{API}/tickets/PA-3/vote", headers=board.viewer.headers)
     r = await client.put(f"{API}/tickets/PA-2/vote", headers=board.member.headers)
     assert r.json() == {"vote_count": 2, "voted_by_me": True}  # twice changes nothing
     await client.put(f"{API}/tickets/PA-1/vote", headers=board.member.headers)
@@ -105,7 +109,7 @@ async def test_worklogs_permissions_and_history(client: AsyncClient, board: Team
     r = await client.patch(
         f"{API}/worklogs/{log['id']}", headers=board.agent.headers, json={"minutes": 10}
     )
-    assert r.status_code == 403 and "your own worklogs" in r.json()["detail"]
+    assert r.status_code == 403 and "worklog.edit_any" in r.json()["detail"]
     r = await client.patch(
         f"{API}/worklogs/{log['id']}",
         headers=board.member.headers,

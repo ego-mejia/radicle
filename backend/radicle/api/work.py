@@ -8,7 +8,7 @@ from radicle.api.deps import CurrentPrincipal, Db, HumanUser
 from radicle.api.schemas.common import Input, Output, Page, UtcDatetime
 from radicle.api.schemas.tickets import TicketOut, UserRef
 from radicle.api.ticket_views import ticket_out, user_ref
-from radicle.db.models import FilterVisibility, Project, ProjectRole, SavedFilter, TicketType
+from radicle.db.models import FilterVisibility, Project, SavedFilter, TicketType
 from radicle.services import filters, preferences, ranking, tickets
 
 router = APIRouter(tags=["filters, ranking and preferences"])
@@ -148,7 +148,7 @@ async def next_ticket(body: NextIn, principal: CurrentPrincipal, db: Db) -> Next
 async def rank_ticket(key: str, body: RankIn, principal: CurrentPrincipal, db: Db) -> TicketOut:
     """Move the ticket right before or after another ticket of the same project."""
     access, ticket = await tickets.load_ticket(
-        db, principal.user, key, need=ProjectRole.member, write=True
+        db, principal.user, key, write=True, permission="ticket.edit"
     )
     await ranking.rank_ticket(db, access, ticket, before=body.before, after=body.after)
     return await ticket_out(db, ticket, viewer=principal.user)

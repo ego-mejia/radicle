@@ -103,7 +103,9 @@ async def test_list_projects_and_me(client: AsyncClient, team: Team) -> None:
     r = await client.get(f"{API}/projects", headers=team.instance.headers)
     assert [p["key"] for p in r.json()["items"]] == ["PA", "PB"]
     r = await client.get(f"{API}/me", headers=team.viewer.headers)
-    assert r.json()["projects"] == [{"key": "PA", "name": "ProyectoA", "role": "viewer"}]
+    assert r.json()["projects"] == [
+        {"key": "PA", "name": "ProyectoA", "role": "viewer", "permissions": ["vote"]}
+    ]
 
 
 async def test_only_instance_admins_create_projects(client: AsyncClient, team: Team) -> None:

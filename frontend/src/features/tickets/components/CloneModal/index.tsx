@@ -52,7 +52,7 @@ export function CloneModal({ ticket, onClose }: { ticket: Ticket; onClose: () =>
       await navigate({ to: '/t/$key', params: { key: copy.key } });
     },
   });
-  const writable = (me.projects ?? []).filter((p) => p.role !== 'viewer');
+  const writable = (me.projects ?? []).filter((p) => p.permissions.includes('ticket.create'));
   return (
     <Modal
       open

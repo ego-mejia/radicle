@@ -10,6 +10,7 @@ import { ThemeModeProvider } from '../contexts/ThemeModeContext';
 import { ToastProvider } from '../contexts/ToastProvider';
 import { authKeys } from '../services/api/auth';
 import type { Me } from '../services/api/types';
+import { MEMBER_PERMISSIONS } from './fixtures';
 
 export const ME: Me = {
   handle: 'luis',
@@ -19,7 +20,7 @@ export const ME: Me = {
   is_instance_admin: false,
   is_active: true,
   created_at: '2026-10-18T10:00:00Z',
-  projects: [{ key: 'PA', name: 'ProyectoA', role: 'member' }],
+  projects: [{ key: 'PA', name: 'ProyectoA', role: 'member', permissions: MEMBER_PERMISSIONS }],
 };
 
 export function makeClient(me: Me | null = ME) {

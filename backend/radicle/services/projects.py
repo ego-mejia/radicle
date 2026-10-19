@@ -106,13 +106,17 @@ async def list_projects(
             for p in await db.scalars(select(Project).order_by(Project.key))
         ]
     else:
-        result = await db.execute(
-            select(Project, ProjectMember.role)
-            .join(ProjectMember, ProjectMember.project_id == Project.id)
-            .where(ProjectMember.user_id == user.id)
-            .order_by(Project.key)
+        from radicle.core.permissions import effective_role
+        from radicle.services.search import visible_project_ids
+
+        found = await db.scalars(
+            select(Project).where(Project.id.in_(visible_project_ids(user))).order_by(Project.key)
         )
-        rows = [ProjectSummary(p, role) for p, role in result.all()]
+        rows = []
+        for p in found:
+            role = await effective_role(db, user, p)
+            if role is not None:
+                rows.append(ProjectSummary(p, role))
     if not include_archived:
         rows = [r for r in rows if r.project.archived_at is None]
     return rows
@@ -151,6 +155,43 @@ async def list_members(db: AsyncSession, project: Project) -> list[ProjectMember
         .order_by(User.handle)
     )
     return list(result)
+
+
+@dataclass(frozen=True)
+class MemberRow:
+    user: User
+    role: ProjectRole | None
+    effective_role: ProjectRole
+    groups: list[str]
+
+
+async def member_rows(db: AsyncSession, project: Project) -> list[MemberRow]:
+    """Everyone in the project, directly or through groups, with their effective role."""
+    from radicle.core.permissions import highest
+    from radicle.db.models import Group, GroupMember, ProjectGroupRole
+
+    direct = {m.user_id: m for m in await list_members(db, project)}
+    via = await db.execute(
+        select(GroupMember.user_id, Group.name, ProjectGroupRole.role)
+        .join(Group, Group.id == GroupMember.group_id)
+        .join(ProjectGroupRole, ProjectGroupRole.group_id == Group.id)
+        .where(ProjectGroupRole.project_id == project.id)
+    )
+    group_roles: dict[uuid.UUID, list[tuple[str, ProjectRole]]] = {}
+    for user_id, name, role in via:
+        group_roles.setdefault(user_id, []).append((name, role))
+    ids = set(direct) | set(group_roles)
+    users = {u.id: u for u in await db.scalars(select(User).where(User.id.in_(ids)))}
+    rows = []
+    for user_id in ids:
+        d = direct.get(user_id)
+        gr = group_roles.get(user_id, [])
+        best = highest([d.role if d else None, *(r for _, r in gr)])
+        assert best is not None  # noqa: S101 - every id has a direct or group role
+        rows.append(
+            MemberRow(users[user_id], d.role if d else None, best, sorted(n for n, _ in gr))
+        )
+    return sorted(rows, key=lambda r: r.user.handle)
 
 
 async def set_member(

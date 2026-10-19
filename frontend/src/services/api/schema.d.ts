@@ -425,6 +425,64 @@ export interface paths {
         patch: operations["patch_filter_api_v1_filters__filter_id__patch"];
         trace?: never;
     };
+    "/api/v1/groups": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Groups */
+        get: operations["list_groups_api_v1_groups_get"];
+        put?: never;
+        /**
+         * Create Group
+         * @description Instance admins create groups; they hold humans and agents.
+         */
+        post: operations["create_group_api_v1_groups_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Group */
+        get: operations["get_group_api_v1_groups__name__get"];
+        put?: never;
+        post?: never;
+        /** Delete Group */
+        delete: operations["delete_group_api_v1_groups__name__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Group */
+        patch: operations["patch_group_api_v1_groups__name__patch"];
+        trace?: never;
+    };
+    "/api/v1/groups/{name}/members/{handle}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Add Group Member */
+        put: operations["add_group_member_api_v1_groups__name__members__handle__put"];
+        post?: never;
+        /** Remove Group Member */
+        delete: operations["remove_group_member_api_v1_groups__name__members__handle__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -789,6 +847,44 @@ export interface paths {
         patch: operations["patch_field_api_v1_projects__key__fields__field_key__patch"];
         trace?: never;
     };
+    "/api/v1/projects/{key}/group-roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Group Roles */
+        get: operations["list_group_roles_api_v1_projects__key__group_roles_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/group-roles/{group}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Group Role
+         * @description Every member of the group gets this role in the project (their highest role wins).
+         */
+        put: operations["put_group_role_api_v1_projects__key__group_roles__group__put"];
+        post?: never;
+        /** Delete Group Role */
+        delete: operations["delete_group_role_api_v1_projects__key__group_roles__group__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{key}/members": {
         parameters: {
             query?: never;
@@ -870,6 +966,34 @@ export interface paths {
          * @description Edit, close (`status: closed`) or reopen (`status: open`).
          */
         patch: operations["patch_milestone_api_v1_projects__key__milestones__name__patch"];
+        trace?: never;
+    };
+    "/api/v1/projects/{key}/permissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Permissions
+         * @description What member and viewer may do in this project. Admins may do everything.
+         */
+        get: operations["get_permissions_api_v1_projects__key__permissions_get"];
+        /**
+         * Put Permissions
+         * @description Turn permissions on or off for member and viewer. Only what you send changes.
+         */
+        put: operations["put_permissions_api_v1_projects__key__permissions_put"];
+        post?: never;
+        /**
+         * Reset Permissions
+         * @description Back to the defaults of the catalog.
+         */
+        delete: operations["reset_permissions_api_v1_projects__key__permissions_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/projects/{key}/save-as-template": {
@@ -2747,6 +2871,62 @@ export interface components {
             transition: string | null;
             type: components["schemas"]["TicketType"];
         };
+        /** GroupCreate */
+        GroupCreate: {
+            /**
+             * Description
+             * @default
+             */
+            description?: string;
+            /**
+             * Name
+             * @description No spaces, e.g. equipo-legal
+             */
+            name: string;
+        };
+        /** GroupDetail */
+        GroupDetail: {
+            /** Created At */
+            created_at: string;
+            /** Description */
+            description: string;
+            /** Member Count */
+            member_count: number;
+            /** Members */
+            members: components["schemas"]["UserRef"][];
+            /** Name */
+            name: string;
+        };
+        /** GroupOut */
+        GroupOut: {
+            /** Created At */
+            created_at: string;
+            /** Description */
+            description: string;
+            /** Member Count */
+            member_count: number;
+            /** Name */
+            name: string;
+        };
+        /** GroupPatch */
+        GroupPatch: {
+            /** Description */
+            description?: string | null;
+            /** Name */
+            name?: string | null;
+        };
+        /** GroupRoleOut */
+        GroupRoleOut: {
+            /** Group */
+            group: string;
+            /** Member Count */
+            member_count: number;
+            role: components["schemas"]["ProjectRole"];
+        };
+        /** GroupRolePut */
+        GroupRolePut: {
+            role: components["schemas"]["ProjectRole"];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -2914,18 +3094,32 @@ export interface components {
             key: string;
             /** Name */
             name: string;
+            /**
+             * Permissions
+             * @description What you may do there, from the permission matrix
+             */
+            permissions: string[];
+            /** @description Effective role: direct or through a group */
             role: components["schemas"]["ProjectRole"];
         };
         /** MemberOut */
         MemberOut: {
             /** Display Name */
             display_name: string;
+            /** @description Highest of the direct and group roles */
+            effective_role: components["schemas"]["ProjectRole"];
+            /**
+             * Groups
+             * @description Groups that bring them in
+             */
+            groups: string[];
             /** Handle */
             handle: string;
             /** Is Active */
             is_active: boolean;
             kind: components["schemas"]["UserKind"];
-            role: components["schemas"]["ProjectRole"];
+            /** @description Direct role; null when only through groups */
+            role: components["schemas"]["ProjectRole"] | null;
         };
         /** MemberPut */
         MemberPut: {
@@ -3093,6 +3287,20 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** Page[GroupOut] */
+        Page_GroupOut_: {
+            /** Items */
+            items: components["schemas"]["GroupOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[GroupRoleOut] */
+        Page_GroupRoleOut_: {
+            /** Items */
+            items: components["schemas"]["GroupRoleOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** Page[MemberOut] */
         Page_MemberOut_: {
             /** Items */
@@ -3184,6 +3392,39 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** PermissionRow */
+        PermissionRow: {
+            /** Description */
+            description: string;
+            /** Member */
+            member: boolean;
+            /** Member Default */
+            member_default: boolean;
+            /** Permission */
+            permission: string;
+            /** Viewer */
+            viewer: boolean;
+            /** Viewer Default */
+            viewer_default: boolean;
+        };
+        /** PermissionsOut */
+        PermissionsOut: {
+            /** Project */
+            project: string;
+            /** Rows */
+            rows: components["schemas"]["PermissionRow"][];
+        };
+        /** PermissionsPut */
+        PermissionsPut: {
+            /** Member */
+            member?: {
+                [key: string]: boolean;
+            };
+            /** Viewer */
+            viewer?: {
+                [key: string]: boolean;
+            };
+        };
         /** PreferencesOut */
         PreferencesOut: {
             /** Density */
@@ -3251,6 +3492,11 @@ export interface components {
              * @default 0
              */
             open_tickets: number;
+            /**
+             * Permissions
+             * @description What you may do here, from the permission matrix
+             */
+            permissions: string[];
             /** @description Your role in the project */
             role: components["schemas"]["ProjectRole"];
             /** Suggested Tags */
@@ -5875,6 +6121,218 @@ export interface operations {
             };
         };
     };
+    list_groups_api_v1_groups_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_GroupOut_"];
+                };
+            };
+        };
+    };
+    create_group_api_v1_groups_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GroupCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_group_api_v1_groups__name__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_group_api_v1_groups__name__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_group_api_v1_groups__name__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GroupPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_group_member_api_v1_groups__name__members__handle__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                handle: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_group_member_api_v1_groups__name__members__handle__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                name: string;
+                handle: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_api_v1_health_get: {
         parameters: {
             query?: never;
@@ -6722,6 +7180,103 @@ export interface operations {
             };
         };
     };
+    list_group_roles_api_v1_projects__key__group_roles_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_GroupRoleOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_group_role_api_v1_projects__key__group_roles__group__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                group: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GroupRolePut"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupRoleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_group_role_api_v1_projects__key__group_roles__group__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                group: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_members_api_v1_projects__key__members_get: {
         parameters: {
             query?: never;
@@ -6942,6 +7497,103 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MilestoneOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_permissions_api_v1_projects__key__permissions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PermissionsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_permissions_api_v1_projects__key__permissions_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PermissionsPut"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PermissionsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reset_permissions_api_v1_projects__key__permissions_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PermissionsOut"];
                 };
             };
             /** @description Validation Error */

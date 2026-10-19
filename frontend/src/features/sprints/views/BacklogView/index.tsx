@@ -1,3 +1,4 @@
+import { can } from '../../../../lib/permissions';
 import {
   DndContext,
   type DragEndEvent,
@@ -91,8 +92,8 @@ export function BacklogView() {
 
   if (loadingProject) return <PageSpinner />;
   if (isError || !project) return <EmptyState plant="seed" title={t('board.notFound')} />;
-  const isAdmin = project.role === 'admin' && !project.archived;
-  const canEdit = project.role !== 'viewer' && !project.archived;
+  const isAdmin = can(project, 'sprint.manage');
+  const canEdit = can(project, 'ticket.edit');
 
   if (boards && !board) {
     return (

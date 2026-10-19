@@ -407,7 +407,16 @@
     "lastUsed": "usado {{when}}",
     "neverUsed": "nunca usado",
     "forbidden": "Solo los admins de instancia pueden abrir esta página.",
-    "templates": "Templates"
+    "templates": "Templates",
+    "groups": "Grupos",
+    "groupsHelp": "Grupos de personas y agentes. Agrega un grupo a un proyecto con un rol y todos sus integrantes trabajan ahí.",
+    "groupName": "Nombre",
+    "groupDescription": "Descripción",
+    "newGroup": "Nuevo grupo",
+    "deleteGroup": "Borrar {{group}}",
+    "deleteGroupConfirm": "Sus integrantes pierden el acceso que les daba el grupo.",
+    "addToGroup": "Agregar a {{group}}",
+    "removeFromGroup": "Quitar a @{{handle}} de {{group}}"
   },
   "settings": {
     "general": "General",
@@ -431,7 +440,20 @@
     "fields": "Campos",
     "workflowsEditHelp": "Estados y transiciones por tipo. Al quitar un estado se pregunta a dónde van sus tickets.",
     "workflowsLinkedHelp": "Vienen del template {{template}}. Edítalos ahí o desliga el proyecto.",
-    "screens": "Screens"
+    "screens": "Screens",
+    "permissions": "Permisos",
+    "permissionsHelp": "Qué pueden hacer member y viewer en este proyecto. Los admins siempre pueden todo. Las casillas resaltadas no son las de default.",
+    "permission": "Permiso",
+    "restoreDefaults": "Restaurar defaults",
+    "groups": "Grupos",
+    "groupsHelp": "Todos los integrantes de un grupo reciben su rol aquí; el rol de una persona es el más alto de los suyos.",
+    "noGroups": "No hay grupos en este proyecto.",
+    "groupMembers_one": "{{count}} persona",
+    "groupMembers_other": "{{count}} personas",
+    "addGroup": "Agregar grupo",
+    "groupRole": "Rol del grupo",
+    "viaGroups": "por {{groups}}",
+    "effectiveRole": "Rol efectivo"
   },
   "profile": {
     "details": "Datos",
@@ -1141,5 +1163,27 @@
         "help": "Texto libre: notas, links, metas."
       }
     }
+  },
+  "permissions": {
+    "ticket.create": "Crear tickets",
+    "ticket.edit": "Editar tickets",
+    "ticket.transition": "Mover tickets entre estados",
+    "ticket.delete": "Borrar tickets",
+    "ticket.move": "Mover tickets a otro proyecto",
+    "ticket.bulk_edit": "Editar muchos tickets a la vez",
+    "ticket.set_security": "Cambiar el nivel de seguridad",
+    "comment.create": "Comentar",
+    "comment.delete_any": "Borrar comentarios de otros",
+    "attachment.upload": "Adjuntar archivos",
+    "attachment.delete_any": "Borrar archivos de otros",
+    "worklog.create": "Registrar tiempo",
+    "worklog.edit_any": "Editar el tiempo de otros",
+    "vote": "Votar",
+    "link.manage": "Ligar tickets",
+    "sprint.manage": "Administrar sprints",
+    "board.manage": "Administrar boards",
+    "inbox.triage": "Hacer triage del Buzón",
+    "project.settings": "Cambiar la configuración",
+    "members.manage": "Administrar miembros"
   }
 }

@@ -1,3 +1,4 @@
+import { can } from '../../../../lib/permissions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useState } from 'react';
@@ -56,7 +57,7 @@ export function TimelineView() {
 
   if (loadingProject) return <PageSpinner />;
   if (isError || !project) return <EmptyState plant="seed" title={t('board.notFound')} />;
-  const canEdit = project.role !== 'viewer' && !project.archived;
+  const canEdit = can(project, 'ticket.edit');
   const go = (next: Partial<typeof search>) => void navigate({ search: { ...search, ...next } });
   const error =
     isApiError(timeline.error, 422) && timeline.error.problem.position !== undefined

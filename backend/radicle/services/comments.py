@@ -14,13 +14,12 @@ from radicle.db.models import (
     CommentReaction,
     EventType,
     Project,
-    ProjectRole,
     Ticket,
     User,
     utcnow,
 )
 from radicle.services import history
-from radicle.services.access import ProjectAccess, check_access, role_in
+from radicle.services.access import ProjectAccess, access_for
 from radicle.services.tickets import bump, sync_mentions
 
 BODY_MAX = 50_000
@@ -129,7 +128,12 @@ class CommentAccess:
 
 
 async def load_comment(
-    db: AsyncSession, user: User, comment_id: uuid.UUID, *, need: ProjectRole
+    db: AsyncSession,
+    user: User,
+    comment_id: uuid.UUID,
+    *,
+    permission: str | None = None,
+    write: bool = False,
 ) -> CommentAccess:
     not_found = NotFound(f"Comment {comment_id} not found.", code="comment_not_found")
     comment = await db.get(Comment, comment_id)
@@ -144,12 +148,8 @@ async def load_comment(
     if project is None:  # pragma: no cover - FK
         raise not_found
     try:
-        access = check_access(
-            project,
-            await role_in(db, user, project),
-            user,
-            need=need,
-            write=need is not ProjectRole.viewer,
+        access = await access_for(
+            db, user, project, write=write or permission is not None, permission=permission
         )
     except NotFound:
         raise not_found from None
@@ -178,10 +178,7 @@ async def edit_comment(db: AsyncSession, ca: CommentAccess, body: str) -> Commen
 
 async def delete_comment(db: AsyncSession, ca: CommentAccess) -> None:
     is_author = ca.comment.author_id == ca.access.user.id
-    if not is_author and ca.access.role is not ProjectRole.admin:
-        raise Forbidden(
-            "Only the author or a project admin can delete a comment.", code="not_author"
-        )
+    ca.access.require("comment.create" if is_author else "comment.delete_any")
     ca.comment.deleted_at = utcnow()
     await sync_mentions(db, ca.ticket.id, ca.comment.id, "")
     history.record(

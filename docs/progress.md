@@ -471,3 +471,28 @@ Los criterios de aceptación de la etapa se verifican así:
 | Un agente consulta `get_milestone_progress` y `get_sprint` por MCP | `test_mcp_reports`, `test_mcp_sprints` |
 | Rendimiento: CFD de un año con 10,000 tickets < 1 s; board de 500 con swimlanes < 1 s | `test_performance.py` (marca `slow`) |
 
+## Etapa 4: Buzón y control de acceso
+
+| # | Entregable | Estado |
+| --- | --- | --- |
+| 4.1 | Grupos y permisos por rol | Listo |
+| 4.2 | Tickets restringidos | Pendiente |
+| 4.3 | Buzón interno | Pendiente |
+| 4.4 | Formulario público | Pendiente |
+| 4.5 | SSO | Pendiente |
+| 4.6 | Audit log | Pendiente |
+| 4.7 | MCP y UI de la etapa | Pendiente |
+
+### 4.1 Grupos y permisos por rol
+
+**Qué se hizo**
+
+- Migración `0017`: `groups`, `group_members`, `project_group_roles` y `project_role_permissions`. Decisión: [0023](decisions/0023-grupos-y-permisos.md).
+- `core/permissions.py`: catálogo, rol efectivo (directo o por grupo, el más alto) y `authorize()`, usado por todas las rutas y tools.
+- API: `/groups` (admin de instancia), `/projects/{key}/group-roles`, `/projects/{key}/permissions` (leer, cambiar y restaurar defaults); `/me` y el detalle del proyecto traen los permisos efectivos.
+- UI: pestaña Permisos con la matriz, grupos en Miembros con rol efectivo, Admin → Grupos; los botones se ocultan según los permisos.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_permission_matrix.py`: cada permiso del catálogo para member y viewer, directo con default y por grupo con override (76 casos), más las tools del MCP con el permiso quitado; rol efectivo, acceso solo por grupo y pérdida inmediata al salir del grupo.
+

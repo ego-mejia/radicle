@@ -11,7 +11,7 @@ from radicle.api.schemas.projects import (
     MilestoneOut,
     MilestonePatch,
 )
-from radicle.db.models import MilestoneStatus, ProjectRole
+from radicle.db.models import MilestoneStatus
 from radicle.services import planning
 from radicle.services.access import project_access
 
@@ -29,7 +29,9 @@ async def list_areas(
 
 @router.post("/areas", response_model=AreaOut, status_code=201)
 async def create_area(key: str, body: AreaCreate, principal: CurrentPrincipal, db: Db) -> AreaOut:
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     area = await planning.create_area(db, access.project, name=body.name, color=body.color)
     return out.area_out(area)
 
@@ -39,7 +41,9 @@ async def patch_area(
     key: str, name: str, body: AreaPatch, principal: CurrentPrincipal, db: Db
 ) -> AreaOut:
     """Rename, recolor, reorder, or archive and restore with `archived`."""
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     area = await planning.get_area(db, access.project, name)
     changes = planning.AreaChanges(
         name=body.name,
@@ -54,7 +58,9 @@ async def patch_area(
 @router.delete("/areas/{name}", status_code=204)
 async def delete_area(key: str, name: str, principal: CurrentPrincipal, db: Db) -> Response:
     """Archives the area; tickets keep it but new tickets cannot use it."""
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     planning.archive_area(await planning.get_area(db, access.project, name))
     return Response(status_code=204)
 
@@ -73,7 +79,9 @@ async def list_milestones(
 async def create_milestone(
     key: str, body: MilestoneCreate, principal: CurrentPrincipal, db: Db
 ) -> MilestoneOut:
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     milestone = await planning.create_milestone(
         db,
         access.project,
@@ -96,7 +104,9 @@ async def patch_milestone(
     key: str, name: str, body: MilestonePatch, principal: CurrentPrincipal, db: Db
 ) -> MilestoneOut:
     """Edit, close (`status: closed`) or reopen (`status: open`)."""
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     milestone = await planning.get_milestone(db, access.project, name)
     changes = planning.MilestoneChanges(
         name=body.name,

@@ -49,7 +49,10 @@ class UserOut(Output):
 class MeProject(Output):
     key: str
     name: str
-    role: ProjectRole
+    role: ProjectRole = Field(description="Effective role: direct or through a group")
+    permissions: list[str] = Field(
+        default_factory=list, description="What you may do there, from the permission matrix"
+    )
 
 
 class MeOut(UserOut):

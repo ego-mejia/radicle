@@ -28,7 +28,7 @@ from radicle.db.models import (
 )
 from radicle.services import custom_fields, history, markdown, periods, rank, screens
 from radicle.services import ticket_fields as fields
-from radicle.services.access import ProjectAccess, project_access
+from radicle.services.access import ProjectAccess, check_access, project_access
 from radicle.services.remaining import estimate_changed
 from radicle.services.workflows import load_workflows
 
@@ -96,9 +96,11 @@ async def load_ticket(
     need: ProjectRole = ProjectRole.viewer,
     write: bool = False,
     include_deleted: bool = False,
+    permission: str | None = None,
 ) -> tuple[ProjectAccess, Ticket]:
-    """Find a ticket by key and check the caller's role in its project.
+    """Find a ticket by key and check what the caller may do with it.
 
+    First whether they can see it (404 otherwise), then `permission` or `need` (403).
     Writes lock the row so concurrent edits serialise and the version check holds.
     """
     project_key, number = fields.parse_key(key)
@@ -106,7 +108,7 @@ async def load_ticket(
     if current is not None:
         project_key, number = current
     try:
-        access = await project_access(db, user, project_key, need=need, write=write)
+        access = await project_access(db, user, project_key)
     except NotFound as exc:
         raise _ticket_not_found(key) from exc
     query = select(Ticket).where(Ticket.project_id == access.project.id, Ticket.number == number)
@@ -115,6 +117,15 @@ async def load_ticket(
     ticket = await db.scalar(query)
     if ticket is None or (ticket.deleted_at is not None and not include_deleted):
         raise _ticket_not_found(key)
+    access = check_access(
+        access.project,
+        access.role,
+        user,
+        need=need,
+        write=write,
+        permissions=access.permissions,
+        permission=permission,
+    )
     return access, ticket
 
 

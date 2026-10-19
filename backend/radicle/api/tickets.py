@@ -34,7 +34,7 @@ async def create_ticket(
     key: str, body: TicketCreate, principal: CurrentPrincipal, db: Db
 ) -> TicketOut:
     """Create a Task, Bug or Draft. Area is required except for drafts."""
-    access = await project_access(db, principal.user, key, need=MEMBER, write=True)
+    access = await project_access(db, principal.user, key, write=True, permission="ticket.create")
     data = tickets.NewTicket(**body.model_dump())
     ticket = await tickets.create_ticket(db, access, data)
     return await ticket_out(db, ticket, viewer=principal.user)
@@ -79,7 +79,9 @@ async def patch_ticket(
 ) -> TicketOut:
     """Edit fields. Only the fields sent change and null clears one. Needs the version."""
     expected = _expected_version(body.expected_version, if_match)
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="ticket.edit"
+    )
     changes: dict[str, Any] = body.model_dump(exclude_unset=True, exclude={"expected_version"})
     try:
         await tickets.update_ticket(db, access, ticket, changes, expected_version=expected)
@@ -95,7 +97,7 @@ async def patch_ticket(
 async def delete_ticket(key: str, principal: CurrentPrincipal, db: Db) -> Response:
     """Soft delete. The ticket disappears from lists but its history stays."""
     access, ticket = await tickets.load_ticket(
-        db, principal.user, key, need=ProjectRole.admin, write=True
+        db, principal.user, key, write=True, permission="ticket.delete"
     )
     await tickets.delete_ticket(db, access, ticket)
     return Response(status_code=204)
@@ -104,7 +106,7 @@ async def delete_ticket(key: str, principal: CurrentPrincipal, db: Db) -> Respon
 @router.post("/tickets/{key}/restore", response_model=TicketOut)
 async def restore_ticket(key: str, principal: CurrentPrincipal, db: Db) -> TicketOut:
     access, ticket = await tickets.load_ticket(
-        db, principal.user, key, need=ProjectRole.admin, write=True, include_deleted=True
+        db, principal.user, key, write=True, permission="ticket.delete", include_deleted=True
     )
     await tickets.restore_ticket(db, access, ticket)
     return await ticket_out(db, ticket, viewer=principal.user)
@@ -115,7 +117,9 @@ async def set_checklist_item(
     key: str, index: int, body: ChecklistPatch, principal: CurrentPrincipal, db: Db
 ) -> TicketOut:
     """Check or uncheck item `index` (0-based) of the description checklist."""
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="ticket.edit"
+    )
     await tickets.set_checklist_item(db, access, ticket, index, body.checked)
     return await ticket_out(db, ticket, viewer=principal.user)
 
@@ -128,7 +132,9 @@ async def list_children(key: str, principal: CurrentPrincipal, db: Db) -> Page[T
 
 @router.put("/tickets/{key}/collaborators/{handle}", response_model=TicketOut)
 async def add_collaborator(key: str, handle: str, principal: CurrentPrincipal, db: Db) -> TicketOut:
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="ticket.edit"
+    )
     await tickets.add_collaborator(db, access, ticket, handle)
     return await ticket_out(db, ticket, viewer=principal.user)
 
@@ -137,7 +143,9 @@ async def add_collaborator(key: str, handle: str, principal: CurrentPrincipal, d
 async def remove_collaborator(
     key: str, handle: str, principal: CurrentPrincipal, db: Db
 ) -> TicketOut:
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="ticket.edit"
+    )
     await tickets.remove_collaborator(db, access, ticket, handle)
     return await ticket_out(db, ticket, viewer=principal.user)
 
@@ -196,7 +204,9 @@ async def transition_ticket(
     key: str, body: TransitionIn, principal: CurrentPrincipal, db: Db
 ) -> TicketOut:
     """Move the ticket. Done statuses need a resolution; the response may carry warnings."""
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="ticket.transition"
+    )
     warnings = await transitions.transition_ticket(
         db,
         access,
@@ -222,6 +232,8 @@ async def change_type(
     key: str, body: TypeChangeIn, principal: CurrentPrincipal, db: Db
 ) -> TicketOut:
     """Change the type, e.g. Draft to Task. The ticket goes to the new initial status."""
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="ticket.edit"
+    )
     await transitions.change_type(db, access, ticket, body.type, body.area)
     return await ticket_out(db, ticket, viewer=principal.user)

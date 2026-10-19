@@ -15,6 +15,7 @@ from radicle.api import (
     dashboards,
     discussion,
     fields,
+    groups,
     jobs,
     me,
     planning,
@@ -84,6 +85,7 @@ def create_app() -> FastAPI:
         timeline,
         reports,
         dashboards,
+        groups,
     ):
         api.include_router(module.router)
     app.include_router(api)

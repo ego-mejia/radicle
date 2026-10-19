@@ -183,7 +183,7 @@ async def test_permissions_and_delete(client: AsyncClient, board: Team) -> None:
     first = (await upload(client, board.member, "PA-1", "a.txt", b"x")).json()
     second = (await upload(client, board.member, "PA-1", "b.txt", b"y")).json()
     r = await client.delete(f"{API}/attachments/{first['id']}", headers=board.agent.headers)
-    assert r.status_code == 403 and "uploaded it" in r.json()["detail"]
+    assert r.status_code == 403 and "attachment.delete_any" in r.json()["detail"]
     assert (
         await client.delete(f"{API}/attachments/{first['id']}", headers=board.member.headers)
     ).status_code == 204

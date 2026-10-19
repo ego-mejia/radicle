@@ -33,7 +33,15 @@ export function MembersSection({ project, isAdmin }: { project: ProjectDetail; i
               {m.display_name} <small>@{m.handle}</small>
               {m.kind === 'agent' && <Badge tone="accent">agent</Badge>}
             </S.Grow>
-            {editable ? (
+            {m.groups.length > 0 && (
+              <S.Muted>{t('settings.viaGroups', { groups: m.groups.join(', ') })}</S.Muted>
+            )}
+            {m.role !== m.effective_role && (
+              <Badge tone="accent" title={t('settings.effectiveRole')}>
+                {t(`projects.roles.${m.effective_role}`)}
+              </Badge>
+            )}
+            {editable && m.role ? (
               <>
                 <Select
                   value={m.role}
@@ -56,7 +64,7 @@ export function MembersSection({ project, isAdmin }: { project: ProjectDetail; i
                 </IconButton>
               </>
             ) : (
-              <Badge>{t(`projects.roles.${m.role}`)}</Badge>
+              m.role && <Badge>{t(`projects.roles.${m.role}`)}</Badge>
             )}
           </S.Row>
         ))}

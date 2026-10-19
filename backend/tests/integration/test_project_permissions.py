@@ -39,7 +39,8 @@ async def test_permission_matrix(
         assert r.status_code in (200, 201), r.text
     else:
         assert r.status_code == 403, r.text
-        assert "this action needs" in r.json()["detail"]
+        detail = r.json()["detail"]
+        assert "this action needs" in detail or "permission is off" in detail
 
 
 async def test_area_and_milestone_edits_need_admin(client: AsyncClient, team: Team) -> None:

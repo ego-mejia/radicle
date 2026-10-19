@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import ProblemError, ValidationFailed
-from radicle.db.models import Job, Project, ProjectRole, Resolution, Ticket, User
+from radicle.db.models import Job, Project, Resolution, Ticket, User
 from radicle.services import jobs, queue, search, tickets, transitions
 from radicle.services.access import ProjectAccess
 
@@ -178,7 +178,7 @@ async def run_one(
     try:
         async with db.begin_nested():
             access, ticket = await tickets.load_ticket(
-                db, user, key, need=ProjectRole.member, write=True
+                db, user, key, write=True, permission="ticket.bulk_edit"
             )
             for op in operations:
                 await apply(db, access, ticket, op)

@@ -38,7 +38,7 @@ export function BulkDialog({ project, keys, action, onClose, onDone }: Props) {
   const [preview, setPreview] = useState<Result | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
   const statuses = [...new Set(project.workflows.flatMap((w) => w.statuses.map((s) => s.name)))];
-  const people = project.members.filter((m) => m.role !== 'viewer');
+  const people = project.members.filter((m) => m.effective_role !== 'viewer');
 
   const operation = (): BulkOperation => {
     if (action === 'field')

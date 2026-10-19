@@ -41,7 +41,7 @@ export function CreateTicketModal({ defaults, onClose }: Props) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const errorMessage = useErrorMessage();
-  const writable = (me.projects ?? []).filter((p) => p.role !== 'viewer');
+  const writable = (me.projects ?? []).filter((p) => p.permissions.includes('ticket.create'));
   const [projectKey, setProjectKey] = useState(
     writable.some((p) => p.key === defaults.project) ? defaults.project! : (writable[0]?.key ?? ''),
   );

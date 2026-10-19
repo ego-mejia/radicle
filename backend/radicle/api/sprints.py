@@ -73,7 +73,9 @@ async def list_sprints(
 async def create_sprint(
     board_id: UUID, body: SprintCreate, principal: CurrentPrincipal, db: Db
 ) -> SprintOut:
-    ba = await boards.load_board(db, principal.user, board_id, need=ADMIN, write=True)
+    ba = await boards.load_board(
+        db, principal.user, board_id, write=True, permission="sprint.manage"
+    )
     sprint = await sprints.create_sprint(db, ba, sprints.SprintSpec(**body.model_dump()))
     return await sprint_out(db, principal, sprint)
 
@@ -91,14 +93,18 @@ async def patch_sprint(
     sprint_id: UUID, body: SprintPatch, principal: CurrentPrincipal, db: Db
 ) -> SprintOut:
     """Future: everything. Active: goal, end date and capacity. Closed: only goal_met."""
-    _, sprint = await sprints.load_sprint(db, principal.user, sprint_id, need=ADMIN, write=True)
+    _, sprint = await sprints.load_sprint(
+        db, principal.user, sprint_id, write=True, permission="sprint.manage"
+    )
     await sprints.update_sprint(db, sprint, body.model_dump(exclude_unset=True))
     return await sprint_out(db, principal, sprint)
 
 
 @router.delete("/sprints/{sprint_id}", status_code=204)
 async def delete_sprint(sprint_id: UUID, principal: CurrentPrincipal, db: Db) -> Response:
-    _, sprint = await sprints.load_sprint(db, principal.user, sprint_id, need=ADMIN, write=True)
+    _, sprint = await sprints.load_sprint(
+        db, principal.user, sprint_id, write=True, permission="sprint.manage"
+    )
     await sprints.delete_sprint(db, principal.user, sprint)
     return Response(status_code=204)
 
@@ -108,7 +114,9 @@ async def start_sprint(
     sprint_id: UUID, body: SprintStart, principal: CurrentPrincipal, db: Db
 ) -> SprintOut:
     """Needs dates (1 to 28 days). Saves each ticket's estimate and remaining as the commitment."""
-    _, sprint = await sprints.load_sprint(db, principal.user, sprint_id, need=ADMIN, write=True)
+    _, sprint = await sprints.load_sprint(
+        db, principal.user, sprint_id, write=True, permission="sprint.manage"
+    )
     await sprints.start_sprint(db, sprint, sprints.SprintSpec(**body.model_dump()))
     return await sprint_out(db, principal, sprint)
 
@@ -117,7 +125,9 @@ async def start_sprint(
 async def complete_sprint(
     sprint_id: UUID, body: SprintComplete, principal: CurrentPrincipal, db: Db
 ) -> SprintCompleteOut:
-    _, sprint = await sprints.load_sprint(db, principal.user, sprint_id, need=ADMIN, write=True)
+    _, sprint = await sprints.load_sprint(
+        db, principal.user, sprint_id, write=True, permission="sprint.manage"
+    )
     result = await sprints.complete_sprint(
         db,
         principal.user,
@@ -137,7 +147,7 @@ async def add_tickets(
     sprint_id: UUID, body: SprintKeys, principal: CurrentPrincipal, db: Db
 ) -> SprintKeysOut:
     """Takes them out of any other open sprint and removes #backlog."""
-    _, sprint = await sprints.load_sprint(db, principal.user, sprint_id, need=MEMBER)
+    _, sprint = await sprints.load_sprint(db, principal.user, sprint_id, permission="ticket.edit")
     return SprintKeysOut(keys=await sprints.add_tickets(db, principal.user, sprint, body.keys))
 
 
@@ -145,7 +155,7 @@ async def add_tickets(
 async def remove_tickets(
     sprint_id: UUID, body: SprintKeys, principal: CurrentPrincipal, db: Db
 ) -> SprintKeysOut:
-    _, sprint = await sprints.load_sprint(db, principal.user, sprint_id, need=MEMBER)
+    _, sprint = await sprints.load_sprint(db, principal.user, sprint_id, permission="ticket.edit")
     return SprintKeysOut(keys=await sprints.remove_tickets(db, principal.user, sprint, body.keys))
 
 

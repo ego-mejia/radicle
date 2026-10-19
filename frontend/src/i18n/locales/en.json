@@ -407,7 +407,16 @@
     "lastUsed": "used {{when}}",
     "neverUsed": "never used",
     "forbidden": "Only instance admins can open this page.",
-    "templates": "Templates"
+    "templates": "Templates",
+    "groups": "Groups",
+    "groupsHelp": "Groups of people and agents. Add a group to a project with a role and everyone in it works there.",
+    "groupName": "Name",
+    "groupDescription": "Description",
+    "newGroup": "New group",
+    "deleteGroup": "Delete {{group}}",
+    "deleteGroupConfirm": "Its members lose the access the group gave them.",
+    "addToGroup": "Add to {{group}}",
+    "removeFromGroup": "Remove @{{handle}} from {{group}}"
   },
   "settings": {
     "general": "General",
@@ -431,7 +440,20 @@
     "fields": "Fields",
     "workflowsEditHelp": "Statuses and transitions per type. Removing a status asks where its tickets go.",
     "workflowsLinkedHelp": "These come from the template {{template}}. Edit them there, or detach the project.",
-    "screens": "Screens"
+    "screens": "Screens",
+    "permissions": "Permissions",
+    "permissionsHelp": "What member and viewer may do in this project. Admins can always do everything. Highlighted boxes differ from the defaults.",
+    "permission": "Permission",
+    "restoreDefaults": "Restore defaults",
+    "groups": "Groups",
+    "groupsHelp": "Everyone in a group gets its role here; a person's role is the highest of theirs.",
+    "noGroups": "No groups in this project.",
+    "groupMembers_one": "{{count}} person",
+    "groupMembers_other": "{{count}} people",
+    "addGroup": "Add group",
+    "groupRole": "Group role",
+    "viaGroups": "via {{groups}}",
+    "effectiveRole": "Effective role"
   },
   "profile": {
     "details": "Details",
@@ -1141,5 +1163,27 @@
         "help": "Free text: notes, links, goals."
       }
     }
+  },
+  "permissions": {
+    "ticket.create": "Create tickets",
+    "ticket.edit": "Edit tickets",
+    "ticket.transition": "Move tickets between statuses",
+    "ticket.delete": "Delete tickets",
+    "ticket.move": "Move tickets to another project",
+    "ticket.bulk_edit": "Edit many tickets at once",
+    "ticket.set_security": "Change a ticket's security level",
+    "comment.create": "Comment",
+    "comment.delete_any": "Delete other people's comments",
+    "attachment.upload": "Attach files",
+    "attachment.delete_any": "Delete other people's files",
+    "worklog.create": "Log time",
+    "worklog.edit_any": "Edit other people's time",
+    "vote": "Vote",
+    "link.manage": "Link tickets",
+    "sprint.manage": "Manage sprints",
+    "board.manage": "Manage boards",
+    "inbox.triage": "Triage the inbox",
+    "project.settings": "Change project settings",
+    "members.manage": "Manage members"
   }
 }

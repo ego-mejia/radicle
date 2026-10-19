@@ -15,6 +15,7 @@ from radicle.api.schemas.users import (
     UserOut,
 )
 from radicle.core.errors import ValidationFailed
+from radicle.core.permissions import permissions_for
 from radicle.db.models import User
 from radicle.services import auth, projects, users
 
@@ -26,7 +27,15 @@ async def me_out(db: AsyncSession, user: User) -> MeOut:
     base = UserOut.model_validate(user).model_dump()
     return MeOut(
         **base,
-        projects=[MeProject(key=r.project.key, name=r.project.name, role=r.role) for r in rows],
+        projects=[
+            MeProject(
+                key=r.project.key,
+                name=r.project.name,
+                role=r.role,
+                permissions=sorted(await permissions_for(db, r.project, r.role)),
+            )
+            for r in rows
+        ],
     )
 
 

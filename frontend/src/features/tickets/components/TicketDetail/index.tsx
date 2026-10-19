@@ -19,6 +19,7 @@ import { Links } from '../Links';
 import { Subtickets } from '../Subtickets';
 import { TicketHeader } from '../TicketHeader';
 import { Worklogs } from '../Worklogs';
+import { can, type Permission } from '../../../../lib/permissions';
 import * as S from './style';
 
 type Tab = 'comments' | 'history' | 'time';
@@ -31,7 +32,8 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
   const { data: project } = useProject(projectOf(ticketKey));
   const actions = useTicketActions(ticket);
   const [tab, setTab] = useState<Tab>('comments');
-  const canAct = Boolean(project && project.role !== 'viewer' && !project.archived);
+  const may = (p: Permission) => can(project, p);
+  const canAct = may('ticket.edit');
   useTicketCommand(
     'assign-me',
     () => ticket && actions.patch.mutate({ assignee: me.handle }),
@@ -44,9 +46,7 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
   if (isPending) return <PageSpinner />;
   if (isError || !ticket) return <EmptyState plant="seed" title={t('ticket.notFound')} />;
 
-  const role = project?.role ?? 'viewer';
-  const canEdit = role !== 'viewer' && !project?.archived;
-  const isAdmin = role === 'admin';
+  const canEdit = may('ticket.edit');
   const mentions = (project?.members ?? []).map((m) => ({
     handle: m.handle,
     name: m.display_name,
@@ -63,16 +63,16 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
             </Button>
           </S.Conflict>
         )}
-        <TicketHeader
-          ticket={ticket}
-          actions={actions}
-          canEdit={canEdit}
-          isAdmin={isAdmin && canEdit}
-        />
+        <TicketHeader ticket={ticket} actions={actions} can={may} />
         <Description ticket={ticket} actions={actions} canEdit={canEdit} mentions={mentions} />
-        <Attachments ticket={ticket} canEdit={canEdit} isAdmin={isAdmin} me={me.handle} />
-        <Subtickets ticket={ticket} canEdit={canEdit} />
-        <Links ticket={ticket} actions={actions} canEdit={canEdit} />
+        <Attachments
+          ticket={ticket}
+          canEdit={may('attachment.upload')}
+          isAdmin={may('attachment.delete_any')}
+          me={me.handle}
+        />
+        <Subtickets ticket={ticket} canEdit={may('ticket.create')} />
+        <Links ticket={ticket} actions={actions} canEdit={may('link.manage')} />
         <S.Activity>
           <Tabs
             label={t('ticket.tabs.comments')}
@@ -88,14 +88,19 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
             <Comments
               ticket={ticket}
               me={me.handle}
-              canComment={canEdit}
-              canModerate={isAdmin}
+              canComment={may('comment.create')}
+              canModerate={may('comment.delete_any')}
               mentions={mentions}
             />
           ) : tab === 'history' ? (
             <History ticket={ticket} />
           ) : (
-            <Worklogs ticket={ticket} me={me.handle} isAdmin={isAdmin} canEdit={canEdit} />
+            <Worklogs
+              ticket={ticket}
+              me={me.handle}
+              isAdmin={may('worklog.edit_any')}
+              canEdit={may('worklog.create')}
+            />
           )}
         </S.Activity>
       </S.Main>

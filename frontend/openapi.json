@@ -2406,6 +2406,154 @@
         "title": "FormSchemaOut",
         "type": "object"
       },
+      "GroupCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "default": "",
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "description": "No spaces, e.g. equipo-legal",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "GroupCreate",
+        "type": "object"
+      },
+      "GroupDetail": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "member_count": {
+            "title": "Member Count",
+            "type": "integer"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/UserRef"
+            },
+            "title": "Members",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "member_count",
+          "created_at",
+          "members"
+        ],
+        "title": "GroupDetail",
+        "type": "object"
+      },
+      "GroupOut": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "member_count": {
+            "title": "Member Count",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "member_count",
+          "created_at"
+        ],
+        "title": "GroupOut",
+        "type": "object"
+      },
+      "GroupPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "title": "GroupPatch",
+        "type": "object"
+      },
+      "GroupRoleOut": {
+        "properties": {
+          "group": {
+            "title": "Group",
+            "type": "string"
+          },
+          "member_count": {
+            "title": "Member Count",
+            "type": "integer"
+          },
+          "role": {
+            "$ref": "#/components/schemas/ProjectRole"
+          }
+        },
+        "required": [
+          "group",
+          "role",
+          "member_count"
+        ],
+        "title": "GroupRoleOut",
+        "type": "object"
+      },
+      "GroupRolePut": {
+        "additionalProperties": false,
+        "properties": {
+          "role": {
+            "$ref": "#/components/schemas/ProjectRole"
+          }
+        },
+        "required": [
+          "role"
+        ],
+        "title": "GroupRolePut",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -2844,14 +2992,24 @@
             "title": "Name",
             "type": "string"
           },
+          "permissions": {
+            "description": "What you may do there, from the permission matrix",
+            "items": {
+              "type": "string"
+            },
+            "title": "Permissions",
+            "type": "array"
+          },
           "role": {
-            "$ref": "#/components/schemas/ProjectRole"
+            "$ref": "#/components/schemas/ProjectRole",
+            "description": "Effective role: direct or through a group"
           }
         },
         "required": [
           "key",
           "name",
-          "role"
+          "role",
+          "permissions"
         ],
         "title": "MeProject",
         "type": "object"
@@ -2861,6 +3019,18 @@
           "display_name": {
             "title": "Display Name",
             "type": "string"
+          },
+          "effective_role": {
+            "$ref": "#/components/schemas/ProjectRole",
+            "description": "Highest of the direct and group roles"
+          },
+          "groups": {
+            "description": "Groups that bring them in",
+            "items": {
+              "type": "string"
+            },
+            "title": "Groups",
+            "type": "array"
           },
           "handle": {
             "title": "Handle",
@@ -2874,7 +3044,15 @@
             "$ref": "#/components/schemas/UserKind"
           },
           "role": {
-            "$ref": "#/components/schemas/ProjectRole"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectRole"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Direct role; null when only through groups"
           }
         },
         "required": [
@@ -2882,6 +3060,8 @@
           "display_name",
           "kind",
           "role",
+          "effective_role",
+          "groups",
           "is_active"
         ],
         "title": "MemberOut",
@@ -3443,6 +3623,62 @@
         "title": "Page[FilterOut]",
         "type": "object"
       },
+      "Page_GroupOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GroupOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[GroupOut]",
+        "type": "object"
+      },
+      "Page_GroupRoleOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GroupRoleOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[GroupRoleOut]",
+        "type": "object"
+      },
       "Page_MemberOut_": {
         "properties": {
           "items": {
@@ -3807,6 +4043,86 @@
         "title": "Page[WorklogOut]",
         "type": "object"
       },
+      "PermissionRow": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "member": {
+            "title": "Member",
+            "type": "boolean"
+          },
+          "member_default": {
+            "title": "Member Default",
+            "type": "boolean"
+          },
+          "permission": {
+            "title": "Permission",
+            "type": "string"
+          },
+          "viewer": {
+            "title": "Viewer",
+            "type": "boolean"
+          },
+          "viewer_default": {
+            "title": "Viewer Default",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "permission",
+          "description",
+          "member",
+          "viewer",
+          "member_default",
+          "viewer_default"
+        ],
+        "title": "PermissionRow",
+        "type": "object"
+      },
+      "PermissionsOut": {
+        "properties": {
+          "project": {
+            "title": "Project",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PermissionRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "project",
+          "rows"
+        ],
+        "title": "PermissionsOut",
+        "type": "object"
+      },
+      "PermissionsPut": {
+        "additionalProperties": false,
+        "properties": {
+          "member": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "title": "Member",
+            "type": "object"
+          },
+          "viewer": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "title": "Viewer",
+            "type": "object"
+          }
+        },
+        "title": "PermissionsPut",
+        "type": "object"
+      },
       "PreferencesOut": {
         "properties": {
           "density": {
@@ -3954,6 +4270,14 @@
             "title": "Open Tickets",
             "type": "integer"
           },
+          "permissions": {
+            "description": "What you may do here, from the permission matrix",
+            "items": {
+              "type": "string"
+            },
+            "title": "Permissions",
+            "type": "array"
+          },
           "role": {
             "$ref": "#/components/schemas/ProjectRole",
             "description": "Your role in the project"
@@ -4003,7 +4327,8 @@
           "custom_fields",
           "template",
           "blocked_policy",
-          "suggested_tags"
+          "suggested_tags",
+          "permissions"
         ],
         "title": "ProjectDetail",
         "type": "object"
@@ -10250,6 +10575,292 @@
         ]
       }
     },
+    "/api/v1/groups": {
+      "get": {
+        "operationId": "list_groups_api_v1_groups_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_GroupOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Groups",
+        "tags": [
+          "groups and permissions"
+        ]
+      },
+      "post": {
+        "description": "Instance admins create groups; they hold humans and agents.",
+        "operationId": "create_group_api_v1_groups_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Group",
+        "tags": [
+          "groups and permissions"
+        ]
+      }
+    },
+    "/api/v1/groups/{name}": {
+      "delete": {
+        "operationId": "delete_group_api_v1_groups__name__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Group",
+        "tags": [
+          "groups and permissions"
+        ]
+      },
+      "get": {
+        "operationId": "get_group_api_v1_groups__name__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Group",
+        "tags": [
+          "groups and permissions"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_group_api_v1_groups__name__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Group",
+        "tags": [
+          "groups and permissions"
+        ]
+      }
+    },
+    "/api/v1/groups/{name}/members/{handle}": {
+      "delete": {
+        "operationId": "remove_group_member_api_v1_groups__name__members__handle__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "handle",
+            "required": true,
+            "schema": {
+              "title": "Handle",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove Group Member",
+        "tags": [
+          "groups and permissions"
+        ]
+      },
+      "put": {
+        "operationId": "add_group_member_api_v1_groups__name__members__handle__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "handle",
+            "required": true,
+            "schema": {
+              "title": "Handle",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Group Member",
+        "tags": [
+          "groups and permissions"
+        ]
+      }
+    },
     "/api/v1/health": {
       "get": {
         "operationId": "health_api_v1_health_get",
@@ -11407,6 +12018,152 @@
         ]
       }
     },
+    "/api/v1/projects/{key}/group-roles": {
+      "get": {
+        "operationId": "list_group_roles_api_v1_projects__key__group_roles_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_GroupRoleOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Group Roles",
+        "tags": [
+          "groups and permissions"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/group-roles/{group}": {
+      "delete": {
+        "operationId": "delete_group_role_api_v1_projects__key__group_roles__group__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "group",
+            "required": true,
+            "schema": {
+              "title": "Group",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Group Role",
+        "tags": [
+          "groups and permissions"
+        ]
+      },
+      "put": {
+        "description": "Every member of the group gets this role in the project (their highest role wins).",
+        "operationId": "put_group_role_api_v1_projects__key__group_roles__group__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "group",
+            "required": true,
+            "schema": {
+              "title": "Group",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupRolePut"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupRoleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Group Role",
+        "tags": [
+          "groups and permissions"
+        ]
+      }
+    },
     "/api/v1/projects/{key}/members": {
       "get": {
         "operationId": "list_members_api_v1_projects__key__members_get",
@@ -11771,6 +12528,141 @@
         "summary": "Patch Milestone",
         "tags": [
           "areas and milestones"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/permissions": {
+      "delete": {
+        "description": "Back to the defaults of the catalog.",
+        "operationId": "reset_permissions_api_v1_projects__key__permissions_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reset Permissions",
+        "tags": [
+          "groups and permissions"
+        ]
+      },
+      "get": {
+        "description": "What member and viewer may do in this project. Admins may do everything.",
+        "operationId": "get_permissions_api_v1_projects__key__permissions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Permissions",
+        "tags": [
+          "groups and permissions"
+        ]
+      },
+      "put": {
+        "description": "Turn permissions on or off for member and viewer. Only what you send changes.",
+        "operationId": "put_permissions_api_v1_projects__key__permissions_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PermissionsPut"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PermissionsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Permissions",
+        "tags": [
+          "groups and permissions"
         ]
       }
     },

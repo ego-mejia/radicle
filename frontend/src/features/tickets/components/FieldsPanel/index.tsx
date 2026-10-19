@@ -28,7 +28,9 @@ type Props = {
 /** Every fixed field, editable in place. */
 export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
   const { t } = useTranslation();
-  const people = (project?.members ?? []).filter((m) => m.role !== 'viewer' && m.is_active);
+  const people = (project?.members ?? []).filter(
+    (m) => m.effective_role !== 'viewer' && m.is_active,
+  );
   const patch = actions.patch.mutate;
   const { data: editSchema } = useQuery({
     queryKey: screenKeys.schema(ticket.project, ticket.type, 'edit'),

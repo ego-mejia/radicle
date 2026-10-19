@@ -27,7 +27,9 @@ def worklog_out(worklog: Worklog, key: str) -> WorklogOut:
 
 
 async def _vote(key: str, principal: CurrentPrincipal, db: Db, voted: bool) -> VoteOut:
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="vote"
+    )
     await timetracking.set_vote(db, access, ticket, voted)
     return VoteOut(vote_count=ticket.vote_count, voted_by_me=voted)
 
@@ -61,7 +63,9 @@ async def list_worklogs(key: str, principal: CurrentPrincipal, db: Db) -> Page[W
 @router.post("/tickets/{key}/worklogs", response_model=WorklogOut, status_code=201)
 async def add_worklog(key: str, body: WorklogIn, principal: CurrentPrincipal, db: Db) -> WorklogOut:
     """Log minutes worked (1 to 1440). Spent and remaining time update right away."""
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="worklog.create"
+    )
     worklog = await timetracking.add_worklog(
         db,
         access,

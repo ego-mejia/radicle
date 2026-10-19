@@ -10,7 +10,7 @@ from radicle.api.schemas.screens import (
     ScreensPut,
 )
 from radicle.core.errors import ValidationFailed
-from radicle.db.models import ProjectRole, ScreenOperation, TicketType, Transition
+from radicle.db.models import ScreenOperation, TicketType, Transition
 from radicle.services import screens, templates
 from radicle.services.access import project_access
 from radicle.services.workflows import load_workflows
@@ -58,7 +58,9 @@ async def put_screens(
     key: str, body: ScreensPut, principal: CurrentPrincipal, db: Db
 ) -> Page[ScreenOut]:
     """Replace every screen of an independent project."""
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     await templates.ensure_editable(db, access.project)
     workflows = await load_workflows(db, access.project.id)
     rows: list[screens.ScreenRow] = []

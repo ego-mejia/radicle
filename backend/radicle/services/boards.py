@@ -85,6 +85,7 @@ async def load_board(
     *,
     need: ProjectRole = ProjectRole.viewer,
     write: bool = False,
+    permission: str | None = None,
 ) -> BoardAccess:
     board = await db.get(Board, board_id)
     if board is None:
@@ -93,14 +94,17 @@ async def load_board(
         # Multi-project boards: anyone can look (tickets are filtered per user);
         # only instance admins change them.
         role = ProjectRole.admin if user.is_instance_admin else ProjectRole.viewer
-        if need is not ProjectRole.viewer and role is not ProjectRole.admin:
+        changes = need is not ProjectRole.viewer or permission is not None
+        if changes and role is not ProjectRole.admin:
             raise Forbidden("Only instance admins change boards that span several projects.")
         return BoardAccess(board, role, None)
     project = await db.get(Project, board.project_id)
     if project is None:  # pragma: no cover - foreign key
         raise _not_found(board_id)
     try:
-        access = await project_access(db, user, project.key, need=need, write=write)
+        access = await project_access(
+            db, user, project.key, need=need, write=write, permission=permission
+        )
     except NotFound:
         raise _not_found(board_id) from None
     return BoardAccess(board, access.role, project)
@@ -531,7 +535,7 @@ async def move(
     timezone: str = "UTC",
 ) -> MoveResult:
     """Move a card to a column (transition) and/or within it (rank)."""
-    access, ticket = await tickets.load_ticket(db, user, key, need=ProjectRole.member, write=True)
+    access, ticket = await tickets.load_ticket(db, user, key, write=True)
     board = ba.board
     statuses = await scope_statuses(db, board)
     columns = resolve_columns(board, statuses)
@@ -539,6 +543,7 @@ async def move(
         raise _fail("column", f"Column {column} does not exist; the board has {len(columns)}.")
     target = columns[column]
     warnings: list[transitions.TicketWarning] = []
+    access.require("ticket.edit" if target.holds(ticket.status) else "ticket.transition")
     if not target.holds(ticket.status):
         note: dict[str, Any] = {}
         if target.wip_limit is not None and board.wip_mode is WipMode.hard:

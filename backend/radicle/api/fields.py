@@ -35,7 +35,9 @@ async def create_field(
     key: str, body: CustomFieldCreate, principal: CurrentPrincipal, db: Db
 ) -> CustomFieldOut:
     """Types: text, number, date, select, checkbox, user, url."""
-    access = await project_access(db, principal.user, key, need=ADMIN, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     await templates.ensure_editable(db, access.project)
     field = await custom_fields.create_field(
         db,
@@ -56,7 +58,9 @@ async def create_field(
 async def patch_field(
     key: str, field_key: str, body: CustomFieldPatch, principal: CurrentPrincipal, db: Db
 ) -> CustomFieldOut:
-    access = await project_access(db, principal.user, key, need=ADMIN, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     await templates.ensure_editable(db, access.project)
     field = await custom_fields.get_field(db, access.project, field_key)
     changes = custom_fields.FieldChanges(
@@ -75,7 +79,9 @@ async def patch_field(
 @router.delete("/{field_key}", status_code=204)
 async def archive_field(key: str, field_key: str, principal: CurrentPrincipal, db: Db) -> Response:
     """Archives the field: tickets keep their values but they stop showing."""
-    access = await project_access(db, principal.user, key, need=ADMIN, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     await templates.ensure_editable(db, access.project)
     field = await custom_fields.get_field(db, access.project, field_key)
     await custom_fields.update_field(

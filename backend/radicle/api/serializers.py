@@ -18,6 +18,7 @@ from radicle.api.schemas.projects import (
     TransitionOut,
     WorkflowOut,
 )
+from radicle.core.permissions import permissions_for
 from radicle.db.models import (
     Area,
     CustomFieldDefinition,
@@ -70,13 +71,24 @@ async def milestones_out(db: AsyncSession, milestones: list[Milestone]) -> list[
     return [milestone_out(m, CategoryCounts(**counts.get(m.id, {}))) for m in milestones]
 
 
-def member_out(member: ProjectMember) -> MemberOut:
+def member_out(member: ProjectMember | projects.MemberRow) -> MemberOut:
     user = member.user
+    if isinstance(member, projects.MemberRow):
+        return MemberOut(
+            handle=user.handle,
+            display_name=user.display_name,
+            kind=user.kind,
+            role=member.role,
+            effective_role=member.effective_role,
+            groups=member.groups,
+            is_active=user.is_active,
+        )
     return MemberOut(
         handle=user.handle,
         display_name=user.display_name,
         kind=user.kind,
         role=member.role,
+        effective_role=member.role,
         is_active=user.is_active,
     )
 
@@ -142,11 +154,12 @@ async def project_detail(db: AsyncSession, project: Project, role: ProjectRole) 
         areas=[area_out(a) for a in await planning.list_areas(db, project)],
         milestones=await milestones_out(db, await planning.list_milestones(db, project)),
         workflows=[workflow_out(w) for w in workflows.values()],
-        members=[member_out(m) for m in await projects.list_members(db, project)],
+        members=[member_out(m) for m in await projects.member_rows(db, project)],
         custom_fields=await fields_out(db, await custom_fields.list_fields(db, project.id)),
         template=await _template_ref(db, project),
         blocked_policy=project.blocked_policy,
         suggested_tags=list(project.suggested_tags or []),
+        permissions=sorted(await permissions_for(db, project, role)),
     )
 
 

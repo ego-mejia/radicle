@@ -85,3 +85,7 @@ export const Actions = styled.div`
   gap: ${({ theme }) => theme.space.sm};
   flex-wrap: wrap;
 `;
+
+export const Muted = styled.small`
+  color: ${({ theme }) => theme.color.textMuted};
+`;

@@ -8,7 +8,6 @@ from radicle.api.jobs import JobOut, job_out
 from radicle.api.schemas.common import Input, Output
 from radicle.api.schemas.tickets import TicketOut
 from radicle.api.ticket_views import ticket_out
-from radicle.db.models import ProjectRole
 from radicle.services import bulk, moving, tickets
 from radicle.services.access import project_access
 
@@ -66,14 +65,14 @@ class BulkOut(Output):
 async def clone_ticket(key: str, body: CloneIn, principal: CurrentPrincipal, db: Db) -> TicketOut:
     """Copy a ticket into its project or another one. The clone starts in the initial
     status, unassigned, with a `clones` link to the original."""
-    access, ticket = await tickets.load_ticket(
-        db, principal.user, key, need=ProjectRole.member, write=True
+    access, ticket = await tickets.load_ticket(db, principal.user, key)
+    target = await project_access(
+        db,
+        principal.user,
+        body.target_project or access.project.key,
+        write=True,
+        permission="ticket.create",
     )
-    target = access
-    if body.target_project and body.target_project.upper() != access.project.key.upper():
-        target = await project_access(
-            db, principal.user, body.target_project, need=ProjectRole.member, write=True
-        )
     clone = await moving.clone_ticket(
         db,
         access,
@@ -90,7 +89,7 @@ async def move_ticket(key: str, body: MoveIn, principal: CurrentPrincipal, db: D
     """Move to another project (admin here, member there). The ticket gets a new key;
     the old one keeps resolving to it."""
     access, ticket = await tickets.load_ticket(
-        db, principal.user, key, need=ProjectRole.admin, write=True
+        db, principal.user, key, write=True, permission="ticket.move"
     )
     await moving.move_ticket(
         db,

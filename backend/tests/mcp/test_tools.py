@@ -271,7 +271,7 @@ async def test_viewer_cannot_create(seeded: Team, mcp_for: McpFor) -> None:
         msg = error_text(
             await mcp.call_tool("create_ticket", {"project": "PA", "type": "draft", "title": "x"})
         )
-        assert "Your role in PA is viewer" in msg
+        assert "'ticket.create' permission is off for the viewer role" in msg
 
 
 async def test_outsider_sees_nothing(seeded: Team, mcp_for: McpFor) -> None:

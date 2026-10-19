@@ -51,7 +51,9 @@ async def upload_attachment(
     ] = None,
 ) -> AttachmentOut:
     """Upload a file (multipart). Images lose their EXIF and are shrunk to `resize`."""
-    access, ticket = await tickets.load_ticket(db, principal.user, key, need=MEMBER, write=True)
+    access, ticket = await tickets.load_ticket(
+        db, principal.user, key, write=True, permission="attachment.upload"
+    )
     data = await _read_limited(file, attachments.max_bytes())
     attachment = await attachments.upload(
         db,
@@ -120,7 +122,9 @@ async def resize_attachment(
     attachment_id: uuid.UUID, body: ResizeIn, principal: CurrentPrincipal, db: Db
 ) -> AttachmentOut:
     """Shrink an image already uploaded. It never gets bigger."""
-    aa = await attachments.load(db, principal.user, attachment_id, need=MEMBER, write=True)
+    aa = await attachments.load(
+        db, principal.user, attachment_id, write=True, permission="attachment.upload"
+    )
     attachment = await attachments.resize(db, aa, body.preset)
     return attachment_out(attachment, f"{aa.access.project.key}-{aa.ticket.number}")
 
@@ -130,6 +134,6 @@ async def delete_attachment(
     attachment_id: uuid.UUID, principal: CurrentPrincipal, db: Db
 ) -> Response:
     """The uploader or a project admin."""
-    aa = await attachments.load(db, principal.user, attachment_id, need=MEMBER, write=True)
+    aa = await attachments.load(db, principal.user, attachment_id, write=True)
     await attachments.delete(db, aa)
     return Response(status_code=204)

@@ -1,5 +1,19 @@
 import type { ProjectDetail, Ticket } from '../services/api/types';
 
+/** What a member may do by default (the catalog in core/permissions.py). */
+export const MEMBER_PERMISSIONS = [
+  'attachment.upload',
+  'comment.create',
+  'inbox.triage',
+  'link.manage',
+  'ticket.bulk_edit',
+  'ticket.create',
+  'ticket.edit',
+  'ticket.transition',
+  'vote',
+  'worklog.create',
+];
+
 export const TICKET: Ticket = {
   key: 'PA-4',
   project: 'PA',
@@ -72,12 +86,22 @@ export const PROJECT: ProjectDetail = {
   milestones: [],
   workflows: [],
   members: [
-    { handle: 'luis', display_name: 'Luis', kind: 'human', role: 'member', is_active: true },
+    {
+      handle: 'luis',
+      display_name: 'Luis',
+      kind: 'human',
+      role: 'member',
+      effective_role: 'member',
+      groups: [],
+      is_active: true,
+    },
     {
       handle: 'agent-backend',
       display_name: 'Backend agent',
       kind: 'agent',
       role: 'member',
+      effective_role: 'member',
+      groups: [],
       is_active: true,
     },
   ],
@@ -90,6 +114,7 @@ export const PROJECT: ProjectDetail = {
   },
   blocked_policy: 'warn',
   suggested_tags: [],
+  permissions: MEMBER_PERMISSIONS,
   custom_fields: [
     {
       key: 'environment',

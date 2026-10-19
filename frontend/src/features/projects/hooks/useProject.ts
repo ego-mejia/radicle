@@ -7,7 +7,7 @@ export function useProject(key: string) {
 
 /** Members who can be assigned (member or admin), for pickers and @mentions. */
 export function assignable(
-  members: { handle: string; display_name: string; role: string; kind: string }[],
+  members: { handle: string; display_name: string; effective_role: string; kind: string }[],
 ) {
-  return members.filter((m) => m.role !== 'viewer');
+  return members.filter((m) => m.effective_role !== 'viewer');
 }

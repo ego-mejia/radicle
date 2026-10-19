@@ -1,3 +1,4 @@
+import { can } from '../../../../lib/permissions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { MoreHorizontal, Plus } from 'lucide-react';
 import { useState } from 'react';
@@ -35,7 +36,7 @@ export function MilestonesList({ project, renderHeader }: Props) {
     onError: (error) => toast(errorMessage(error), 'error'),
   });
 
-  const isAdmin = project.role === 'admin' && !project.archived;
+  const isAdmin = can(project, 'project.settings');
   const addButton = isAdmin && (
     <Button variant="primary" onClick={() => setEditing('new')}>
       <Plus />

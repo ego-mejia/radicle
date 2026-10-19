@@ -65,12 +65,15 @@ async def load_sprint(
     *,
     need: ProjectRole = ProjectRole.viewer,
     write: bool = False,
+    permission: str | None = None,
 ) -> tuple[BoardAccess, Sprint]:
     sprint = await db.get(Sprint, sprint_id)
     if sprint is None:
         raise _not_found(sprint_id)
     try:
-        access = await load_board(db, user, sprint.board_id, need=need, write=write)
+        access = await load_board(
+            db, user, sprint.board_id, need=need, write=write, permission=permission
+        )
     except NotFound:
         raise _not_found(sprint_id) from None
     return access, sprint
@@ -407,7 +410,7 @@ async def complete_sprint(
 
 async def _set_tags(db: AsyncSession, user: User, ticket: Ticket, tags: list[str]) -> None:
     access, _ = await tickets.load_ticket(
-        db, user, await _key(db, ticket), need=ProjectRole.member, write=True
+        db, user, await _key(db, ticket), write=True, permission="ticket.edit"
     )
     await tickets.update_ticket(
         db, access, ticket, {"tags": tags}, expected_version=None, enforce_screen=False
@@ -422,7 +425,7 @@ async def add_tickets(db: AsyncSession, user: User, sprint: Sprint, keys: list[s
     added: list[str] = []
     now = utcnow()
     for key in keys:
-        _, ticket = await tickets.load_ticket(db, user, key, need=ProjectRole.member, write=True)
+        _, ticket = await tickets.load_ticket(db, user, key, write=True, permission="ticket.edit")
         current = await db.scalar(
             select(SprintTicket).where(
                 SprintTicket.ticket_id == ticket.id,
@@ -467,7 +470,7 @@ async def remove_tickets(
         raise _state_error(sprint, "remove tickets")
     removed: list[str] = []
     for key in keys:
-        _, ticket = await tickets.load_ticket(db, user, key, need=ProjectRole.member, write=True)
+        _, ticket = await tickets.load_ticket(db, user, key, write=True, permission="ticket.edit")
         row = await db.scalar(
             select(SprintTicket).where(_in_sprint(sprint.id), SprintTicket.ticket_id == ticket.id)
         )

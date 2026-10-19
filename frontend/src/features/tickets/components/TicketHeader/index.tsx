@@ -19,11 +19,13 @@ import { CloneModal } from '../CloneModal';
 import { MoveModal } from '../MoveModal';
 import { StatusButton } from '../StatusButton';
 import { VoteButton } from '../VoteButton';
+import type { Permission } from '../../../../lib/permissions';
 import * as S from './style';
 
-type Props = { ticket: Ticket; actions: TicketActions; canEdit: boolean; isAdmin: boolean };
+type Props = { ticket: Ticket; actions: TicketActions; can: (p: Permission) => boolean };
 
-export function TicketHeader({ ticket, actions, canEdit, isAdmin }: Props) {
+export function TicketHeader({ ticket, actions, can }: Props) {
+  const canEdit = can('ticket.edit');
   const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
@@ -69,10 +71,10 @@ export function TicketHeader({ ticket, actions, canEdit, isAdmin }: Props) {
       <S.Top>
         <TypeIcon type={ticket.type} size={16} />
         <TicketKey>{ticket.key}</TicketKey>
-        <StatusButton ticket={ticket} actions={actions} canEdit={canEdit} />
+        <StatusButton ticket={ticket} actions={actions} canEdit={can('ticket.transition')} />
         {ticket.blocked && <Badge tone="danger">{t('ticket.blocked')}</Badge>}
         <S.Spacer />
-        <VoteButton ticket={ticket} canVote={canEdit} />
+        <VoteButton ticket={ticket} canVote={can('vote')} />
         <Menu
           align="end"
           trigger={
@@ -92,10 +94,10 @@ export function TicketHeader({ ticket, actions, canEdit, isAdmin }: Props) {
               key: 'clone',
               label: t('ticket.menu.clone'),
               icon: <Copy />,
-              disabled: !canEdit,
+              disabled: !can('ticket.create'),
               onSelect: () => setDialog('clone'),
             },
-            ...(isAdmin
+            ...(can('ticket.move')
               ? [
                   {
                     key: 'move',
@@ -111,7 +113,7 @@ export function TicketHeader({ ticket, actions, canEdit, isAdmin }: Props) {
               icon: <Link2 />,
               onSelect: () => void copyLink(),
             },
-            ...(isAdmin
+            ...(can('ticket.delete')
               ? [
                   { separator: true as const, key: 'sep' },
                   {

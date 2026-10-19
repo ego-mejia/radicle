@@ -74,7 +74,7 @@ async def list_boards(key: str, principal: CurrentPrincipal, db: Db) -> Page[Boa
 async def create_board(
     key: str, body: BoardCreate, principal: CurrentPrincipal, db: Db
 ) -> BoardOut:
-    access = await project_access(db, principal.user, key, need=ADMIN, write=True)
+    access = await project_access(db, principal.user, key, write=True, permission="board.manage")
     board = await boards.create_board(
         db,
         access,
@@ -103,7 +103,9 @@ async def patch_board(
     board_id: UUID, body: BoardPatch, principal: CurrentPrincipal, db: Db
 ) -> BoardOut:
     """Columns group statuses (by id, or whole categories); a status sits in one column."""
-    ba = await boards.load_board(db, principal.user, board_id, need=ADMIN, write=True)
+    ba = await boards.load_board(
+        db, principal.user, board_id, write=True, permission="board.manage"
+    )
     changes = body.model_dump(mode="json", exclude_unset=True)
     await boards.update_board(db, ba.board, changes)
     return await board_out(db, ba.board)
@@ -111,7 +113,9 @@ async def patch_board(
 
 @router.delete("/boards/{board_id}", status_code=204)
 async def delete_board(board_id: UUID, principal: CurrentPrincipal, db: Db) -> Response:
-    ba = await boards.load_board(db, principal.user, board_id, need=ADMIN, write=True)
+    ba = await boards.load_board(
+        db, principal.user, board_id, write=True, permission="board.manage"
+    )
     await db.delete(ba.board)
     return Response(status_code=204)
 
@@ -133,7 +137,9 @@ async def list_quick_filters(
 async def create_quick_filter(
     board_id: UUID, body: QuickFilterIn, principal: CurrentPrincipal, db: Db
 ) -> QuickFilterOut:
-    ba = await boards.load_board(db, principal.user, board_id, need=ADMIN, write=True)
+    ba = await boards.load_board(
+        db, principal.user, board_id, write=True, permission="board.manage"
+    )
     q = await boards.save_quick_filter(
         db, ba.board, name=body.name, rql=body.rql, position=body.position
     )
@@ -144,7 +150,9 @@ async def create_quick_filter(
 async def patch_quick_filter(
     board_id: UUID, filter_id: UUID, body: QuickFilterIn, principal: CurrentPrincipal, db: Db
 ) -> QuickFilterOut:
-    ba = await boards.load_board(db, principal.user, board_id, need=ADMIN, write=True)
+    ba = await boards.load_board(
+        db, principal.user, board_id, write=True, permission="board.manage"
+    )
     existing = await boards.get_quick_filter(db, ba.board, filter_id)
     q = await boards.save_quick_filter(
         db, ba.board, name=body.name, rql=body.rql, position=body.position, existing=existing
@@ -156,7 +164,9 @@ async def patch_quick_filter(
 async def delete_quick_filter(
     board_id: UUID, filter_id: UUID, principal: CurrentPrincipal, db: Db
 ) -> Response:
-    ba = await boards.load_board(db, principal.user, board_id, need=ADMIN, write=True)
+    ba = await boards.load_board(
+        db, principal.user, board_id, write=True, permission="board.manage"
+    )
     await db.delete(await boards.get_quick_filter(db, ba.board, filter_id))
     return Response(status_code=204)
 

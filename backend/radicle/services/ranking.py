@@ -162,8 +162,8 @@ async def next_ticket(
         db,
         user,
         project_row.key,
-        need=ProjectRole.member if claim else ProjectRole.viewer,
         write=claim,
+        permission="ticket.edit" if claim else None,
     )
     if not claim:
         return access, ticket

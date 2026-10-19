@@ -1,3 +1,4 @@
+import { can } from '../../../../lib/permissions';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
@@ -69,7 +70,7 @@ export function ListView() {
         error={error}
         warnings={search.warnings.map((w) => w.message)}
       />
-      {project.role !== 'viewer' && (
+      {can(project, 'ticket.bulk_edit') && (
         <BulkBar
           project={project}
           keys={[...selected]}
@@ -97,10 +98,10 @@ export function ListView() {
               hasMore={!!hasNextPage}
               loadingMore={isFetchingNextPage}
               onLoadMore={loadMore}
-              selected={project.role !== 'viewer' ? selected : undefined}
+              selected={can(project, 'ticket.bulk_edit') ? selected : undefined}
               onSelect={select}
               onReorder={
-                currentOrder(query)?.field === 'rank' && project.role !== 'viewer'
+                currentOrder(query)?.field === 'rank' && can(project, 'ticket.edit')
                   ? async (key, place) => {
                       await rankTicket(key, place);
                       await queryClient.invalidateQueries({ queryKey: ticketKeys.all });

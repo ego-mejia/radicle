@@ -14,7 +14,6 @@ from radicle.db.models import (
     EventType,
     LinkType,
     Project,
-    ProjectRole,
     Status,
     StatusCategory,
     Ticket,
@@ -23,7 +22,7 @@ from radicle.db.models import (
     User,
 )
 from radicle.services import history
-from radicle.services.access import ProjectAccess, check_access, role_in
+from radicle.services.access import ProjectAccess, access_for
 from radicle.services.tickets import bump, load_ticket
 
 
@@ -180,9 +179,7 @@ async def remove_link(db: AsyncSession, user: User, link_id: uuid.UUID) -> None:
     if project is None:  # pragma: no cover - FK
         raise NotFound(f"Link {link_id} not found.", code="link_not_found")
     try:
-        check_access(
-            project, await role_in(db, user, project), user, need=ProjectRole.member, write=True
-        )
+        await access_for(db, user, project, write=True, permission="link.manage")
     except NotFound as exc:
         raise NotFound(f"Link {link_id} not found.", code="link_not_found") from exc
     source_key, target_key = await _key(db, source), await _key(db, target)

@@ -1,3 +1,4 @@
+from radicle.db.models.access import Group, GroupMember, ProjectGroupRole, ProjectRolePermission
 from radicle.db.models.attachments import Attachment
 from radicle.db.models.base import Base, utcnow
 from radicle.db.models.boards import Board, BoardKind, BoardQuickFilter, Swimlane, WipMode
@@ -69,6 +70,8 @@ __all__ = [
     "DashboardWidget",
     "EventType",
     "FilterVisibility",
+    "Group",
+    "GroupMember",
     "Job",
     "JobStatus",
     "LinkType",
@@ -77,8 +80,10 @@ __all__ = [
     "MilestoneStatus",
     "Priority",
     "Project",
+    "ProjectGroupRole",
     "ProjectMember",
     "ProjectRole",
+    "ProjectRolePermission",
     "RemainingMode",
     "Resolution",
     "RuleKind",

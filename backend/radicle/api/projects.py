@@ -66,7 +66,9 @@ async def get_project(key: str, principal: CurrentPrincipal, db: Db) -> ProjectD
 async def patch_project(
     key: str, body: ProjectPatch, principal: CurrentPrincipal, db: Db
 ) -> ProjectDetail:
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     await projects.update_project(access, name=body.name, description_md=body.description_md)
     return await out.project_detail(db, access.project, access.role)
 
@@ -97,7 +99,7 @@ async def get_workflows(key: str, principal: CurrentPrincipal, db: Db) -> list[W
 @router.get("/{key}/members", response_model=Page[MemberOut])
 async def list_members(key: str, principal: CurrentPrincipal, db: Db) -> Page[MemberOut]:
     access = await project_access(db, principal.user, key)
-    members = await projects.list_members(db, access.project)
+    members = await projects.member_rows(db, access.project)
     return Page(items=[out.member_out(m) for m in members])
 
 
@@ -106,7 +108,7 @@ async def put_member(
     key: str, handle: str, body: MemberPut, principal: CurrentPrincipal, db: Db
 ) -> MemberOut:
     """Add a user or agent to the project, or change their role."""
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(db, principal.user, key, write=True, permission="members.manage")
     member = await projects.set_member(db, access, handle, body.role)
     return out.member_out(member)
 
@@ -114,7 +116,7 @@ async def put_member(
 @router.delete("/{key}/members/{handle}", status_code=204)
 async def delete_member(key: str, handle: str, principal: CurrentPrincipal, db: Db) -> Response:
     """Remove a member. A project can never be left without an admin."""
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(db, principal.user, key, write=True, permission="members.manage")
     await projects.remove_member(db, access, handle)
     return Response(status_code=204)
 
@@ -125,7 +127,7 @@ async def save_as_template(
 ) -> TemplateDetail:
     """New template with this project's workflows, fields, areas, tags and settings.
     Tickets, milestones and members are not copied."""
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin)
+    access = await project_access(db, principal.user, key, permission="project.settings")
     change = await templates.save_as_template(
         db, access, name=body.name, description_md=body.description_md
     )
@@ -135,7 +137,9 @@ async def save_as_template(
 @router.post("/{key}/detach", response_model=ProjectDetail)
 async def detach_project(key: str, principal: CurrentPrincipal, db: Db) -> ProjectDetail:
     """Stop following the template. The project keeps its configuration and can edit it."""
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     templates.detach(access)
     return await out.project_detail(db, access.project, access.role)
 
@@ -146,7 +150,9 @@ async def put_workflow(
 ) -> WorkflowPutOut:
     """Replace one workflow (independent projects only). Statuses keep their `ref`;
     tickets in removed statuses need `status_mappings`."""
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     warnings = await templates.put_workflow(
         db,
         access,
@@ -162,7 +168,9 @@ async def put_settings(
     key: str, body: ProjectSettingsPut, principal: CurrentPrincipal, db: Db
 ) -> ProjectDetail:
     """Blocked policy: warn lets blocked tickets move with a warning, enforce stops them."""
-    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    access = await project_access(
+        db, principal.user, key, write=True, permission="project.settings"
+    )
     await templates.ensure_editable(db, access.project)
     access.project.blocked_policy = body.blocked_policy
     access.project.updated_at = utcnow()
