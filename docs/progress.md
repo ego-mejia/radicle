@@ -8,7 +8,7 @@ Estado de cada entregable. Se actualiza al cerrar cada uno.
 | --- | --- | --- |
 | 1.1 | Base, auth y usuarios | Aceptado |
 | 1.2 | Proyectos, miembros, áreas y milestones | Listo |
-| 1.3 | Tickets e historial | Pendiente |
+| 1.3 | Tickets e historial | Listo |
 | 1.4 | Workflows y transiciones | Pendiente |
 | 1.5 | Links, comentarios y reacciones | Pendiente |
 | 1.6 | RQL y búsqueda | Pendiente |
@@ -70,3 +70,26 @@ curl -H "Authorization: Bearer rdc_..." localhost:8000/api/v1/me
 
 - `tests/integration/test_projects.py::test_acceptance_project_with_areas_and_milestone`: ProyectoA (PA) con Legal, Marketing, Backend, Frontend y V1.
 - `tests/integration/test_project_permissions.py`: matriz de 10 acciones por 6 roles; viewer recibe 403 al editar y no miembro 404 en todo.
+
+### 1.3 Tickets e historial
+
+**Qué se hizo**
+
+- Migración `0003`: `tickets` (con `search_vector` generado en inglés y español, índices GIN de tags, full-text y trigramas), `ticket_collaborators`, `mentions` y `ticket_events`.
+- `ticket_events` es de solo inserción: un trigger rechaza `UPDATE`, `DELETE` y `TRUNCATE` aunque se haga desde SQL.
+- CRUD de tickets con todos los campos fijos, áreas y milestones por nombre, personas por handle y padre por key. Errores con las opciones válidas (por ejemplo, "Valid areas: Legal, Marketing...").
+- Numeración sin huecos ni duplicados con `UPDATE ... RETURNING` sobre `projects.ticket_seq`.
+- Versionado optimista: `PATCH` exige `If-Match` o `expected_version`; si no coincide, 409 con el ticket actual.
+- Un evento `field_changed` por campo con valor anterior y nuevo; `created`, `checklist_item_toggled`, `collaborator_added/removed`, `deleted`, `restored`.
+- Checklist parseado de la descripción (ignora código, assignee por último `@handle`, `assignee_unknown`); `PATCH /checklist/{index}` reescribe solo esa línea.
+- Menciones guardadas al crear o editar la descripción (fuera de código, sin contar emails).
+- Soft delete y restore; los hijos pierden el padre con su evento.
+- Rank con fractional indexing (máximo 4 caracteres tras 10,000 inserciones al final).
+- Conteos reales por categoría en milestones y tickets abiertos por proyecto.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_concurrency.py`: 50 creaciones en paralelo con commits reales dan PA-1 a PA-50.
+- `tests/integration/test_history_integrity.py`: `UPDATE`, `DELETE` y `TRUNCATE` sobre el historial fallan.
+- `tests/integration/test_tickets.py::test_patch_fields_and_history`: cada cambio con valor anterior y nuevo.
+- `tests/integration/test_ticket_permissions.py`: matriz de 8 acciones por 6 roles.

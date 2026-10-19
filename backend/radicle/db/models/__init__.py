@@ -12,14 +12,27 @@ from radicle.db.models.projects import (
     TicketType,
     Transition,
 )
+from radicle.db.models.tickets import (
+    PRIORITY_ORDER,
+    EventType,
+    Mention,
+    Priority,
+    Ticket,
+    TicketCollaborator,
+    TicketEvent,
+)
 from radicle.db.models.users import ApiToken, Session, User, UserKind
 
 __all__ = [
+    "PRIORITY_ORDER",
     "ApiToken",
     "Area",
     "Base",
+    "EventType",
+    "Mention",
     "Milestone",
     "MilestoneStatus",
+    "Priority",
     "Project",
     "ProjectMember",
     "ProjectRole",
@@ -27,6 +40,9 @@ __all__ = [
     "Session",
     "Status",
     "StatusCategory",
+    "Ticket",
+    "TicketCollaborator",
+    "TicketEvent",
     "TicketType",
     "Transition",
     "User",

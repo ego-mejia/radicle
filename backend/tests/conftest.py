@@ -204,3 +204,39 @@ async def team(client: AsyncClient, admin: Actor) -> Team:
         )
         assert r.status_code == 200, r.text
     return Team(instance=admin, **actors)
+
+
+AREAS = ("Legal", "Marketing", "Backend", "Frontend")
+
+
+@pytest.fixture
+async def board(client: AsyncClient, team: Team) -> Team:
+    """`team` plus the acceptance setup: four areas and milestone V1."""
+    for name in AREAS:
+        r = await client.post(
+            "/api/v1/projects/PA/areas", headers=team.instance.headers, json={"name": name}
+        )
+        assert r.status_code == 201, r.text
+    r = await client.post(
+        "/api/v1/projects/PA/milestones",
+        headers=team.instance.headers,
+        json={"name": "V1", "target_date": "2026-12-15"},
+    )
+    assert r.status_code == 201, r.text
+    return team
+
+
+async def new_ticket(client: AsyncClient, actor: Actor, **fields: object) -> dict:
+    body = {"type": "task", "title": "Ticket", "area": "Backend", **fields}
+    r = await client.post("/api/v1/projects/PA/tickets", headers=actor.headers, json=body)
+    assert r.status_code == 201, r.text
+    return r.json()
+
+
+async def patch_ticket(client: AsyncClient, actor: Actor, key: str, **fields: object):
+    current = (await client.get(f"/api/v1/tickets/{key}", headers=actor.headers)).json()
+    return await client.patch(
+        f"/api/v1/tickets/{key}",
+        headers={**actor.headers, "If-Match": str(current["version"])},
+        json=fields,
+    )

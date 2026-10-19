@@ -53,7 +53,7 @@ class MeProject(BaseModel):
 
 
 class MeOut(UserOut):
-    projects: list[MeProject] = []
+    projects: list[MeProject] = Field(default_factory=list)
 
 
 class LoginIn(Input):
