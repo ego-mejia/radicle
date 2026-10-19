@@ -21,6 +21,7 @@ const FIXED = [
   'assignee',
   'collaborators',
   'parent',
+  'start_date',
   'due_date',
   'estimate_hours',
   'tags',

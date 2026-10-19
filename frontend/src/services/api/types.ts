@@ -104,3 +104,8 @@ export const CARD_FIELDS = [
   'checklist',
   'votes',
 ] as const;
+
+export type Sprint = S['SprintOut'];
+export type SprintDetail = S['SprintDetail'];
+export type SprintReport = S['SprintReport'];
+export type SprintState = Sprint['state'];

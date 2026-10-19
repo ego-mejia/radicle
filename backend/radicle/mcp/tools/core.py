@@ -34,6 +34,7 @@ class TicketChanges(BaseModel):
     milestone: str | None = Field(default=None, description="Open milestone name")
     parent: str | None = Field(default=None, description="Parent ticket key")
     assignee: str | None = Field(default=None, description="Handle of a member or agent")
+    start_date: date | None = None
     due_date: date | None = None
     estimate_hours: float | None = None
     tags: list[str] | None = None
@@ -150,6 +151,7 @@ def register(server: MCPServer) -> None:
         assignee: Annotated[str | None, Field(description="Handle")] = None,
         collaborators: list[str] | None = None,
         parent: Annotated[str | None, Field(description="Parent ticket key")] = None,
+        start_date: date | None = None,
         due_date: date | None = None,
         estimate_hours: float | None = None,
         tags: list[str] | None = None,
@@ -169,6 +171,7 @@ def register(server: MCPServer) -> None:
             "assignee": assignee,
             "collaborators": collaborators,
             "parent": parent,
+            "start_date": start_date.isoformat() if start_date else None,
             "due_date": due_date.isoformat() if due_date else None,
             "estimate_hours": estimate_hours,
             "tags": tags,

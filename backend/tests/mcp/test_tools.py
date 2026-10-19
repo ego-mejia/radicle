@@ -43,6 +43,12 @@ TOOLS = {
     "save_filter",
     "list_boards",
     "get_board",
+    "list_sprints",
+    "get_sprint",
+    "add_to_sprint",
+    "remove_from_sprint",
+    "start_sprint",
+    "complete_sprint",
 }
 
 

@@ -7,15 +7,17 @@ from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import Select, func, select
+from sqlalchemy import Select, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import ValidationFailed
 from radicle.db.models import (
     Area,
+    Board,
     Milestone,
     Project,
     ProjectMember,
+    Sprint,
     Status,
     Ticket,
     User,
@@ -142,6 +144,17 @@ async def _missing_names(
         if kind == "handle":
             exists = await db.scalar(select(User.id).where(User.handle == value))
             label = f"User @{value}"
+        elif kind == "sprint":
+            exists = await db.scalar(
+                select(Sprint.id)
+                .join(Board, Board.id == Sprint.board_id)
+                .where(
+                    func.lower(Sprint.name) == value.lower(),
+                    or_(Board.project_id.is_(None), Board.project_id.in_(visible)),
+                )
+                .limit(1)
+            )
+            label = f"Sprint '{value}'"
         elif kind == "project":
             exists = await db.scalar(
                 select(Project.id).where(Project.key == value, Project.id.in_(visible))

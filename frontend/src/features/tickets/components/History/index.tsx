@@ -124,6 +124,7 @@ export function History({ ticket }: { ticket: Ticket }) {
 const FIELD_KEYS: Record<string, string> = {
   description_md: 'description',
   due_date: 'due',
+  start_date: 'start',
   estimate_hours: 'estimate',
 };
 

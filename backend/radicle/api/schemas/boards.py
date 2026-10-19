@@ -3,6 +3,7 @@ from typing import Any
 from pydantic import Field
 
 from radicle.api.schemas.common import Input, Output, UtcDatetime
+from radicle.api.schemas.sprints import SprintOut
 from radicle.api.schemas.tickets import TicketSummary, WarningOut
 from radicle.db.models import BoardKind, Resolution, StatusCategory, Swimlane, TicketType, WipMode
 
@@ -111,6 +112,9 @@ class BoardDataOut(Output):
     swimlane_by: Swimlane
     lanes: list[LaneOut]
     columns: list[ColumnData]
+    sprint: SprintOut | None = Field(
+        default=None, description="Scrum boards: the active sprint, whose tickets they show"
+    )
 
 
 class BoardMoveIn(Input):

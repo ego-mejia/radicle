@@ -21,9 +21,10 @@ from radicle.api.schemas.boards import (
 )
 from radicle.api.schemas.common import Page
 from radicle.api.schemas.tickets import WarningOut
+from radicle.api.sprints import sprint_out
 from radicle.api.ticket_views import summaries_out
-from radicle.db.models import Board, Project, ProjectRole, Status, Swimlane
-from radicle.services import boards
+from radicle.db.models import Board, BoardKind, Project, ProjectRole, Status, Swimlane
+from radicle.services import boards, sprints
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["boards"])
@@ -216,8 +217,13 @@ async def board_data(
         if by is not Swimlane.none
         else []
     )
+    active = await sprints.active_sprint(db, ba.board) if ba.board.kind is BoardKind.scrum else None
     return BoardDataOut(
-        board=await board_out(db, ba.board), swimlane_by=by, lanes=lanes, columns=out_columns
+        board=await board_out(db, ba.board),
+        swimlane_by=by,
+        lanes=lanes,
+        columns=out_columns,
+        sprint=await sprint_out(db, principal, active) if active else None,
     )
 
 

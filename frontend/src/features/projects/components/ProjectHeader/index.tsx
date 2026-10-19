@@ -1,5 +1,5 @@
 import { createLink } from '@tanstack/react-router';
-import { Columns3, Flag, List, Settings } from 'lucide-react';
+import { Columns3, Flag, List, ListTodo, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Badge, TicketKey } from '../../../../components/ui/Badge';
 import type { ProjectDetail } from '../../../../services/api/types';
@@ -30,6 +30,15 @@ export function ProjectHeader({ project, actions }: Props) {
         >
           <Columns3 />
           {t('nav.board')}
+        </Tab>
+        <Tab
+          to="/p/$key/backlog"
+          params={params}
+          search={{}}
+          activeOptions={{ includeSearch: false }}
+        >
+          <ListTodo />
+          {t('nav.backlog')}
         </Tab>
         <Tab to="/p/$key/list" params={params} search={{}} activeOptions={{ includeSearch: false }}>
           <List />

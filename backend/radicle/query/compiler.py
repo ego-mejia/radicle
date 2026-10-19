@@ -38,6 +38,9 @@ from radicle.db.models import (
     Milestone,
     Priority,
     Project,
+    Sprint,
+    SprintState,
+    SprintTicket,
     Status,
     StatusCategory,
     Ticket,
@@ -103,9 +106,13 @@ class _Compiler:
         if isinstance(node, ast.IsEmpty):
             f = self.lookup(node.field, node.field_pos)
             check_empty(f, node.field_pos)
-            empty: ColumnElement[bool] = (
-                not_(Ticket.custom_fields.has_key(_cf_key(f))) if f.custom else _column(f).is_(None)
-            )
+            empty: ColumnElement[bool]
+            if f.custom:
+                empty = not_(Ticket.custom_fields.has_key(_cf_key(f)))
+            elif f.name == "sprint":
+                empty = not_(exists().where(_open_sprint_row()))
+            else:
+                empty = _column(f).is_(None)
             return not_(empty) if node.negated else empty
         if isinstance(node, ast.InList):
             f = self.lookup(node.field, node.field_pos)
@@ -154,6 +161,8 @@ class _Compiler:
         if f.name == "status":
             self.references.append(("status", text, v.pos))
             return _nn(func.lower(Status.name) == text.lower())
+        if f.name == "sprint":
+            return self.sprint_equals(v)
         if f.name in ("area", "milestone"):
             self.references.append((f.name, text, v.pos))
             model = Area if f.name == "area" else Milestone
@@ -182,6 +191,18 @@ class _Compiler:
                 raise RQLError(f"'{f.name}' takes true or false (at {v.pos}).", position=v.pos)
             return _blocked() if flag == "true" else not_(_blocked())
         return self.ordered(f, "=", v)
+
+    def sprint_equals(self, v: ast.Value) -> ColumnElement[bool]:
+        """`active` and `future` (unquoted) are states; anything else is a sprint name."""
+        text = v.text.strip()
+        if v.kind == "word" and text.lower() in ("active", "future"):
+            sprint_match: ColumnElement[bool] = Sprint.state == SprintState(text.lower())
+            row = _open_sprint_row()
+        else:
+            self.references.append(("sprint", text, v.pos))
+            sprint_match = func.lower(Sprint.name) == text.lower()
+            row = and_(SprintTicket.ticket_id == Ticket.id, SprintTicket.removed_at.is_(None))
+        return exists().where(row, Sprint.id == SprintTicket.sprint_id, sprint_match)
 
     def handle_equals(self, f: Field, v: ast.Value) -> ColumnElement[bool]:
         if v.kind == "func":
@@ -313,7 +334,7 @@ class _Compiler:
             return _nn(_apply(_column(f), op, number))
         if f.kind is Kind.date:
             day = self.as_date(v)
-            return _nn(_apply(Ticket.due_date, op, day))
+            return _nn(_apply(_column(f), op, day))
         return self.datetime_compare(f, op, v)
 
     def datetime_compare(self, f: Field, op: str, v: ast.Value) -> ColumnElement[bool]:
@@ -390,6 +411,15 @@ class _Compiler:
         )
 
 
+def _open_sprint_row() -> ColumnElement[bool]:
+    """The ticket sits in a sprint that is not closed."""
+    return and_(
+        SprintTicket.ticket_id == Ticket.id,
+        SprintTicket.removed_at.is_(None),
+        SprintTicket.sprint_closed.is_(False),
+    )
+
+
 def _cf_key(f: Field) -> str:
     return f.name.split(".", 1)[1]
 
@@ -404,6 +434,7 @@ def _column(f: Field) -> Any:
         "reporter": Ticket.reporter_id,
         "parent": Ticket.parent_id,
         "due": Ticket.due_date,
+        "start": Ticket.start_date,
         "created": Ticket.created_at,
         "updated": Ticket.updated_at,
         "resolved": Ticket.resolved_at,
@@ -475,6 +506,7 @@ def _order_by(sorts: tuple[ast.Sort, ...]) -> list[Any]:
                     "created": Ticket.created_at,
                     "updated": Ticket.updated_at,
                     "due": Ticket.due_date,
+                    "start": Ticket.start_date,
                     "rank": Ticket.rank,
                     "estimate": Ticket.estimate_hours,
                     "votes": Ticket.vote_count,

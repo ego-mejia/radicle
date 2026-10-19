@@ -136,6 +136,15 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
       <FieldRow label={t('ticket.fields.reporter')}>
         <PersonChip person={ticket.reporter} />
       </FieldRow>
+      <FieldRow label={t('ticket.fields.start')}>
+        <InlineInput
+          label={t('ticket.fields.start')}
+          type="date"
+          value={ticket.start_date ?? ''}
+          disabled={!can('due_date')}
+          onCommit={(value) => patch({ start_date: value || null })}
+        />
+      </FieldRow>
       <FieldRow label={t('ticket.fields.due')}>
         <InlineInput
           label={t('ticket.fields.due')}

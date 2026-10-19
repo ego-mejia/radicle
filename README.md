@@ -78,6 +78,8 @@ El contenedor `worker` corre los trabajos en segundo plano: propagación de temp
 
 Cada proyecto empieza con un board Kanban "Main". Los admins crean más desde el board (**Nuevo board**) y los configuran en **Configurar**: origen RQL (un área o varios proyectos), columnas por estado o por categoría, límites WIP suaves (avisan en rojo) o duros (bloquean, un admin puede forzar), carriles, campos de la tarjeta y quick filters.
 
+Los boards Scrum tienen sprints. En la pestaña **Backlog** se planean arrastrando tickets a cada sprint (con barra de capacidad), se inicia el sprint con fechas y meta, y al cerrarlo lo pendiente pasa al siguiente sprint o regresa a `#backlog`.
+
 ## Atajos
 
 `?` muestra todos. Los principales: `c` crear ticket, `/` buscar, `⌘K` paleta de comandos, `g p` proyectos, `g m` mis tickets, `j`/`k` moverse en listas y board, y con un ticket abierto `e` título, `a` asignarme, `m` mover, `l` tags, `p` prioridad. Se pueden apagar en el perfil.

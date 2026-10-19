@@ -42,6 +42,7 @@ SCREEN_FIELDS: dict[str, str] = {
     "assignee": "user",
     "collaborators": "users",
     "parent": "ticket",
+    "start_date": "date",
     "due_date": "date",
     "estimate_hours": "number",
     "tags": "tags",
@@ -55,6 +56,7 @@ LABELS = {
     "assignee": "Assignee",
     "collaborators": "Collaborators",
     "parent": "Parent",
+    "start_date": "Start date",
     "due_date": "Due date",
     "estimate_hours": "Estimate",
     "tags": "Tags",
@@ -355,7 +357,9 @@ async def check_edit(
     schema = await form_schema(db, project, ticket.type, ScreenOperation.edit)
     if not schema.from_screen:
         return
-    allowed = schema.names()
+    allowed = set(schema.names())
+    if "due_date" in allowed:
+        allowed.add("start_date")  # dates travel together (timeline), even on older screens
     touched = [name for name in changes if name != "custom_fields"]
     touched += [f"cf.{key}" for key in (changes.get("custom_fields") or {})]
     if role is not ProjectRole.admin:

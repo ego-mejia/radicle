@@ -43,7 +43,8 @@
     "searchPlaceholder": "Ve a PA-4 o busca con RQL…",
     "mainNav": "Navegación principal",
     "breadcrumb": "Ruta",
-    "skip": "Saltar al contenido"
+    "skip": "Saltar al contenido",
+    "backlog": "Backlog"
   },
   "theme": {
     "label": "Tema",
@@ -100,7 +101,9 @@
       "links": "Links",
       "checklist": "Checklist",
       "collaborator": "Colaborador",
-      "votes": "Votos"
+      "votes": "Votos",
+      "start": "Fecha de inicio",
+      "sprint": "Sprint"
     },
     "unassigned": "Sin asignar",
     "noArea": "Sin área",
@@ -205,7 +208,22 @@
       "comment_edited": "editó un comentario",
       "comment_deleted": "borró un comentario",
       "deleted": "borró el ticket",
-      "restored": "restauró el ticket"
+      "restored": "restauró el ticket",
+      "custom_field_changed": "cambió {{field}}",
+      "status_remapped": "lo movió con el template",
+      "attachment_added": "adjuntó un archivo",
+      "attachment_removed": "quitó un archivo",
+      "attachment_resized": "redujo una imagen",
+      "vote_added": "votó 🙋",
+      "vote_removed": "quitó su voto",
+      "worklog_added": "registró tiempo",
+      "worklog_updated": "editó tiempo registrado",
+      "worklog_deleted": "borró tiempo registrado",
+      "cloned_from": "lo clonó",
+      "moved": "lo movió a otro proyecto",
+      "rank_changed": "lo reordenó",
+      "sprint_added": "lo metió a un sprint",
+      "sprint_removed": "lo sacó de un sprint"
     }
   },
   "auth": {
@@ -612,7 +630,8 @@
       "parent": "Padre",
       "title": "Título",
       "collaborators": "Colaboradores",
-      "tags": "Tags"
+      "tags": "Tags",
+      "start_date": "Fecha de inicio"
     }
   },
   "screens": {
@@ -810,5 +829,62 @@
       "filters": "Filtros guardados",
       "actions": "Acciones"
     }
+  },
+  "sprints": {
+    "backlog": "Backlog",
+    "select": "Seleccionar {{key}}",
+    "drag": "Arrastrar {{key}}",
+    "noEstimate": "Sin estimación: no cuenta para la capacidad",
+    "noEstimateShort": "sin est.",
+    "states": {
+      "future": "Futuro",
+      "active": "Activo",
+      "closed": "Cerrado"
+    },
+    "summary_one": "{{count}} ticket · {{hours}}",
+    "summary_other": "{{count}} tickets · {{hours}}",
+    "start": "Iniciar sprint",
+    "complete": "Cerrar sprint",
+    "delete": "Borrar {{name}}",
+    "deleteConfirm": "Sus tickets regresan al backlog.",
+    "capacity": "Capacidad",
+    "capacityOf": "{{hours}} de {{capacity}}",
+    "unestimated_one": "{{count}} ticket sin estimación",
+    "unestimated_other": "{{count}} tickets sin estimación",
+    "emptySprint": "Arrastra tickets aquí para planear el sprint.",
+    "emptyBacklog": "El backlog está vacío.",
+    "startTitle": "Iniciar {{name}}",
+    "name": "Nombre",
+    "goal": "Meta",
+    "startDate": "Inicio",
+    "endDate": "Fin",
+    "duration": "Un sprint dura de 1 a 28 días; este dura {{days}}.",
+    "capacityHours": "Capacidad (horas)",
+    "capacityHint": "Opcional. La barra se pone naranja cuando el plan se pasa.",
+    "completeTitle": "Cerrar {{name}}",
+    "report": {
+      "completed": "Terminados",
+      "notCompleted": "No terminados",
+      "added": "Agregados después de iniciar",
+      "removed": "Sacados"
+    },
+    "hours": "{{hours}} h",
+    "moveUnfinished_one": "¿A dónde va el ticket no terminado?",
+    "moveUnfinished_other": "¿A dónde van los {{count}} tickets no terminados?",
+    "tagBacklog": "Ponerles #backlog",
+    "noScrum": "Todavía no hay un board Scrum",
+    "noScrumHelp": "Los sprints viven en boards Scrum. Crea uno para planear sprints desde el backlog.",
+    "createScrum": "Crear board Scrum",
+    "selection": "Tickets seleccionados",
+    "selected_one": "{{count}} seleccionado",
+    "selected_other": "{{count}} seleccionados",
+    "moveTo": "Mover a…",
+    "move": "Mover",
+    "create": "Nuevo sprint",
+    "noActive": "No hay sprint activo",
+    "noActiveHelp": "Inicia uno desde el backlog.",
+    "goBacklog": "Ir al backlog",
+    "daysLeft_one": "Queda {{count}} día",
+    "daysLeft_other": "Quedan {{count}} días"
   }
 }

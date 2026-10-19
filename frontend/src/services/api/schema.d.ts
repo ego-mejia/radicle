@@ -144,6 +144,26 @@ export interface paths {
         patch: operations["patch_board_api_v1_boards__board_id__patch"];
         trace?: never;
     };
+    "/api/v1/boards/{board_id}/backlog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Board Backlog
+         * @description Tickets of the board's source in no open sprint and not done, by rank (first 500).
+         */
+        get: operations["board_backlog_api_v1_boards__board_id__backlog_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/boards/{board_id}/data": {
         parameters: {
             query?: never;
@@ -219,6 +239,27 @@ export interface paths {
         head?: never;
         /** Patch Quick Filter */
         patch: operations["patch_quick_filter_api_v1_boards__board_id__quick_filters__filter_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/boards/{board_id}/sprints": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Sprints
+         * @description Active first, then future in plan order, then closed (newest first).
+         */
+        get: operations["list_sprints_api_v1_boards__board_id__sprints_get"];
+        put?: never;
+        /** Create Sprint */
+        post: operations["create_sprint_api_v1_boards__board_id__sprints_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/comments/{comment_id}": {
@@ -948,6 +989,106 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sprints/{sprint_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Sprint */
+        get: operations["get_sprint_api_v1_sprints__sprint_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Sprint */
+        delete: operations["delete_sprint_api_v1_sprints__sprint_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Sprint
+         * @description Future: everything. Active: goal, end date and capacity. Closed: only goal_met.
+         */
+        patch: operations["patch_sprint_api_v1_sprints__sprint_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/sprints/{sprint_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Complete Sprint */
+        post: operations["complete_sprint_api_v1_sprints__sprint_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sprints/{sprint_id}/report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Sprint Report
+         * @description Saved when the sprint closes; live while it is active.
+         */
+        get: operations["sprint_report_api_v1_sprints__sprint_id__report_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sprints/{sprint_id}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start Sprint
+         * @description Needs dates (1 to 28 days). Saves each ticket's estimate and remaining as the commitment.
+         */
+        post: operations["start_sprint_api_v1_sprints__sprint_id__start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sprints/{sprint_id}/tickets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Tickets
+         * @description Takes them out of any other open sprint and removes #backlog.
+         */
+        post: operations["add_tickets_api_v1_sprints__sprint_id__tickets_post"];
+        /** Remove Tickets */
+        delete: operations["remove_tickets_api_v1_sprints__sprint_id__tickets_delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -1713,6 +1854,13 @@ export interface components {
             /** Width */
             width: number | null;
         };
+        /** BacklogOut */
+        BacklogOut: {
+            /** Items */
+            items: components["schemas"]["TicketSummary"][];
+            /** Total */
+            total: number;
+        };
         /**
          * BlockedPolicy
          * @enum {string}
@@ -1750,6 +1898,8 @@ export interface components {
             columns: components["schemas"]["ColumnData"][];
             /** Lanes */
             lanes: components["schemas"]["LaneOut"][];
+            /** @description Scrum boards: the active sprint, whose tickets they show */
+            sprint: components["schemas"]["SprintOut"] | null;
             swimlane_by: components["schemas"]["Swimlane"];
         };
         /**
@@ -1965,6 +2115,8 @@ export interface components {
             resolution: components["schemas"]["Resolution"] | null;
             /** Spent Hours */
             spent_hours: number;
+            /** Start Date */
+            start_date: string | null;
             status: components["schemas"]["StatusRef"];
             /** Tags */
             tags: string[];
@@ -2660,6 +2812,13 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** Page[SprintOut] */
+        Page_SprintOut_: {
+            /** Items */
+            items: components["schemas"]["SprintOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** Page[SyncRunOut] */
         Page_SyncRunOut_: {
             /** Items */
@@ -2912,6 +3071,19 @@ export interface components {
          * @enum {string}
          */
         RemainingMode: "auto" | "manual";
+        /** ReportItem */
+        ReportItem: {
+            /** Committed Hours */
+            committed_hours: number;
+            /** Estimate Hours */
+            estimate_hours: number;
+            /** Key */
+            key: string;
+            /** Remaining Hours */
+            remaining_hours: number;
+            /** Title */
+            title: string;
+        };
         /** ResizeIn */
         ResizeIn: {
             /**
@@ -3120,6 +3292,210 @@ export interface components {
             /** Needs Setup */
             needs_setup: boolean;
         };
+        /** SprintComplete */
+        SprintComplete: {
+            /**
+             * Move Unfinished To
+             * @description A future sprint id of this board, or 'backlog'
+             * @default backlog
+             */
+            move_unfinished_to?: string;
+            /**
+             * Tag Backlog
+             * @description Tag unfinished tickets #backlog
+             * @default true
+             */
+            tag_backlog?: boolean;
+        };
+        /** SprintCompleteOut */
+        SprintCompleteOut: {
+            moved_to: components["schemas"]["SprintOut"] | null;
+            sprint: components["schemas"]["SprintOut"];
+            /** Unfinished */
+            unfinished: string[];
+        };
+        /** SprintCreate */
+        SprintCreate: {
+            /** Capacity Hours */
+            capacity_hours?: number | string | null;
+            /** End Date */
+            end_date?: string | null;
+            /** Goal */
+            goal?: string | null;
+            /**
+             * Name
+             * @description Default: Sprint N
+             */
+            name?: string | null;
+            /** Start Date */
+            start_date?: string | null;
+        };
+        /** SprintDetail */
+        SprintDetail: {
+            /** Board Id */
+            board_id: string;
+            /** Capacity Hours */
+            capacity_hours: number | null;
+            /** Completed At */
+            completed_at: string | null;
+            /** Done Count */
+            done_count: number;
+            /** End Date */
+            end_date: string | null;
+            /** Estimate Hours */
+            estimate_hours: number;
+            /** Goal */
+            goal: string | null;
+            /** Goal Met */
+            goal_met: boolean | null;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Over Capacity */
+            over_capacity: boolean;
+            /** Position */
+            position: number;
+            /** Remaining Hours */
+            remaining_hours: number;
+            /** Start Date */
+            start_date: string | null;
+            /** Started At */
+            started_at: string | null;
+            state: components["schemas"]["SprintState"];
+            /**
+             * Ticket Count
+             * @description Tickets you can see
+             */
+            ticket_count: number;
+            /** Tickets */
+            tickets: components["schemas"]["TicketSummary"][];
+            /**
+             * Unestimated Count
+             * @description Tickets without an estimate
+             */
+            unestimated_count: number;
+        };
+        /** SprintKeys */
+        SprintKeys: {
+            /** Keys */
+            keys: string[];
+        };
+        /** SprintKeysOut */
+        SprintKeysOut: {
+            /**
+             * Keys
+             * @description Tickets that changed
+             */
+            keys: string[];
+        };
+        /** SprintOut */
+        SprintOut: {
+            /** Board Id */
+            board_id: string;
+            /** Capacity Hours */
+            capacity_hours: number | null;
+            /** Completed At */
+            completed_at: string | null;
+            /** Done Count */
+            done_count: number;
+            /** End Date */
+            end_date: string | null;
+            /** Estimate Hours */
+            estimate_hours: number;
+            /** Goal */
+            goal: string | null;
+            /** Goal Met */
+            goal_met: boolean | null;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Over Capacity */
+            over_capacity: boolean;
+            /** Position */
+            position: number;
+            /** Remaining Hours */
+            remaining_hours: number;
+            /** Start Date */
+            start_date: string | null;
+            /** Started At */
+            started_at: string | null;
+            state: components["schemas"]["SprintState"];
+            /**
+             * Ticket Count
+             * @description Tickets you can see
+             */
+            ticket_count: number;
+            /**
+             * Unestimated Count
+             * @description Tickets without an estimate
+             */
+            unestimated_count: number;
+        };
+        /** SprintPatch */
+        SprintPatch: {
+            /** Capacity Hours */
+            capacity_hours?: number | string | null;
+            /** End Date */
+            end_date?: string | null;
+            /** Goal */
+            goal?: string | null;
+            /**
+             * Goal Met
+             * @description Marked by hand in the report
+             */
+            goal_met?: boolean | null;
+            /** Name */
+            name?: string | null;
+            /** Position */
+            position?: number | null;
+            /** Start Date */
+            start_date?: string | null;
+        };
+        /** SprintReport */
+        SprintReport: {
+            /** Added After Start */
+            added_after_start: components["schemas"]["ReportItem"][];
+            /** Committed Hours */
+            committed_hours: number;
+            /** Completed */
+            completed: components["schemas"]["ReportItem"][];
+            /** Completed Hours */
+            completed_hours: number;
+            /** End Date */
+            end_date: string | null;
+            /** Goal */
+            goal: string | null;
+            /** Goal Met */
+            goal_met: boolean | null;
+            /** Not Completed */
+            not_completed: components["schemas"]["ReportItem"][];
+            /** Removed */
+            removed: components["schemas"]["ReportItem"][];
+            /** Sprint */
+            sprint: string;
+            /** Start Date */
+            start_date: string | null;
+        };
+        /** SprintStart */
+        SprintStart: {
+            /** Capacity Hours */
+            capacity_hours?: number | string | null;
+            /** End Date */
+            end_date?: string | null;
+            /** Goal */
+            goal?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Start Date */
+            start_date?: string | null;
+        };
+        /**
+         * SprintState
+         * @enum {string}
+         */
+        SprintState: "future" | "active" | "closed";
         /**
          * StatusCategory
          * @enum {string}
@@ -3323,6 +3699,8 @@ export interface components {
             parent?: string | null;
             /** @default medium */
             priority?: components["schemas"]["Priority"];
+            /** Start Date */
+            start_date?: string | null;
             /** Tags */
             tags?: string[];
             /** Title */
@@ -3398,6 +3776,8 @@ export interface components {
             resolved_at: string | null;
             /** Spent Hours */
             spent_hours: number;
+            /** Start Date */
+            start_date: string | null;
             status: components["schemas"]["StatusRef"];
             /** Tags */
             tags: string[];
@@ -3457,6 +3837,8 @@ export interface components {
              * @description Send auto to go back to estimate minus spent
              */
             remaining_mode?: "auto" | null;
+            /** Start Date */
+            start_date?: string | null;
             /** Tags */
             tags?: string[] | null;
             /** Title */
@@ -3503,6 +3885,8 @@ export interface components {
             resolution: components["schemas"]["Resolution"] | null;
             /** Spent Hours */
             spent_hours: number;
+            /** Start Date */
+            start_date: string | null;
             status: components["schemas"]["StatusRef"];
             /** Tags */
             tags: string[];
@@ -4157,6 +4541,41 @@ export interface operations {
             };
         };
     };
+    board_backlog_api_v1_boards__board_id__backlog_get: {
+        parameters: {
+            query?: {
+                quick_filters?: string[] | null;
+                /** @description Extra RQL, combined with AND */
+                q?: string | null;
+            };
+            header?: never;
+            path: {
+                board_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BacklogOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     board_data_api_v1_boards__board_id__data_get: {
         parameters: {
             query?: {
@@ -4350,6 +4769,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["QuickFilterOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_sprints_api_v1_boards__board_id__sprints_get: {
+        parameters: {
+            query?: {
+                state?: components["schemas"]["SprintState"] | null;
+            };
+            header?: never;
+            path: {
+                board_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_SprintOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_sprint_api_v1_boards__board_id__sprints_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                board_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SprintCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SprintOut"];
                 };
             };
             /** @description Validation Error */
@@ -6052,6 +6539,272 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SetupStatus"];
+                };
+            };
+        };
+    };
+    get_sprint_api_v1_sprints__sprint_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sprint_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SprintDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_sprint_api_v1_sprints__sprint_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sprint_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_sprint_api_v1_sprints__sprint_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sprint_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SprintPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SprintOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_sprint_api_v1_sprints__sprint_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sprint_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SprintComplete"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SprintCompleteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    sprint_report_api_v1_sprints__sprint_id__report_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sprint_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SprintReport"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    start_sprint_api_v1_sprints__sprint_id__start_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sprint_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SprintStart"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SprintOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_tickets_api_v1_sprints__sprint_id__tickets_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sprint_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SprintKeys"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SprintKeysOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_tickets_api_v1_sprints__sprint_id__tickets_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sprint_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SprintKeys"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SprintKeysOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

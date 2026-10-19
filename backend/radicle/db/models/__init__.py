@@ -31,6 +31,7 @@ from radicle.db.models.projects import (
     Transition,
     TransitionRule,
 )
+from radicle.db.models.sprints import Sprint, SprintCommitment, SprintState, SprintTicket
 from radicle.db.models.templates import SyncStatus, Template, TemplateSyncRun
 from radicle.db.models.tickets import (
     PRIORITY_ORDER,
@@ -82,6 +83,10 @@ __all__ = [
     "Screen",
     "ScreenOperation",
     "Session",
+    "Sprint",
+    "SprintCommitment",
+    "SprintState",
+    "SprintTicket",
     "Status",
     "StatusCategory",
     "Swimlane",

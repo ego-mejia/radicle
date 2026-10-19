@@ -13,6 +13,7 @@ from radicle.core.config import get_settings
 from radicle.db.models import (
     DailyStatusCount,
     Project,
+    SprintTicket,
     Status,
     StatusCategory,
     Ticket,
@@ -124,8 +125,19 @@ def today(tz: str | None = None) -> date:
 
 
 def _sprint_key(end: datetime) -> Any:
-    """Sprint of the ticket at `end` (stage 3.3); the zero uuid when none."""
-    return literal(ZERO)
+    """Sprint the ticket was in at `end`; the zero uuid when none."""
+    sprint = (
+        select(SprintTicket.sprint_id)
+        .where(
+            SprintTicket.ticket_id == Ticket.id,
+            SprintTicket.added_at < end,
+            or_(SprintTicket.removed_at.is_(None), SprintTicket.removed_at >= end),
+        )
+        .order_by(SprintTicket.added_at.desc())
+        .limit(1)
+        .scalar_subquery()
+    )
+    return func.coalesce(sprint, literal(ZERO))
 
 
 async def snapshot(db: AsyncSession, day: date) -> int:

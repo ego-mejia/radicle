@@ -200,6 +200,8 @@ class EventType(enum.StrEnum):
     cloned_from = "cloned_from"
     moved = "moved"
     rank_changed = "rank_changed"
+    sprint_added = "sprint_added"
+    sprint_removed = "sprint_removed"
 
 
 class TicketEvent(Base):

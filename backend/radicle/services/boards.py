@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Any
 
-from sqlalchemy import ColumnElement, and_, false, func, or_, select
+from sqlalchemy import ColumnElement, Select, and_, false, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
@@ -18,6 +18,9 @@ from radicle.db.models import (
     Milestone,
     Project,
     ProjectRole,
+    Sprint,
+    SprintState,
+    SprintTicket,
     Status,
     StatusCategory,
     Swimlane,
@@ -375,16 +378,28 @@ async def _base_where(
     return compiled.where
 
 
-def _column_where(column: Column, window_days: int) -> ColumnElement[bool]:
+def _column_where(column: Column, window_days: int | None) -> ColumnElement[bool]:
     # Categories match statuses of any project the source reaches, not only this one's.
     where: ColumnElement[bool] = or_(
         Ticket.status_id.in_(column.status_ids) if column.status_ids else false(),
         Status.category.in_(column.categories) if column.categories else false(),
     )
-    if column.done_only:
+    if column.done_only and window_days is not None:
         since = utcnow() - timedelta(days=window_days)
         where = and_(where, Ticket.resolved_at >= since)
     return where
+
+
+def _active_sprint_tickets(board: Board) -> Select[Any]:
+    return (
+        select(SprintTicket.ticket_id)
+        .join(Sprint, Sprint.id == SprintTicket.sprint_id)
+        .where(
+            Sprint.board_id == board.id,
+            Sprint.state == SprintState.active,
+            SprintTicket.removed_at.is_(None),
+        )
+    )
 
 
 async def board_data(
@@ -404,11 +419,16 @@ async def board_data(
     columns = resolve_columns(board, statuses)
     mapped = set().union(*(c.status_ids for c in columns)) if columns else set()
     base = await _base_where(db, user, board, quick_filter_ids or [], timezone, extra)
+    window: int | None = board.done_window_days
+    if board.kind is BoardKind.scrum:
+        # A Scrum board shows the active sprint, done tickets included.
+        base = and_(base, Ticket.id.in_(_active_sprint_tickets(board)))
+        window = None
     offset = int(cursor) if cursor and cursor.isdigit() else 0
     for column in columns:
         if only_column is not None and column.index != only_column:
             continue
-        query = search.base_query(user).where(base, _column_where(column, board.done_window_days))
+        query = search.base_query(user).where(base, _column_where(column, window))
         column.total = int(await db.scalar(select(func.count()).select_from(query.subquery())) or 0)
         rows = list(
             await db.scalars(query.order_by(Ticket.rank, Ticket.id).offset(offset).limit(PAGE + 1))

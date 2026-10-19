@@ -43,7 +43,8 @@
     "searchPlaceholder": "Go to PA-4 or search with RQL…",
     "mainNav": "Main navigation",
     "breadcrumb": "Breadcrumb",
-    "skip": "Skip to content"
+    "skip": "Skip to content",
+    "backlog": "Backlog"
   },
   "theme": {
     "label": "Theme",
@@ -100,7 +101,9 @@
       "links": "Links",
       "checklist": "Checklist",
       "collaborator": "Collaborator",
-      "votes": "Votes"
+      "votes": "Votes",
+      "start": "Start date",
+      "sprint": "Sprint"
     },
     "unassigned": "Unassigned",
     "noArea": "No area",
@@ -205,7 +208,22 @@
       "comment_edited": "edited a comment",
       "comment_deleted": "deleted a comment",
       "deleted": "deleted the ticket",
-      "restored": "restored the ticket"
+      "restored": "restored the ticket",
+      "custom_field_changed": "changed {{field}}",
+      "status_remapped": "moved it with the template",
+      "attachment_added": "attached a file",
+      "attachment_removed": "removed a file",
+      "attachment_resized": "resized an image",
+      "vote_added": "voted 🙋",
+      "vote_removed": "removed their vote",
+      "worklog_added": "logged time",
+      "worklog_updated": "edited logged time",
+      "worklog_deleted": "deleted logged time",
+      "cloned_from": "cloned it",
+      "moved": "moved it to another project",
+      "rank_changed": "reordered it",
+      "sprint_added": "added it to a sprint",
+      "sprint_removed": "took it out of a sprint"
     }
   },
   "auth": {
@@ -612,7 +630,8 @@
       "parent": "Parent",
       "title": "Title",
       "collaborators": "Collaborators",
-      "tags": "Tags"
+      "tags": "Tags",
+      "start_date": "Start date"
     }
   },
   "screens": {
@@ -810,5 +829,62 @@
       "filters": "Saved filters",
       "actions": "Actions"
     }
+  },
+  "sprints": {
+    "backlog": "Backlog",
+    "select": "Select {{key}}",
+    "drag": "Drag {{key}}",
+    "noEstimate": "No estimate: it does not count toward capacity",
+    "noEstimateShort": "no est.",
+    "states": {
+      "future": "Future",
+      "active": "Active",
+      "closed": "Closed"
+    },
+    "summary_one": "{{count}} ticket · {{hours}}",
+    "summary_other": "{{count}} tickets · {{hours}}",
+    "start": "Start sprint",
+    "complete": "Complete sprint",
+    "delete": "Delete {{name}}",
+    "deleteConfirm": "Its tickets go back to the backlog.",
+    "capacity": "Capacity",
+    "capacityOf": "{{hours}} of {{capacity}}",
+    "unestimated_one": "{{count}} ticket without an estimate",
+    "unestimated_other": "{{count}} tickets without an estimate",
+    "emptySprint": "Drag tickets here to plan the sprint.",
+    "emptyBacklog": "The backlog is empty.",
+    "startTitle": "Start {{name}}",
+    "name": "Name",
+    "goal": "Goal",
+    "startDate": "Start",
+    "endDate": "End",
+    "duration": "A sprint lasts 1 to 28 days; this one is {{days}}.",
+    "capacityHours": "Capacity (hours)",
+    "capacityHint": "Optional. The bar turns orange when the plan goes over it.",
+    "completeTitle": "Complete {{name}}",
+    "report": {
+      "completed": "Completed",
+      "notCompleted": "Not completed",
+      "added": "Added after start",
+      "removed": "Removed"
+    },
+    "hours": "{{hours}} h",
+    "moveUnfinished_one": "Where does the unfinished ticket go?",
+    "moveUnfinished_other": "Where do the {{count}} unfinished tickets go?",
+    "tagBacklog": "Tag them #backlog",
+    "noScrum": "No Scrum board yet",
+    "noScrumHelp": "Sprints live in Scrum boards. Create one to plan sprints from the backlog.",
+    "createScrum": "Create Scrum board",
+    "selection": "Selected tickets",
+    "selected_one": "{{count}} selected",
+    "selected_other": "{{count}} selected",
+    "moveTo": "Move to…",
+    "move": "Move",
+    "create": "New sprint",
+    "noActive": "No active sprint",
+    "noActiveHelp": "Start one from the backlog.",
+    "goBacklog": "Go to backlog",
+    "daysLeft_one": "{{count}} day left",
+    "daysLeft_other": "{{count}} days left"
   }
 }

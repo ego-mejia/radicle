@@ -11,6 +11,7 @@ import { LoginView } from './features/auth/views/LoginView';
 import { SetupView } from './features/auth/views/SetupView';
 import { BoardSettingsView } from './features/board/views/BoardSettingsView';
 import { BoardView } from './features/board/views/BoardView';
+import { BacklogView } from './features/sprints/views/BacklogView';
 import { ListView } from './features/list/views/ListView';
 import { MilestonesView } from './features/milestones/views/MilestonesView';
 import { MyTicketsView } from './features/mytickets/views/MyTicketsView';
@@ -124,6 +125,16 @@ const boardSettingsRoute = createRoute({
   component: BoardSettingsView,
 });
 
+const backlogRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/p/$key/backlog',
+  component: BacklogView,
+  validateSearch: (search: Record<string, unknown>): { board?: string; t?: string } => ({
+    board: str(search.board),
+    t: str(search.t),
+  }),
+});
+
 const listRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/p/$key/list',
@@ -189,6 +200,7 @@ const routeTree = rootRoute.addChildren([
     projectsRoute,
     boardRoute,
     boardSettingsRoute,
+    backlogRoute,
     listRoute,
     milestonesRoute,
     settingsRoute,

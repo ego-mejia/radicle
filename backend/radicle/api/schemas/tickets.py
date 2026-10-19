@@ -86,6 +86,7 @@ class TicketOut(Output):
     assignee: UserRef | None
     collaborators: list[UserRef]
     reporter: UserRef
+    start_date: date | None
     due_date: date | None
     estimate_hours: float | None
     original_estimate_hours: float | None = Field(description="The first estimate; never changes")
@@ -126,6 +127,7 @@ class TicketCreate(Input):
     assignee: str | None = Field(default=None, description="Handle of a member or agent")
     collaborators: list[str] = Field(default_factory=list)
     parent: str | None = Field(default=None, description="Parent ticket key, e.g. PA-4")
+    start_date: date | None = None
     due_date: date | None = None
     estimate_hours: float | None = None
     tags: list[str] = Field(default_factory=list)
@@ -144,6 +146,7 @@ class TicketPatch(Input):
     milestone: str | None = None
     parent: str | None = None
     assignee: str | None = None
+    start_date: date | None = None
     due_date: date | None = None
     estimate_hours: float | None = None
     remaining_hours: float | None = Field(
@@ -190,6 +193,7 @@ class TicketSummary(Output):
     tags: list[str]
     custom_fields: dict[str, Any]
     blocked: bool
+    start_date: date | None
     due_date: date | None
     estimate_hours: float | None
     spent_hours: float

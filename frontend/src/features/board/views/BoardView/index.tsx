@@ -31,6 +31,7 @@ import { BoardToolbar } from '../../components/BoardToolbar';
 import { DropResolver } from '../../components/DropResolver';
 import { TicketCard } from '../../components/TicketCard';
 import { useBoardDrag } from '../../hooks/useBoardDrag';
+import { SprintBanner } from '../../../sprints/components/SprintBanner';
 import * as S from './style';
 
 export function BoardView() {
@@ -102,6 +103,9 @@ export function BoardView() {
           }
           onCreate={() => create.mutate()}
         />
+      )}
+      {data?.board.kind === 'scrum' && (
+        <SprintBanner project={projectKey} boardId={data.board.id} sprint={data.sprint} />
       )}
       <BoardFilters
         project={project}

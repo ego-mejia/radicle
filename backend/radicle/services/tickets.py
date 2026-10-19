@@ -41,6 +41,7 @@ UPDATABLE = (
     "parent",
     "assignee",
     "due_date",
+    "start_date",
     "estimate_hours",
     "tags",
     "custom_fields",
@@ -73,6 +74,7 @@ class NewTicket:
     collaborators: list[str] = field(default_factory=list)
     parent: str | None = None
     due_date: date | None = None
+    start_date: date | None = None
     estimate_hours: float | Decimal | None = None
     tags: list[str] = field(default_factory=list)
     custom_fields: dict[str, Any] = field(default_factory=dict)
@@ -195,6 +197,7 @@ async def create_ticket(db: AsyncSession, access: ProjectAccess, data: NewTicket
         assignee_id=assignee.id if assignee else None,
         reporter_id=access.user.id,
         due_date=data.due_date,
+        start_date=data.start_date,
         estimate_hours=estimate,
         tags=tags,
         custom_fields=custom_values,
@@ -315,6 +318,11 @@ async def update_ticket(
         if new_due != ticket.due_date:
             diffs.append(("due_date", fields.iso(ticket.due_date), fields.iso(new_due)))
             ticket.due_date = new_due
+    if "start_date" in changes:
+        new_start = changes["start_date"]
+        if new_start != ticket.start_date:
+            diffs.append(("start_date", fields.iso(ticket.start_date), fields.iso(new_start)))
+            ticket.start_date = new_start
     if "estimate_hours" in changes:
         new_estimate = fields.normalize_estimate(changes["estimate_hours"])
         if new_estimate != ticket.estimate_hours:

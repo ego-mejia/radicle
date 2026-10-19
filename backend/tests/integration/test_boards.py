@@ -209,7 +209,7 @@ async def test_board_crud_validation_and_visibility(client: AsyncClient, board: 
     r = await client.post(
         f"{API}/projects/PA/boards",
         headers=board.admin.headers,
-        json={"name": "Backend", "source_rql": "project = PA AND area = Backend", "kind": "scrum"},
+        json={"name": "Backend", "source_rql": "project = PA AND area = Backend"},
     )
     assert r.status_code == 201
     backend = r.json()

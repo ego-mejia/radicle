@@ -365,7 +365,7 @@ Los criterios de aceptación de la etapa se verifican así:
 | --- | --- | --- |
 | 3.1 | Periodos de estado y snapshots | Listo |
 | 3.2 | Boards configurables | Listo |
-| 3.3 | Scrum | Pendiente |
+| 3.3 | Scrum | Listo |
 | 3.4 | Timeline | Pendiente |
 | 3.5 | Reportes agile | Pendiente |
 | 3.6 | Reportes generales | Pendiente |
@@ -398,4 +398,19 @@ Los criterios de aceptación de la etapa se verifican así:
 - `tests/integration/test_boards.py::test_acceptance_review_column_with_wip_3`: columna "Review" con In Review y QA Verified, WIP 3, en rojo con el cuarto.
 - Mismo archivo: mover con una, varias y ninguna transición, WIP duro y forzado, cada swimlane, quick filters combinados y tickets no visibles.
 - `test_performance.py` (marca `slow`): board de 500 tickets con swimlanes en menos de 1 s.
+
+### 3.3 Scrum
+
+**Qué se hizo**
+
+- Migración `0015`: `sprints`, `sprint_tickets` y `sprint_commitments`, con un solo sprint activo por board y un ticket en a lo más un sprint abierto garantizados por índices. Decisión: [0019](decisions/0019-scrum.md).
+- API de sprints (crear, editar según estado, borrar futuros, iniciar con compromiso, cerrar con traspaso, meter y sacar tickets, reporte) y `GET /boards/{id}/backlog`.
+- RQL `sprint` (`active`, `future`, nombre, `IS EMPTY`) y `start`; `start_date` editable en API, MCP y UI.
+- MCP: `list_sprints`, `get_sprint`, `add_to_sprint`, `remove_from_sprint`, `start_sprint`, `complete_sprint`.
+- UI: pestaña Backlog con sprints arriba (capacidad, aviso de tickets sin estimar), backlog abajo, drag entre listas, selección múltiple, diálogos Iniciar y Cerrar sprint; el board Scrum muestra el sprint activo.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_sprints.py::test_acceptance_full_sprint`: planear con capacidad, iniciar, agregar a mitad (cambio de alcance), cerrar mandando lo pendiente a #backlog; el reporte guardado no cambia después.
+- Mismo archivo: máquina de estados, un solo activo, un ticket en un solo sprint abierto, traspaso al siguiente sprint, permisos, RQL `start` y `sprint`, snapshot por sprint y las tools del MCP.
 

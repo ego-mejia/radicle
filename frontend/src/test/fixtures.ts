@@ -16,6 +16,7 @@ export const TICKET: Ticket = {
   assignee: { handle: 'agent-backend', display_name: 'Backend agent', kind: 'agent' },
   collaborators: [],
   reporter: { handle: 'luis', display_name: 'Luis', kind: 'human' },
+  start_date: null,
   due_date: null,
   estimate_hours: 8,
   original_estimate_hours: 8,

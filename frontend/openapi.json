@@ -305,6 +305,27 @@
         "title": "AttachmentOut",
         "type": "object"
       },
+      "BacklogOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TicketSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "BacklogOut",
+        "type": "object"
+      },
       "BlockedPolicy": {
         "enum": [
           "warn",
@@ -396,6 +417,17 @@
             "title": "Lanes",
             "type": "array"
           },
+          "sprint": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SprintOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Scrum boards: the active sprint, whose tickets they show"
+          },
           "swimlane_by": {
             "$ref": "#/components/schemas/Swimlane"
           }
@@ -404,7 +436,8 @@
           "board",
           "swimlane_by",
           "lanes",
-          "columns"
+          "columns",
+          "sprint"
         ],
         "title": "BoardDataOut",
         "type": "object"
@@ -1044,6 +1077,18 @@
             "title": "Spent Hours",
             "type": "number"
           },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
           "status": {
             "$ref": "#/components/schemas/StatusRef"
           },
@@ -1083,6 +1128,7 @@
           "tags",
           "custom_fields",
           "blocked",
+          "start_date",
           "due_date",
           "estimate_hours",
           "spent_hours",
@@ -3163,6 +3209,34 @@
         "title": "Page[ScreenOut]",
         "type": "object"
       },
+      "Page_SprintOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SprintOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[SprintOut]",
+        "type": "object"
+      },
       "Page_SyncRunOut_": {
         "properties": {
           "items": {
@@ -3887,6 +3961,39 @@
         "title": "RemainingMode",
         "type": "string"
       },
+      "ReportItem": {
+        "properties": {
+          "committed_hours": {
+            "title": "Committed Hours",
+            "type": "number"
+          },
+          "estimate_hours": {
+            "title": "Estimate Hours",
+            "type": "number"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "remaining_hours": {
+            "title": "Remaining Hours",
+            "type": "number"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title",
+          "estimate_hours",
+          "committed_hours",
+          "remaining_hours"
+        ],
+        "title": "ReportItem",
+        "type": "object"
+      },
       "ResizeIn": {
         "additionalProperties": false,
         "properties": {
@@ -4432,6 +4539,737 @@
         "title": "SetupStatus",
         "type": "object"
       },
+      "SprintComplete": {
+        "additionalProperties": false,
+        "properties": {
+          "move_unfinished_to": {
+            "default": "backlog",
+            "description": "A future sprint id of this board, or 'backlog'",
+            "title": "Move Unfinished To",
+            "type": "string"
+          },
+          "tag_backlog": {
+            "default": true,
+            "description": "Tag unfinished tickets #backlog",
+            "title": "Tag Backlog",
+            "type": "boolean"
+          }
+        },
+        "title": "SprintComplete",
+        "type": "object"
+      },
+      "SprintCompleteOut": {
+        "properties": {
+          "moved_to": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SprintOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sprint": {
+            "$ref": "#/components/schemas/SprintOut"
+          },
+          "unfinished": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unfinished",
+            "type": "array"
+          }
+        },
+        "required": [
+          "sprint",
+          "moved_to",
+          "unfinished"
+        ],
+        "title": "SprintCompleteOut",
+        "type": "object"
+      },
+      "SprintCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "capacity_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Hours"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Default: Sprint N",
+            "title": "Name"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          }
+        },
+        "title": "SprintCreate",
+        "type": "object"
+      },
+      "SprintDetail": {
+        "properties": {
+          "board_id": {
+            "title": "Board Id",
+            "type": "string"
+          },
+          "capacity_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Hours"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "done_count": {
+            "title": "Done Count",
+            "type": "integer"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "estimate_hours": {
+            "title": "Estimate Hours",
+            "type": "number"
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal"
+          },
+          "goal_met": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal Met"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "over_capacity": {
+            "title": "Over Capacity",
+            "type": "boolean"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "remaining_hours": {
+            "title": "Remaining Hours",
+            "type": "number"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "state": {
+            "$ref": "#/components/schemas/SprintState"
+          },
+          "ticket_count": {
+            "description": "Tickets you can see",
+            "title": "Ticket Count",
+            "type": "integer"
+          },
+          "tickets": {
+            "items": {
+              "$ref": "#/components/schemas/TicketSummary"
+            },
+            "title": "Tickets",
+            "type": "array"
+          },
+          "unestimated_count": {
+            "description": "Tickets without an estimate",
+            "title": "Unestimated Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "board_id",
+          "name",
+          "goal",
+          "state",
+          "start_date",
+          "end_date",
+          "capacity_hours",
+          "started_at",
+          "completed_at",
+          "position",
+          "goal_met",
+          "ticket_count",
+          "done_count",
+          "estimate_hours",
+          "remaining_hours",
+          "unestimated_count",
+          "over_capacity",
+          "tickets"
+        ],
+        "title": "SprintDetail",
+        "type": "object"
+      },
+      "SprintKeys": {
+        "additionalProperties": false,
+        "properties": {
+          "keys": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "title": "Keys",
+            "type": "array"
+          }
+        },
+        "required": [
+          "keys"
+        ],
+        "title": "SprintKeys",
+        "type": "object"
+      },
+      "SprintKeysOut": {
+        "properties": {
+          "keys": {
+            "description": "Tickets that changed",
+            "items": {
+              "type": "string"
+            },
+            "title": "Keys",
+            "type": "array"
+          }
+        },
+        "required": [
+          "keys"
+        ],
+        "title": "SprintKeysOut",
+        "type": "object"
+      },
+      "SprintOut": {
+        "properties": {
+          "board_id": {
+            "title": "Board Id",
+            "type": "string"
+          },
+          "capacity_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Hours"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "done_count": {
+            "title": "Done Count",
+            "type": "integer"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "estimate_hours": {
+            "title": "Estimate Hours",
+            "type": "number"
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal"
+          },
+          "goal_met": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal Met"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "over_capacity": {
+            "title": "Over Capacity",
+            "type": "boolean"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "remaining_hours": {
+            "title": "Remaining Hours",
+            "type": "number"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "state": {
+            "$ref": "#/components/schemas/SprintState"
+          },
+          "ticket_count": {
+            "description": "Tickets you can see",
+            "title": "Ticket Count",
+            "type": "integer"
+          },
+          "unestimated_count": {
+            "description": "Tickets without an estimate",
+            "title": "Unestimated Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "board_id",
+          "name",
+          "goal",
+          "state",
+          "start_date",
+          "end_date",
+          "capacity_hours",
+          "started_at",
+          "completed_at",
+          "position",
+          "goal_met",
+          "ticket_count",
+          "done_count",
+          "estimate_hours",
+          "remaining_hours",
+          "unestimated_count",
+          "over_capacity"
+        ],
+        "title": "SprintOut",
+        "type": "object"
+      },
+      "SprintPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "capacity_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Hours"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal"
+          },
+          "goal_met": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Marked by hand in the report",
+            "title": "Goal Met"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          }
+        },
+        "title": "SprintPatch",
+        "type": "object"
+      },
+      "SprintReport": {
+        "properties": {
+          "added_after_start": {
+            "items": {
+              "$ref": "#/components/schemas/ReportItem"
+            },
+            "title": "Added After Start",
+            "type": "array"
+          },
+          "committed_hours": {
+            "title": "Committed Hours",
+            "type": "number"
+          },
+          "completed": {
+            "items": {
+              "$ref": "#/components/schemas/ReportItem"
+            },
+            "title": "Completed",
+            "type": "array"
+          },
+          "completed_hours": {
+            "title": "Completed Hours",
+            "type": "number"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal"
+          },
+          "goal_met": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal Met"
+          },
+          "not_completed": {
+            "items": {
+              "$ref": "#/components/schemas/ReportItem"
+            },
+            "title": "Not Completed",
+            "type": "array"
+          },
+          "removed": {
+            "items": {
+              "$ref": "#/components/schemas/ReportItem"
+            },
+            "title": "Removed",
+            "type": "array"
+          },
+          "sprint": {
+            "title": "Sprint",
+            "type": "string"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          }
+        },
+        "required": [
+          "sprint",
+          "goal",
+          "goal_met",
+          "start_date",
+          "end_date",
+          "committed_hours",
+          "completed_hours",
+          "completed",
+          "not_completed",
+          "added_after_start",
+          "removed"
+        ],
+        "title": "SprintReport",
+        "type": "object"
+      },
+      "SprintStart": {
+        "additionalProperties": false,
+        "properties": {
+          "capacity_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capacity Hours"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "goal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goal"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          }
+        },
+        "title": "SprintStart",
+        "type": "object"
+      },
+      "SprintState": {
+        "enum": [
+          "future",
+          "active",
+          "closed"
+        ],
+        "title": "SprintState",
+        "type": "string"
+      },
       "StatusCategory": {
         "enum": [
           "todo",
@@ -4974,6 +5812,18 @@
             "$ref": "#/components/schemas/Priority",
             "default": "medium"
           },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
           "tags": {
             "items": {
               "type": "string"
@@ -5204,6 +6054,18 @@
             "title": "Spent Hours",
             "type": "number"
           },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
           "status": {
             "$ref": "#/components/schemas/StatusRef"
           },
@@ -5260,6 +6122,7 @@
           "assignee",
           "collaborators",
           "reporter",
+          "start_date",
           "due_date",
           "estimate_hours",
           "original_estimate_hours",
@@ -5430,6 +6293,18 @@
             "description": "Send auto to go back to estimate minus spent",
             "title": "Remaining Mode"
           },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
           "tags": {
             "anyOf": [
               {
@@ -5585,6 +6460,18 @@
             "title": "Spent Hours",
             "type": "number"
           },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
           "status": {
             "$ref": "#/components/schemas/StatusRef"
           },
@@ -5624,6 +6511,7 @@
           "tags",
           "custom_fields",
           "blocked",
+          "start_date",
           "due_date",
           "estimate_hours",
           "spent_hours",
@@ -7061,6 +7949,88 @@
         ]
       }
     },
+    "/api/v1/boards/{board_id}/backlog": {
+      "get": {
+        "description": "Tickets of the board's source in no open sprint and not done, by rank (first 500).",
+        "operationId": "board_backlog_api_v1_boards__board_id__backlog_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "quick_filters",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "items": {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Quick Filters"
+            }
+          },
+          {
+            "description": "Extra RQL, combined with AND",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Extra RQL, combined with AND",
+              "title": "Q"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BacklogOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Board Backlog",
+        "tags": [
+          "sprints"
+        ]
+      }
+    },
     "/api/v1/boards/{board_id}/data": {
       "get": {
         "description": "Cards grouped by column (50 per column, by rank), with WIP counts and lanes.\nActive quick filters combine with AND.",
@@ -7445,6 +8415,117 @@
         "summary": "Patch Quick Filter",
         "tags": [
           "boards"
+        ]
+      }
+    },
+    "/api/v1/boards/{board_id}/sprints": {
+      "get": {
+        "description": "Active first, then future in plan order, then closed (newest first).",
+        "operationId": "list_sprints_api_v1_boards__board_id__sprints_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/SprintState"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_SprintOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Sprints",
+        "tags": [
+          "sprints"
+        ]
+      },
+      "post": {
+        "operationId": "create_sprint_api_v1_boards__board_id__sprints_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "board_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Board Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SprintCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SprintOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Sprint",
+        "tags": [
+          "sprints"
         ]
       }
     },
@@ -9886,6 +10967,391 @@
         "summary": "Setup Status",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/api/v1/sprints/{sprint_id}": {
+      "delete": {
+        "operationId": "delete_sprint_api_v1_sprints__sprint_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sprint Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Sprint",
+        "tags": [
+          "sprints"
+        ]
+      },
+      "get": {
+        "operationId": "get_sprint_api_v1_sprints__sprint_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sprint Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SprintDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Sprint",
+        "tags": [
+          "sprints"
+        ]
+      },
+      "patch": {
+        "description": "Future: everything. Active: goal, end date and capacity. Closed: only goal_met.",
+        "operationId": "patch_sprint_api_v1_sprints__sprint_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sprint Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SprintPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SprintOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Sprint",
+        "tags": [
+          "sprints"
+        ]
+      }
+    },
+    "/api/v1/sprints/{sprint_id}/complete": {
+      "post": {
+        "operationId": "complete_sprint_api_v1_sprints__sprint_id__complete_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sprint Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SprintComplete"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SprintCompleteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Complete Sprint",
+        "tags": [
+          "sprints"
+        ]
+      }
+    },
+    "/api/v1/sprints/{sprint_id}/report": {
+      "get": {
+        "description": "Saved when the sprint closes; live while it is active.",
+        "operationId": "sprint_report_api_v1_sprints__sprint_id__report_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sprint Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SprintReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sprint Report",
+        "tags": [
+          "sprints"
+        ]
+      }
+    },
+    "/api/v1/sprints/{sprint_id}/start": {
+      "post": {
+        "description": "Needs dates (1 to 28 days). Saves each ticket's estimate and remaining as the commitment.",
+        "operationId": "start_sprint_api_v1_sprints__sprint_id__start_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sprint Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SprintStart"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SprintOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start Sprint",
+        "tags": [
+          "sprints"
+        ]
+      }
+    },
+    "/api/v1/sprints/{sprint_id}/tickets": {
+      "delete": {
+        "operationId": "remove_tickets_api_v1_sprints__sprint_id__tickets_delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sprint Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SprintKeys"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SprintKeysOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove Tickets",
+        "tags": [
+          "sprints"
+        ]
+      },
+      "post": {
+        "description": "Takes them out of any other open sprint and removes #backlog.",
+        "operationId": "add_tickets_api_v1_sprints__sprint_id__tickets_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "sprint_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Sprint Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SprintKeys"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SprintKeysOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Tickets",
+        "tags": [
+          "sprints"
         ]
       }
     },
