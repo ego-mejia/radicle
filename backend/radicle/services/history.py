@@ -6,7 +6,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.db.models import EventType, Ticket, TicketEvent, User
+from radicle.db.models import EventType, Ticket, TicketEvent, User, utcnow
 
 
 def record(
@@ -26,6 +26,7 @@ def record(
         field=field,
         old_value=old,
         new_value=new,
+        created_at=utcnow(),  # set now so status periods can reuse the exact moment
     )
     db.add(event)
     return event

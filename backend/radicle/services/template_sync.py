@@ -34,7 +34,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
-from radicle.services import custom_fields, history, screens
+from radicle.services import custom_fields, history, periods, screens
 from radicle.services.template_config import (
     FieldConf,
     TemplateConfig,
@@ -185,7 +185,7 @@ async def _move_tickets(
         else:
             ticket.resolution = None
             ticket.resolved_at = None
-        history.record(
+        event = history.record(
             db,
             ticket,
             actor,
@@ -194,6 +194,7 @@ async def _move_tickets(
             old=old_value,
             new={"status": target.name, "resolution": _value(ticket.resolution)},
         )
+        await periods.track(db, ticket, event)
         bump(ticket)
     await db.flush()
     return len(tickets)

@@ -358,3 +358,28 @@ Los criterios de aceptación de la etapa se verifican así:
 | Quitar #backlog y poner V1 a 120 tickets con vista previa | `test_acceptance_bulk_120_runs_as_job`; E2E de bulk |
 | `next_ticket` con `claim=true` | `test_acceptance_agent_claims_next_ticket` y la prueba de concurrencia |
 | Flujo diario solo con teclado y `cmd+k` | E2E `daily work with the keyboard only` |
+
+## Etapa 3: Planeación y visibilidad
+
+| # | Entregable | Estado |
+| --- | --- | --- |
+| 3.1 | Periodos de estado y snapshots | Listo |
+| 3.2 | Boards configurables | Pendiente |
+| 3.3 | Scrum | Pendiente |
+| 3.4 | Timeline | Pendiente |
+| 3.5 | Reportes agile | Pendiente |
+| 3.6 | Reportes generales | Pendiente |
+| 3.7 | Dashboards | Pendiente |
+
+### 3.1 Periodos de estado y snapshots
+
+**Qué se hizo**
+
+- Migración `0013`: `tickets.start_date`, `ticket_status_periods` (llenada desde `ticket_events` al migrar) y `daily_status_counts`. Decisión: [0017](decisions/0017-periodos-y-snapshots.md).
+- Periodos mantenidos en la misma transacción de cada cambio de estado.
+- Snapshot diario idempotente en el worker (cada hora recalcula ayer y hoy) y comandos `radicle backfill-periods` y `radicle backfill-snapshots --from AAAA-MM-DD`.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_periods.py::test_backfill_rebuilds_exactly_the_live_periods`: con reapertura, cambio de tipo y movimiento de proyecto, el backfill da exactamente los periodos que se escribieron en vivo.
+- `test_snapshot_is_idempotent_and_uses_the_time_zone`: dos snapshots del mismo día no duplican, y el corte del día sigue `RADICLE_TIMEZONE`.

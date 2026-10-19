@@ -19,7 +19,10 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.services.attachments",
     "radicle.services.bulk",
     "radicle.services.ranking",
+    "radicle.services.periods",
 )
+# Jobs the worker defers on a schedule (cron in UTC).
+PERIODIC: dict[str, str] = {"daily_snapshot": "5 * * * *"}
 
 
 def conninfo(database_url: str) -> str:
@@ -42,6 +45,8 @@ async def run_handler(name: str, args: dict[str, Any]) -> None:
 def _task(name: str) -> Any:
     async def run(**args: Any) -> None:
         log.info("job %s %s", name, args)
+        # Periodic tasks receive the schedule timestamp; handlers do not need it.
+        args.pop("timestamp", None)
         await run_handler(name, args)
 
     run.__name__ = name
@@ -55,5 +60,7 @@ def build_app() -> procrastinate.App:
         connector=procrastinate.PsycopgConnector(conninfo=conninfo(get_settings().database_url))
     )
     for name in queue.HANDLERS:
-        app.task(name=name, queue=queue.QUEUE, pass_context=False)(_task(name))
+        task = app.task(name=name, queue=queue.QUEUE, pass_context=False)(_task(name))
+        if name in PERIODIC:
+            app.periodic(cron=PERIODIC[name], periodic_id=name)(task)
     return app

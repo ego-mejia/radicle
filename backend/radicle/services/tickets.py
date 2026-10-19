@@ -26,7 +26,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
-from radicle.services import custom_fields, history, markdown, rank, screens
+from radicle.services import custom_fields, history, markdown, periods, rank, screens
 from radicle.services import ticket_fields as fields
 from radicle.services.access import ProjectAccess, project_access
 from radicle.services.remaining import estimate_changed
@@ -207,7 +207,7 @@ async def create_ticket(db: AsyncSession, access: ProjectAccess, data: NewTicket
     await db.flush()
     for user in collaborators:
         db.add(TicketCollaborator(ticket_id=ticket.id, user_id=user.id))
-    history.record(
+    created_event = history.record(
         db,
         ticket,
         access.user,
@@ -218,6 +218,7 @@ async def create_ticket(db: AsyncSession, access: ProjectAccess, data: NewTicket
         history.record(
             db, ticket, access.user, EventType.custom_field_changed, field=f"cf.{key}", new=new
         )
+    await periods.track(db, ticket, created_event)
     await sync_mentions(db, ticket.id, None, description)
     await db.flush()
     await db.refresh(ticket)

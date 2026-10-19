@@ -20,3 +20,10 @@ def test_cli_requires_a_command(capsys) -> None:  # type: ignore[no-untyped-def]
     except SystemExit as exc:
         assert exc.code == 2
     assert "worker" in capsys.readouterr().err
+
+
+def test_periodic_snapshot_is_scheduled() -> None:
+    app = worker_app.build_app()
+    assert "daily_snapshot" in app.tasks
+    periodic = [t.task.name for t in app.periodic_registry.periodic_tasks.values()]
+    assert periodic == ["daily_snapshot"]

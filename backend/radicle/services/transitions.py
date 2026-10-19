@@ -23,6 +23,7 @@ from radicle.db.models import (
 from radicle.services import (
     comments,
     history,
+    periods,
     relations,
     screens,
     tickets,
@@ -212,9 +213,10 @@ async def transition_ticket(
     }
     if forced:
         new["forced"] = True
-    history.record(
+    event = history.record(
         db, ticket, access.user, EventType.status_changed, field="status", old=old, new=new
     )
+    await periods.track(db, ticket, event)
     bump(ticket)
     await db.flush()
 
@@ -333,7 +335,7 @@ async def change_type(
         old=ticket.type.value,
         new=new_type.value,
     )
-    history.record(
+    status_event = history.record(
         db,
         ticket,
         access.user,
@@ -359,6 +361,7 @@ async def change_type(
     ticket.status = new_status
     ticket.resolution = None
     ticket.resolved_at = None
+    await periods.track(db, ticket, status_event)
     bump(ticket)
     await db.flush()
 

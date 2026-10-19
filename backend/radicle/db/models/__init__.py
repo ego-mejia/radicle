@@ -10,6 +10,7 @@ from radicle.db.models.discussion import (
 from radicle.db.models.fields import CustomFieldDefinition, CustomFieldType
 from radicle.db.models.filters import FilterVisibility, SavedFilter, UserPreferences
 from radicle.db.models.jobs import Job, JobStatus
+from radicle.db.models.metrics import DailyStatusCount, TicketStatusPeriod
 from radicle.db.models.projects import (
     Area,
     BlockedPolicy,
@@ -57,6 +58,7 @@ __all__ = [
     "CommentReaction",
     "CustomFieldDefinition",
     "CustomFieldType",
+    "DailyStatusCount",
     "EventType",
     "FilterVisibility",
     "Job",
@@ -87,6 +89,7 @@ __all__ = [
     "TicketEvent",
     "TicketKeyAlias",
     "TicketLink",
+    "TicketStatusPeriod",
     "TicketType",
     "TicketVote",
     "Transition",

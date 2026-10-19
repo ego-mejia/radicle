@@ -28,7 +28,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
-from radicle.services import history, rank
+from radicle.services import history, periods, rank
 from radicle.services.access import ProjectAccess, project_access
 from radicle.services.tickets import NewTicket, bump, create_ticket
 from radicle.services.workflows import load_workflows
@@ -379,7 +379,7 @@ async def move_ticket(
         last_rank = rank.after(last_rank)
         t.rank = last_rank
         new_key = f"{target.project.key}-{t.number}"
-        history.record(
+        event = history.record(
             db,
             t,
             access.user,
@@ -392,6 +392,7 @@ async def move_ticket(
                 "dropped_custom_fields": sorted(dropped) or None,
             },
         )
+        await periods.track(db, t, event)
         bump(t)
         await db.flush()
     return ticket

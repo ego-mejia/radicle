@@ -104,6 +104,7 @@ class Ticket(Base):
     parent_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("tickets.id"), index=True)
     assignee_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"), index=True)
     reporter_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    start_date: Mapped[date | None] = mapped_column(Date)
     due_date: Mapped[date | None] = mapped_column(Date, index=True)
     estimate_hours: Mapped[Decimal | None] = mapped_column(Numeric(7, 2))
     # Copied from the first estimate the ticket ever gets, then never changes.

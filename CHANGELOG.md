@@ -13,6 +13,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - 1.5: links entre tickets con su inverso y aviso de bloqueado, comentarios markdown con menciones y reacciones.
 - 1.6: lenguaje de queries RQL con full-text en inglés y español, errores con posición, autocompletado y seed de 10,000 tickets.
 - 1.7: servidor MCP en `/mcp` con 19 tools, guía de RQL como recurso y autenticación por token de agente.
+- 3.1: periodos de estado por ticket reconstruidos del historial y mantenidos en vivo, snapshots diarios y comandos de backfill.
 - 2.8: filtros guardados y `filter =` en RQL, ranking manual con drag, `next_ticket` atómico para agentes, preferencias, atajos de teclado y paleta ⌘K.
 - 2.7: clonar con opciones, mover entre proyectos con alias de la key vieja, edición masiva con dry run y jobs con progreso.
 - 2.6: votos 🙋, worklogs, estimado original y restante automático o manual, RQL de tiempo y votos, tools MCP de tiempo.
