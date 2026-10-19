@@ -1,8 +1,17 @@
 import * as S from './style';
 
-export function FieldRow({ label, children }: { label: string; children: React.ReactNode }) {
+export function FieldRow({
+  label,
+  children,
+  name,
+}: {
+  label: string;
+  children: React.ReactNode;
+  /** Lets keyboard shortcuts find the control, e.g. "priority". */
+  name?: string;
+}) {
   return (
-    <S.Row>
+    <S.Row data-field={name}>
       <S.Label>{label}</S.Label>
       <S.Value>{children}</S.Value>
     </S.Row>

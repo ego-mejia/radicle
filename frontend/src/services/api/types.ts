@@ -74,3 +74,6 @@ export type Limits = S['Limits'];
 export type ImagePreset = 'original' | 'large' | 'medium' | 'small';
 
 export type Worklog = S['WorklogOut'];
+
+export type SavedFilter = S['FilterOut'];
+export type Preferences = S['PreferencesOut'];

@@ -1171,6 +1171,158 @@
         "title": "FieldOptionOut",
         "type": "object"
       },
+      "FilterIn": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Required for visibility=project",
+            "title": "Project"
+          },
+          "rql": {
+            "title": "Rql",
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/FilterVisibility",
+            "default": "private"
+          }
+        },
+        "required": [
+          "name",
+          "rql"
+        ],
+        "title": "FilterIn",
+        "type": "object"
+      },
+      "FilterOut": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/UserRef"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project"
+          },
+          "rql": {
+            "title": "Rql",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "visibility": {
+            "$ref": "#/components/schemas/FilterVisibility"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "rql",
+          "visibility",
+          "project",
+          "owner",
+          "mine",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "FilterOut",
+        "type": "object"
+      },
+      "FilterPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project"
+          },
+          "rql": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rql"
+          },
+          "visibility": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FilterVisibility"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "FilterPatch",
+        "type": "object"
+      },
+      "FilterVisibility": {
+        "enum": [
+          "private",
+          "project",
+          "instance"
+        ],
+        "title": "FilterVisibility",
+        "type": "string"
+      },
       "FormSchemaOut": {
         "properties": {
           "fields": {
@@ -1825,6 +1977,71 @@
         "title": "MoveIn",
         "type": "object"
       },
+      "NextIn": {
+        "additionalProperties": false,
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "claim": {
+            "default": false,
+            "description": "Assign it to you and start it, atomically",
+            "title": "Claim",
+            "type": "boolean"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TicketType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "NextIn",
+        "type": "object"
+      },
+      "NextOut": {
+        "properties": {
+          "ticket": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TicketOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null when nothing is ready to work on"
+          }
+        },
+        "required": [
+          "ticket"
+        ],
+        "title": "NextOut",
+        "type": "object"
+      },
       "Page_AreaOut_": {
         "properties": {
           "items": {
@@ -1963,6 +2180,34 @@
           "next_cursor"
         ],
         "title": "Page[EventOut]",
+        "type": "object"
+      },
+      "Page_FilterOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FilterOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[FilterOut]",
         "type": "object"
       },
       "Page_MemberOut_": {
@@ -2271,6 +2516,41 @@
           "next_cursor"
         ],
         "title": "Page[WorklogOut]",
+        "type": "object"
+      },
+      "PreferencesOut": {
+        "properties": {
+          "density": {
+            "title": "Density",
+            "type": "string"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "shortcuts": {
+            "title": "Shortcuts",
+            "type": "boolean"
+          },
+          "theme": {
+            "title": "Theme",
+            "type": "string"
+          }
+        },
+        "required": [
+          "theme",
+          "language",
+          "shortcuts",
+          "density"
+        ],
+        "title": "PreferencesOut",
         "type": "object"
       },
       "Priority": {
@@ -2641,6 +2921,37 @@
           "custom_fields"
         ],
         "title": "ProjectValues",
+        "type": "object"
+      },
+      "RankIn": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Ticket key to go right below",
+            "title": "After"
+          },
+          "before": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Ticket key to go right above",
+            "title": "Before"
+          }
+        },
+        "title": "RankIn",
         "type": "object"
       },
       "ReactionOut": {
@@ -5892,6 +6203,183 @@
         ]
       }
     },
+    "/api/v1/filters": {
+      "get": {
+        "description": "Filters you can see: yours, your projects' and the instance's. With `project`,\nonly project filters of that project.",
+        "operationId": "list_filters_api_v1_filters_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "project",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Project"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_FilterOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Filters",
+        "tags": [
+          "filters, ranking and preferences"
+        ]
+      },
+      "post": {
+        "operationId": "create_filter_api_v1_filters_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilterOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Filter",
+        "tags": [
+          "filters, ranking and preferences"
+        ]
+      }
+    },
+    "/api/v1/filters/{filter_id}": {
+      "delete": {
+        "operationId": "delete_filter_api_v1_filters__filter_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "filter_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Filter Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Filter",
+        "tags": [
+          "filters, ranking and preferences"
+        ]
+      },
+      "patch": {
+        "description": "Only the owner. To change someone else's filter, save a copy.",
+        "operationId": "patch_filter_api_v1_filters__filter_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "filter_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Filter Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilterPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilterOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Filter",
+        "tags": [
+          "filters, ranking and preferences"
+        ]
+      }
+    },
     "/api/v1/health": {
       "get": {
         "operationId": "health_api_v1_health_get",
@@ -6073,6 +6561,69 @@
         "summary": "Patch Me",
         "tags": [
           "me"
+        ]
+      }
+    },
+    "/api/v1/me/preferences": {
+      "get": {
+        "operationId": "get_preferences_api_v1_me_preferences_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreferencesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Preferences",
+        "tags": [
+          "filters, ranking and preferences"
+        ]
+      },
+      "patch": {
+        "description": "theme (system, light, dark), language (en, es or null), shortcuts, density.",
+        "operationId": "patch_preferences_api_v1_me_preferences_patch",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Body",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreferencesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Preferences",
+        "tags": [
+          "filters, ranking and preferences"
         ]
       }
     },
@@ -8289,6 +8840,48 @@
         ]
       }
     },
+    "/api/v1/tickets/next": {
+      "post": {
+        "description": "The highest-ranked ticket ready to work on: to do, not blocked, unassigned or yours.\nWith `claim`, it is assigned to you and moved to in progress; parallel callers never\nget the same ticket.",
+        "operationId": "next_ticket_api_v1_tickets_next_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NextIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NextOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Next Ticket",
+        "tags": [
+          "filters, ranking and preferences"
+        ]
+      }
+    },
     "/api/v1/tickets/{key}": {
       "delete": {
         "description": "Soft delete. The ticket disappears from lists but its history stays.",
@@ -9145,6 +9738,59 @@
         "summary": "Move Ticket",
         "tags": [
           "clone, move and bulk"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/rank": {
+      "post": {
+        "description": "Move the ticket right before or after another ticket of the same project.",
+        "operationId": "rank_ticket_api_v1_tickets__key__rank_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RankIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rank Ticket",
+        "tags": [
+          "filters, ranking and preferences"
         ]
       }
     },

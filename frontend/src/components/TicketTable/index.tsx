@@ -1,14 +1,9 @@
-import { ArrowDown, ArrowUp, CircleSlash } from 'lucide-react';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatDate, isOverdue, relativeTime } from '../../lib/format';
 import type { TicketSummary } from '../../services/api/types';
-import { CategoryIcon } from '../icons/CategoryIcon';
-import { PriorityIcon } from '../icons/PriorityIcon';
-import { TypeIcon } from '../icons/TypeIcon';
-import { Avatar } from '../ui/Avatar';
-import { TicketKey } from '../ui/Badge';
 import { Spinner } from '../ui/Spinner';
+import { Rows, TicketRow } from './components/TicketRow';
 import * as S from './style';
 
 type Sort = { field: string; desc: boolean } | null;
@@ -25,6 +20,8 @@ type Props = {
   /** With a selection, each row gets a checkbox for bulk actions. */
   selected?: Set<string>;
   onSelect?: (keys: string[], selected: boolean) => void;
+  /** When ordered by rank: drag rows to reorder. */
+  onReorder?: (key: string, place: { before?: string; after?: string }) => Promise<void>;
 };
 
 const COLUMNS: { id: string; sort?: string }[] = [
@@ -53,6 +50,7 @@ export function TicketTable({
   onLoadMore,
   selected,
   onSelect,
+  onReorder,
 }: Props) {
   const { t } = useTranslation();
   const sentinel = useRef<HTMLDivElement>(null);
@@ -72,6 +70,7 @@ export function TicketTable({
       <S.Table>
         <thead>
           <tr>
+            {onReorder && <S.CheckCell aria-hidden />}
             {selected && onSelect && (
               <S.CheckCell>
                 <input
@@ -109,94 +108,19 @@ export function TicketTable({
           </tr>
         </thead>
         <tbody>
-          {tickets.map((ticket) => (
-            <tr
-              key={ticket.key}
-              tabIndex={0}
-              onClick={() => onOpen(ticket.key)}
-              onKeyDown={(e) => e.key === 'Enter' && onOpen(ticket.key)}
-              aria-selected={selected?.has(ticket.key) || undefined}
-            >
-              {selected && onSelect && (
-                <S.CheckCell onClick={(e) => e.stopPropagation()}>
-                  <input
-                    type="checkbox"
-                    aria-label={t('bulk.select', { key: ticket.key })}
-                    checked={selected.has(ticket.key)}
-                    onChange={(e) => onSelect([ticket.key], e.target.checked)}
-                  />
-                </S.CheckCell>
-              )}
-              <td>
-                <TicketKey>{ticket.key}</TicketKey>
-              </td>
-              <td>
-                <TypeIcon type={ticket.type} />
-              </td>
-              <S.TitleCell>
-                <S.Cell>
-                  {ticket.blocked && (
-                    <S.Muted $danger title={t('ticket.blocked')}>
-                      <CircleSlash size={13} />
-                    </S.Muted>
-                  )}
-                  {ticket.title}
-                </S.Cell>
-              </S.TitleCell>
-              <td>
-                <S.Cell>
-                  <CategoryIcon category={ticket.status.category} />
-                  {ticket.status.name}
-                </S.Cell>
-              </td>
-              <td>
-                <S.Cell>
-                  <PriorityIcon priority={ticket.priority} />
-                  {t(`ticket.priorities.${ticket.priority}`)}
-                </S.Cell>
-              </td>
-              <td>
-                {ticket.vote_count > 0 ? (
-                  <S.Cell title={t('votes.count', { count: ticket.vote_count })}>
-                    🙋 {ticket.vote_count}
-                  </S.Cell>
-                ) : (
-                  <S.Muted>—</S.Muted>
-                )}
-              </td>
-              <td>
-                {ticket.assignee ? (
-                  <S.Cell>
-                    <Avatar
-                      handle={ticket.assignee.handle}
-                      name={ticket.assignee.display_name}
-                      kind={ticket.assignee.kind}
-                      size={20}
-                    />
-                    {ticket.assignee.handle}
-                  </S.Cell>
-                ) : (
-                  <S.Muted>—</S.Muted>
-                )}
-              </td>
-              <td>{ticket.area ?? <S.Muted>—</S.Muted>}</td>
-              <td>{ticket.milestone ?? <S.Muted>—</S.Muted>}</td>
-              <td>
-                {ticket.due_date ? (
-                  <S.Muted
-                    $danger={isOverdue(ticket.due_date) && ticket.status.category !== 'done'}
-                  >
-                    {formatDate(ticket.due_date)}
-                  </S.Muted>
-                ) : (
-                  <S.Muted>—</S.Muted>
-                )}
-              </td>
-              <td>
-                <S.Muted>{relativeTime(ticket.updated_at)}</S.Muted>
-              </td>
-            </tr>
-          ))}
+          <Rows tickets={tickets} onReorder={onReorder}>
+            {(ticket, handle) => (
+              <TicketRow
+                key={ticket.key}
+                ticket={ticket}
+                onOpen={onOpen}
+                selected={selected}
+                onSelect={onSelect}
+                sortable={Boolean(onReorder)}
+                handle={handle}
+              />
+            )}
+          </Rows>
         </tbody>
       </S.Table>
       <S.Sentinel ref={sentinel} />

@@ -22,6 +22,7 @@ import {
   ticketKeys,
   transitionTicket,
 } from '../../../../services/api/tickets';
+import { rankTicket } from '../../../../services/api/work';
 import { useMoveFeedback } from '../../../tickets/hooks/useMoveFeedback';
 import {
   CATEGORIES,
@@ -96,7 +97,19 @@ export function BoardView() {
   const onDragEnd = (event: DragEndEvent) => {
     const current = drag;
     setDrag(null);
-    const target = event.over?.id as Category | undefined;
+    let target = event.over?.id as Category | undefined;
+    const overTicket = event.over?.data.current?.ticket as TicketSummary | undefined;
+    if (current && overTicket) {
+      if (overTicket.status.category === current.ticket.status.category) {
+        if (overTicket.key !== current.ticket.key) {
+          void rankTicket(current.ticket.key, { before: overTicket.key })
+            .then(() => queryClient.invalidateQueries({ queryKey: ticketKeys.all }))
+            .catch((error: unknown) => feedback.error(error));
+        }
+        return;
+      }
+      target = overTicket.status.category;
+    }
     if (!current || !target || target === current.ticket.status.category || !current.options)
       return;
     const options = current.options.filter((o) => o.category === target);

@@ -18,6 +18,7 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.services.templates",
     "radicle.services.attachments",
     "radicle.services.bulk",
+    "radicle.services.ranking",
 )
 
 

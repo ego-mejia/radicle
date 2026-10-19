@@ -27,3 +27,10 @@ export const Prefs = styled.div`
     grid-template-columns: minmax(0, 1fr);
   }
 `;
+
+export const Toggle = styled.label`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+`;

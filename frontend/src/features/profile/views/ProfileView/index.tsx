@@ -10,6 +10,7 @@ import { SettingsCard, SettingsParts as P } from '../../../../components/ui/Sett
 import type { ThemePreference } from '../../../../contexts/themeMode';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { useMe } from '../../../../hooks/useMe';
+import { usePreferences } from '../../../../hooks/usePreferences';
 import { useThemeMode } from '../../../../hooks/useThemeMode';
 import { useToast } from '../../../../hooks/useToast';
 import { LANGUAGES } from '../../../../i18n';
@@ -31,6 +32,7 @@ export function ProfileView() {
   const errorMessage = useErrorMessage();
   const queryClient = useQueryClient();
   const { preference, setPreference } = useThemeMode();
+  const { prefs, save: savePrefs } = usePreferences();
   const [name, setName] = useState(me.display_name);
   const [passwords, setPasswords] = useState({ current_password: '', new_password: '' });
   const [tokenName, setTokenName] = useState('');
@@ -93,7 +95,10 @@ export function ProfileView() {
             <Field label={t('language.label')}>
               <Select
                 value={i18n.resolvedLanguage}
-                onChange={(e) => void i18n.changeLanguage(e.target.value)}
+                onChange={(e) => {
+                  void i18n.changeLanguage(e.target.value);
+                  savePrefs({ language: e.target.value });
+                }}
               >
                 {LANGUAGES.map((lng) => (
                   <option key={lng} value={lng}>
@@ -105,12 +110,37 @@ export function ProfileView() {
             <Field label={t('theme.label')}>
               <Select
                 value={preference}
-                onChange={(e) => setPreference(e.target.value as ThemePreference)}
+                onChange={(e) => {
+                  setPreference(e.target.value as ThemePreference);
+                  savePrefs({ theme: e.target.value });
+                }}
               >
                 <option value="system">{t('theme.system')}</option>
                 <option value="light">{t('theme.light')}</option>
                 <option value="dark">{t('theme.dark')}</option>
               </Select>
+            </Field>
+            <Field label={t('profile.density')}>
+              <Select
+                value={prefs?.density ?? 'comfortable'}
+                onChange={(e) => {
+                  document.documentElement.dataset.density = e.target.value;
+                  savePrefs({ density: e.target.value });
+                }}
+              >
+                <option value="comfortable">{t('profile.densities.comfortable')}</option>
+                <option value="compact">{t('profile.densities.compact')}</option>
+              </Select>
+            </Field>
+            <Field label={t('profile.shortcuts')} hint={t('profile.shortcutsHint')} group>
+              <S.Toggle>
+                <input
+                  type="checkbox"
+                  checked={prefs?.shortcuts ?? true}
+                  onChange={(e) => savePrefs({ shortcuts: e.target.checked })}
+                />
+                {t('profile.shortcutsOn')}
+              </S.Toggle>
             </Field>
           </S.Prefs>
         </SettingsCard>

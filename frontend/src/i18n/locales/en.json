@@ -345,7 +345,15 @@
     "saved": "Saved",
     "tokens": "Personal tokens",
     "tokensHelp": "Use them for the API or to connect an MCP client as yourself.",
-    "tokenName": "Token name"
+    "tokenName": "Token name",
+    "density": "Density",
+    "densities": {
+      "comfortable": "Comfortable",
+      "compact": "Compact"
+    },
+    "shortcuts": "Keyboard shortcuts",
+    "shortcutsHint": "Press ? anywhere to see them. ⌘K always works.",
+    "shortcutsOn": "Single-key shortcuts on"
   },
   "fields": {
     "title": "Custom fields",
@@ -549,7 +557,9 @@
     "defaults": "Default fields.",
     "noFields": "Asks for no fields.",
     "required": "Required",
-    "linkedHelp": "Screens come from the template {{template}}."
+    "linkedHelp": "Screens come from the template {{template}}.",
+    "show": "Show {{field}}",
+    "requiredFor": "{{field}} required"
   },
   "attachments": {
     "title_one": "Attachments ({{count}})",
@@ -668,5 +678,69 @@
     "previewSummary": "{{ok}} would change, {{failed}} would fail:",
     "doneSummary": "{{ok}} changed, {{failed}} failed.",
     "jobProgress": "Running in the background: {{done}} of {{total}}"
+  },
+  "rank": {
+    "drag": "Drag to reorder {{key}}"
+  },
+  "filters": {
+    "title": "Filters",
+    "save": "Save current filter",
+    "saveShort": "Save",
+    "name": "Name",
+    "visibility": "Who sees it",
+    "delete": "Delete filter {{name}}",
+    "groups": {
+      "mine": "Mine",
+      "project": "Project",
+      "instance": "Everyone"
+    },
+    "visibilities": {
+      "private": "Only me",
+      "project": "Everyone in {{key}}",
+      "instance": "Everyone in Radicle"
+    }
+  },
+  "shortcuts": {
+    "title": "Keyboard shortcuts",
+    "note": "Shortcuts do not fire while you type in a field. Turn them off in your profile.",
+    "groups": {
+      "global": "Anywhere",
+      "lists": "Lists and board",
+      "ticket": "Open ticket"
+    },
+    "actions": {
+      "create": "Create ticket",
+      "search": "Focus search",
+      "palette": "Command palette",
+      "help": "This help",
+      "projects": "Go to projects",
+      "myTickets": "Go to my tickets",
+      "close": "Close panel or dialog",
+      "next": "Next",
+      "previous": "Previous",
+      "open": "Open selected",
+      "editTitle": "Edit title",
+      "assignMe": "Assign to me",
+      "move": "Move (transitions)",
+      "tags": "Tags",
+      "priority": "Priority"
+    }
+  },
+  "palette": {
+    "title": "Command palette",
+    "placeholder": "Search tickets, projects, filters or actions…",
+    "empty": "Nothing matches.",
+    "open": "Open {{key}}",
+    "create": "Create ticket",
+    "light": "Switch to light theme",
+    "dark": "Switch to dark theme",
+    "settings": "Settings of {{key}}",
+    "groups": {
+      "recent": "Recent",
+      "tickets": "Tickets",
+      "projects": "Projects",
+      "filters": "Saved filters",
+      "actions": "Actions"
+    }
   }
 }

@@ -164,6 +164,49 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/filters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Filters
+         * @description Filters you can see: yours, your projects' and the instance's. With `project`,
+         *     only project filters of that project.
+         */
+        get: operations["list_filters_api_v1_filters_get"];
+        put?: never;
+        /** Create Filter */
+        post: operations["create_filter_api_v1_filters_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/filters/{filter_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Filter */
+        delete: operations["delete_filter_api_v1_filters__filter_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Filter
+         * @description Only the owner. To change someone else's filter, save a copy.
+         */
+        patch: operations["patch_filter_api_v1_filters__filter_id__patch"];
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -257,6 +300,27 @@ export interface paths {
         head?: never;
         /** Patch Me */
         patch: operations["patch_me_api_v1_me_patch"];
+        trace?: never;
+    };
+    "/api/v1/me/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Preferences */
+        get: operations["get_preferences_api_v1_me_preferences_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Patch Preferences
+         * @description theme (system, light, dark), language (en, es or null), shortcuts, density.
+         */
+        patch: operations["patch_preferences_api_v1_me_preferences_patch"];
         trace?: never;
     };
     "/api/v1/me/tokens": {
@@ -929,6 +993,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tickets/next": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Next Ticket
+         * @description The highest-ranked ticket ready to work on: to do, not blocked, unassigned or yours.
+         *     With `claim`, it is assigned to you and moved to in progress; parallel callers never
+         *     get the same ticket.
+         */
+        post: operations["next_ticket_api_v1_tickets_next_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tickets/{key}": {
         parameters: {
             query?: never;
@@ -1136,6 +1222,26 @@ export interface paths {
          *     the old one keeps resolving to it.
          */
         post: operations["move_ticket_api_v1_tickets__key__move_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{key}/rank": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rank Ticket
+         * @description Move the ticket right before or after another ticket of the same project.
+         */
+        post: operations["rank_ticket_api_v1_tickets__key__rank_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1800,6 +1906,54 @@ export interface components {
             /** Value */
             value: string;
         };
+        /** FilterIn */
+        FilterIn: {
+            /** Name */
+            name: string;
+            /**
+             * Project
+             * @description Required for visibility=project
+             */
+            project?: string | null;
+            /** Rql */
+            rql: string;
+            /** @default private */
+            visibility?: components["schemas"]["FilterVisibility"];
+        };
+        /** FilterOut */
+        FilterOut: {
+            /** Created At */
+            created_at: string;
+            /** Id */
+            id: string;
+            /** Mine */
+            mine: boolean;
+            /** Name */
+            name: string;
+            owner: components["schemas"]["UserRef"];
+            /** Project */
+            project: string | null;
+            /** Rql */
+            rql: string;
+            /** Updated At */
+            updated_at: string;
+            visibility: components["schemas"]["FilterVisibility"];
+        };
+        /** FilterPatch */
+        FilterPatch: {
+            /** Name */
+            name?: string | null;
+            /** Project */
+            project?: string | null;
+            /** Rql */
+            rql?: string | null;
+            visibility?: components["schemas"]["FilterVisibility"] | null;
+        };
+        /**
+         * FilterVisibility
+         * @enum {string}
+         */
+        FilterVisibility: "private" | "project" | "instance";
         /** FormSchemaOut */
         FormSchemaOut: {
             /** Fields */
@@ -2036,6 +2190,25 @@ export interface components {
             /** Target Project */
             target_project: string;
         };
+        /** NextIn */
+        NextIn: {
+            /** Area */
+            area?: string | null;
+            /**
+             * Claim
+             * @description Assign it to you and start it, atomically
+             * @default false
+             */
+            claim?: boolean;
+            /** Project */
+            project?: string | null;
+            type?: components["schemas"]["TicketType"] | null;
+        };
+        /** NextOut */
+        NextOut: {
+            /** @description null when nothing is ready to work on */
+            ticket: components["schemas"]["TicketOut"] | null;
+        };
         /** Page[AreaOut] */
         Page_AreaOut_: {
             /** Items */
@@ -2068,6 +2241,13 @@ export interface components {
         Page_EventOut_: {
             /** Items */
             items: components["schemas"]["EventOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[FilterOut] */
+        Page_FilterOut_: {
+            /** Items */
+            items: components["schemas"]["FilterOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -2147,6 +2327,17 @@ export interface components {
             items: components["schemas"]["WorklogOut"][];
             /** Next Cursor */
             next_cursor: string | null;
+        };
+        /** PreferencesOut */
+        PreferencesOut: {
+            /** Density */
+            density: string;
+            /** Language */
+            language: string | null;
+            /** Shortcuts */
+            shortcuts: boolean;
+            /** Theme */
+            theme: string;
         };
         /**
          * Priority
@@ -2292,6 +2483,19 @@ export interface components {
              * @description Most used tags first
              */
             tags: string[];
+        };
+        /** RankIn */
+        RankIn: {
+            /**
+             * After
+             * @description Ticket key to go right below
+             */
+            after?: string | null;
+            /**
+             * Before
+             * @description Ticket key to go right above
+             */
+            before?: string | null;
         };
         /** ReactionOut */
         ReactionOut: {
@@ -3575,6 +3779,134 @@ export interface operations {
             };
         };
     };
+    list_filters_api_v1_filters_get: {
+        parameters: {
+            query?: {
+                project?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_FilterOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_filter_api_v1_filters_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FilterIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FilterOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_filter_api_v1_filters__filter_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                filter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_filter_api_v1_filters__filter_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                filter_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FilterPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FilterOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_api_v1_health_get: {
         parameters: {
             query?: never;
@@ -3715,6 +4047,61 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_preferences_api_v1_me_preferences_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreferencesOut"];
+                };
+            };
+        };
+    };
+    patch_preferences_api_v1_me_preferences_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreferencesOut"];
                 };
             };
             /** @description Validation Error */
@@ -5213,6 +5600,39 @@ export interface operations {
             };
         };
     };
+    next_ticket_api_v1_tickets_next_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NextIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NextOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_ticket_api_v1_tickets__key__get: {
         parameters: {
             query?: never;
@@ -5726,6 +6146,41 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["MoveIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rank_ticket_api_v1_tickets__key__rank_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RankIn"];
             };
         };
         responses: {

@@ -12,10 +12,12 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
   ticket: TicketSummary;
   dragging?: boolean;
   overlay?: boolean;
+  /** Another card hovers it: it would be ranked right above. */
+  dropTarget?: boolean;
 };
 
 export const TicketCard = forwardRef<HTMLDivElement, Props>(function TicketCard(
-  { ticket, dragging = false, overlay = false, ...rest },
+  { ticket, dragging = false, overlay = false, dropTarget = false, ...rest },
   ref,
 ) {
   const { t } = useTranslation();
@@ -25,6 +27,7 @@ export const TicketCard = forwardRef<HTMLDivElement, Props>(function TicketCard(
       $draft={ticket.type === 'draft'}
       $dragging={dragging}
       $overlay={overlay}
+      $dropTarget={dropTarget}
       aria-label={`${ticket.key} ${ticket.title}`}
       {...rest}
     >

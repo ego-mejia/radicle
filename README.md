@@ -2,7 +2,7 @@
 
 Ticket tracker open source y self-hosted con servidor MCP desde el día 1: personas y agentes trabajan el mismo proyecto.
 
-> Estado: etapa 1 completa; etapa 2 en curso. Ver [docs/progress.md](docs/progress.md).
+> Estado: etapas 1 y 2 completas; etapa 3 en curso. Ver [docs/progress.md](docs/progress.md).
 
 ## Instalar
 
@@ -63,6 +63,20 @@ Clientes que solo hablan stdio usan [`mcp-remote`](https://www.npmjs.com/package
 ```
 
 Tools: `whoami`, `list_projects`, `get_project`, `search_tickets`, `my_tickets`, `get_ticket`, `create_ticket`, `update_ticket`, `get_transitions`, `transition_ticket`, `change_ticket_type`, `set_checklist_item`, `add_comment`, `list_comments`, `link_tickets`, `unlink_tickets`, `add_collaborator`, `remove_collaborator`, `get_history`. Recursos: `radicle://guide/rql` y `radicle://projects/{key}/schema`.
+
+## Configuración
+
+Todo se configura con variables de entorno (ver `.env.example`). Las más importantes:
+
+- `RADICLE_SECRET_KEY`: firma los links de los adjuntos. Usa un valor largo y aleatorio en producción.
+- `RADICLE_STORAGE`: `local` guarda los adjuntos en el volumen `attachments`; `s3` usa cualquier S3 compatible (AWS, MinIO, R2) con `RADICLE_S3_*`.
+- `RADICLE_MAX_UPLOAD_MB` (25) y `RADICLE_IMAGE_DEFAULT_RESIZE` (`large`): tamaño máximo por archivo y tamaño default de las imágenes.
+
+El contenedor `worker` corre los trabajos en segundo plano: propagación de templates, variantes de imágenes, ediciones masivas grandes y rebalanceo del ranking. Si no está corriendo, esas tareas esperan en la cola.
+
+## Atajos
+
+`?` muestra todos. Los principales: `c` crear ticket, `/` buscar, `⌘K` paleta de comandos, `g p` proyectos, `g m` mis tickets, `j`/`k` moverse en listas y board, y con un ticket abierto `e` título, `a` asignarme, `m` mover, `l` tags, `p` prioridad. Se pueden apagar en el perfil.
 
 ## Desarrollo
 

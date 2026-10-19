@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
 import { EmptyState } from '../../../../components/ui/EmptyState';
@@ -6,6 +6,8 @@ import { PageSpinner } from '../../../../components/ui/Spinner';
 import { Tabs } from '../../../../components/ui/Tabs';
 import { useMe } from '../../../../hooks/useMe';
 import { projectOf } from '../../../../lib/format';
+import { rememberTicket } from '../../../../lib/ticketCommands';
+import { useTicketCommand } from '../../../../hooks/useTicketCommand';
 import { useProject } from '../../../projects/hooks/useProject';
 import { useTicket, useTicketActions } from '../../hooks/useTicket';
 import { Attachments } from '../Attachments';
@@ -29,6 +31,15 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
   const { data: project } = useProject(projectOf(ticketKey));
   const actions = useTicketActions(ticket);
   const [tab, setTab] = useState<Tab>('comments');
+  const canAct = Boolean(project && project.role !== 'viewer' && !project.archived);
+  useTicketCommand(
+    'assign-me',
+    () => ticket && actions.patch.mutate({ assignee: me.handle }),
+    canAct,
+  );
+  useEffect(() => {
+    if (ticket) rememberTicket({ key: ticket.key, title: ticket.title });
+  }, [ticket?.key, ticket?.title]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isPending) return <PageSpinner />;
   if (isError || !ticket) return <EmptyState plant="seed" title={t('ticket.notFound')} />;
@@ -42,7 +53,7 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
   }));
 
   return (
-    <S.Layout>
+    <S.Layout data-ticket-detail={ticket.key}>
       <S.Main>
         {actions.conflict && (
           <S.Conflict role="alert">

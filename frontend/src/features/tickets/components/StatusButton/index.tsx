@@ -7,6 +7,7 @@ import { CategoryIcon } from '../../../../components/icons/CategoryIcon';
 import { Spinner } from '../../../../components/ui/Spinner';
 import { fetchTransitions, ticketKeys } from '../../../../services/api/tickets';
 import type { Ticket } from '../../../../services/api/types';
+import { useTicketCommand } from '../../../../hooks/useTicketCommand';
 import type { TicketActions } from '../../hooks/useTicket';
 import { TransitionPicker } from '../TransitionPicker';
 import * as S from './style';
@@ -17,6 +18,7 @@ type Props = { ticket: Ticket; actions: TicketActions; canEdit: boolean };
 export function StatusButton({ ticket, actions, canEdit }: Props) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  useTicketCommand('move', () => setOpen(true), canEdit);
   const { data: options, isPending } = useQuery({
     queryKey: [...ticketKeys.transitions(ticket.key), ticket.version],
     queryFn: () => fetchTransitions(ticket.key),

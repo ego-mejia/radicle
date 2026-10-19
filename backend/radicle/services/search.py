@@ -90,12 +90,16 @@ async def search(
     now: datetime | None = None,
 ) -> SearchResult:
     query = parse(q)
+    from radicle.services import filters
+
+    saved = await filters.expand(db, user, query)
     types = await custom_fields.rql_types(db, visible_project_ids(user))
     ctx = Context(
         user_id=user.id,
         now=now or utcnow(),
         tz=ZoneInfo(timezone),
         custom_fields={k: t.value for k, t in types.items()},
+        filters=saved,
     )
     compiled = compile_query(query, ctx)
     offset = _decode_cursor(cursor)
@@ -119,6 +123,15 @@ async def _missing_names(
     warnings: list[SearchWarning] = []
     visible = visible_project_ids(user)
     for kind, value, position in references:
+        if kind == "filter":
+            warnings.append(
+                SearchWarning(
+                    "unknown_name",
+                    f"Filter '{value}' does not exist; it matches nothing.",
+                    position,
+                )
+            )
+            continue
         if kind == "handle":
             exists = await db.scalar(select(User.id).where(User.handle == value))
             label = f"User @{value}"

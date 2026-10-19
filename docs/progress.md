@@ -199,7 +199,7 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 | 2.5 | Adjuntos | Listo |
 | 2.6 | Votos y tiempo real invertido | Listo |
 | 2.7 | Clonar, mover y bulk edit | Listo |
-| 2.8 | Filtros, ranking, atajos y cmd+k | Pendiente |
+| 2.8 | Filtros, ranking, atajos y cmd+k | Listo |
 
 ### 2.1 Worker y campos custom
 
@@ -320,3 +320,41 @@ El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft 
 - `tests/integration/test_clone_move_bulk.py::test_acceptance_move_keeps_old_key`: PA-7 pasa a PB como PB-15 y `GET /tickets/PA-7` regresa PB-15 con `moved_from`.
 - `test_acceptance_bulk_120_runs_as_job`: quitar #backlog y poner V1 a 120 tickets, con vista previa, corre como job y reporta por ticket.
 - `frontend/src/features/list/components/BulkBar/BulkBar.test.tsx`: vista previa y aplicar.
+
+### 2.8 Filtros, ranking, atajos y cmd+k
+
+**Qué se hizo**
+
+- Migración `0012`: `saved_filters` y `user_preferences`. Decisión: [0016](decisions/0016-filtros-ranking-atajos.md).
+- Filtros guardados privados, de proyecto o de instancia (`/filters`), y `filter = "<nombre>"` en RQL, también anidados.
+- Ranking manual `POST /tickets/{key}/rank` con evento `rank_changed` y rebalanceo por job.
+- `POST /tickets/next` con `claim` atómico (`FOR UPDATE SKIP LOCKED`).
+- Preferencias por persona `GET` y `PATCH /me/preferences`.
+- MCP: `next_ticket`, `rank_ticket`, `list_filters`, `run_filter` y `save_filter`. Las tools quedaron en módulos por tema (`mcp/tools/`).
+- UI: barra lateral de filtros en la lista (míos, del proyecto, de todos) y "Guardar"; arrastrar filas para reordenar cuando la lista va por rank, y soltar una tarjeta sobre otra en el board para ponerla arriba; atajos `c`, `/`, `⌘K`, `?`, `g p`, `g m`, `j`, `k`, `Enter`, `e`, `a`, `m`, `l`, `p` y `Esc` con ayuda en `?`; paleta de comandos con tickets, proyectos, filtros, acciones y recientes; preferencias de atajos, densidad, tema e idioma en el perfil.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_filters_rank_next.py::test_acceptance_agent_claims_next_ticket`: el agente llama `next_ticket` con `claim=true` y queda asignado y en progreso el de más arriba.
+- `tests/integration/test_concurrency.py::test_ten_agents_claim_different_tickets`: 10 agentes reclaman a la vez y reciben 10 tickets distintos.
+- `frontend/e2e/stage2.spec.ts`, último paso: flujo diario solo con teclado.
+
+## Etapa 2: aceptación
+
+Los criterios de aceptación de la etapa se verifican así:
+
+| Criterio | Dónde |
+| --- | --- |
+| Template "Producto digital" desde ProyectoA y ProyectoB a partir de él | E2E `template from PA reaches PB...`; `test_templates.py` |
+| "Blocked" llega a ProyectoB en segundos y no a ProyectoC desligado | E2E (worker real); `test_acceptance_template_propagates_to_linked_projects_only` |
+| Quitar un estado pide a dónde mandar sus tickets y los mueve con historial | `test_removing_a_status_needs_a_mapping_and_moves_tickets`; diálogo de mapeo |
+| `checklist_complete` en Complete; el error dice qué falta | E2E; `test_acceptance_checklist_complete_blocks_complete` |
+| Política enforce: un ticket bloqueado no pasa a In Progress | `test_blocked_policy_warn_and_enforce` |
+| Un Bug exige Environment al crearse en UI, API y MCP | E2E; `test_acceptance_required_custom_field_same_in_api_and_mcp` |
+| Pegar un screenshot, reducirlo a mediano y que baje su tamaño | E2E; `test_acceptance_screenshot_in_comment_resized_to_medium` |
+| Votar con 🙋 y ordenar el backlog por votos | E2E; `test_votes_and_backlog_by_votes` |
+| Un agente registra 2 h por MCP y la barra se actualiza | `test_acceptance_agent_logs_two_hours` |
+| Mover PA-7 a ProyectoB y el link viejo sigue funcionando | E2E; `test_acceptance_move_keeps_old_key` |
+| Quitar #backlog y poner V1 a 120 tickets con vista previa | `test_acceptance_bulk_120_runs_as_job`; E2E de bulk |
+| `next_ticket` con `claim=true` | `test_acceptance_agent_claims_next_ticket` y la prueba de concurrencia |
+| Flujo diario solo con teclado y `cmd+k` | E2E `daily work with the keyboard only` |

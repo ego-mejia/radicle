@@ -19,11 +19,18 @@ function DraggableCard({
     data: { ticket },
     disabled,
   });
+  // Each card is also a drop target: dropping on a card of the same column ranks above it.
+  const drop = useDroppable({ id: `card:${ticket.key}`, data: { ticket }, disabled });
   return (
     <TicketCard
-      ref={setNodeRef}
+      ref={(node) => {
+        setNodeRef(node);
+        drop.setNodeRef(node);
+      }}
+      dropTarget={drop.isOver && !isDragging}
       ticket={ticket}
       dragging={isDragging}
+      data-nav-item
       {...attributes}
       {...listeners}
       onClick={onOpen}

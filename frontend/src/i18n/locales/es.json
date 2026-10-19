@@ -345,7 +345,15 @@
     "saved": "Guardado",
     "tokens": "Tokens personales",
     "tokensHelp": "Úsalos para la API o para conectar un cliente MCP como tú.",
-    "tokenName": "Nombre del token"
+    "tokenName": "Nombre del token",
+    "density": "Densidad",
+    "densities": {
+      "comfortable": "Cómoda",
+      "compact": "Compacta"
+    },
+    "shortcuts": "Atajos de teclado",
+    "shortcutsHint": "Presiona ? en cualquier lugar para verlos. ⌘K siempre funciona.",
+    "shortcutsOn": "Atajos de una tecla activos"
   },
   "fields": {
     "title": "Campos custom",
@@ -549,7 +557,9 @@
     "defaults": "Campos por default.",
     "noFields": "No pide campos.",
     "required": "Obligatorio",
-    "linkedHelp": "Las screens vienen del template {{template}}."
+    "linkedHelp": "Las screens vienen del template {{template}}.",
+    "show": "Mostrar {{field}}",
+    "requiredFor": "{{field}} obligatorio"
   },
   "attachments": {
     "title_one": "Adjuntos ({{count}})",
@@ -668,5 +678,69 @@
     "previewSummary": "{{ok}} cambiarían, {{failed}} fallarían:",
     "doneSummary": "{{ok}} cambiaron, {{failed}} fallaron.",
     "jobProgress": "Corriendo en segundo plano: {{done}} de {{total}}"
+  },
+  "rank": {
+    "drag": "Arrastra para reordenar {{key}}"
+  },
+  "filters": {
+    "title": "Filtros",
+    "save": "Guardar filtro actual",
+    "saveShort": "Guardar",
+    "name": "Nombre",
+    "visibility": "Quién lo ve",
+    "delete": "Borrar filtro {{name}}",
+    "groups": {
+      "mine": "Míos",
+      "project": "Del proyecto",
+      "instance": "De todos"
+    },
+    "visibilities": {
+      "private": "Solo yo",
+      "project": "Todos en {{key}}",
+      "instance": "Todos en Radicle"
+    }
+  },
+  "shortcuts": {
+    "title": "Atajos de teclado",
+    "note": "Los atajos no se disparan mientras escribes en un campo. Se apagan en tu perfil.",
+    "groups": {
+      "global": "En cualquier lugar",
+      "lists": "Listas y board",
+      "ticket": "Ticket abierto"
+    },
+    "actions": {
+      "create": "Crear ticket",
+      "search": "Enfocar búsqueda",
+      "palette": "Paleta de comandos",
+      "help": "Esta ayuda",
+      "projects": "Ir a proyectos",
+      "myTickets": "Ir a mis tickets",
+      "close": "Cerrar panel o diálogo",
+      "next": "Siguiente",
+      "previous": "Anterior",
+      "open": "Abrir el seleccionado",
+      "editTitle": "Editar título",
+      "assignMe": "Asignarme",
+      "move": "Mover (transiciones)",
+      "tags": "Tags",
+      "priority": "Prioridad"
+    }
+  },
+  "palette": {
+    "title": "Paleta de comandos",
+    "placeholder": "Busca tickets, proyectos, filtros o acciones…",
+    "empty": "Nada coincide.",
+    "open": "Abrir {{key}}",
+    "create": "Crear ticket",
+    "light": "Cambiar a tema claro",
+    "dark": "Cambiar a tema oscuro",
+    "settings": "Settings de {{key}}",
+    "groups": {
+      "recent": "Recientes",
+      "tickets": "Tickets",
+      "projects": "Proyectos",
+      "filters": "Filtros guardados",
+      "actions": "Acciones"
+    }
   }
 }

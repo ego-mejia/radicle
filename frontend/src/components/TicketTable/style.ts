@@ -104,3 +104,10 @@ export const CheckCell = styled.td`
     cursor: pointer;
   }
 `;
+
+export const Grip = styled.span`
+  display: inline-grid;
+  place-items: center;
+  color: ${({ theme }) => theme.color.textMuted};
+  cursor: grab;
+`;

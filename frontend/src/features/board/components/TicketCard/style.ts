@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 
-export const Card = styled.div<{ $draft: boolean; $dragging: boolean; $overlay: boolean }>`
+export const Card = styled.div<{
+  $draft: boolean;
+  $dragging: boolean;
+  $overlay: boolean;
+  $dropTarget: boolean;
+}>`
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -11,7 +16,12 @@ export const Card = styled.div<{ $draft: boolean; $dragging: boolean; $overlay: 
   border-radius: ${({ theme }) => theme.radius.md};
   cursor: grab;
   opacity: ${({ $dragging }) => ($dragging ? 0.4 : 1)};
-  box-shadow: ${({ $overlay }) => ($overlay ? '0 14px 30px rgba(0,0,0,.25)' : 'none')};
+  box-shadow: ${({ theme, $overlay, $dropTarget }) =>
+    $overlay
+      ? '0 14px 30px rgba(0,0,0,.25)'
+      : $dropTarget
+        ? `0 -3px 0 0 ${theme.color.accent}`
+        : 'none'};
   transform: ${({ $overlay }) => ($overlay ? 'rotate(1.5deg)' : 'none')};
   touch-action: none;
   user-select: none;

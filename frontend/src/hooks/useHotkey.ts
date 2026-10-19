@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
+import { ShortcutsContext } from '../contexts/shortcuts';
 
-function typingIn(target: EventTarget | null): boolean {
+export function typingIn(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
   return (
     target.isContentEditable ||
@@ -11,8 +12,9 @@ function typingIn(target: EventTarget | null): boolean {
 
 /** Single-key shortcut that is ignored while the user types in a field. */
 export function useHotkey(key: string, handler: () => void, enabled = true) {
+  const shortcutsOn = useContext(ShortcutsContext);
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !shortcutsOn) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey || typingIn(event.target)) return;
       if (event.key === key) {
@@ -22,5 +24,5 @@ export function useHotkey(key: string, handler: () => void, enabled = true) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [key, handler, enabled]);
+  }, [key, handler, enabled, shortcutsOn]);
 }

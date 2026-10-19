@@ -9,6 +9,7 @@ import { IconButton } from '../../../../components/ui/Button';
 import { ConfirmDialog } from '../../../../components/ui/ConfirmDialog';
 import { Menu } from '../../../../components/ui/Menu';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
+import { useTicketCommand } from '../../../../hooks/useTicketCommand';
 import { useToast } from '../../../../hooks/useToast';
 import { deleteTicket, ticketKeys } from '../../../../services/api/tickets';
 import type { Ticket } from '../../../../services/api/types';
@@ -41,6 +42,15 @@ export function TicketHeader({ ticket, actions, canEdit, isAdmin }: Props) {
     },
     onError: (error) => toast(errorMessage(error), 'error'),
   });
+
+  useTicketCommand(
+    'edit-title',
+    () => {
+      setTitle(ticket.title);
+      setEditing(true);
+    },
+    canEdit,
+  );
 
   const saveTitle = () => {
     setEditing(false);

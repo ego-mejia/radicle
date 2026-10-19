@@ -150,3 +150,53 @@ async def test_parallel_votes_keep_vote_count_exact(
     finally:
         await db_session.dispose_engine()
         get_settings.cache_clear()
+
+
+async def test_ten_agents_claim_different_tickets(postgres: PostgresContainer, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    app = await fresh_app(postgres, monkeypatch, "claims_check")
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://t") as c:
+            await c.post(
+                "/api/v1/setup",
+                json={
+                    "handle": "root",
+                    "display_name": "Root",
+                    "email": "r@example.com",
+                    "password": "password-123",
+                },
+            )
+            h = {"X-CSRF-Token": c.cookies["radicle_csrf"]}
+            await c.post("/api/v1/projects", headers=h, json={"key": "PA", "name": "A"})
+            await c.post("/api/v1/projects/PA/areas", headers=h, json={"name": "Backend"})
+            for i in range(12):
+                await c.post(
+                    "/api/v1/projects/PA/tickets",
+                    headers=h,
+                    json={"type": "task", "title": f"t{i}", "area": "Backend"},
+                )
+            agents = []
+            for i in range(10):
+                r = await c.post(
+                    "/api/v1/agents",
+                    headers=h,
+                    json={"handle": f"bot{i}", "display_name": f"Bot {i}"},
+                )
+                await c.put(
+                    f"/api/v1/projects/PA/members/bot{i}", headers=h, json={"role": "member"}
+                )
+                agents.append({"Authorization": f"Bearer {r.json()['token']['token']}"})
+            c.cookies.clear()
+
+            async def claim(headers: dict[str, str]) -> str:
+                r = await c.post("/api/v1/tickets/next", headers=headers, json={"claim": True})
+                assert r.status_code == 200, r.text
+                return str(r.json()["ticket"]["key"])
+
+            claimed = await asyncio.gather(*(claim(a) for a in agents))
+            assert len(set(claimed)) == 10
+            assert sorted(claimed, key=lambda k: int(k.split("-")[1])) == [
+                f"PA-{i}" for i in range(1, 11)
+            ]
+    finally:
+        await db_session.dispose_engine()
+        get_settings.cache_clear()

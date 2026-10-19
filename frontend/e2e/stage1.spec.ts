@@ -26,7 +26,7 @@ async function createTicket(type: 'Task' | 'Bug' | 'Draft', title: string, area?
   const dialog = page.getByRole('dialog', { name: 'Create ticket' });
   await dialog.getByRole('radio', { name: type }).click();
   await dialog.getByLabel('Title').fill(title);
-  if (area) await dialog.getByLabel('Area', { exact: true }).selectOption(area);
+  if (area) await dialog.getByLabel('Area *', { exact: true }).selectOption(area);
   await dialog.getByRole('button', { name: 'Create', exact: true }).click();
   await expect(dialog).toBeHidden();
 }

@@ -8,6 +8,7 @@ from radicle.db.models.discussion import (
     TicketLink,
 )
 from radicle.db.models.fields import CustomFieldDefinition, CustomFieldType
+from radicle.db.models.filters import FilterVisibility, SavedFilter, UserPreferences
 from radicle.db.models.jobs import Job, JobStatus
 from radicle.db.models.projects import (
     Area,
@@ -57,6 +58,7 @@ __all__ = [
     "CustomFieldDefinition",
     "CustomFieldType",
     "EventType",
+    "FilterVisibility",
     "Job",
     "JobStatus",
     "LinkType",
@@ -70,6 +72,7 @@ __all__ = [
     "RemainingMode",
     "Resolution",
     "RuleKind",
+    "SavedFilter",
     "Screen",
     "ScreenOperation",
     "Session",
@@ -90,6 +93,7 @@ __all__ = [
     "TransitionRule",
     "User",
     "UserKind",
+    "UserPreferences",
     "Worklog",
     "utcnow",
 ]

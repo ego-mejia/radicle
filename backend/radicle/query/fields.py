@@ -84,6 +84,7 @@ FIELDS: dict[str, Field] = {
         Field("votes", Kind.number, ("=", *ORDER), description="🙋 count"),
         Field("blocked", Kind.boolean, ("=",), values=("true", "false")),
         Field("linked", Kind.key, ("=",), description="Linked in any direction to this key"),
+        Field("filter", Kind.name, ("=",), in_list=True, description="A saved filter, by name"),
     )
 }
 

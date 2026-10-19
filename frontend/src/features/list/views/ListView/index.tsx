@@ -14,6 +14,9 @@ import { useProject } from '../../../projects/hooks/useProject';
 import { TicketPanel } from '../../../tickets/components/TicketPanel';
 import { ticketKeys } from '../../../../services/api/tickets';
 import { BulkBar } from '../../components/BulkBar';
+import { SavedFilters } from '../../components/SavedFilters';
+import { rankTicket } from '../../../../services/api/work';
+import * as S from './style';
 import { RqlBar } from '../../components/RqlBar';
 import { useTicketSearch } from '../../hooks/useTicketSearch';
 
@@ -77,24 +80,37 @@ export function ListView() {
           }}
         />
       )}
-      {search.isPending ? (
-        <PageSpinner />
-      ) : error ? null : search.items.length === 0 ? (
-        <EmptyState plant="pot" title={t('list.emptyTitle')} text={t('list.emptyText')} />
-      ) : (
-        <TicketTable
-          tickets={search.items}
-          total={search.total}
-          sort={currentOrder(query)}
-          onSort={(field) => setQuery(withOrder(query, field))}
-          onOpen={(ticketKey) => void navigate({ search: { q, t: ticketKey } })}
-          hasMore={!!hasNextPage}
-          loadingMore={isFetchingNextPage}
-          onLoadMore={loadMore}
-          selected={project.role !== 'viewer' ? selected : undefined}
-          onSelect={select}
-        />
-      )}
+      <S.Body>
+        <SavedFilters project={projectKey} query={query} onPick={setQuery} />
+        <S.Results>
+          {search.isPending ? (
+            <PageSpinner />
+          ) : error ? null : search.items.length === 0 ? (
+            <EmptyState plant="pot" title={t('list.emptyTitle')} text={t('list.emptyText')} />
+          ) : (
+            <TicketTable
+              tickets={search.items}
+              total={search.total}
+              sort={currentOrder(query)}
+              onSort={(field) => setQuery(withOrder(query, field))}
+              onOpen={(ticketKey) => void navigate({ search: { q, t: ticketKey } })}
+              hasMore={!!hasNextPage}
+              loadingMore={isFetchingNextPage}
+              onLoadMore={loadMore}
+              selected={project.role !== 'viewer' ? selected : undefined}
+              onSelect={select}
+              onReorder={
+                currentOrder(query)?.field === 'rank' && project.role !== 'viewer'
+                  ? async (key, place) => {
+                      await rankTicket(key, place);
+                      await queryClient.invalidateQueries({ queryKey: ticketKeys.all });
+                    }
+                  : undefined
+              }
+            />
+          )}
+        </S.Results>
+      </S.Body>
       <TicketPanel
         ticketKey={openKey}
         onClose={() => void navigate({ search: { q, t: undefined } })}

@@ -24,6 +24,7 @@ from radicle.api import (
     tickets,
     time,
     users,
+    work,
 )
 from radicle.core.config import get_settings
 from radicle.core.errors import NotFound, install_error_handlers
@@ -63,6 +64,7 @@ def create_app() -> FastAPI:
         projects,
         planning,
         bulk,
+        work,
         fields,
         screens,
         search,

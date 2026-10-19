@@ -9,6 +9,7 @@ import {
   type Ticket,
 } from '../../../../services/api/types';
 import { fetchSchema, screenKeys } from '../../../../services/api/screens';
+import { useTicketCommand } from '../../../../hooks/useTicketCommand';
 import type { TicketActions } from '../../hooks/useTicket';
 import { TimeTracking } from '../TimeTracking';
 import { CustomFieldRows } from './components/CustomFieldRows';
@@ -34,6 +35,14 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
     queryFn: () => fetchSchema(ticket.project, ticket.type, 'edit'),
     enabled: canEdit,
   });
+  const focusIn = (name: string) =>
+    (
+      document.querySelector(
+        `[data-field="${name}"] select, [data-field="${name}"] input`,
+      ) as HTMLElement | null
+    )?.focus();
+  useTicketCommand('priority', () => focusIn('priority'), canEdit);
+  useTicketCommand('tags', () => focusIn('tags'), canEdit);
   const onScreen = new Set(editSchema?.fields.map((f) => f.field) ?? []);
   // Fields outside the edit screen are read-only, except for project admins.
   const can = (name: string) =>
@@ -55,7 +64,7 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
           {t(`ticket.resolutions.${ticket.resolution}`)}
         </FieldRow>
       )}
-      <FieldRow label={t('ticket.fields.priority')}>
+      <FieldRow label={t('ticket.fields.priority')} name="priority">
         <InlineSelect
           label={t('ticket.fields.priority')}
           value={ticket.priority}
@@ -149,7 +158,7 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
       <S.Time>
         <TimeTracking ticket={ticket} actions={actions} canEdit={can('estimate_hours')} />
       </S.Time>
-      <FieldRow label={t('ticket.fields.tags')}>
+      <FieldRow label={t('ticket.fields.tags')} name="tags">
         <TagsField
           tags={ticket.tags}
           disabled={!can('tags')}

@@ -82,7 +82,7 @@ export function ScreensEditor({ screens, workflows, customFields, onChange, read
         const screen = find(op);
         const fields = screen?.fields ?? [];
         return (
-          <S.Card key={`${op.operation}-${op.transition ?? ''}`}>
+          <S.Card key={`${op.operation}-${op.transition ?? ''}`} aria-label={op.label}>
             <S.Head>
               <strong>{op.label}</strong>
               <label>
@@ -132,6 +132,7 @@ export function ScreensEditor({ screens, workflows, customFields, onChange, read
                       <label>
                         <input
                           type="checkbox"
+                          aria-label={t('screens.show', { field: label })}
                           disabled={readOnly}
                           checked={Boolean(entry)}
                           onChange={(e) =>
@@ -143,6 +144,7 @@ export function ScreensEditor({ screens, workflows, customFields, onChange, read
                       <label>
                         <input
                           type="checkbox"
+                          aria-label={t('screens.requiredFor', { field: label })}
                           disabled={readOnly || !entry}
                           checked={Boolean(entry?.required)}
                           onChange={(e) =>

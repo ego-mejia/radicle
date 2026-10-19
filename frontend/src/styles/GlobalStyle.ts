@@ -10,6 +10,12 @@ export const GlobalStyle = createGlobalStyle`
     accent-color: ${({ theme }) => theme.color.accent};
   }
 
+  html[data-density='compact'] td,
+  html[data-density='compact'] th {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
   body {
     margin: 0;
     background: ${({ theme }) => theme.color.bg};

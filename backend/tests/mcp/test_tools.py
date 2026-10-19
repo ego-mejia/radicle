@@ -36,6 +36,11 @@ TOOLS = {
     "clone_ticket",
     "move_ticket",
     "bulk_update",
+    "next_ticket",
+    "rank_ticket",
+    "list_filters",
+    "run_filter",
+    "save_filter",
 }
 
 

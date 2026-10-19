@@ -63,6 +63,8 @@ class Context:
     tz: ZoneInfo = field(default_factory=lambda: ZoneInfo("UTC"))
     # cf.<key> -> custom field type of the fields the user can query.
     custom_fields: dict[str, str] = field(default_factory=dict)
+    # Saved filters by lowercase name: their where clause, or None when unknown.
+    filters: dict[str, "ast.Node | None"] = field(default_factory=dict)
 
 
 @dataclass
@@ -134,6 +136,12 @@ class _Compiler:
         text = v.text.strip()
         if f.custom:
             return self.custom_equals(f, v)
+        if f.name == "filter":
+            node = self.ctx.filters.get(text.lower())
+            if node is None:
+                self.references.append(("filter", text, v.pos))
+                return false()
+            return _nn(self.node(node))
         if f.name == "category":
             return _nn(Status.category == StatusCategory(self.enum_value(f, v)))
         if f.kind is Kind.enum:
