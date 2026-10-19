@@ -2803,6 +2803,256 @@
         "title": "InboxOut",
         "type": "object"
       },
+      "InboxSettingsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "allow_attachments": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allow Attachments"
+          },
+          "allowed_classifications": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Allowed Classifications"
+          },
+          "auto_tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auto Tags"
+          },
+          "captcha": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "altcha, turnstile, hcaptcha or none",
+            "title": "Captcha"
+          },
+          "captcha_secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Write only",
+            "title": "Captcha Secret"
+          },
+          "captcha_site_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Captcha Site Key"
+          },
+          "enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enabled"
+          },
+          "intro_md": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intro Md"
+          },
+          "max_attachments": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Attachments"
+          },
+          "public_slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Slug"
+          },
+          "require_email": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Require Email"
+          },
+          "thank_you_md": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thank You Md"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "title": "InboxSettingsIn",
+        "type": "object"
+      },
+      "InboxSettingsOut": {
+        "properties": {
+          "allow_attachments": {
+            "title": "Allow Attachments",
+            "type": "boolean"
+          },
+          "allowed_classifications": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Allowed Classifications",
+            "type": "array"
+          },
+          "auto_tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Auto Tags",
+            "type": "array"
+          },
+          "captcha": {
+            "title": "Captcha",
+            "type": "string"
+          },
+          "captcha_has_secret": {
+            "description": "The secret is stored encrypted, never shown",
+            "title": "Captcha Has Secret",
+            "type": "boolean"
+          },
+          "captcha_site_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Captcha Site Key"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "intro_md": {
+            "title": "Intro Md",
+            "type": "string"
+          },
+          "max_attachments": {
+            "title": "Max Attachments",
+            "type": "integer"
+          },
+          "public_slug": {
+            "title": "Public Slug",
+            "type": "string"
+          },
+          "public_url": {
+            "title": "Public Url",
+            "type": "string"
+          },
+          "require_email": {
+            "title": "Require Email",
+            "type": "boolean"
+          },
+          "thank_you_md": {
+            "title": "Thank You Md",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "enabled",
+          "public_slug",
+          "public_url",
+          "title",
+          "intro_md",
+          "thank_you_md",
+          "allowed_classifications",
+          "require_email",
+          "allow_attachments",
+          "max_attachments",
+          "captcha",
+          "captcha_site_key",
+          "captcha_has_secret",
+          "auto_tags"
+        ],
+        "title": "InboxSettingsOut",
+        "type": "object"
+      },
       "JobOut": {
         "properties": {
           "created_at": {
@@ -13017,6 +13267,99 @@
           }
         },
         "summary": "Get Inbox",
+        "tags": [
+          "inbox"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/inbox-settings": {
+      "get": {
+        "operationId": "get_inbox_settings_api_v1_projects__key__inbox_settings_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InboxSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Inbox Settings",
+        "tags": [
+          "inbox"
+        ]
+      },
+      "put": {
+        "description": "The public form at /b/{slug}: turn it on, texts, kinds, email, files, captcha.",
+        "operationId": "put_inbox_settings_api_v1_projects__key__inbox_settings_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InboxSettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InboxSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Inbox Settings",
         "tags": [
           "inbox"
         ]

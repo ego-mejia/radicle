@@ -35,9 +35,11 @@ from radicle.api import (
     work,
 )
 from radicle.core.config import get_settings
+from radicle.core.crypto import require_key
 from radicle.core.errors import NotFound, install_error_handlers
 from radicle.db.session import dispose_engine
 from radicle.mcp import server as mcp_server
+from radicle.public.router import router as public_router
 
 API_PREFIX = "/api/v1"
 
@@ -51,6 +53,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    require_key()  # no secret key, no app: secrets in the database depend on it
     app = FastAPI(
         title="Radicle",
         version=__version__,
@@ -93,6 +96,7 @@ def create_app() -> FastAPI:
     ):
         api.include_router(module.router)
     app.include_router(api)
+    app.include_router(public_router)
     mcp_server.mount(app)
     # Unversioned alias for container health checks and load balancers.
     app.add_api_route("/health", system.health, methods=["GET"], include_in_schema=False)

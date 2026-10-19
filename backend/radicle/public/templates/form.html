@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+{% if intro %}<div class="muted">{% for p in intro %}<p>{{ p }}</p>{% endfor %}</div>{% endif %}
+<form class="card" method="post" enctype="multipart/form-data" novalidate>
+  {% if rejected %}<p class="alert" role="alert">{{ rejected }}</p>{% endif %}
+  <fieldset>
+    <legend>{{ t.kind }}</legend>
+    <div class="kinds">
+      {% for kind in kinds %}
+      <label><input type="radio" name="classification" value="{{ kind }}" {% if values.classification == kind %}checked{% endif %} required> <span>{{ t[kind] }}</span></label>
+      {% endfor %}
+    </div>
+    {% if errors.classification %}<p class="error" id="err-classification">{{ t["err_" + errors.classification] }}</p>{% endif %}
+  </fieldset>
+  <div>
+    <label for="title">{{ t.title }}</label>
+    <input id="title" name="title" type="text" maxlength="150" value="{{ values.title or '' }}" required aria-describedby="title-hint"{% if errors.title %} aria-invalid="true"{% endif %}>
+    {% if errors.title %}<p class="error">{{ t["err_" + errors.title] }}</p>{% else %}<p class="hint" id="title-hint">{{ t.title_hint }}</p>{% endif %}
+  </div>
+  <div>
+    <label for="description">{{ t.description }}</label>
+    <textarea id="description" name="description" maxlength="10000" aria-describedby="description-hint">{{ values.description or '' }}</textarea>
+    {% if errors.description %}<p class="error">{{ t["err_" + errors.description] }}</p>{% else %}<p class="hint" id="description-hint">{{ t.description_hint }}</p>{% endif %}
+  </div>
+  <div>
+    <label for="name">{{ t.name }}</label>
+    <input id="name" name="name" type="text" maxlength="120" value="{{ values.name or '' }}" autocomplete="name">
+  </div>
+  <div>
+    <label for="email">{{ t.email if require_email else t.email_optional }}</label>
+    <input id="email" name="email" type="email" value="{{ values.email or '' }}" autocomplete="email"{% if require_email %} required{% endif %}{% if errors.email %} aria-invalid="true"{% endif %}>
+    {% if errors.email %}<p class="error">{{ t["err_" + errors.email] }}</p>{% endif %}
+  </div>
+  {% if allow_attachments and max_attachments > 0 %}
+  <div>
+    <label for="files">{{ t.files }}</label>
+    <input id="files" name="files" type="file" multiple accept="image/png,image/jpeg,image/gif,image/webp,application/pdf">
+    {% if errors.files %}<p class="error">{{ t["err_" + errors.files] }}</p>{% else %}<p class="hint">{{ t.files_hint.replace("{n}", max_attachments|string) }}</p>{% endif %}
+  </div>
+  {% endif %}
+  <div class="hp" aria-hidden="true">
+    <label for="website">Website</label>
+    <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+  </div>
+  <input type="hidden" name="token" value="{{ token }}">
+  {% if captcha == "altcha" %}
+  <input type="hidden" name="altcha" id="altcha">
+  <p class="robot" id="robot" role="status">{{ t.verifying }}</p>
+  {% elif captcha == "turnstile" %}
+  <div class="cf-turnstile" data-sitekey="{{ site_key }}" data-response-field-name="altcha"></div>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  {% elif captcha == "hcaptcha" %}
+  <div class="h-captcha" data-sitekey="{{ site_key }}"></div>
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+  {% endif %}
+  <button type="submit" id="send"{% if captcha == "altcha" %} disabled{% endif %}>{{ t.send }}</button>
+</form>
+<p><a href="{{ base }}/t">{{ t.lookup }}</a></p>
+{% if captcha == "altcha" %}
+<script>
+(async () => {
+  const robot = document.getElementById('robot');
+  const send = document.getElementById('send');
+  const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+  const c = await (await fetch('{{ base }}/challenge')).json();
+  const enc = new TextEncoder();
+  for (let n = 0; n <= c.maxnumber; n++) {
+    if (hex(await crypto.subtle.digest('SHA-256', enc.encode(c.salt + n))) === c.challenge) {
+      document.getElementById('altcha').value = btoa(JSON.stringify({
+        algorithm: c.algorithm, challenge: c.challenge, number: n, salt: c.salt, signature: c.signature,
+      }));
+      robot.textContent = '{{ t.verified }}';
+      send.disabled = false;
+      return;
+    }
+  }
+})();
+</script>
+{% endif %}
+{% endblock %}

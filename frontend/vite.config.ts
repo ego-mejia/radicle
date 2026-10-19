@@ -31,6 +31,8 @@ export default defineConfig({
       '/api': 'http://localhost:8000',
       '/mcp': 'http://localhost:8000',
       '/health': 'http://localhost:8000',
+      // Public inbox pages are rendered by the backend.
+      '/b/': 'http://localhost:8000',
     },
   },
 });

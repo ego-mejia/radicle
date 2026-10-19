@@ -55,6 +55,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build image and run smoke test
+        env:
+          RADICLE_SECRET_KEY: ci-only-not-secret-0123456789abcdef
         run: scripts/smoke.sh
 
   e2e:
@@ -69,6 +71,8 @@ jobs:
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Start Radicle on a fresh database
+        env:
+          RADICLE_SECRET_KEY: ci-only-not-secret-0123456789abcdef
         run: |
           docker compose up -d --build
           for i in $(seq 1 60); do curl -fsS localhost:8000/health && break; sleep 2; done

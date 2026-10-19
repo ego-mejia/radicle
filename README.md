@@ -9,7 +9,7 @@ Ticket tracker open source y self-hosted con servidor MCP desde el día 1: perso
 Requisitos: Docker con Compose.
 
 ```bash
-cp .env.example .env        # opcional: cambia RADICLE_BASE_URL y POSTGRES_PASSWORD
+cp .env.example .env        # pon RADICLE_SECRET_KEY (openssl rand -hex 32); es obligatoria
 docker compose up -d
 ```
 
@@ -85,6 +85,8 @@ La pestaña **Timeline** muestra los tickets en el tiempo por milestone o área:
 En **Reportes** están burndown, burnup, velocity, cumulative flow, control chart, sprint report, creados vs resueltos, distribución, progreso de milestone con pronóstico y tiempo; cada uno con su tabla y Exportar CSV. `RADICLE_WORKDAYS` define los días hábiles del burndown.
 
 **Dashboards** junta widgets (conteos, distribuciones, progreso de milestone, burndown, bloqueados...) en una cuadrícula que se arma arrastrando. Cada proyecto tiene su **Resumen**; los demás se comparten contigo, con un proyecto o con todos, y cada quien ve solo los tickets que puede ver.
+
+**Buzón**: cada proyecto puede abrir un formulario público en `/b/{slug}` (Settings → Buzón) para que cualquiera mande quejas, sugerencias o ideas sin cuenta, con ALTCHA contra spam y un código para seguir su envío. Todo llega como Draft al Buzón del proyecto, donde se califica, se aprueba como task o bug, o se descarta.
 
 ## Atajos
 

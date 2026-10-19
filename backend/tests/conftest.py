@@ -1,4 +1,7 @@
 import os
+
+# The app refuses to start without it (it encrypts secrets in the database).
+os.environ.setdefault("RADICLE_SECRET_KEY", "tests-only-secret-key-0123456789")
 import subprocess
 import sys
 from collections.abc import AsyncIterator, Iterator
@@ -96,6 +99,9 @@ async def client(db: AsyncSession) -> AsyncIterator[AsyncClient]:
 
     app.dependency_overrides[get_db] = _override_db
     login_limiter.reset()
+    from radicle.public.router import tracking_limiter
+
+    tracking_limiter.reset()
     transport = ASGITransport(app=app, client=("10.0.0.1", 1234))
     async with AsyncClient(transport=transport, base_url="http://test") as c:
         yield c

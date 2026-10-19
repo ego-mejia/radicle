@@ -456,7 +456,8 @@
     "groupRole": "Rol del grupo",
     "viaGroups": "por {{groups}}",
     "effectiveRole": "Rol efectivo",
-    "levels": "Niveles"
+    "levels": "Niveles",
+    "inbox": "Buzón"
   },
   "profile": {
     "details": "Datos",
@@ -1282,5 +1283,30 @@
     "fromInbox": "Vino del Buzón",
     "fromInboxDetail": "Vino del Buzón · {{origin}} · {{classification}}",
     "submitter": "Enviado por"
+  },
+  "inboxSettings": {
+    "title": "Formulario público",
+    "help": "Personas sin cuenta mandan quejas, sugerencias e ideas; llegan al Buzón como Drafts con origen Usuario.",
+    "enabled": "El formulario público está activo",
+    "copy": "Copiar link",
+    "copied": "Link copiado",
+    "open": "Abrir",
+    "slug": "Dirección",
+    "pageTitle": "Título de la página",
+    "intro": "Texto de introducción",
+    "thanks": "Texto de agradecimiento",
+    "kinds": "Qué pueden mandar",
+    "requireEmail": "Email obligatorio",
+    "attachments": "Permitir capturas y PDF",
+    "maxFiles": "Archivos por envío",
+    "tags": "Tags para cada envío",
+    "tagsHint": "Separados por coma",
+    "captcha": "Anti-spam",
+    "captchaHint": "ALTCHA no usa terceros",
+    "noCaptcha": "Ninguno (no recomendado)",
+    "siteKey": "Site key",
+    "secret": "Llave secreta",
+    "secretSaved": "Guardada (cifrada). Escribe para reemplazarla.",
+    "saved": "Formulario público guardado"
   }
 }

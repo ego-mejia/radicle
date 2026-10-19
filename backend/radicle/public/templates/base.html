@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>{% block title %}{{ page_title }}{% endblock %}</title>
+  <style>
+    :root {
+      --bg: #F5F6F8; --surface: #FFFFFF; --border: #E5E7EB; --text: #111827;
+      --muted: #6B7280; --accent: #4D7C0F; --fill: #C6F432; --on-fill: #1A2E05;
+      --soft: #ECF8C8; --danger: #DC2626;
+      color-scheme: light dark;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0E0F11; --surface: #17191C; --border: #2A2D31; --text: #E6E6E6;
+        --muted: #7C8591; --accent: #C6F432; --soft: #2A3311; --danger: #F87171;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font: 15px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    main { max-width: 640px; margin: 0 auto; padding: 32px 16px 48px; }
+    header { margin-bottom: 20px; }
+    header small { color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-size: 12px; }
+    h1 { margin: 4px 0 8px; font-size: 26px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+      padding: 20px; display: flex; flex-direction: column; gap: 16px;
+    }
+    label, legend { font-weight: 600; display: block; margin-bottom: 4px; }
+    fieldset { border: 0; padding: 0; margin: 0; }
+    .kinds { display: flex; gap: 8px; flex-wrap: wrap; }
+    .kinds label {
+      font-weight: 500; border: 1px solid var(--border); border-radius: 999px;
+      padding: 6px 14px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
+    }
+    .kinds input:checked + span { font-weight: 700; }
+    .kinds label:has(input:checked) { border-color: var(--accent); background: var(--soft); }
+    input[type=text], input[type=email], textarea {
+      width: 100%; font: inherit; color: var(--text); background: var(--surface);
+      border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px;
+    }
+    textarea { min-height: 140px; resize: vertical; }
+    input:focus-visible, textarea:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent); outline-offset: 2px;
+    }
+    .hint { color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .error { color: var(--danger); font-size: 13px; margin-top: 2px; }
+    .alert {
+      border: 1px solid var(--danger); color: var(--danger); border-radius: 8px; padding: 10px 12px;
+    }
+    button {
+      font: inherit; font-weight: 600; background: var(--fill); color: var(--on-fill);
+      border: 0; border-radius: 8px; padding: 10px 18px; cursor: pointer; align-self: flex-start;
+    }
+    button[disabled] { opacity: .6; cursor: wait; }
+    .robot { color: var(--muted); font-size: 13px; }
+    .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+    .code {
+      font: 600 28px/1.2 "JetBrains Mono", ui-monospace, monospace; letter-spacing: .12em;
+      background: var(--soft); padding: 10px 14px; border-radius: 8px; align-self: flex-start;
+    }
+    .state { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .muted { color: var(--muted); }
+    a { color: var(--accent); }
+    footer { margin-top: 24px; color: var(--muted); font-size: 12px; text-align: center; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <small>{{ project_name }}</small>
+      <h1>{% block heading %}{{ page_title }}{% endblock %}</h1>
+    </header>
+    {% block content %}{% endblock %}
+    <footer>{{ t.powered }}</footer>
+  </main>
+</body>
+</html>

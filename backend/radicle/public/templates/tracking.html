@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block heading %}{{ t.track_title }}{% endblock %}
+{% block content %}
+<div class="card">
+  {% if item %}
+  <p class="state" data-testid="state">{{ t["state_" + item.state] }}</p>
+  <h2>{{ item.title }}</h2>
+  <p class="muted">{{ t[item.classification] }} · {{ t.sent_on }} {{ item.created_at.strftime("%Y-%m-%d") }}</p>
+  {% if item.public_comment %}<div><strong>{{ t.note }}</strong>{% for p in item.public_comment.split("\n") %}<p>{{ p }}</p>{% endfor %}</div>{% endif %}
+  {% else %}
+  {% if unknown %}<p class="alert" role="alert">{{ t.unknown_code }}</p>{% endif %}
+  <form method="get" action="{{ base }}/t">
+    <label for="code">{{ t.code }}</label>
+    <input id="code" name="code" type="text" maxlength="12" autocomplete="off" style="text-transform: uppercase">
+    <p><button type="submit">{{ t.go }}</button></p>
+  </form>
+  {% endif %}
+  <a href="{{ base }}">{{ t.back }}</a>
+</div>
+{% endblock %}

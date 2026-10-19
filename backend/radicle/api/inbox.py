@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Query
 from pydantic import Field
 
-from radicle.api.deps import CurrentPrincipal, Db
+from radicle.api.deps import AppSettings, CurrentPrincipal, Db
 from radicle.api.schemas.common import Input, Output
 from radicle.api.schemas.tickets import TicketOut, TicketSummary
 from radicle.api.ticket_views import summaries_out, ticket_out
-from radicle.db.models import Classification, Origin, Priority, TicketType
-from radicle.services import inbox, tickets
+from radicle.db.models import Classification, Origin, Priority, ProjectRole, TicketType
+from radicle.services import inbox, public_form, tickets
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["inbox"])
@@ -92,3 +92,62 @@ async def duplicate(key: str, body: DuplicateIn, principal: CurrentPrincipal, db
     access, ticket = await tickets.load_ticket(db, principal.user, key, write=True)
     await inbox.mark_duplicate(db, access, ticket, key, body.original)
     return await ticket_out(db, ticket, viewer=principal.user)
+
+
+class InboxSettingsOut(Output):
+    enabled: bool
+    public_slug: str
+    public_url: str
+    title: str
+    intro_md: str
+    thank_you_md: str
+    allowed_classifications: list[str]
+    require_email: bool
+    allow_attachments: bool
+    max_attachments: int
+    captcha: str
+    captcha_site_key: str | None
+    captcha_has_secret: bool = Field(description="The secret is stored encrypted, never shown")
+    auto_tags: list[str]
+
+
+class InboxSettingsIn(Input):
+    enabled: bool | None = None
+    public_slug: str | None = None
+    title: str | None = None
+    intro_md: str | None = None
+    thank_you_md: str | None = None
+    allowed_classifications: list[str] | None = None
+    require_email: bool | None = None
+    allow_attachments: bool | None = None
+    max_attachments: int | None = None
+    captcha: str | None = Field(default=None, description="altcha, turnstile, hcaptcha or none")
+    captcha_site_key: str | None = None
+    captcha_secret: str | None = Field(default=None, description="Write only")
+    auto_tags: list[str] | None = None
+
+
+def _settings_out(view: dict[str, object], base_url: str) -> InboxSettingsOut:
+    return InboxSettingsOut(
+        **view,
+        public_url=f"{base_url.rstrip('/')}/b/{view['public_slug']}",
+    )
+
+
+@router.get("/projects/{key}/inbox-settings", response_model=InboxSettingsOut)
+async def get_inbox_settings(
+    key: str, principal: CurrentPrincipal, db: Db, settings: AppSettings
+) -> InboxSettingsOut:
+    access = await project_access(db, principal.user, key, need=ProjectRole.admin)
+    row = await public_form.get_settings_for(db, access.project)
+    return _settings_out(public_form.public_view(row), settings.base_url)
+
+
+@router.put("/projects/{key}/inbox-settings", response_model=InboxSettingsOut)
+async def put_inbox_settings(
+    key: str, body: InboxSettingsIn, principal: CurrentPrincipal, db: Db, settings: AppSettings
+) -> InboxSettingsOut:
+    """The public form at /b/{slug}: turn it on, texts, kinds, email, files, captcha."""
+    access = await project_access(db, principal.user, key, need=ProjectRole.admin, write=True)
+    _, _, after = await public_form.save_settings(db, access, body.model_dump(exclude_unset=True))
+    return _settings_out(after, settings.base_url)

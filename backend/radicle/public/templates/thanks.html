@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block heading %}{{ t.thanks }}{% endblock %}
+{% block content %}
+<div class="card">
+  {% if thank_you %}<div>{% for p in thank_you %}<p>{{ p }}</p>{% endfor %}</div>{% endif %}
+  <div>
+    <p class="muted">{{ t.your_code }}</p>
+    <p class="code" data-testid="tracking-code">{{ code }}</p>
+  </div>
+  <a href="{{ base }}/t/{{ code }}">{{ t.track_link }}</a>
+  <a href="{{ base }}">{{ t.back }}</a>
+</div>
+{% endblock %}

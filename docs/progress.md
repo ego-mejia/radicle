@@ -478,7 +478,7 @@ Los criterios de aceptación de la etapa se verifican así:
 | 4.1 | Grupos y permisos por rol | Listo |
 | 4.2 | Tickets restringidos | Listo |
 | 4.3 | Buzón interno | Listo |
-| 4.4 | Formulario público | Pendiente |
+| 4.4 | Formulario público | Listo |
 | 4.5 | SSO | Pendiente |
 | 4.6 | Audit log | Pendiente |
 | 4.7 | MCP y UI de la etapa | Pendiente |
@@ -521,4 +521,17 @@ Los criterios de aceptación de la etapa se verifican así:
 **Cómo verificarlo**
 
 - `tests/integration/test_inbox.py`: clasificación obligatoria y origen por canal, pestañas, orden por puntaje y RQL, permiso `inbox.triage`, aprobar y convertir atómico conservando votos, comentarios y origen, descartar y duplicado con traspaso de votos sin repetir, y las tools del MCP.
+
+### 4.4 Formulario público
+
+**Qué se hizo**
+
+- Migración `0020`: `inbox_settings`, `inbox_submissions`, `used_challenges` y el usuario de sistema `inbox`. Decisión: [0026](decisions/0026-formulario-publico.md).
+- Página pública `/b/{slug}` (Jinja) con ALTCHA, honeypot, tiempo mínimo, rate limit, máximo de links, adjuntos (imágenes reducidas y PDF) y página de seguimiento `/b/{slug}/t/{code}`.
+- `GET/PUT /projects/{key}/inbox-settings` y la pestaña Buzón en Settings con link para copiar.
+- `RADICLE_SECRET_KEY` ahora es obligatoria y cifra secretos (AES-GCM).
+
+**Cómo verificarlo**
+
+- `tests/integration/test_public_form.py`: envío sin cuenta con captura que aparece en el Buzón con origen Usuario, seguimiento Recibido, Aceptado y Cerrado con nota y sin datos internos; ALTCHA inválido y reusado, honeypot, tiempo mínimo, links, rate limit del sexto envío, tipos y tamaños de archivos, email obligatorio, escape de HTML y markdown, secretos cifrados y rate limit del seguimiento.
 

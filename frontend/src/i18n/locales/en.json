@@ -456,7 +456,8 @@
     "groupRole": "Group role",
     "viaGroups": "via {{groups}}",
     "effectiveRole": "Effective role",
-    "levels": "Levels"
+    "levels": "Levels",
+    "inbox": "Inbox"
   },
   "profile": {
     "details": "Details",
@@ -1282,5 +1283,30 @@
     "fromInbox": "From the inbox",
     "fromInboxDetail": "From the inbox · {{origin}} · {{classification}}",
     "submitter": "Sent by"
+  },
+  "inboxSettings": {
+    "title": "Public form",
+    "help": "People without an account send complaints, suggestions and ideas here; they land in the inbox as drafts with origin User.",
+    "enabled": "The public form is on",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "open": "Open",
+    "slug": "Address",
+    "pageTitle": "Page title",
+    "intro": "Intro text",
+    "thanks": "Thank-you text",
+    "kinds": "What people can send",
+    "requireEmail": "Email is required",
+    "attachments": "Allow screenshots and PDF",
+    "maxFiles": "Files per submission",
+    "tags": "Tags for every submission",
+    "tagsHint": "Comma separated",
+    "captcha": "Anti-spam",
+    "captchaHint": "ALTCHA needs no third party",
+    "noCaptcha": "None (not recommended)",
+    "siteKey": "Site key",
+    "secret": "Secret key",
+    "secretSaved": "Saved (encrypted). Type to replace it.",
+    "saved": "Public form saved"
   }
 }

@@ -19,6 +19,7 @@ from radicle.db.models.discussion import (
 )
 from radicle.db.models.fields import CustomFieldDefinition, CustomFieldType
 from radicle.db.models.filters import FilterVisibility, SavedFilter, UserPreferences
+from radicle.db.models.inbox import Captcha, InboxSettings, InboxSubmission, UsedChallenge
 from radicle.db.models.jobs import Job, JobStatus
 from radicle.db.models.metrics import DailyStatusCount, TicketStatusPeriod
 from radicle.db.models.projects import (
@@ -70,6 +71,7 @@ __all__ = [
     "Board",
     "BoardKind",
     "BoardQuickFilter",
+    "Captcha",
     "Classification",
     "Comment",
     "CommentReaction",
@@ -82,6 +84,8 @@ __all__ = [
     "FilterVisibility",
     "Group",
     "GroupMember",
+    "InboxSettings",
+    "InboxSubmission",
     "Job",
     "JobStatus",
     "LinkType",
@@ -125,6 +129,7 @@ __all__ = [
     "TicketVote",
     "Transition",
     "TransitionRule",
+    "UsedChallenge",
     "User",
     "UserKind",
     "UserPreferences",

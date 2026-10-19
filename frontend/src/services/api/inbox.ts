@@ -68,3 +68,31 @@ export async function scoreItem(
     }),
   );
 }
+
+export type InboxSettingsPatch = {
+  enabled?: boolean;
+  public_slug?: string;
+  title?: string;
+  intro_md?: string;
+  thank_you_md?: string;
+  allowed_classifications?: string[];
+  require_email?: boolean;
+  allow_attachments?: boolean;
+  max_attachments?: number;
+  captcha?: string;
+  captcha_site_key?: string;
+  captcha_secret?: string;
+  auto_tags?: string[];
+};
+
+export async function fetchInboxSettings(key: string) {
+  return unwrap(
+    await api.GET('/api/v1/projects/{key}/inbox-settings', { params: { path: { key } } }),
+  );
+}
+
+export async function putInboxSettings(key: string, body: InboxSettingsPatch) {
+  return unwrap(
+    await api.PUT('/api/v1/projects/{key}/inbox-settings', { params: { path: { key } }, body }),
+  );
+}

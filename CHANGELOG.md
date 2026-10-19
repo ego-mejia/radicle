@@ -13,6 +13,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - 1.5: links entre tickets con su inverso y aviso de bloqueado, comentarios markdown con menciones y reacciones.
 - 1.6: lenguaje de queries RQL con full-text en inglés y español, errores con posición, autocompletado y seed de 10,000 tickets.
 - 1.7: servidor MCP en `/mcp` con 19 tools, guía de RQL como recurso y autenticación por token de agente.
+- 4.4: formulario público sin cuenta con ALTCHA, anti-spam, adjuntos y página de seguimiento; `RADICLE_SECRET_KEY` obligatoria para cifrar secretos.
 - 4.3: Buzón con origen, clasificación, impacto y esfuerzo, matriz, triage, aprobar y convertir en el mismo ticket, duplicados con votos y tools MCP.
 - 4.2: tickets restringidos con niveles de seguridad por proyecto y un único filtro de visibilidad en búsqueda, boards, reportes, dashboards, adjuntos y MCP.
 - 4.1: grupos, rol efectivo por grupo y matriz de permisos por proyecto con una sola función de autorización en API, MCP y UI.

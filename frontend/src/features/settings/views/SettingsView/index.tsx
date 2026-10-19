@@ -9,6 +9,7 @@ import { AreasSection } from '../../components/AreasSection';
 import { CustomFieldsSection } from '../../components/CustomFieldsSection';
 import { GeneralSection } from '../../components/GeneralSection';
 import { GroupRolesSection } from '../../components/GroupRolesSection';
+import { InboxSettingsSection } from '../../components/InboxSettingsSection';
 import { LevelsSection } from '../../components/LevelsSection';
 import { MembersSection } from '../../components/MembersSection';
 import { PermissionsSection } from '../../components/PermissionsSection';
@@ -24,6 +25,7 @@ type Tab =
   | 'members'
   | 'permissions'
   | 'levels'
+  | 'inbox'
   | 'areas'
   | 'milestones'
   | 'workflows'
@@ -34,6 +36,7 @@ const TABS: Tab[] = [
   'members',
   'permissions',
   'levels',
+  'inbox',
   'areas',
   'milestones',
   'workflows',
@@ -71,6 +74,12 @@ export function SettingsView() {
             <MembersSection project={project} isAdmin={manageMembers} />
             <GroupRolesSection project={project} editable={manageMembers} />
           </>
+        )}
+        {current === 'inbox' && (
+          <InboxSettingsSection
+            project={project}
+            editable={project.role === 'admin' && !project.archived}
+          />
         )}
         {current === 'levels' && (
           <LevelsSection

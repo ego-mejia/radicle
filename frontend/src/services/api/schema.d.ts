@@ -905,6 +905,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{key}/inbox-settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Inbox Settings */
+        get: operations["get_inbox_settings_api_v1_projects__key__inbox_settings_get"];
+        /**
+         * Put Inbox Settings
+         * @description The public form at /b/{slug}: turn it on, texts, kinds, email, files, captcha.
+         */
+        put: operations["put_inbox_settings_api_v1_projects__key__inbox_settings_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{key}/members": {
         parameters: {
             query?: never;
@@ -3155,6 +3176,75 @@ export interface components {
              * @enum {string}
              */
             tab: "new" | "in_review" | "approved" | "discarded";
+        };
+        /** InboxSettingsIn */
+        InboxSettingsIn: {
+            /** Allow Attachments */
+            allow_attachments?: boolean | null;
+            /** Allowed Classifications */
+            allowed_classifications?: string[] | null;
+            /** Auto Tags */
+            auto_tags?: string[] | null;
+            /**
+             * Captcha
+             * @description altcha, turnstile, hcaptcha or none
+             */
+            captcha?: string | null;
+            /**
+             * Captcha Secret
+             * @description Write only
+             */
+            captcha_secret?: string | null;
+            /** Captcha Site Key */
+            captcha_site_key?: string | null;
+            /** Enabled */
+            enabled?: boolean | null;
+            /** Intro Md */
+            intro_md?: string | null;
+            /** Max Attachments */
+            max_attachments?: number | null;
+            /** Public Slug */
+            public_slug?: string | null;
+            /** Require Email */
+            require_email?: boolean | null;
+            /** Thank You Md */
+            thank_you_md?: string | null;
+            /** Title */
+            title?: string | null;
+        };
+        /** InboxSettingsOut */
+        InboxSettingsOut: {
+            /** Allow Attachments */
+            allow_attachments: boolean;
+            /** Allowed Classifications */
+            allowed_classifications: string[];
+            /** Auto Tags */
+            auto_tags: string[];
+            /** Captcha */
+            captcha: string;
+            /**
+             * Captcha Has Secret
+             * @description The secret is stored encrypted, never shown
+             */
+            captcha_has_secret: boolean;
+            /** Captcha Site Key */
+            captcha_site_key: string | null;
+            /** Enabled */
+            enabled: boolean;
+            /** Intro Md */
+            intro_md: string;
+            /** Max Attachments */
+            max_attachments: number;
+            /** Public Slug */
+            public_slug: string;
+            /** Public Url */
+            public_url: string;
+            /** Require Email */
+            require_email: boolean;
+            /** Thank You Md */
+            thank_you_md: string;
+            /** Title */
+            title: string;
         };
         /** JobOut */
         JobOut: {
@@ -7661,6 +7751,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["InboxOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_inbox_settings_api_v1_projects__key__inbox_settings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InboxSettingsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_inbox_settings_api_v1_projects__key__inbox_settings_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InboxSettingsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InboxSettingsOut"];
                 };
             };
             /** @description Validation Error */
