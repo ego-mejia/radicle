@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Smoke test: bring the stack up, run first-time setup, create an agent and use its token.
 # Usage: scripts/smoke.sh [base_url]   (set SMOKE_KEEP=1 to leave the stack running)
-# Stage 1.7 extends this with whoami and create_ticket over MCP.
 set -euo pipefail
 
 BASE_URL="${1:-http://localhost:${RADICLE_PORT:-8000}}"
@@ -41,5 +40,36 @@ TOKEN="$(curl -fsS -b "$JAR" -H "X-CSRF-Token: $CSRF" -H 'Content-Type: applicat
 echo "==> agent token authenticates"
 [ "$(curl -fsS -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/v1/me" | json "['kind']")" = "agent" ] \
   || fail "agent /me"
+
+echo "==> project PA with the agent as member"
+curl -fsS -b "$JAR" -H "X-CSRF-Token: $CSRF" -H 'Content-Type: application/json' \
+  "$BASE_URL/api/v1/projects" -d '{"key":"PA","name":"ProyectoA"}' >/dev/null || fail "project"
+curl -fsS -b "$JAR" -H "X-CSRF-Token: $CSRF" -H 'Content-Type: application/json' -X PUT \
+  "$BASE_URL/api/v1/projects/PA/members/agent-smoke" -d '{"role":"member"}' >/dev/null \
+  || fail "member"
+
+mcp() {
+  curl -fsS "$BASE_URL/mcp" -H "Authorization: Bearer $TOKEN" \
+    -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+    -H 'MCP-Protocol-Version: 2025-06-18' -d "$1"
+}
+
+echo "==> MCP initialize"
+mcp '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"smoke","version":"1"}}}' \
+  | grep -q '"radicle"' || fail "MCP initialize"
+
+echo "==> MCP whoami"
+mcp '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"whoami","arguments":{}}}' \
+  | grep -q 'agent-smoke' || fail "MCP whoami"
+
+echo "==> MCP create_ticket"
+mcp '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"create_ticket","arguments":{"project":"PA","type":"draft","title":"From MCP"}}}' \
+  | grep -q 'PA-1' || fail "MCP create_ticket"
+[ "$(curl -fsS -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/v1/tickets/PA-1" \
+  | json "['reporter']['handle']")" = "agent-smoke" ] || fail "ticket reporter"
+
+echo "==> MCP rejects a missing token"
+[ "$(curl -s -o /dev/null -w '%{http_code}' -X POST "$BASE_URL/mcp" \
+  -H 'Content-Type: application/json' -d '{}')" = "401" ] || fail "MCP without token"
 
 echo "SMOKE OK"

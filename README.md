@@ -36,7 +36,48 @@ curl -b jar -H "X-CSRF-Token: $CSRF" -H 'Content-Type: application/json' \
   http://localhost:8000/api/v1/agents -d '{"handle":"agent-backend","display_name":"Backend agent"}'
 ```
 
-La respuesta trae `token.token` (`rdc_...`). Se muestra una sola vez. El agente se autentica con `Authorization: Bearer rdc_...`. La conexión por MCP (`/mcp`) llega en el entregable 1.7.
+La respuesta trae `token.token` (`rdc_...`). Se muestra una sola vez. El agente se autentica con `Authorization: Bearer rdc_...`. Agrégalo como miembro del proyecto (`PUT /api/v1/projects/PA/members/agent-backend` con `{"role": "member"}`) para que pueda trabajar sus tickets.
+
+### Conectar un agente por MCP
+
+El servidor MCP vive en `/mcp` (Streamable HTTP) y acepta el token del agente o un token personal.
+
+Claude Code:
+
+```bash
+claude mcp add --transport http radicle http://localhost:8000/mcp \
+  --header "Authorization: Bearer rdc_xxxxxxxx"
+```
+
+Clientes con configuración JSON:
+
+```json
+{
+  "mcpServers": {
+    "radicle": {
+      "type": "http",
+      "url": "http://localhost:8000/mcp",
+      "headers": { "Authorization": "Bearer rdc_xxxxxxxx" }
+    }
+  }
+}
+```
+
+Clientes que solo hablan stdio usan [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) como puente:
+
+```json
+{
+  "mcpServers": {
+    "radicle": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "http://localhost:8000/mcp",
+               "--header", "Authorization: Bearer rdc_xxxxxxxx"]
+    }
+  }
+}
+```
+
+Tools: `whoami`, `list_projects`, `get_project`, `search_tickets`, `my_tickets`, `get_ticket`, `create_ticket`, `update_ticket`, `get_transitions`, `transition_ticket`, `change_ticket_type`, `set_checklist_item`, `add_comment`, `list_comments`, `link_tickets`, `unlink_tickets`, `add_collaborator`, `remove_collaborator`, `get_history`. Recursos: `radicle://guide/rql` y `radicle://projects/{key}/schema`.
 
 ## Desarrollo
 

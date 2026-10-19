@@ -21,13 +21,15 @@ from radicle.api import (
 from radicle.core.config import get_settings
 from radicle.core.errors import NotFound, install_error_handlers
 from radicle.db.session import dispose_engine
+from radicle.mcp import server as mcp_server
 
 API_PREFIX = "/api/v1"
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    yield
+    async with mcp_server.server.session_manager.run():
+        yield
     await dispose_engine()
 
 
@@ -49,6 +51,7 @@ def create_app() -> FastAPI:
     for module in (system, auth, me, users, projects, planning, search, tickets, discussion):
         api.include_router(module.router)
     app.include_router(api)
+    mcp_server.mount(app)
     # Unversioned alias for container health checks and load balancers.
     app.add_api_route("/health", system.health, methods=["GET"], include_in_schema=False)
 

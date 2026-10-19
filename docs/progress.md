@@ -12,7 +12,7 @@ Estado de cada entregable. Se actualiza al cerrar cada uno.
 | 1.4 | Workflows y transiciones | Listo |
 | 1.5 | Links, comentarios y reacciones | Listo |
 | 1.6 | RQL y búsqueda | Listo |
-| 1.7 | Servidor MCP | Pendiente |
+| 1.7 | Servidor MCP | Listo |
 | 1.8 | UI web | Pendiente |
 
 ### 1.1 Base, auth y usuarios
@@ -53,7 +53,7 @@ curl -H "Authorization: Bearer rdc_..." localhost:8000/api/v1/me
 
 **Cobertura al cerrar:** 93% total; `services/` entre 90% y 100%.
 
-**Pendiente para entregables siguientes:** `/me` regresa `projects: []` hasta 1.2; el smoke agrega MCP en 1.7.
+
 
 ### 1.2 Proyectos, miembros, áreas y milestones
 
@@ -144,3 +144,22 @@ curl -H "Authorization: Bearer rdc_..." localhost:8000/api/v1/me
 - `tests/integration/test_search.py::test_spec_examples`: los 7 ejemplos del spec regresan lo esperado.
 - `tests/unit/test_rql_parser.py` (más de 60 casos) y `tests/unit/test_rql_compiler.py`: errores con posición.
 - `tests/integration/test_performance.py` con 10,000 tickets: búsqueda p95 de 53 ms y board de 600 tickets en 122 ms (límites 300 ms y 1 s).
+
+### 1.7 Servidor MCP
+
+**Qué se hizo**
+
+- SDK oficial `mcp` 2.x montado en la misma app en `/mcp` (Streamable HTTP, stateless, JSON).
+- 19 tools con descripciones escritas para un LLM; cada una llama a la API REST en proceso con el token del agente, así comparten validaciones, permisos e historial.
+- Respuestas compactas en listas (`compact`) y completas en `get_ticket` (con subtickets y últimos comentarios).
+- Errores como tool errors con el mensaje accionable de la API, incluidas las transiciones válidas.
+- Recursos `radicle://guide/rql` (generado del catálogo de campos) y `radicle://projects/{key}/schema`.
+- `/mcp` rechaza con 401 conexiones sin token, con token desconocido o revocado.
+- `scripts/smoke.sh` ahora hace `initialize`, `whoami` y `create_ticket` por MCP contra el contenedor.
+- README con cómo conectar Claude Code, clientes JSON y `mcp-remote`. Decisión: [0006](decisions/0006-mcp-transporte-y-tools.md).
+
+**Cómo verificarlo**
+
+- `tests/mcp/test_agent_flow.py`: el agente hace `whoami`, `my_tickets`, `get_ticket`, mueve PA-4 a In Progress, marca el checklist, comenta, liga PA-4 bloqueando PA-5 y busca; el historial muestra cada evento con el agente como actor.
+- `tests/mcp/test_tools.py`: éxito y error de cada tool, viewer sin permiso de crear, token revocado sin conexión.
+- `scripts/smoke.sh` contra Docker.
