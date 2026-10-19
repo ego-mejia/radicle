@@ -1,4 +1,11 @@
 from radicle.db.models.base import Base, utcnow
+from radicle.db.models.discussion import (
+    LINK_LABELS,
+    Comment,
+    CommentReaction,
+    LinkType,
+    TicketLink,
+)
 from radicle.db.models.projects import (
     Area,
     Milestone,
@@ -24,11 +31,15 @@ from radicle.db.models.tickets import (
 from radicle.db.models.users import ApiToken, Session, User, UserKind
 
 __all__ = [
+    "LINK_LABELS",
     "PRIORITY_ORDER",
     "ApiToken",
     "Area",
     "Base",
+    "Comment",
+    "CommentReaction",
     "EventType",
+    "LinkType",
     "Mention",
     "Milestone",
     "MilestoneStatus",
@@ -43,6 +54,7 @@ __all__ = [
     "Ticket",
     "TicketCollaborator",
     "TicketEvent",
+    "TicketLink",
     "TicketType",
     "Transition",
     "User",

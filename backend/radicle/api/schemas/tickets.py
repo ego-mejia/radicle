@@ -169,3 +169,29 @@ class TypeChangeIn(Input):
     area: str | None = Field(
         default=None, description="Required when moving to task or bug without an area"
     )
+
+
+class LinkCreate(Input):
+    type: str = Field(description="blocks, relates_to, duplicates or clones")
+    target: str = Field(description="Target ticket key, e.g. PA-4")
+
+
+class ReactionOut(BaseModel):
+    emoji: str
+    count: int
+    users: list[str]
+
+
+class CommentOut(BaseModel):
+    id: str
+    ticket: str
+    author: UserRef
+    body_md: str
+    created_at: UtcDatetime
+    edited_at: UtcDatetime | None
+    deleted: bool
+    reactions: list[ReactionOut] = Field(default_factory=list)
+
+
+class CommentIn(Input):
+    body_md: str

@@ -136,7 +136,9 @@ class Mention(Base):
     ticket_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("tickets.id", ondelete="CASCADE"), index=True
     )
-    comment_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), index=True)
+    comment_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("comments.id", ondelete="CASCADE"), index=True
+    )
     mentioned_user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), index=True
     )

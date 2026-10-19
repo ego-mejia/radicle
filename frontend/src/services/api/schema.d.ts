@@ -61,6 +61,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/comments/{comment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Comment
+         * @description The author or a project admin can delete. History records 'comment deleted'.
+         */
+        delete: operations["delete_comment_api_v1_comments__comment_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Edit Comment
+         * @description Only the author can edit.
+         */
+        patch: operations["edit_comment_api_v1_comments__comment_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/comments/{comment_id}/reactions/{emoji}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Add Reaction */
+        put: operations["add_reaction_api_v1_comments__comment_id__reactions__emoji__put"];
+        post?: never;
+        /** Remove Reaction */
+        delete: operations["remove_reaction_api_v1_comments__comment_id__reactions__emoji__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health": {
         parameters: {
             query?: never;
@@ -73,6 +115,23 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/links/{link_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Link */
+        delete: operations["delete_link_api_v1_links__link_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -501,6 +560,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tickets/{key}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Comments
+         * @description Comments of a ticket. Deleted comments stay as placeholders with an empty body.
+         */
+        get: operations["list_comments_api_v1_tickets__key__comments_get"];
+        put?: never;
+        /**
+         * Create Comment
+         * @description Comment in markdown. @handles outside code are recorded as mentions.
+         */
+        post: operations["create_comment_api_v1_tickets__key__comments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tickets/{key}/history": {
         parameters: {
             query?: never;
@@ -515,6 +598,29 @@ export interface paths {
         get: operations["get_history_api_v1_tickets__key__history_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{key}/links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Links */
+        get: operations["list_links_api_v1_tickets__key__links_get"];
+        put?: never;
+        /**
+         * Create Link
+         * @description Link this ticket to another. `blocks` means this ticket blocks the target.
+         *
+         *     Returns the ticket's links after the change.
+         */
+        post: operations["create_link_api_v1_tickets__key__links_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -770,6 +876,29 @@ export interface components {
             /** Checked */
             checked: boolean;
         };
+        /** CommentIn */
+        CommentIn: {
+            /** Body Md */
+            body_md: string;
+        };
+        /** CommentOut */
+        CommentOut: {
+            author: components["schemas"]["UserRef"];
+            /** Body Md */
+            body_md: string;
+            /** Created At */
+            created_at: string;
+            /** Deleted */
+            deleted: boolean;
+            /** Edited At */
+            edited_at: string | null;
+            /** Id */
+            id: string;
+            /** Reactions */
+            reactions?: components["schemas"]["ReactionOut"][];
+            /** Ticket */
+            ticket: string;
+        };
         /** EventOut */
         EventOut: {
             actor: components["schemas"]["UserRef"];
@@ -797,6 +926,19 @@ export interface components {
             database: string;
             /** Status */
             status: string;
+        };
+        /** LinkCreate */
+        LinkCreate: {
+            /**
+             * Target
+             * @description Target ticket key, e.g. PA-4
+             */
+            target: string;
+            /**
+             * Type
+             * @description blocks, relates_to, duplicates or clones
+             */
+            type: string;
         };
         /** LinkOut */
         LinkOut: {
@@ -923,6 +1065,13 @@ export interface components {
         Page_AreaOut_: {
             /** Items */
             items: components["schemas"]["AreaOut"][];
+            /** Next Cursor */
+            next_cursor?: string | null;
+        };
+        /** Page[CommentOut] */
+        Page_CommentOut_: {
+            /** Items */
+            items: components["schemas"]["CommentOut"][];
             /** Next Cursor */
             next_cursor?: string | null;
         };
@@ -1059,6 +1208,15 @@ export interface components {
          * @enum {string}
          */
         ProjectRole: "admin" | "member" | "viewer";
+        /** ReactionOut */
+        ReactionOut: {
+            /** Count */
+            count: number;
+            /** Emoji */
+            emoji: string;
+            /** Users */
+            users: string[];
+        };
         /**
          * Resolution
          * @enum {string}
@@ -1575,6 +1733,134 @@ export interface operations {
             };
         };
     };
+    delete_comment_api_v1_comments__comment_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    edit_comment_api_v1_comments__comment_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CommentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_reaction_api_v1_comments__comment_id__reactions__emoji__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+                emoji: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_reaction_api_v1_comments__comment_id__reactions__emoji__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+                emoji: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_api_v1_health_get: {
         parameters: {
             query?: never;
@@ -1591,6 +1877,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Health"];
+                };
+            };
+        };
+    };
+    delete_link_api_v1_links__link_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                link_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -2636,6 +2951,77 @@ export interface operations {
             };
         };
     };
+    list_comments_api_v1_tickets__key__comments_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                cursor?: string | null;
+                /** @description asc = oldest first */
+                order?: "asc" | "desc";
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_CommentOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_comment_api_v1_tickets__key__comments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CommentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CommentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_history_api_v1_tickets__key__history_get: {
         parameters: {
             query?: {
@@ -2658,6 +3044,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_EventOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_links_api_v1_tickets__key__links_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LinkOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_link_api_v1_tickets__key__links_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LinkCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LinkOut"][];
                 };
             };
             /** @description Validation Error */

@@ -10,7 +10,7 @@ Estado de cada entregable. Se actualiza al cerrar cada uno.
 | 1.2 | Proyectos, miembros, áreas y milestones | Listo |
 | 1.3 | Tickets e historial | Listo |
 | 1.4 | Workflows y transiciones | Listo |
-| 1.5 | Links, comentarios y reacciones | Pendiente |
+| 1.5 | Links, comentarios y reacciones | Listo |
 | 1.6 | RQL y búsqueda | Pendiente |
 | 1.7 | Servidor MCP | Pendiente |
 | 1.8 | UI web | Pendiente |
@@ -110,3 +110,19 @@ curl -H "Authorization: Bearer rdc_..." localhost:8000/api/v1/me
 
 - `tests/integration/test_transitions.py::test_acceptance_task_lifecycle`: To Do a Done solo por Close con wont_do o duplicate, Complete pide resolution, Reopen la limpia.
 - `tests/unit/test_workflow_engine.py`: 13 casos del motor.
+
+### 1.5 Links, comentarios y reacciones
+
+**Qué se hizo**
+
+- Migración `0004`: `ticket_links`, `comments`, `comment_reactions` y la llave de `mentions.comment_id`.
+- Links blocks, relates to, duplicates y clones; cada ticket los ve con su etiqueta (blocks / is blocked by, etc.). No se duplican en ningún sentido, ni hacia el mismo ticket. Evento `link_added` o `link_removed` en ambos tickets.
+- `blocked` en el ticket y aviso `blocked` al moverlo a in_progress o done mientras un bloqueante no está en done.
+- Comentarios markdown con menciones; editar solo el autor; borrar el autor o un admin del proyecto. Un comentario borrado queda como placeholder vacío y el historial registra `comment_deleted`. El historial guarda solo el id del comentario, no su texto.
+- Reacciones con un emoji Unicode (incluye tonos de piel, secuencias ZWJ y banderas).
+- Los tickets borrados desaparecen de los links.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_links.py::test_acceptance_blocked_link_both_sides_and_warning`: PA-5 bloqueado por PA-4, etiqueta en ambos, aviso al mover PA-5.
+- `tests/integration/test_comments.py::test_acceptance_comment_lifecycle`: comentar, reaccionar, editar, borrar y verlo en el historial.
