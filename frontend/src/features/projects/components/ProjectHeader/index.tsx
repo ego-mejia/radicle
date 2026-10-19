@@ -1,9 +1,11 @@
+import { useQuery } from '@tanstack/react-query';
 import { createLink } from '@tanstack/react-router';
 import {
   CalendarRange,
   ChartLine,
   Columns3,
   Flag,
+  Inbox,
   LayoutDashboard,
   List,
   ListTodo,
@@ -11,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Badge, TicketKey } from '../../../../components/ui/Badge';
+import { fetchInbox, inboxKeys } from '../../../../services/api/inbox';
 import type { ProjectDetail } from '../../../../services/api/types';
 import * as S from './style';
 
@@ -21,6 +24,12 @@ type Props = { project: ProjectDetail; actions?: React.ReactNode };
 export function ProjectHeader({ project, actions }: Props) {
   const { t } = useTranslation();
   const params = { key: project.key };
+  const { data: inbox } = useQuery({
+    queryKey: inboxKeys.list(project.key, { tab: 'new' }),
+    queryFn: () => fetchInbox(project.key, { tab: 'new' }),
+    staleTime: 60_000,
+  });
+  const newItems = inbox?.counts.new ?? 0;
   return (
     <S.Header>
       <S.TitleRow>
@@ -52,6 +61,18 @@ export function ProjectHeader({ project, actions }: Props) {
         >
           <ListTodo />
           {t('nav.backlog')}
+        </Tab>
+        <Tab
+          to="/p/$key/inbox"
+          params={params}
+          search={{}}
+          activeOptions={{ includeSearch: false }}
+        >
+          <Inbox />
+          {t('nav.inbox')}
+          {newItems > 0 && (
+            <S.Count aria-label={t('inbox.newCount', { count: newItems })}>{newItems}</S.Count>
+          )}
         </Tab>
         <Tab to="/p/$key/list" params={params} search={{}} activeOptions={{ includeSearch: false }}>
           <List />

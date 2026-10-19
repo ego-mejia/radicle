@@ -218,13 +218,14 @@ async def ticket_out(
         updated_at=ticket.updated_at,
         resolved_at=ticket.resolved_at,
         deleted=ticket.deleted_at is not None,
-        security_level=(
-            await db.scalar(
-                select(SecurityLevel.name).where(SecurityLevel.id == ticket.security_level_id)
-            )
-            if ticket.security_level_id
-            else None
-        ),
+        security_level=await _level_name(db, ticket),
+        origin=ticket.origin,
+        classification=ticket.classification,
+        impact=ticket.impact,
+        effort=ticket.effort,
+        converted_at=ticket.converted_at,
+        submitter_name=ticket.submitter_name,
+        submitter_email=ticket.submitter_email,
         warnings=warnings or [],
     )
 
@@ -278,6 +279,12 @@ async def summaries_out(db: AsyncSession, tickets: list[Ticket]) -> list[TicketS
                 checklist_total=len(items),
                 rank=t.rank,
                 updated_at=t.updated_at,
+                created_at=t.created_at,
+                origin=t.origin,
+                classification=t.classification,
+                impact=t.impact,
+                effort=t.effort,
+                converted=t.converted_at is not None,
             )
         )
     return result

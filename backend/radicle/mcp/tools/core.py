@@ -159,8 +159,13 @@ def register(server: MCPServer) -> None:
             dict[str, Any] | None,
             Field(description='By key, e.g. {"environment": "prod"}. See get_project.'),
         ] = None,
+        classification: Annotated[
+            Literal["idea", "experiment", "complaint", "suggestion"] | None,
+            Field(description="Drafts only, and required for them"),
+        ] = None,
     ) -> dict[str, Any]:
-        """Create a ticket and return it. Write checklists as `- [ ] item @handle` lines."""
+        """Create a ticket and return it. Write checklists as `- [ ] item @handle` lines.
+        Drafts (inbox items) need a classification."""
         body = {
             "type": type,
             "title": title,
@@ -176,6 +181,7 @@ def register(server: MCPServer) -> None:
             "estimate_hours": estimate_hours,
             "tags": tags,
             "custom_fields": custom_fields,
+            "classification": classification,
         }
         async with api(ctx) as client:
             ticket = await client.call(

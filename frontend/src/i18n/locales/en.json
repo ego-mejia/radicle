@@ -50,7 +50,8 @@
     "timeline": "Timeline",
     "reports": "Reports",
     "dashboards": "Dashboards",
-    "summary": "Summary"
+    "summary": "Summary",
+    "inbox": "Inbox"
   },
   "theme": {
     "label": "Theme",
@@ -1203,5 +1204,83 @@
     "participants": "Participants see it",
     "delete": "Delete {{name}}",
     "newLevel": "New level"
+  },
+  "inbox": {
+    "title": "Inbox",
+    "classification": "Classification",
+    "origin": "Origin",
+    "impact": "Impact",
+    "effort": "Effort",
+    "impactFor": "Impact of {{key}}",
+    "effortFor": "Effort of {{key}}",
+    "classifications": {
+      "idea": "Idea",
+      "experiment": "Experiment",
+      "complaint": "Complaint",
+      "suggestion": "Suggestion"
+    },
+    "origins": {
+      "team": "Team",
+      "user": "User"
+    },
+    "tabs": {
+      "new": "New",
+      "in_review": "In review",
+      "approved": "Approved",
+      "discarded": "Discarded"
+    },
+    "allClassifications": "All classifications",
+    "allOrigins": "Any origin",
+    "sort": "Sort",
+    "sorts": {
+      "votes": "Most votes",
+      "age": "Oldest first",
+      "score": "Best score"
+    },
+    "view": "View",
+    "table": "Table",
+    "matrix": "Matrix",
+    "cols": {
+      "key": "Key",
+      "title": "Title",
+      "age": "Age",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actionsFor": "Actions for {{key}}",
+    "review": "Start review",
+    "approve": "Approve and convert",
+    "markDuplicate": "Mark duplicate",
+    "discard": "Discard",
+    "approveTitle": "Approve {{key}}",
+    "approveHelp": "It becomes a task or bug in the same ticket: origin, classification, votes, comments and history stay.",
+    "convertTo": "Convert to",
+    "approved": "{{key}} is now a {{type}}.",
+    "discardTitle": "Discard {{key}}",
+    "publicComment": "Note for whoever sent it",
+    "publicCommentHint": "Optional. Shown on their tracking page.",
+    "duplicateTitle": "{{key}} is a duplicate",
+    "original": "Original ticket",
+    "duplicateHint": "Its voters are added to the original's.",
+    "empty": {
+      "new": "Nothing new in the inbox.",
+      "in_review": "Nothing in review.",
+      "approved": "Nothing approved yet.",
+      "discarded": "Nothing discarded."
+    },
+    "quadrants": {
+      "quick_wins": "Quick wins",
+      "big_bets": "Big bets",
+      "fillers": "Fillers",
+      "not_worth": "Not worth it"
+    },
+    "unscored": "Not scored",
+    "allScored": "Everything is scored.",
+    "dot": "{{key}} {{title}}, {{votes}} votes",
+    "newCount_one": "{{count}} new item",
+    "newCount_other": "{{count}} new items",
+    "fromInbox": "From the inbox",
+    "fromInboxDetail": "From the inbox · {{origin}} · {{classification}}",
+    "submitter": "Sent by"
   }
 }

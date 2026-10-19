@@ -21,6 +21,7 @@ import { Subtickets } from '../Subtickets';
 import { TicketHeader } from '../TicketHeader';
 import { Worklogs } from '../Worklogs';
 import { can, type Permission } from '../../../../lib/permissions';
+import { InboxInfo } from '../InboxInfo';
 import * as S from './style';
 
 type Tab = 'comments' | 'history' | 'time';
@@ -71,6 +72,7 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
           </S.Restricted>
         )}
         <TicketHeader ticket={ticket} actions={actions} can={may} />
+        <InboxInfo ticket={ticket} actions={actions} canTriage={may('inbox.triage')} />
         <Description ticket={ticket} actions={actions} canEdit={canEdit} mentions={mentions} />
         <Attachments
           ticket={ticket}

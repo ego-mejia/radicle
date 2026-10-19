@@ -101,7 +101,9 @@ async def test_schema_endpoint(client: AsyncClient, screened: Team) -> None:
     assert schema["fields"][3]["options"] == ["highest", "high", "medium", "low", "lowest"]
 
     r = await client.get(
-        f"{API}/projects/PA/schema", headers=screened.viewer.headers, params={"type": "draft"}
+        f"{API}/projects/PA/schema",
+        headers=screened.viewer.headers,
+        params={"type": "draft", "classification": "idea"},
     )
     draft = r.json()
     assert draft["from_screen"] is False

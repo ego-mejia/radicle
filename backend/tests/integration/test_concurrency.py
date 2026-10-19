@@ -54,7 +54,7 @@ async def test_50_parallel_creations_get_numbers_1_to_50(
                 r = await c.post(
                     "/api/v1/projects/PA/tickets",
                     headers=bearer,
-                    json={"type": "draft", "title": f"t{i}"},
+                    json={"type": "draft", "classification": "idea", "title": f"t{i}"},
                 )
                 assert r.status_code == 201, r.text
                 return int(r.json()["key"].split("-")[1])
@@ -105,7 +105,9 @@ async def test_parallel_votes_keep_vote_count_exact(
             h = {"X-CSRF-Token": c.cookies["radicle_csrf"]}
             await c.post("/api/v1/projects", headers=h, json={"key": "PA", "name": "A"})
             await c.post(
-                "/api/v1/projects/PA/tickets", headers=h, json={"type": "draft", "title": "Idea"}
+                "/api/v1/projects/PA/tickets",
+                headers=h,
+                json={"type": "draft", "classification": "idea", "title": "Idea"},
             )
             bearers = []
             for i in range(8):

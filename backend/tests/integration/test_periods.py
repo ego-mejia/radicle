@@ -43,7 +43,7 @@ async def test_backfill_rebuilds_exactly_the_live_periods(
     await move(client, m, "PA-1", "Done", resolution="done")
     await move(client, m, "PA-1", "To Do")
     await move(client, m, "PA-1", "Done", resolution="wont_do")
-    await new_ticket(client, m, type="draft", area=None)  # PA-2: type change
+    await new_ticket(client, m, type="draft", classification="idea", area=None)  # PA-2: type change
     await move(client, m, "PA-2", "In Review")
     r = await client.post(
         f"{API}/tickets/PA-2/type", headers=m.headers, json={"type": "bug", "area": "Legal"}
@@ -63,7 +63,11 @@ async def test_backfill_rebuilds_exactly_the_live_periods(
 
     live = await snapshot_of_periods(db)
     first = await db.scalar(select(Ticket.id).where(Ticket.title == "Ticket", Ticket.number == 1))
-    pa1 = sorted((p for p in live if p[0] == first), key=lambda p: p[3])
+    # Ties on entered_at happen when moves land in the same instant: the period that
+    # ended first (or at all) goes first.
+    pa1 = sorted(
+        (p for p in live if p[0] == first), key=lambda p: (p[3], p[4] is None, p[4] or p[3])
+    )
     assert [p[2].value for p in pa1] == [
         "todo",
         "in_progress",

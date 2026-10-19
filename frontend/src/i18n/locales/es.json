@@ -50,7 +50,8 @@
     "timeline": "Timeline",
     "reports": "Reportes",
     "dashboards": "Dashboards",
-    "summary": "Resumen"
+    "summary": "Resumen",
+    "inbox": "Buzón"
   },
   "theme": {
     "label": "Tema",
@@ -1203,5 +1204,83 @@
     "participants": "Los participantes lo ven",
     "delete": "Borrar {{name}}",
     "newLevel": "Nuevo nivel"
+  },
+  "inbox": {
+    "title": "Buzón",
+    "classification": "Clasificación",
+    "origin": "Origen",
+    "impact": "Impacto",
+    "effort": "Esfuerzo",
+    "impactFor": "Impacto de {{key}}",
+    "effortFor": "Esfuerzo de {{key}}",
+    "classifications": {
+      "idea": "Idea",
+      "experiment": "Experimento",
+      "complaint": "Queja",
+      "suggestion": "Sugerencia"
+    },
+    "origins": {
+      "team": "Equipo",
+      "user": "Usuario"
+    },
+    "tabs": {
+      "new": "Nuevos",
+      "in_review": "En revisión",
+      "approved": "Aprobados",
+      "discarded": "Descartados"
+    },
+    "allClassifications": "Todas las clasificaciones",
+    "allOrigins": "Cualquier origen",
+    "sort": "Orden",
+    "sorts": {
+      "votes": "Más votos",
+      "age": "Más antiguos",
+      "score": "Mejor puntaje"
+    },
+    "view": "Vista",
+    "table": "Tabla",
+    "matrix": "Matriz",
+    "cols": {
+      "key": "Key",
+      "title": "Título",
+      "age": "Antigüedad",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "actionsFor": "Acciones de {{key}}",
+    "review": "Pasar a revisión",
+    "approve": "Aprobar y convertir",
+    "markDuplicate": "Marcar duplicado",
+    "discard": "Descartar",
+    "approveTitle": "Aprobar {{key}}",
+    "approveHelp": "Se vuelve task o bug en el mismo ticket: se conservan origen, clasificación, votos, comentarios e historial.",
+    "convertTo": "Convertir a",
+    "approved": "{{key}} ahora es {{type}}.",
+    "discardTitle": "Descartar {{key}}",
+    "publicComment": "Nota para quien lo envió",
+    "publicCommentHint": "Opcional. Se muestra en su página de seguimiento.",
+    "duplicateTitle": "{{key}} es duplicado",
+    "original": "Ticket original",
+    "duplicateHint": "Sus votantes se suman a los del original.",
+    "empty": {
+      "new": "No hay nada nuevo en el Buzón.",
+      "in_review": "Nada en revisión.",
+      "approved": "Todavía no hay aprobados.",
+      "discarded": "Nada descartado."
+    },
+    "quadrants": {
+      "quick_wins": "Quick wins",
+      "big_bets": "Apuestas grandes",
+      "fillers": "Relleno",
+      "not_worth": "No vale la pena"
+    },
+    "unscored": "Sin calificar",
+    "allScored": "Todo está calificado.",
+    "dot": "{{key}} {{title}}, {{votes}} votos",
+    "newCount_one": "{{count}} nuevo",
+    "newCount_other": "{{count}} nuevos",
+    "fromInbox": "Vino del Buzón",
+    "fromInboxDetail": "Vino del Buzón · {{origin}} · {{classification}}",
+    "submitter": "Enviado por"
   }
 }

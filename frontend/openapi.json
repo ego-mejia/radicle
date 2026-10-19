@@ -46,6 +46,57 @@
         "title": "AgentCreated",
         "type": "object"
       },
+      "ApproveIn": {
+        "additionalProperties": false,
+        "properties": {
+          "area": {
+            "title": "Area",
+            "type": "string"
+          },
+          "assignee": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assignee"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milestone"
+          },
+          "priority": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Priority"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "$ref": "#/components/schemas/TicketType",
+            "description": "task or bug"
+          }
+        },
+        "required": [
+          "type",
+          "area"
+        ],
+        "title": "ApproveIn",
+        "type": "object"
+      },
       "AreaConf": {
         "additionalProperties": false,
         "properties": {
@@ -1008,6 +1059,32 @@
             "title": "Checklist Total",
             "type": "integer"
           },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Classification"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "converted": {
+            "default": false,
+            "title": "Converted",
+            "type": "boolean"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
           "custom_fields": {
             "additionalProperties": true,
             "title": "Custom Fields",
@@ -1025,6 +1102,17 @@
             ],
             "title": "Due Date"
           },
+          "effort": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort"
+          },
           "estimate_hours": {
             "anyOf": [
               {
@@ -1035,6 +1123,17 @@
               }
             ],
             "title": "Estimate Hours"
+          },
+          "impact": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact"
           },
           "key": {
             "title": "Key",
@@ -1055,6 +1154,16 @@
               }
             ],
             "title": "Milestone"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Origin"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "priority": {
             "$ref": "#/components/schemas/Priority"
@@ -1137,6 +1246,12 @@
           "checklist_total",
           "rank",
           "updated_at",
+          "created_at",
+          "origin",
+          "classification",
+          "impact",
+          "effort",
+          "converted",
           "lane"
         ],
         "title": "Card",
@@ -1222,6 +1337,16 @@
         ],
         "title": "ChecklistPatch",
         "type": "object"
+      },
+      "Classification": {
+        "enum": [
+          "idea",
+          "experiment",
+          "complaint",
+          "suggestion"
+        ],
+        "title": "Classification",
+        "type": "string"
       },
       "CloneIn": {
         "additionalProperties": false,
@@ -1950,6 +2075,40 @@
         "title": "DependencyOut",
         "type": "object"
       },
+      "DiscardIn": {
+        "additionalProperties": false,
+        "properties": {
+          "public_comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Shown to the submitter on the tracking page",
+            "title": "Public Comment"
+          }
+        },
+        "title": "DiscardIn",
+        "type": "object"
+      },
+      "DuplicateIn": {
+        "additionalProperties": false,
+        "properties": {
+          "original": {
+            "description": "Key of the ticket it duplicates",
+            "title": "Original",
+            "type": "string"
+          }
+        },
+        "required": [
+          "original"
+        ],
+        "title": "DuplicateIn",
+        "type": "object"
+      },
       "EventOut": {
         "properties": {
           "actor": {
@@ -2606,6 +2765,42 @@
           "database"
         ],
         "title": "Health",
+        "type": "object"
+      },
+      "InboxOut": {
+        "properties": {
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Items per tab: new, in_review, approved, discarded",
+            "title": "Counts",
+            "type": "object"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TicketSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "tab": {
+            "enum": [
+              "new",
+              "in_review",
+              "approved",
+              "discarded"
+            ],
+            "title": "Tab",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tab",
+          "counts",
+          "items"
+        ],
+        "title": "InboxOut",
         "type": "object"
       },
       "JobOut": {
@@ -3421,6 +3616,14 @@
         ],
         "title": "NextOut",
         "type": "object"
+      },
+      "Origin": {
+        "enum": [
+          "team",
+          "user"
+        ],
+        "title": "Origin",
+        "type": "string"
       },
       "Page_AreaOut_": {
         "properties": {
@@ -6650,6 +6853,17 @@
             "description": "Handle of a member or agent",
             "title": "Assignee"
           },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Classification"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Drafts only, required: idea, experiment, complaint, suggestion"
+          },
           "collaborators": {
             "items": {
               "type": "string"
@@ -6797,6 +7011,16 @@
             "title": "Children Count",
             "type": "integer"
           },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Classification"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "collaborators": {
             "items": {
               "$ref": "#/components/schemas/UserRef"
@@ -6807,6 +7031,18 @@
           "comments_count": {
             "title": "Comments Count",
             "type": "integer"
+          },
+          "converted_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When it came out of the inbox as a task or bug",
+            "title": "Converted At"
           },
           "created_at": {
             "title": "Created At",
@@ -6839,6 +7075,17 @@
             ],
             "title": "Due Date"
           },
+          "effort": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort"
+          },
           "estimate_hours": {
             "anyOf": [
               {
@@ -6849,6 +7096,17 @@
               }
             ],
             "title": "Estimate Hours"
+          },
+          "impact": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact"
           },
           "key": {
             "title": "Key",
@@ -6883,6 +7141,17 @@
             ],
             "description": "Set when you asked for an old key of a moved ticket",
             "title": "Moved From"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Origin"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Inbox: team or user (public form)"
           },
           "original_estimate_hours": {
             "anyOf": [
@@ -6987,6 +7256,28 @@
           "status": {
             "$ref": "#/components/schemas/StatusRef"
           },
+          "submitter_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitter Email"
+          },
+          "submitter_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Submitter Name"
+          },
           "tags": {
             "items": {
               "type": "string"
@@ -7065,6 +7356,13 @@
           "deleted",
           "moved_from",
           "security_level",
+          "origin",
+          "classification",
+          "impact",
+          "effort",
+          "converted_at",
+          "submitter_name",
+          "submitter_email",
           "warnings"
         ],
         "title": "TicketOut",
@@ -7095,6 +7393,17 @@
               }
             ],
             "title": "Assignee"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Classification"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Inbox: needs inbox.triage"
           },
           "custom_fields": {
             "anyOf": [
@@ -7132,6 +7441,18 @@
             ],
             "title": "Due Date"
           },
+          "effort": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Inbox, 1 to 5: needs inbox.triage",
+            "title": "Effort"
+          },
           "estimate_hours": {
             "anyOf": [
               {
@@ -7154,6 +7475,18 @@
             ],
             "description": "Required unless sent as the If-Match header",
             "title": "Expected Version"
+          },
+          "impact": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Inbox, 1 to 5: needs inbox.triage",
+            "title": "Impact"
           },
           "milestone": {
             "anyOf": [
@@ -7362,6 +7695,32 @@
             "title": "Checklist Total",
             "type": "integer"
           },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Classification"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "converted": {
+            "default": false,
+            "title": "Converted",
+            "type": "boolean"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
           "custom_fields": {
             "additionalProperties": true,
             "title": "Custom Fields",
@@ -7379,6 +7738,17 @@
             ],
             "title": "Due Date"
           },
+          "effort": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort"
+          },
           "estimate_hours": {
             "anyOf": [
               {
@@ -7389,6 +7759,17 @@
               }
             ],
             "title": "Estimate Hours"
+          },
+          "impact": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact"
           },
           "key": {
             "title": "Key",
@@ -7404,6 +7785,16 @@
               }
             ],
             "title": "Milestone"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Origin"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "priority": {
             "$ref": "#/components/schemas/Priority"
@@ -7485,7 +7876,13 @@
           "checklist_done",
           "checklist_total",
           "rank",
-          "updated_at"
+          "updated_at",
+          "created_at",
+          "origin",
+          "classification",
+          "impact",
+          "effort",
+          "converted"
         ],
         "title": "TicketSummary",
         "type": "object"
@@ -7616,6 +8013,32 @@
             "title": "Checklist Total",
             "type": "integer"
           },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Classification"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "converted": {
+            "default": false,
+            "title": "Converted",
+            "type": "boolean"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
           "custom_fields": {
             "additionalProperties": true,
             "title": "Custom Fields",
@@ -7633,6 +8056,17 @@
             ],
             "title": "Due Date"
           },
+          "effort": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort"
+          },
           "estimate_hours": {
             "anyOf": [
               {
@@ -7643,6 +8077,17 @@
               }
             ],
             "title": "Estimate Hours"
+          },
+          "impact": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact"
           },
           "key": {
             "title": "Key",
@@ -7658,6 +8103,16 @@
               }
             ],
             "title": "Milestone"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Origin"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "priority": {
             "$ref": "#/components/schemas/Priority"
@@ -7745,6 +8200,12 @@
           "checklist_total",
           "rank",
           "updated_at",
+          "created_at",
+          "origin",
+          "classification",
+          "impact",
+          "effort",
+          "converted",
           "version"
         ],
         "title": "TimelineTicket",
@@ -8721,6 +9182,32 @@
             "title": "Checklist Total",
             "type": "integer"
           },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Classification"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "converted": {
+            "default": false,
+            "title": "Converted",
+            "type": "boolean"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
           "custom_fields": {
             "additionalProperties": true,
             "title": "Custom Fields",
@@ -8738,6 +9225,17 @@
             ],
             "title": "Due Date"
           },
+          "effort": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effort"
+          },
           "estimate_hours": {
             "anyOf": [
               {
@@ -8748,6 +9246,17 @@
               }
             ],
             "title": "Estimate Hours"
+          },
+          "impact": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Impact"
           },
           "key": {
             "title": "Key",
@@ -8763,6 +9272,16 @@
               }
             ],
             "title": "Milestone"
+          },
+          "origin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Origin"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "priority": {
             "$ref": "#/components/schemas/Priority"
@@ -8845,6 +9364,12 @@
           "checklist_total",
           "rank",
           "updated_at",
+          "created_at",
+          "origin",
+          "classification",
+          "impact",
+          "effort",
+          "converted",
           "blocked_by"
         ],
         "title": "WidgetTicket",
@@ -12389,6 +12914,114 @@
         ]
       }
     },
+    "/api/v1/projects/{key}/inbox": {
+      "get": {
+        "description": "The project's drafts: new, in review, approved (converted) or discarded.",
+        "operationId": "get_inbox_api_v1_projects__key__inbox_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tab",
+            "required": false,
+            "schema": {
+              "default": "new",
+              "enum": [
+                "new",
+                "in_review",
+                "approved",
+                "discarded"
+              ],
+              "title": "Tab",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "classification",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Classification"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Classification"
+            }
+          },
+          {
+            "in": "query",
+            "name": "origin",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Origin"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Origin"
+            }
+          },
+          {
+            "description": "votes, age or score (impact*2-effort)",
+            "in": "query",
+            "name": "sort",
+            "required": false,
+            "schema": {
+              "default": "votes",
+              "description": "votes, age or score (impact*2-effort)",
+              "enum": [
+                "votes",
+                "age",
+                "score"
+              ],
+              "title": "Sort",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InboxOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Inbox",
+        "tags": [
+          "inbox"
+        ]
+      }
+    },
     "/api/v1/projects/{key}/members": {
       "get": {
         "operationId": "list_members_api_v1_projects__key__members_get",
@@ -15852,6 +16485,164 @@
         "summary": "Get History",
         "tags": [
           "tickets"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/inbox/approve": {
+      "post": {
+        "description": "Approve and convert in one step: the draft becomes a task or bug in the same ticket,\nkeeping origin, classification, votes, comments and history.",
+        "operationId": "approve_api_v1_tickets__key__inbox_approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve",
+        "tags": [
+          "inbox"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/inbox/discard": {
+      "post": {
+        "operationId": "discard_api_v1_tickets__key__inbox_discard_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscardIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Discard",
+        "tags": [
+          "inbox"
+        ]
+      }
+    },
+    "/api/v1/tickets/{key}/inbox/duplicate": {
+      "post": {
+        "description": "Link as duplicate of `original`, close it and pass its voters to the original.",
+        "operationId": "duplicate_api_v1_tickets__key__inbox_duplicate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DuplicateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Duplicate",
+        "tags": [
+          "inbox"
         ]
       }
     },

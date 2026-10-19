@@ -146,3 +146,8 @@ export const WIDGET_TYPES = [
   'markdown',
 ] as const;
 export type WidgetType = (typeof WIDGET_TYPES)[number];
+
+export type Classification = NonNullable<Ticket['classification']>;
+export const CLASSIFICATIONS: Classification[] = ['idea', 'experiment', 'complaint', 'suggestion'];
+export type InboxTab = 'new' | 'in_review' | 'approved' | 'discarded';
+export type InboxData = S['InboxOut'];

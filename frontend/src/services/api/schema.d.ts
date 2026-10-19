@@ -885,6 +885,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{key}/inbox": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Inbox
+         * @description The project's drafts: new, in review, approved (converted) or discarded.
+         */
+        get: operations["get_inbox_api_v1_projects__key__inbox_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{key}/members": {
         parameters: {
             query?: never;
@@ -1789,6 +1809,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tickets/{key}/inbox/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Approve
+         * @description Approve and convert in one step: the draft becomes a task or bug in the same ticket,
+         *     keeping origin, classification, votes, comments and history.
+         */
+        post: operations["approve_api_v1_tickets__key__inbox_approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{key}/inbox/discard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Discard */
+        post: operations["discard_api_v1_tickets__key__inbox_discard_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tickets/{key}/inbox/duplicate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Duplicate
+         * @description Link as duplicate of `original`, close it and pass its voters to the original.
+         */
+        post: operations["duplicate_api_v1_tickets__key__inbox_duplicate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tickets/{key}/links": {
         parameters: {
             query?: never;
@@ -2135,6 +2213,18 @@ export interface components {
             mcp_url: string;
             token: components["schemas"]["TokenCreated"];
         };
+        /** ApproveIn */
+        ApproveIn: {
+            /** Area */
+            area: string;
+            /** Assignee */
+            assignee?: string | null;
+            /** Milestone */
+            milestone?: string | null;
+            priority?: components["schemas"]["Priority"] | null;
+            /** @description task or bug */
+            type: components["schemas"]["TicketType"];
+        };
         /** AreaConf */
         AreaConf: {
             /** Color */
@@ -2459,14 +2549,26 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            classification: components["schemas"]["Classification"] | null;
+            /**
+             * Converted
+             * @default false
+             */
+            converted: boolean;
+            /** Created At */
+            created_at: string | null;
             /** Custom Fields */
             custom_fields: {
                 [key: string]: unknown;
             };
             /** Due Date */
             due_date: string | null;
+            /** Effort */
+            effort: number | null;
             /** Estimate Hours */
             estimate_hours: number | null;
+            /** Impact */
+            impact: number | null;
             /** Key */
             key: string;
             /**
@@ -2476,6 +2578,7 @@ export interface components {
             lane: string;
             /** Milestone */
             milestone: string | null;
+            origin: components["schemas"]["Origin"] | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -2534,6 +2637,11 @@ export interface components {
             /** Checked */
             checked: boolean;
         };
+        /**
+         * Classification
+         * @enum {string}
+         */
+        Classification: "idea" | "experiment" | "complaint" | "suggestion";
         /** CloneIn */
         CloneIn: {
             /**
@@ -2793,6 +2901,22 @@ export interface components {
              */
             conflict: boolean;
         };
+        /** DiscardIn */
+        DiscardIn: {
+            /**
+             * Public Comment
+             * @description Shown to the submitter on the tracking page
+             */
+            public_comment?: string | null;
+        };
+        /** DuplicateIn */
+        DuplicateIn: {
+            /**
+             * Original
+             * @description Key of the ticket it duplicates
+             */
+            original: string;
+        };
         /** EventOut */
         EventOut: {
             actor: components["schemas"]["UserRef"];
@@ -3014,6 +3138,23 @@ export interface components {
             database: string;
             /** Status */
             status: string;
+        };
+        /** InboxOut */
+        InboxOut: {
+            /**
+             * Counts
+             * @description Items per tab: new, in_review, approved, discarded
+             */
+            counts: {
+                [key: string]: number;
+            };
+            /** Items */
+            items: components["schemas"]["TicketSummary"][];
+            /**
+             * Tab
+             * @enum {string}
+             */
+            tab: "new" | "in_review" | "approved" | "discarded";
         };
         /** JobOut */
         JobOut: {
@@ -3307,6 +3448,11 @@ export interface components {
             /** @description null when nothing is ready to work on */
             ticket: components["schemas"]["TicketOut"] | null;
         };
+        /**
+         * Origin
+         * @enum {string}
+         */
+        Origin: "team" | "user";
         /** Page[AreaOut] */
         Page_AreaOut_: {
             /** Items */
@@ -4381,6 +4527,8 @@ export interface components {
              * @description Handle of a member or agent
              */
             assignee?: string | null;
+            /** @description Drafts only, required: idea, experiment, complaint, suggestion */
+            classification?: components["schemas"]["Classification"] | null;
             /** Collaborators */
             collaborators?: string[];
             /**
@@ -4429,10 +4577,16 @@ export interface components {
             checklist: components["schemas"]["ChecklistItemOut"][];
             /** Children Count */
             children_count: number;
+            classification: components["schemas"]["Classification"] | null;
             /** Collaborators */
             collaborators: components["schemas"]["UserRef"][];
             /** Comments Count */
             comments_count: number;
+            /**
+             * Converted At
+             * @description When it came out of the inbox as a task or bug
+             */
+            converted_at: string | null;
             /** Created At */
             created_at: string;
             /**
@@ -4451,8 +4605,12 @@ export interface components {
             description_md: string;
             /** Due Date */
             due_date: string | null;
+            /** Effort */
+            effort: number | null;
             /** Estimate Hours */
             estimate_hours: number | null;
+            /** Impact */
+            impact: number | null;
             /** Key */
             key: string;
             /** Links */
@@ -4464,6 +4622,8 @@ export interface components {
              * @description Set when you asked for an old key of a moved ticket
              */
             moved_from: string | null;
+            /** @description Inbox: team or user (public form) */
+            origin: components["schemas"]["Origin"] | null;
             /**
              * Original Estimate Hours
              * @description The first estimate; never changes
@@ -4493,6 +4653,10 @@ export interface components {
             /** Start Date */
             start_date: string | null;
             status: components["schemas"]["StatusRef"];
+            /** Submitter Email */
+            submitter_email: string | null;
+            /** Submitter Name */
+            submitter_name: string | null;
             /** Tags */
             tags: string[];
             /** Title */
@@ -4518,6 +4682,8 @@ export interface components {
             area?: string | null;
             /** Assignee */
             assignee?: string | null;
+            /** @description Inbox: needs inbox.triage */
+            classification?: components["schemas"]["Classification"] | null;
             /**
              * Custom Fields
              * @description Only the keys you send change; null clears a value
@@ -4529,6 +4695,11 @@ export interface components {
             description_md?: string | null;
             /** Due Date */
             due_date?: string | null;
+            /**
+             * Effort
+             * @description Inbox, 1 to 5: needs inbox.triage
+             */
+            effort?: number | null;
             /** Estimate Hours */
             estimate_hours?: number | null;
             /**
@@ -4536,6 +4707,11 @@ export interface components {
              * @description Required unless sent as the If-Match header
              */
             expected_version?: number | null;
+            /**
+             * Impact
+             * @description Inbox, 1 to 5: needs inbox.triage
+             */
+            impact?: number | null;
             /** Milestone */
             milestone?: string | null;
             /** Parent */
@@ -4594,18 +4770,31 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            classification: components["schemas"]["Classification"] | null;
+            /**
+             * Converted
+             * @default false
+             */
+            converted: boolean;
+            /** Created At */
+            created_at: string | null;
             /** Custom Fields */
             custom_fields: {
                 [key: string]: unknown;
             };
             /** Due Date */
             due_date: string | null;
+            /** Effort */
+            effort: number | null;
             /** Estimate Hours */
             estimate_hours: number | null;
+            /** Impact */
+            impact: number | null;
             /** Key */
             key: string;
             /** Milestone */
             milestone: string | null;
+            origin: components["schemas"]["Origin"] | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -4673,18 +4862,31 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            classification: components["schemas"]["Classification"] | null;
+            /**
+             * Converted
+             * @default false
+             */
+            converted: boolean;
+            /** Created At */
+            created_at: string | null;
             /** Custom Fields */
             custom_fields: {
                 [key: string]: unknown;
             };
             /** Due Date */
             due_date: string | null;
+            /** Effort */
+            effort: number | null;
             /** Estimate Hours */
             estimate_hours: number | null;
+            /** Impact */
+            impact: number | null;
             /** Key */
             key: string;
             /** Milestone */
             milestone: string | null;
+            origin: components["schemas"]["Origin"] | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -5056,18 +5258,31 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            classification: components["schemas"]["Classification"] | null;
+            /**
+             * Converted
+             * @default false
+             */
+            converted: boolean;
+            /** Created At */
+            created_at: string | null;
             /** Custom Fields */
             custom_fields: {
                 [key: string]: unknown;
             };
             /** Due Date */
             due_date: string | null;
+            /** Effort */
+            effort: number | null;
             /** Estimate Hours */
             estimate_hours: number | null;
+            /** Impact */
+            impact: number | null;
             /** Key */
             key: string;
             /** Milestone */
             milestone: string | null;
+            origin: components["schemas"]["Origin"] | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -7422,6 +7637,43 @@ export interface operations {
             };
         };
     };
+    get_inbox_api_v1_projects__key__inbox_get: {
+        parameters: {
+            query?: {
+                tab?: "new" | "in_review" | "approved" | "discarded";
+                classification?: components["schemas"]["Classification"] | null;
+                origin?: components["schemas"]["Origin"] | null;
+                /** @description votes, age or score (impact*2-effort) */
+                sort?: "votes" | "age" | "score";
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InboxOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_members_api_v1_projects__key__members_get: {
         parameters: {
             query?: never;
@@ -9476,6 +9728,111 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_EventOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approve_api_v1_tickets__key__inbox_approve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApproveIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    discard_api_v1_tickets__key__inbox_discard_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DiscardIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    duplicate_api_v1_tickets__key__inbox_duplicate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DuplicateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketOut"];
                 };
             };
             /** @description Validation Error */

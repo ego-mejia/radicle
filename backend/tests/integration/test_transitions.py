@@ -83,7 +83,7 @@ async def test_get_transitions(client: AsyncClient, board: Team) -> None:
 async def test_draft_approve_sets_resolution_automatically(
     client: AsyncClient, board: Team
 ) -> None:
-    await new_ticket(client, board.member, type="draft", area=None)
+    await new_ticket(client, board.member, type="draft", classification="idea", area=None)
     await move(client, board, "PA-1", "In Review")
     r = await move(client, board, "PA-1", "Approved")
     assert r.status_code == 200 and r.json()["resolution"] == "done"
@@ -110,7 +110,7 @@ async def test_transition_bumps_version_and_counts(client: AsyncClient, board: T
 
 
 async def test_change_draft_to_task(client: AsyncClient, board: Team) -> None:
-    await new_ticket(client, board.member, type="draft", area=None)
+    await new_ticket(client, board.member, type="draft", classification="idea", area=None)
     await move(client, board, "PA-1", "In Review")
     r = await client.post(f"{API}/PA-1/type", headers=board.member.headers, json={"type": "task"})
     assert r.status_code == 422 and "Area is required" in r.json()["detail"]

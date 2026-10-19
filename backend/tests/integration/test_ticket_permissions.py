@@ -12,7 +12,12 @@ ACTIONS = [
     ("GET", T, None, "viewer"),
     ("GET", f"{T}/history", None, "viewer"),
     ("GET", f"{T}/children", None, "viewer"),
-    ("POST", "/api/v1/projects/PA/tickets", {"type": "draft", "title": "x"}, "member"),
+    (
+        "POST",
+        "/api/v1/projects/PA/tickets",
+        {"type": "draft", "classification": "idea", "title": "x"},
+        "member",
+    ),
     ("PATCH", T, {"title": "x", "expected_version": 1}, "member"),
     ("PATCH", f"{T}/checklist/0", {"checked": True}, "member"),
     ("PUT", f"{T}/collaborators/luis", None, "member"),
@@ -52,6 +57,6 @@ async def test_archived_project_tickets_are_read_only(client: AsyncClient, board
     r = await client.post(
         "/api/v1/projects/PA/tickets",
         headers=board.member.headers,
-        json={"type": "draft", "title": "x"},
+        json={"type": "draft", "classification": "idea", "title": "x"},
     )
     assert r.status_code == 409

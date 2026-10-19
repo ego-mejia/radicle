@@ -14,6 +14,7 @@ import { BoardView } from './features/board/views/BoardView';
 import { BacklogView } from './features/sprints/views/BacklogView';
 import { TimelineView } from './features/timeline/views/TimelineView';
 import { ReportsView } from './features/reports/views/ReportsView';
+import { InboxView } from './features/inbox/views/InboxView';
 import { DashboardsView } from './features/dashboards/views/DashboardsView';
 import { DashboardView } from './features/dashboards/views/DashboardView';
 import { ProjectSummaryView } from './features/dashboards/views/ProjectSummaryView';
@@ -203,6 +204,29 @@ const summaryRoute = createRoute({
   component: ProjectSummaryView,
 });
 
+const inboxRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/p/$key/inbox',
+  component: InboxView,
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): {
+    tab?: string;
+    classification?: string;
+    origin?: string;
+    sort?: string;
+    view?: string;
+    t?: string;
+  } => ({
+    tab: str(search.tab),
+    classification: str(search.classification),
+    origin: str(search.origin),
+    sort: str(search.sort),
+    view: str(search.view),
+    t: str(search.t),
+  }),
+});
+
 const listRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/p/$key/list',
@@ -271,6 +295,7 @@ const routeTree = rootRoute.addChildren([
     backlogRoute,
     timelineRoute,
     reportsRoute,
+    inboxRoute,
     dashboardsRoute,
     dashboardRoute,
     summaryRoute,

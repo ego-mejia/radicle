@@ -205,6 +205,7 @@ COVERED: dict[str, list[str]] = {
     "/api/v1/projects/{key}/milestones/{name}": ["/projects/PA/milestones/V1"],
     "/api/v1/filters": ["/filters"],
     "/api/v1/search/fields": ["/search/fields?project=PA"],
+    "/api/v1/projects/{key}/inbox": ["/projects/PA/inbox", "/projects/PA/inbox?tab=approved"],
 }
 # Routes that never show ticket content (configuration, people, the user's own data).
 EXEMPT = {
@@ -413,6 +414,7 @@ READ_TOOLS = {
     "get_milestone_progress": {"project": "PA", "milestone": "V1"},
     "get_report": {"type": "time", "project": "PA"},
     "next_ticket": {"project": "PA"},
+    "list_inbox": {"project": "PA"},
 }
 
 

@@ -122,7 +122,7 @@ async def test_acceptance_move_keeps_old_key(
         await client.post(
             f"{API}/projects/PB/tickets",
             headers=two.member.headers,
-            json={"type": "draft", "title": f"b{i}"},
+            json={"type": "draft", "classification": "idea", "title": f"b{i}"},
         )
     for i in range(6):
         await new_ticket(client, two.member, title=f"a{i}")
@@ -302,7 +302,12 @@ async def test_acceptance_bulk_120_runs_as_job(
         await client.post(
             f"{API}/projects/PA/tickets",
             headers=board.member.headers,
-            json={"type": "draft", "title": f"Idea {i}", "tags": ["backlog"]},
+            json={
+                "type": "draft",
+                "classification": "idea",
+                "title": f"Idea {i}",
+                "tags": ["backlog"],
+            },
         )
     body = {
         "query": "#backlog",

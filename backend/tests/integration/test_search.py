@@ -56,7 +56,14 @@ async def data(client: AsyncClient, board: Team) -> Team:
     # PA-5 child of PA-4, done
     await new_ticket(client, m, type="task", title="Revisar contrato", area="Legal", parent="PA-4")
     # PA-6 draft reported by ana (admin)
-    await new_ticket(client, board.admin, type="draft", title="Idea de onboarding", area=None)
+    await new_ticket(
+        client,
+        board.admin,
+        type="draft",
+        classification="idea",
+        title="Idea de onboarding",
+        area=None,
+    )
     await move(client, board, "PA-3", "In Progress")
     await move(client, board, "PA-5", "Done", resolution="wont_do")
     r = await client.post(
@@ -153,7 +160,7 @@ async def test_permission_filter_always_applies(client: AsyncClient, data: Team)
     r = await client.post(
         f"{API}/projects/PB/tickets",
         headers=data.instance.headers,
-        json={"type": "draft", "title": "Secret"},
+        json={"type": "draft", "classification": "idea", "title": "Secret"},
     )
     assert r.status_code == 201
     assert await keys(client, data.outsider, "") == []

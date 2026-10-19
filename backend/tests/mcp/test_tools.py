@@ -51,6 +51,11 @@ TOOLS = {
     "complete_sprint",
     "get_milestone_progress",
     "get_report",
+    "list_inbox",
+    "score_inbox_item",
+    "approve_inbox_item",
+    "discard_inbox_item",
+    "mark_inbox_duplicate",
 }
 
 
@@ -187,7 +192,9 @@ async def test_transitions(seeded: Team, mcp_for: McpFor) -> None:
 
 
 async def test_change_type(seeded: Team, mcp_for: McpFor, client: AsyncClient) -> None:
-    await new_ticket(client, seeded.member, type="draft", area=None, title="Idea")
+    await new_ticket(
+        client, seeded.member, type="draft", classification="idea", area=None, title="Idea"
+    )
     async with mcp_for(seeded.agent) as mcp:
         assert "Area is required" in error_text(
             await mcp.call_tool("change_ticket_type", {"key": "PA-3", "type": "task"})
@@ -269,7 +276,10 @@ async def test_history(seeded: Team, mcp_for: McpFor) -> None:
 async def test_viewer_cannot_create(seeded: Team, mcp_for: McpFor) -> None:
     async with mcp_for(seeded.viewer) as mcp:
         msg = error_text(
-            await mcp.call_tool("create_ticket", {"project": "PA", "type": "draft", "title": "x"})
+            await mcp.call_tool(
+                "create_ticket",
+                {"project": "PA", "type": "draft", "classification": "idea", "title": "x"},
+            )
         )
         assert "'ticket.create' permission is off for the viewer role" in msg
 

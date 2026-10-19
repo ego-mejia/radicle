@@ -71,6 +71,13 @@ export const TICKET: Ticket = {
   deleted: false,
   moved_from: null,
   security_level: null,
+  origin: null,
+  classification: null,
+  impact: null,
+  effort: null,
+  converted_at: null,
+  submitter_name: null,
+  submitter_email: null,
   warnings: [],
 };
 

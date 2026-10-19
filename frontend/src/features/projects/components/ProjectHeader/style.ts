@@ -57,3 +57,14 @@ export const Tab = styled.a`
 export const Spacer = styled.div`
   flex: 1;
 `;
+
+export const Count = styled.span`
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: ${({ theme }) => theme.radius.full};
+  background: ${({ theme }) => theme.color.accentFill};
+  color: ${({ theme }) => theme.color.onAccent};
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  font-weight: 700;
+  text-align: center;
+`;

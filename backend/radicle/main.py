@@ -16,6 +16,7 @@ from radicle.api import (
     discussion,
     fields,
     groups,
+    inbox,
     jobs,
     me,
     planning,
@@ -88,6 +89,7 @@ def create_app() -> FastAPI:
         dashboards,
         groups,
         security,
+        inbox,
     ):
         api.include_router(module.router)
     app.include_router(api)

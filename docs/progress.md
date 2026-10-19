@@ -477,7 +477,7 @@ Los criterios de aceptación de la etapa se verifican así:
 | --- | --- | --- |
 | 4.1 | Grupos y permisos por rol | Listo |
 | 4.2 | Tickets restringidos | Listo |
-| 4.3 | Buzón interno | Pendiente |
+| 4.3 | Buzón interno | Listo |
 | 4.4 | Formulario público | Pendiente |
 | 4.5 | SSO | Pendiente |
 | 4.6 | Audit log | Pendiente |
@@ -508,4 +508,17 @@ Los criterios de aceptación de la etapa se verifican así:
 **Cómo verificarlo**
 
 - `tests/integration/test_restricted.py`: recorre todas las rutas GET y las tools de lectura del MCP como un miembro fuera del nivel y falla si aparece el ticket; 404 por key, alias, comentario, adjunto y worklog; grants por grupo, admins y participantes; `next_ticket`, bulk y permiso `ticket.set_security`.
+
+### 4.3 Buzón interno
+
+**Qué se hizo**
+
+- Migración `0019` con origen, clasificación, impacto, esfuerzo y conversión. Decisión: [0025](decisions/0025-buzon.md).
+- `GET /projects/{key}/inbox` con pestañas, filtros y orden; `POST /tickets/{key}/inbox/approve`, `/discard` y `/duplicate`; RQL `origin`, `classification`, `impact`, `effort` y `converted`.
+- MCP: `list_inbox`, `score_inbox_item`, `approve_inbox_item`, `discard_inbox_item`, `mark_inbox_duplicate`; `create_ticket` acepta `classification`.
+- UI: pestaña Buzón con contador de nuevos, tabla con calificación en línea, matriz impacto por esfuerzo con drag, diálogos de aprobar, descartar y duplicado; en el ticket, datos del Buzón y badge "Vino del Buzón".
+
+**Cómo verificarlo**
+
+- `tests/integration/test_inbox.py`: clasificación obligatoria y origen por canal, pestañas, orden por puntaje y RQL, permiso `inbox.triage`, aprobar y convertir atómico conservando votos, comentarios y origen, descartar y duplicado con traspaso de votos sin repetir, y las tools del MCP.
 

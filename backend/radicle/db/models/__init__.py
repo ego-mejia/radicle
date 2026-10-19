@@ -44,8 +44,10 @@ from radicle.db.models.sprints import Sprint, SprintCommitment, SprintState, Spr
 from radicle.db.models.templates import SyncStatus, Template, TemplateSyncRun
 from radicle.db.models.tickets import (
     PRIORITY_ORDER,
+    Classification,
     EventType,
     Mention,
+    Origin,
     Priority,
     RemainingMode,
     Ticket,
@@ -68,6 +70,7 @@ __all__ = [
     "Board",
     "BoardKind",
     "BoardQuickFilter",
+    "Classification",
     "Comment",
     "CommentReaction",
     "CustomFieldDefinition",
@@ -85,6 +88,7 @@ __all__ = [
     "Mention",
     "Milestone",
     "MilestoneStatus",
+    "Origin",
     "Priority",
     "Project",
     "ProjectGroupRole",

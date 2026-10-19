@@ -20,7 +20,9 @@ async def test_acceptance_three_types_with_all_fields(client: AsyncClient, board
     }
     task = await new_ticket(client, m, type="task", title="API de pagos", area="backend", **full)
     bug = await new_ticket(client, m, type="bug", title="Falla login", area="Frontend", **full)
-    draft = await new_ticket(client, m, type="draft", title="Idea", area=None)
+    draft = await new_ticket(
+        client, m, type="draft", classification="idea", title="Idea", area=None
+    )
     assert [task["key"], bug["key"], draft["key"]] == ["PA-1", "PA-2", "PA-3"]
 
     assert task["status"] == {"name": "To Do", "category": "todo"}
@@ -72,13 +74,37 @@ async def test_create_validation_errors(client: AsyncClient, board: Team) -> Non
     cases = [
         ({"type": "task", "title": "x"}, "area", "Area is required"),
         ({"type": "task", "title": "x", "area": "Nope"}, "area", "Valid areas: Legal"),
-        ({"type": "draft", "title": "x", "milestone": "V9"}, "milestone", "Open milestones: V1"),
-        ({"type": "draft", "title": "x", "assignee": "vera"}, "assignee", "only active members"),
-        ({"type": "draft", "title": "x", "assignee": "ghost"}, "assignee", "does not exist"),
-        ({"type": "draft", "title": "x", "parent": "PA-99"}, "parent", "must be a ticket in PA"),
-        ({"type": "draft", "title": "a\nb"}, "title", "line breaks"),
-        ({"type": "draft", "title": "x", "tags": ["no spaces"]}, "tags", "Invalid tag"),
-        ({"type": "draft", "title": "x", "estimate_hours": 10000}, "estimate_hours", "between"),
+        (
+            {"type": "draft", "classification": "idea", "title": "x", "milestone": "V9"},
+            "milestone",
+            "Open milestones: V1",
+        ),
+        (
+            {"type": "draft", "classification": "idea", "title": "x", "assignee": "vera"},
+            "assignee",
+            "only active members",
+        ),
+        (
+            {"type": "draft", "classification": "idea", "title": "x", "assignee": "ghost"},
+            "assignee",
+            "does not exist",
+        ),
+        (
+            {"type": "draft", "classification": "idea", "title": "x", "parent": "PA-99"},
+            "parent",
+            "must be a ticket in PA",
+        ),
+        ({"type": "draft", "classification": "idea", "title": "a\nb"}, "title", "line breaks"),
+        (
+            {"type": "draft", "classification": "idea", "title": "x", "tags": ["no spaces"]},
+            "tags",
+            "Invalid tag",
+        ),
+        (
+            {"type": "draft", "classification": "idea", "title": "x", "estimate_hours": 10000},
+            "estimate_hours",
+            "between",
+        ),
     ]
     for body, field, message in cases:
         r = await client.post(f"{API}/projects/PA/tickets", headers=h, json=body)
@@ -106,7 +132,7 @@ async def test_closed_milestone_and_archived_area_rejected(
     r = await client.post(
         f"{API}/projects/PA/tickets",
         headers=board.member.headers,
-        json={"type": "draft", "title": "x", "milestone": "V1"},
+        json={"type": "draft", "classification": "idea", "title": "x", "milestone": "V1"},
     )
     assert "is closed" in r.json()["detail"]
 

@@ -17,7 +17,13 @@ import { ApiError } from '../../../../services/api/client';
 import { projectKeys } from '../../../../services/api/projects';
 import { fetchSchema, screenKeys } from '../../../../services/api/screens';
 import { createTicket, ticketKeys } from '../../../../services/api/tickets';
-import { TICKET_TYPES, type TicketCreate, type TicketType } from '../../../../services/api/types';
+import {
+  CLASSIFICATIONS,
+  type Classification,
+  TICKET_TYPES,
+  type TicketCreate,
+  type TicketType,
+} from '../../../../services/api/types';
 import { useProject } from '../../../projects/hooks/useProject';
 import { SchemaFields } from '../SchemaFields';
 import * as S from './style';
@@ -47,6 +53,7 @@ export function CreateTicketModal({ defaults, onClose }: Props) {
   );
   const { data: project } = useProject(projectKey);
   const [type, setType] = useState<TicketType>('task');
+  const [classification, setClassification] = useState<Classification>('idea');
   const [values, setValues] = useState<Values>(() => initial(defaults));
   const [another, setAnother] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -68,6 +75,7 @@ export function CreateTicketModal({ defaults, onClose }: Props) {
         type,
         title: String(values.title ?? ''),
         custom_fields: custom,
+        classification: type === 'draft' ? classification : null,
       } as TicketCreate);
     },
     onSuccess: async (ticket) => {
@@ -176,6 +184,20 @@ export function CreateTicketModal({ defaults, onClose }: Props) {
             </S.Types>
           </Field>
         </S.Row>
+        {type === 'draft' && (
+          <Field label={`${t('inbox.classification')} *`} error={errors.classification}>
+            <Select
+              value={classification}
+              onChange={(e) => setClassification(e.target.value as Classification)}
+            >
+              {CLASSIFICATIONS.map((c) => (
+                <option key={c} value={c}>
+                  {t(`inbox.classifications.${c}`)}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        )}
         <Field label={`${t('ticket.fields.title')} *`} error={errors.title}>
           <Input
             value={String(values.title ?? '')}

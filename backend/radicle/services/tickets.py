@@ -13,9 +13,11 @@ from radicle.core.errors import Conflict, NotFound, ValidationFailed
 from radicle.core.permissions import can_see, visible_tickets_clause
 from radicle.db.models import (
     Area,
+    Classification,
     EventType,
     Mention,
     Milestone,
+    Origin,
     Priority,
     Project,
     ProjectRole,
@@ -48,6 +50,9 @@ UPDATABLE = (
     "custom_fields",
     "remaining_hours",
     "remaining_mode",
+    "classification",
+    "impact",
+    "effort",
 )
 
 
@@ -79,6 +84,41 @@ class NewTicket:
     estimate_hours: float | Decimal | None = None
     tags: list[str] = field(default_factory=list)
     custom_fields: dict[str, Any] = field(default_factory=dict)
+    classification: Classification | None = None
+    # Set by the public form; tickets created by members come from the team.
+    origin: Origin = Origin.team
+    submitter_name: str | None = None
+    submitter_email: str | None = None
+
+
+def _check_inbox_fields(data: NewTicket) -> None:
+    if data.type is not TicketType.draft:
+        if data.classification is not None:
+            raise ValidationFailed(
+                "Only drafts take a classification; it stays when a draft becomes a task or bug.",
+                errors=[{"field": "classification", "message": "drafts only"}],
+            )
+        return
+    if data.classification is None:
+        raise ValidationFailed(
+            "A draft needs a classification: idea, experiment, complaint or suggestion.",
+            errors=[{"field": "classification", "message": "required"}],
+        )
+    if data.classification is Classification.experiment and data.origin is not Origin.team:
+        raise ValidationFailed(
+            "Only the team can file experiments.",
+            errors=[{"field": "classification", "message": "team only"}],
+        )
+
+
+def check_score(name: str, value: Any) -> int | None:
+    if value is None:
+        return None
+    if not isinstance(value, int) or isinstance(value, bool) or not 1 <= value <= 5:
+        raise ValidationFailed(
+            f"{name.capitalize()} goes from 1 to 5.", errors=[{"field": name, "message": "1-5"}]
+        )
+    return value
 
 
 def bump(ticket: Ticket) -> None:
@@ -161,6 +201,7 @@ def _ticket_not_found(key: str) -> NotFound:
 
 async def create_ticket(db: AsyncSession, access: ProjectAccess, data: NewTicket) -> Ticket:
     project = access.project
+    _check_inbox_fields(data)
     title = fields.normalize_title(data.title)
     description = fields.check_description(data.description_md)
     area = await fields.resolve_area(db, project, data.area) if data.area else None
@@ -218,6 +259,10 @@ async def create_ticket(db: AsyncSession, access: ProjectAccess, data: NewTicket
         rank=rank.after(last_rank),
         time_spent_minutes=0,
         remaining_mode=RemainingMode.auto,
+        origin=data.origin if data.type is TicketType.draft else None,
+        classification=data.classification,
+        submitter_name=data.submitter_name,
+        submitter_email=data.submitter_email,
     )
     estimate_changed(ticket)
     db.add(ticket)
@@ -367,6 +412,34 @@ async def update_ticket(
             diffs.append(("remaining_mode", ticket.remaining_mode.value, "auto"))
         ticket.remaining_mode = RemainingMode.auto
         estimate_changed(ticket)
+    if "classification" in changes:
+        value = changes["classification"]
+        new_class = Classification(value) if value else None
+        if new_class is None and ticket.type is TicketType.draft:
+            raise ValidationFailed(
+                "A draft needs a classification.",
+                errors=[{"field": "classification", "message": "required"}],
+            )
+        if new_class is not None and ticket.origin is None and ticket.converted_at is None:
+            raise ValidationFailed(
+                "Only drafts take a classification.",
+                errors=[{"field": "classification", "message": "drafts only"}],
+            )
+        if new_class != ticket.classification:
+            diffs.append(
+                (
+                    "classification",
+                    ticket.classification.value if ticket.classification else None,
+                    new_class.value if new_class else None,
+                )
+            )
+            ticket.classification = new_class
+    for score in ("impact", "effort"):
+        if score in changes:
+            new_score = check_score(score, changes[score])
+            if new_score != getattr(ticket, score):
+                diffs.append((score, getattr(ticket, score), new_score))
+                setattr(ticket, score, new_score)
     if "tags" in changes:
         new_tags = fields.normalize_tags(changes["tags"] or [])
         if new_tags != list(ticket.tags):

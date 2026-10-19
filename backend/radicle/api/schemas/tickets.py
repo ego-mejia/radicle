@@ -5,6 +5,8 @@ from pydantic import Field
 
 from radicle.api.schemas.common import Input, Output, UtcDatetime
 from radicle.db.models import (
+    Classification,
+    Origin,
     Priority,
     RemainingMode,
     Resolution,
@@ -120,6 +122,15 @@ class TicketOut(Output):
     security_level: str | None = Field(
         default=None, description="Who may see it is limited by this level"
     )
+    origin: Origin | None = Field(default=None, description="Inbox: team or user (public form)")
+    classification: Classification | None = None
+    impact: int | None = None
+    effort: int | None = None
+    converted_at: UtcDatetime | None = Field(
+        default=None, description="When it came out of the inbox as a task or bug"
+    )
+    submitter_name: str | None = None
+    submitter_email: str | None = None
     warnings: list[WarningOut] = Field(default_factory=list)
 
 
@@ -139,6 +150,9 @@ class TicketCreate(Input):
     tags: list[str] = Field(default_factory=list)
     custom_fields: dict[str, Any] = Field(
         default_factory=dict, description='By field key, e.g. {"environment": "prod"}'
+    )
+    classification: Classification | None = Field(
+        default=None, description="Drafts only, required: idea, experiment, complaint, suggestion"
     )
 
 
@@ -170,6 +184,11 @@ class TicketPatch(Input):
         description="Security level name; null makes the ticket public to the project. "
         "Needs ticket.set_security",
     )
+    classification: Classification | None = Field(
+        default=None, description="Inbox: needs inbox.triage"
+    )
+    impact: int | None = Field(default=None, description="Inbox, 1 to 5: needs inbox.triage")
+    effort: int | None = Field(default=None, description="Inbox, 1 to 5: needs inbox.triage")
     expected_version: int | None = Field(
         default=None, description="Required unless sent as the If-Match header"
     )
@@ -213,6 +232,12 @@ class TicketSummary(Output):
     checklist_total: int
     rank: str
     updated_at: UtcDatetime
+    created_at: UtcDatetime | None = None
+    origin: Origin | None = None
+    classification: Classification | None = None
+    impact: int | None = None
+    effort: int | None = None
+    converted: bool = False
 
 
 class RuleFailureOut(Output):

@@ -82,8 +82,14 @@ async def patch_ticket(
     access, ticket = await tickets.load_ticket(db, principal.user, key, write=True)
     changes: dict[str, Any] = body.model_dump(exclude_unset=True, exclude={"expected_version"})
     level = changes.pop("security_level", ...)
-    if changes or level is ...:
+    triage: dict[str, Any] = {
+        k: changes.pop(k) for k in ("classification", "impact", "effort") if k in changes
+    }
+    if triage:
+        access.require("inbox.triage")
+    if changes or (level is ... and not triage):
         access.require("ticket.edit")
+    changes.update(triage)
     try:
         await tickets.update_ticket(db, access, ticket, changes, expected_version=expected)
         if level is not ...:

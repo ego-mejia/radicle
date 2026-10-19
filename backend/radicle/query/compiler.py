@@ -189,6 +189,9 @@ class _Compiler:
             flag = text.lower()
             if flag not in ("true", "false"):
                 raise RQLError(f"'{f.name}' takes true or false (at {v.pos}).", position=v.pos)
+            if f.name == "converted":
+                converted = Ticket.converted_at.is_not(None)
+                return converted if flag == "true" else not_(converted)
             return _blocked() if flag == "true" else not_(_blocked())
         return self.ordered(f, "=", v)
 
@@ -443,6 +446,10 @@ def _column(f: Field) -> Any:
         "remaining": Ticket.remaining_hours,
         "spent": Ticket.time_spent_minutes.cast(Numeric) / literal(60),
         "votes": Ticket.vote_count,
+        "origin": Ticket.origin,
+        "classification": Ticket.classification,
+        "impact": Ticket.impact,
+        "effort": Ticket.effort,
     }
     return columns[f.name]
 

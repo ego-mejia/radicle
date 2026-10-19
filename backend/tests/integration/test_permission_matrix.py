@@ -77,7 +77,7 @@ ACTIONS: dict[str, Action] = {
     "ticket.create": lambda c, w: c.post(
         f"{API}/projects/PA/tickets",
         headers=w.actor.headers,
-        json={"type": "draft", "title": "Nuevo"},
+        json={"type": "draft", "classification": "idea", "title": "Nuevo"},
     ),
     "ticket.edit": _edit,
     "ticket.transition": lambda c, w: c.post(
@@ -252,7 +252,7 @@ async def test_effective_role_is_the_highest(client: AsyncClient, board: Team) -
     r = await client.post(
         f"{API}/projects/PA/tickets",
         headers=board.viewer.headers,
-        json={"type": "draft", "title": "No"},
+        json={"type": "draft", "classification": "idea", "title": "No"},
     )
     assert r.status_code == 403
 
@@ -315,7 +315,11 @@ async def test_groups_and_matrix_admin_only(client: AsyncClient, board: Team) ->
 
 
 MCP_CASES = [
-    ("ticket.create", "create_ticket", {"project": "PA", "type": "draft", "title": "x"}),
+    (
+        "ticket.create",
+        "create_ticket",
+        {"project": "PA", "type": "draft", "classification": "idea", "title": "x"},
+    ),
     ("ticket.edit", "update_ticket", {"key": "PA-1", "changes": {"title": "Nuevo"}}),
     ("ticket.transition", "transition_ticket", {"key": "PA-1", "to_status": "In Progress"}),
     ("comment.create", "add_comment", {"key": "PA-1", "body": "hola"}),

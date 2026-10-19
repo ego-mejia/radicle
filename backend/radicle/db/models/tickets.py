@@ -13,6 +13,7 @@ from sqlalchemy import (
     Index,
     Integer,
     Numeric,
+    SmallInteger,
     Text,
     UniqueConstraint,
     func,
@@ -37,6 +38,18 @@ class RemainingMode(enum.StrEnum):
     manual = "manual"
 
 
+class Origin(enum.StrEnum):
+    team = "team"
+    user = "user"
+
+
+class Classification(enum.StrEnum):
+    idea = "idea"
+    experiment = "experiment"
+    complaint = "complaint"
+    suggestion = "suggestion"
+
+
 class Priority(enum.StrEnum):
     highest = "highest"
     high = "high"
@@ -55,6 +68,8 @@ PRIORITY_ORDER = {
 
 priority_enum = _enum(Priority, "priority")
 remaining_mode_enum = _enum(RemainingMode, "remaining_mode")
+_origin_enum = _enum(Origin, "ticket_origin")
+_classification_enum = _enum(Classification, "classification")
 
 # Title weighs more than description; both languages so stemming works in en and es.
 SEARCH_VECTOR_SQL = (
@@ -113,6 +128,18 @@ class Ticket(Base):
     security_level_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("security_levels.id", ondelete="RESTRICT"), index=True
     )
+    # Inbox: Drafts carry where they came from and how they were scored; conversion
+    # to Task or Bug keeps them.
+    origin: Mapped[Origin | None] = mapped_column(_origin_enum)
+    classification: Mapped[Classification | None] = mapped_column(_classification_enum)
+    impact: Mapped[int | None] = mapped_column(SmallInteger)
+    effort: Mapped[int | None] = mapped_column(SmallInteger)
+    converted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    submitter_name: Mapped[str | None] = mapped_column(Text)
+    submitter_email: Mapped[str | None] = mapped_column(CITEXT)
+    tracking_code: Mapped[str | None] = mapped_column(Text, unique=True)
+    # Shown to the submitter on the tracking page when the item is discarded.
+    public_comment: Mapped[str | None] = mapped_column(Text)
     remaining_mode: Mapped[RemainingMode] = mapped_column(
         remaining_mode_enum, default=RemainingMode.auto, server_default="auto"
     )
@@ -203,6 +230,7 @@ class EventType(enum.StrEnum):
     cloned_from = "cloned_from"
     moved = "moved"
     rank_changed = "rank_changed"
+    converted = "converted"
     sprint_added = "sprint_added"
     sprint_removed = "sprint_removed"
 
