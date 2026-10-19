@@ -28,7 +28,10 @@ def _ts(name: str, nullable: bool = False) -> sa.Column:
 
 def _ticket_fk(name: str) -> sa.Column:
     return sa.Column(
-        name, sa.Uuid(), sa.ForeignKey("tickets.id", ondelete="CASCADE"), nullable=False,
+        name,
+        sa.Uuid(),
+        sa.ForeignKey("tickets.id", ondelete="CASCADE"),
+        nullable=False,
         index=True,
     )
 
@@ -63,16 +66,25 @@ def upgrade() -> None:
 
     op.create_table(
         "comment_reactions",
-        sa.Column("comment_id", sa.Uuid(), sa.ForeignKey("comments.id", ondelete="CASCADE"),
-                  primary_key=True),
-        sa.Column("user_id", sa.Uuid(), sa.ForeignKey("users.id", ondelete="CASCADE"),
-                  primary_key=True),
+        sa.Column(
+            "comment_id",
+            sa.Uuid(),
+            sa.ForeignKey("comments.id", ondelete="CASCADE"),
+            primary_key=True,
+        ),
+        sa.Column(
+            "user_id", sa.Uuid(), sa.ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+        ),
         sa.Column("emoji", sa.Text(), primary_key=True),
         _ts("created_at"),
     )
 
     op.create_foreign_key(
-        "mentions_comment_id_fkey", "mentions", "comments", ["comment_id"], ["id"],
+        "mentions_comment_id_fkey",
+        "mentions",
+        "comments",
+        ["comment_id"],
+        ["id"],
         ondelete="CASCADE",
     )
 

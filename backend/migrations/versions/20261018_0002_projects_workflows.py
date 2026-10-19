@@ -113,8 +113,9 @@ def upgrade() -> None:
         _ts("created_at"),
         sa.CheckConstraint("color IS NULL OR color ~ '^#[0-9A-Fa-f]{6}$'", name="ck_areas_color"),
     )
-    op.create_index("uq_areas_project_name", "areas", ["project_id", sa.text("lower(name)")],
-                    unique=True)
+    op.create_index(
+        "uq_areas_project_name", "areas", ["project_id", sa.text("lower(name)")], unique=True
+    )
 
     op.create_table(
         "milestones",
@@ -128,8 +129,12 @@ def upgrade() -> None:
         sa.Column("position", sa.Integer(), nullable=False),
         _ts("created_at"),
     )
-    op.create_index("uq_milestones_project_name", "milestones",
-                    ["project_id", sa.text("lower(name)")], unique=True)
+    op.create_index(
+        "uq_milestones_project_name",
+        "milestones",
+        ["project_id", sa.text("lower(name)")],
+        unique=True,
+    )
 
     op.create_table(
         "statuses",
@@ -142,10 +147,19 @@ def upgrade() -> None:
         sa.Column("is_initial", sa.Boolean(), nullable=False, server_default="false"),
         _ts("created_at"),
     )
-    op.create_index("uq_statuses_project_type_name", "statuses",
-                    ["project_id", "ticket_type", sa.text("lower(name)")], unique=True)
-    op.create_index("uq_statuses_initial", "statuses", ["project_id", "ticket_type"],
-                    unique=True, postgresql_where=sa.text("is_initial"))
+    op.create_index(
+        "uq_statuses_project_type_name",
+        "statuses",
+        ["project_id", "ticket_type", sa.text("lower(name)")],
+        unique=True,
+    )
+    op.create_index(
+        "uq_statuses_initial",
+        "statuses",
+        ["project_id", "ticket_type"],
+        unique=True,
+        postgresql_where=sa.text("is_initial"),
+    )
 
     op.create_table(
         "transitions",
@@ -153,10 +167,18 @@ def upgrade() -> None:
         _project_fk(),
         sa.Column("ticket_type", _enum("ticket_type"), nullable=False),
         sa.Column("name", sa.Text(), nullable=False),
-        sa.Column("from_status_id", sa.Uuid(),
-                  sa.ForeignKey("statuses.id", ondelete="CASCADE"), nullable=True),
-        sa.Column("to_status_id", sa.Uuid(),
-                  sa.ForeignKey("statuses.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "from_status_id",
+            sa.Uuid(),
+            sa.ForeignKey("statuses.id", ondelete="CASCADE"),
+            nullable=True,
+        ),
+        sa.Column(
+            "to_status_id",
+            sa.Uuid(),
+            sa.ForeignKey("statuses.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("allowed_resolutions", postgresql.ARRAY(_enum("resolution")), nullable=True),
         sa.Column("position", sa.Integer(), nullable=False),
         _ts("created_at"),

@@ -39,69 +39,110 @@ def upgrade() -> None:
     op.create_table(
         "tickets",
         sa.Column("id", sa.Uuid(), primary_key=True),
-        sa.Column("project_id", sa.Uuid(), sa.ForeignKey("projects.id", ondelete="CASCADE"),
-                  nullable=False),
+        sa.Column(
+            "project_id",
+            sa.Uuid(),
+            sa.ForeignKey("projects.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("number", sa.Integer(), nullable=False),
         sa.Column("type", _enum("ticket_type", "task", "bug", "draft"), nullable=False),
         sa.Column("title", sa.Text(), nullable=False),
         sa.Column("description_md", sa.Text(), nullable=False, server_default=""),
         sa.Column("status_id", sa.Uuid(), sa.ForeignKey("statuses.id"), nullable=False),
-        sa.Column("resolution",
-                  _enum("resolution", "done", "wont_do", "duplicate", "cannot_reproduce"),
-                  nullable=True),
+        sa.Column(
+            "resolution",
+            _enum("resolution", "done", "wont_do", "duplicate", "cannot_reproduce"),
+            nullable=True,
+        ),
         sa.Column("priority", _enum("priority"), nullable=False, server_default="medium"),
         sa.Column("area_id", sa.Uuid(), sa.ForeignKey("areas.id"), nullable=True, index=True),
-        sa.Column("milestone_id", sa.Uuid(), sa.ForeignKey("milestones.id"), nullable=True,
-                  index=True),
-        sa.Column("parent_id", sa.Uuid(), sa.ForeignKey("tickets.id"), nullable=True,
-                  index=True),
-        sa.Column("assignee_id", sa.Uuid(), sa.ForeignKey("users.id"), nullable=True,
-                  index=True),
+        sa.Column(
+            "milestone_id", sa.Uuid(), sa.ForeignKey("milestones.id"), nullable=True, index=True
+        ),
+        sa.Column("parent_id", sa.Uuid(), sa.ForeignKey("tickets.id"), nullable=True, index=True),
+        sa.Column("assignee_id", sa.Uuid(), sa.ForeignKey("users.id"), nullable=True, index=True),
         sa.Column("reporter_id", sa.Uuid(), sa.ForeignKey("users.id"), nullable=False),
         sa.Column("due_date", sa.Date(), nullable=True, index=True),
         sa.Column("estimate_hours", sa.Numeric(7, 2), nullable=True),
         sa.Column("tags", postgresql.ARRAY(sa.Text()), nullable=False, server_default="{}"),
         sa.Column("rank", sa.Text(), nullable=False),
         sa.Column("version", sa.Integer(), nullable=False, server_default="1"),
-        sa.Column("search_vector", postgresql.TSVECTOR(),
-                  sa.Computed(SEARCH_VECTOR_SQL, persisted=True), nullable=True),
+        sa.Column(
+            "search_vector",
+            postgresql.TSVECTOR(),
+            sa.Computed(SEARCH_VECTOR_SQL, persisted=True),
+            nullable=True,
+        ),
         _ts("created_at"),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False,
-                  server_default=sa.func.now(), index=True),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            nullable=False,
+            server_default=sa.func.now(),
+            index=True,
+        ),
         _ts("resolved_at", nullable=True),
         _ts("deleted_at", nullable=True),
         sa.UniqueConstraint("project_id", "number", name="uq_tickets_project_number"),
         sa.CheckConstraint("char_length(title) BETWEEN 1 AND 255", name="ck_tickets_title"),
-        sa.CheckConstraint("estimate_hours IS NULL OR estimate_hours BETWEEN 0 AND 9999",
-                           name="ck_tickets_estimate"),
+        sa.CheckConstraint(
+            "estimate_hours IS NULL OR estimate_hours BETWEEN 0 AND 9999",
+            name="ck_tickets_estimate",
+        ),
         sa.CheckConstraint("cardinality(tags) <= 20", name="ck_tickets_tags"),
         sa.CheckConstraint("parent_id IS NULL OR parent_id <> id", name="ck_tickets_parent"),
     )
     op.create_index("ix_tickets_tags", "tickets", ["tags"], postgresql_using="gin")
-    op.create_index("ix_tickets_search_vector", "tickets", ["search_vector"],
-                    postgresql_using="gin")
-    op.create_index("ix_tickets_title_trgm", "tickets", ["title"], postgresql_using="gin",
-                    postgresql_ops={"title": "gin_trgm_ops"})
+    op.create_index(
+        "ix_tickets_search_vector", "tickets", ["search_vector"], postgresql_using="gin"
+    )
+    op.create_index(
+        "ix_tickets_title_trgm",
+        "tickets",
+        ["title"],
+        postgresql_using="gin",
+        postgresql_ops={"title": "gin_trgm_ops"},
+    )
     op.create_index("ix_tickets_project_status", "tickets", ["project_id", "status_id"])
     op.create_index("ix_tickets_project_rank", "tickets", ["project_id", "rank"])
 
     op.create_table(
         "ticket_collaborators",
-        sa.Column("ticket_id", sa.Uuid(), sa.ForeignKey("tickets.id", ondelete="CASCADE"),
-                  primary_key=True),
-        sa.Column("user_id", sa.Uuid(), sa.ForeignKey("users.id", ondelete="CASCADE"),
-                  primary_key=True, index=True),
+        sa.Column(
+            "ticket_id",
+            sa.Uuid(),
+            sa.ForeignKey("tickets.id", ondelete="CASCADE"),
+            primary_key=True,
+        ),
+        sa.Column(
+            "user_id",
+            sa.Uuid(),
+            sa.ForeignKey("users.id", ondelete="CASCADE"),
+            primary_key=True,
+            index=True,
+        ),
         _ts("created_at"),
     )
 
     op.create_table(
         "mentions",
         sa.Column("id", sa.Uuid(), primary_key=True),
-        sa.Column("ticket_id", sa.Uuid(), sa.ForeignKey("tickets.id", ondelete="CASCADE"),
-                  nullable=False, index=True),
+        sa.Column(
+            "ticket_id",
+            sa.Uuid(),
+            sa.ForeignKey("tickets.id", ondelete="CASCADE"),
+            nullable=False,
+            index=True,
+        ),
         sa.Column("comment_id", sa.Uuid(), nullable=True, index=True),
-        sa.Column("mentioned_user_id", sa.Uuid(),
-                  sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column(
+            "mentioned_user_id",
+            sa.Uuid(),
+            sa.ForeignKey("users.id", ondelete="CASCADE"),
+            nullable=False,
+            index=True,
+        ),
         _ts("created_at"),
     )
 
