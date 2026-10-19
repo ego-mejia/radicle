@@ -2406,6 +2406,29 @@
         "title": "FormSchemaOut",
         "type": "object"
       },
+      "GrantsPut": {
+        "additionalProperties": false,
+        "properties": {
+          "groups": {
+            "description": "Group names",
+            "items": {
+              "type": "string"
+            },
+            "title": "Groups",
+            "type": "array"
+          },
+          "users": {
+            "description": "Handles",
+            "items": {
+              "type": "string"
+            },
+            "title": "Users",
+            "type": "array"
+          }
+        },
+        "title": "GrantsPut",
+        "type": "object"
+      },
       "GroupCreate": {
         "additionalProperties": false,
         "properties": {
@@ -3819,6 +3842,34 @@
         "title": "Page[ScreenOut]",
         "type": "object"
       },
+      "Page_SecurityLevelOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SecurityLevelOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[SecurityLevelOut]",
+        "type": "object"
+      },
       "Page_SprintOut_": {
         "properties": {
           "items": {
@@ -5224,6 +5275,120 @@
           "position"
         ],
         "title": "SearchWarningOut",
+        "type": "object"
+      },
+      "SecurityLevelCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "default": "",
+            "title": "Description",
+            "type": "string"
+          },
+          "include_participants": {
+            "default": true,
+            "title": "Include Participants",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "SecurityLevelCreate",
+        "type": "object"
+      },
+      "SecurityLevelOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "groups": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Groups",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "include_participants": {
+            "description": "Reporter, assignee and collaborators always see their tickets",
+            "title": "Include Participants",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "ticket_count": {
+            "title": "Ticket Count",
+            "type": "integer"
+          },
+          "users": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Users",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "include_participants",
+          "groups",
+          "users",
+          "ticket_count"
+        ],
+        "title": "SecurityLevelOut",
+        "type": "object"
+      },
+      "SecurityLevelPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "include_participants": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Include Participants"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "title": "SecurityLevelPatch",
         "type": "object"
       },
       "SettingsConf": {
@@ -6791,6 +6956,18 @@
             ],
             "title": "Resolved At"
           },
+          "security_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Who may see it is limited by this level",
+            "title": "Security Level"
+          },
           "spent_hours": {
             "title": "Spent Hours",
             "type": "number"
@@ -6887,6 +7064,7 @@
           "resolved_at",
           "deleted",
           "moved_from",
+          "security_level",
           "warnings"
         ],
         "title": "TicketOut",
@@ -7034,6 +7212,18 @@
             "description": "Send auto to go back to estimate minus spent",
             "title": "Remaining Mode"
           },
+          "security_level": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Security level name; null makes the ticket public to the project. Needs ticket.set_security",
+            "title": "Security Level"
+          },
           "start_date": {
             "anyOf": [
               {
@@ -7076,27 +7266,62 @@
         "type": "object"
       },
       "TicketRef": {
+        "description": "Null key, title, type and status with `restricted`: a ticket you may not see.",
         "properties": {
           "key": {
-            "title": "Key",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key"
+          },
+          "restricted": {
+            "default": false,
+            "title": "Restricted",
+            "type": "boolean"
           },
           "status": {
-            "$ref": "#/components/schemas/StatusRef"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StatusRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "title": {
-            "title": "Title",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
           },
           "type": {
-            "$ref": "#/components/schemas/TicketType"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TicketType"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
           "key",
           "title",
           "type",
-          "status"
+          "status",
+          "restricted"
         ],
         "title": "TicketRef",
         "type": "object"
@@ -12889,6 +13114,99 @@
         ]
       }
     },
+    "/api/v1/projects/{key}/security-levels": {
+      "get": {
+        "operationId": "list_levels_api_v1_projects__key__security_levels_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_SecurityLevelOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Levels",
+        "tags": [
+          "security levels"
+        ]
+      },
+      "post": {
+        "description": "A restricted audience for tickets, e.g. \"Legal confidencial\". Grant it with PUT\n/security-levels/{id}/grants.",
+        "operationId": "create_level_api_v1_projects__key__security_levels_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SecurityLevelCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityLevelOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Level",
+        "tags": [
+          "security levels"
+        ]
+      }
+    },
     "/api/v1/projects/{key}/settings": {
       "put": {
         "description": "Blocked policy: warn lets blocked tickets move with a warning, enforce stops them.",
@@ -13718,6 +14036,148 @@
         "summary": "Search Fields",
         "tags": [
           "search"
+        ]
+      }
+    },
+    "/api/v1/security-levels/{level_id}": {
+      "delete": {
+        "description": "Only levels no ticket uses.",
+        "operationId": "delete_level_api_v1_security_levels__level_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "level_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Level Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Level",
+        "tags": [
+          "security levels"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_level_api_v1_security_levels__level_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "level_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Level Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SecurityLevelPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityLevelOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Level",
+        "tags": [
+          "security levels"
+        ]
+      }
+    },
+    "/api/v1/security-levels/{level_id}/grants": {
+      "put": {
+        "description": "Replace who may see the level's tickets (groups and users).",
+        "operationId": "put_grants_api_v1_security_levels__level_id__grants_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "level_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Level Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantsPut"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityLevelOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Grants",
+        "tags": [
+          "security levels"
         ]
       }
     },

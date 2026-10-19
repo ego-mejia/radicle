@@ -9,6 +9,7 @@ from sqlalchemy import ColumnElement, Select, and_, false, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from radicle.core.permissions import visible_tickets_clause
 from radicle.db.models import (
     PRIORITY_ORDER,
     Area,
@@ -463,16 +464,19 @@ async def board_data(
         column.next_cursor = str(offset + PAGE) if len(rows) > PAGE else None
     if only_column is not None:
         columns = [c for c in columns if c.index == only_column]
-    lanes = await _lanes(db, swimlane or board.swimlane_by, [t for c in columns for t in c.tickets])
+    lanes = await _lanes(
+        db, swimlane or board.swimlane_by, [t for c in columns for t in c.tickets], user
+    )
     unmapped = [s for s in statuses if s.id not in mapped]
     return BoardData(board, columns, unmapped, lanes)
 
 
 NO_LANE = ("", "")
+RESTRICTED_LABEL = "Restricted ticket"
 
 
 async def _lanes(
-    db: AsyncSession, by: Swimlane, items: list[Ticket]
+    db: AsyncSession, by: Swimlane, items: list[Ticket], user: User
 ) -> dict[uuid.UUID, tuple[str, str]]:
     if by is Swimlane.none or not items:
         return {}
@@ -498,9 +502,11 @@ async def _lanes(
         rows = await db.execute(
             select(Ticket.id, Project.key, Ticket.number, Ticket.title)
             .join(Project, Project.id == Ticket.project_id)
-            .where(Ticket.id.in_(ids))
+            .where(Ticket.id.in_(ids), visible_tickets_clause(user))
         )
         labels = {tid: f"{key}-{number} {title}" for tid, key, number, title in rows.all()}
+        # Parents the user may not see get a lane without key or title.
+        labels.update({tid: RESTRICTED_LABEL for tid in ids if tid not in labels})
     result = {}
     for t in items:
         value = getattr(t, f"{by.value}_id")

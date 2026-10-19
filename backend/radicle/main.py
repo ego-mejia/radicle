@@ -23,6 +23,7 @@ from radicle.api import (
     reports,
     screens,
     search,
+    security,
     sprints,
     system,
     templates,
@@ -86,6 +87,7 @@ def create_app() -> FastAPI:
         reports,
         dashboards,
         groups,
+        security,
     ):
         api.include_router(module.router)
     app.include_router(api)

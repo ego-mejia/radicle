@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.config import get_settings
 from radicle.core.errors import Conflict, NotFound, ProblemError, ValidationFailed
+from radicle.core.permissions import can_see
 from radicle.db.models import (
     Attachment,
     Comment,
@@ -174,6 +175,8 @@ async def load(
         access = await access_for(db, user, project, need=need, write=write, permission=permission)
     except NotFound:
         raise not_found from None
+    if not await can_see(db, user, ticket):
+        raise not_found
     return AttachmentAccess(access, ticket, attachment)
 
 

@@ -53,7 +53,7 @@ async def milestone_progress(
     Only tickets the user can see count. With no throughput there is no forecast."""
     rows = (
         await db.execute(
-            search.base_query(user)
+            search.base_query(user, include_restricted=True)
             .with_only_columns(Ticket, Status.category)
             .where(Ticket.milestone_id == milestone.id)
         )

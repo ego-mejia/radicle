@@ -177,7 +177,9 @@ export function FieldsPanel({ ticket, project, actions, canEdit }: Props) {
         />
       </FieldRow>
       <FieldRow label={t('ticket.fields.parent')}>
-        {ticket.parent ? (
+        {ticket.parent?.restricted || (ticket.parent && !ticket.parent.key) ? (
+          <S.Muted>{t('ticket.restrictedTicket')}</S.Muted>
+        ) : ticket.parent?.key ? (
           <Link to="/t/$key" params={{ key: ticket.parent.key }}>
             <S.ParentLink as="span">{ticket.parent.key}</S.ParentLink> {ticket.parent.title}
           </Link>

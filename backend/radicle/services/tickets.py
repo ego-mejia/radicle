@@ -10,6 +10,7 @@ from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import Conflict, NotFound, ValidationFailed
+from radicle.core.permissions import can_see, visible_tickets_clause
 from radicle.db.models import (
     Area,
     EventType,
@@ -117,6 +118,8 @@ async def load_ticket(
     ticket = await db.scalar(query)
     if ticket is None or (ticket.deleted_at is not None and not include_deleted):
         raise _ticket_not_found(key)
+    if not await can_see(db, user, ticket):
+        raise _ticket_not_found(key)  # restricted: 404, never 403
     access = check_access(
         access.project,
         access.role,
@@ -564,11 +567,16 @@ async def sync_mentions(
         db.add(Mention(ticket_id=ticket_id, comment_id=comment_id, mentioned_user_id=user_id))
 
 
-async def list_children(db: AsyncSession, ticket: Ticket) -> list[Ticket]:
+async def list_children(db: AsyncSession, ticket: Ticket, viewer: User) -> list[Ticket]:
+    """Subtickets the viewer may see (restricted ones are left out)."""
     return list(
         await db.scalars(
             select(Ticket)
-            .where(Ticket.parent_id == ticket.id, Ticket.deleted_at.is_(None))
+            .where(
+                Ticket.parent_id == ticket.id,
+                Ticket.deleted_at.is_(None),
+                visible_tickets_clause(viewer),
+            )
             .order_by(Ticket.rank)
         )
     )

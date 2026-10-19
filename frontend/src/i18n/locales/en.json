@@ -174,7 +174,8 @@
     "moveComment": "Comment (optional)",
     "moveCommentRequired": "Comment (required for this move)",
     "moveTo": "Move to {{status}}",
-    "moreOptions": "More options to move to {{status}}"
+    "moreOptions": "More options to move to {{status}}",
+    "restrictedTicket": "Restricted ticket"
   },
   "create": {
     "title": "Create ticket",
@@ -453,7 +454,8 @@
     "addGroup": "Add group",
     "groupRole": "Group role",
     "viaGroups": "via {{groups}}",
-    "effectiveRole": "Effective role"
+    "effectiveRole": "Effective role",
+    "levels": "Levels"
   },
   "profile": {
     "details": "Details",
@@ -1185,5 +1187,21 @@
     "inbox.triage": "Triage the inbox",
     "project.settings": "Change project settings",
     "members.manage": "Manage members"
+  },
+  "security": {
+    "public": "Visible to the project",
+    "restrictedTo": "Only {{level}} can see it",
+    "visibility": "Visibility: {{level}}",
+    "banner": "Restricted: only \"{{level}}\" can see this ticket.",
+    "levels": "Security levels",
+    "levelsHelp": "A ticket with a level is seen only by its groups and people, the project admins and, if checked, its reporter, assignee and collaborators.",
+    "noLevels": "No security levels yet.",
+    "ticketCount_one": "{{count}} ticket",
+    "ticketCount_other": "{{count}} tickets",
+    "groups": "Groups",
+    "users": "People",
+    "participants": "Participants see it",
+    "delete": "Delete {{name}}",
+    "newLevel": "New level"
   }
 }

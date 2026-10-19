@@ -476,7 +476,7 @@ Los criterios de aceptación de la etapa se verifican así:
 | # | Entregable | Estado |
 | --- | --- | --- |
 | 4.1 | Grupos y permisos por rol | Listo |
-| 4.2 | Tickets restringidos | Pendiente |
+| 4.2 | Tickets restringidos | Listo |
 | 4.3 | Buzón interno | Pendiente |
 | 4.4 | Formulario público | Pendiente |
 | 4.5 | SSO | Pendiente |
@@ -495,4 +495,17 @@ Los criterios de aceptación de la etapa se verifican así:
 **Cómo verificarlo**
 
 - `tests/integration/test_permission_matrix.py`: cada permiso del catálogo para member y viewer, directo con default y por grupo con override (76 casos), más las tools del MCP con el permiso quitado; rol efectivo, acceso solo por grupo y pérdida inmediata al salir del grupo.
+
+### 4.2 Tickets restringidos
+
+**Qué se hizo**
+
+- Migración `0018`: `security_levels`, `security_level_grants` y `tickets.security_level_id`. Decisión: [0024](decisions/0024-tickets-restringidos.md).
+- `visible_tickets_clause(user)` como único filtro de visibilidad en todo el sistema; 404 para lo restringido; links y padre como "Ticket restringido"; historial sin keys ocultas.
+- API de niveles (`/projects/{key}/security-levels`, `/security-levels/{id}`, `/grants`) y `security_level` en el ticket.
+- UI: candado en el ticket (con permiso), banner de restringido, pestaña Niveles en Settings.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_restricted.py`: recorre todas las rutas GET y las tools de lectura del MCP como un miembro fuera del nivel y falla si aparece el ticket; 404 por key, alias, comentario, adjunto y worklog; grants por grupo, admins y participantes; `next_ticket`, bulk y permiso `ticket.set_security`.
 

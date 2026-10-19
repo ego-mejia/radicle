@@ -16,6 +16,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import Forbidden, NotFound, ValidationFailed
+from radicle.core.permissions import can_see
 from radicle.db.models import (
     EventType,
     Project,
@@ -217,6 +218,8 @@ async def load_worklog(db: AsyncSession, user: User, worklog_id: uuid.UUID) -> W
         access = await access_for(db, user, project, write=True)
     except NotFound:
         raise not_found from None
+    if not await can_see(db, user, ticket):
+        raise not_found
     access.require("worklog.create" if worklog.user_id == user.id else "worklog.edit_any")
     return WorklogAccess(access, ticket, worklog)
 

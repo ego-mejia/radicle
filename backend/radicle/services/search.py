@@ -10,15 +10,13 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import Select, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from radicle.core import permissions
 from radicle.core.errors import ValidationFailed
 from radicle.db.models import (
     Area,
     Board,
-    GroupMember,
     Milestone,
     Project,
-    ProjectGroupRole,
-    ProjectMember,
     Sprint,
     Status,
     Ticket,
@@ -49,25 +47,24 @@ class SearchResult:
 
 
 def visible_project_ids(user: User) -> Any:
-    """Projects the user belongs to, directly or through a group."""
-    if user.is_instance_admin:
-        return select(Project.id)
-    direct = select(ProjectMember.project_id).where(ProjectMember.user_id == user.id)
-    via_groups = (
-        select(ProjectGroupRole.project_id)
-        .join(GroupMember, GroupMember.group_id == ProjectGroupRole.group_id)
-        .where(GroupMember.user_id == user.id)
+    return permissions.visible_project_ids(user)
+
+
+def base_query(user: User, *, include_restricted: bool = False) -> Select[Any]:
+    """Tickets the user can see, never soft-deleted ones.
+
+    `include_restricted` keeps tickets of the user's projects that a security level hides
+    from them; only aggregate numbers use it (counts in reports), never lists."""
+    visible = (
+        Ticket.project_id.in_(visible_project_ids(user))
+        if include_restricted
+        else permissions.visible_tickets_clause(user)
     )
-    return direct.union(via_groups)
-
-
-def base_query(user: User) -> Select[Any]:
-    """Tickets the user can see: projects they belong to, never soft-deleted ones."""
     return (
         select(Ticket)
         .join(Project, Project.id == Ticket.project_id)
         .join(Status, Status.id == Ticket.status_id)
-        .where(Ticket.deleted_at.is_(None), Ticket.project_id.in_(visible_project_ids(user)))
+        .where(Ticket.deleted_at.is_(None), visible)
     )
 
 

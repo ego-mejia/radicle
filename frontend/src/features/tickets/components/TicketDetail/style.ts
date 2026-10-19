@@ -36,3 +36,15 @@ export const Activity = styled.section`
   flex-direction: column;
   gap: ${({ theme }) => theme.space.lg};
 `;
+
+export const Restricted = styled.p`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 6px ${({ theme }) => theme.space.md};
+  border: 1px solid ${({ theme }) => theme.color.warning};
+  border-radius: ${({ theme }) => theme.radius.md};
+  color: ${({ theme }) => theme.color.warning};
+  font-size: ${({ theme }) => theme.fontSize.md};
+`;

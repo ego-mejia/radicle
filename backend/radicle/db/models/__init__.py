@@ -1,4 +1,11 @@
-from radicle.db.models.access import Group, GroupMember, ProjectGroupRole, ProjectRolePermission
+from radicle.db.models.access import (
+    Group,
+    GroupMember,
+    ProjectGroupRole,
+    ProjectRolePermission,
+    SecurityLevel,
+    SecurityLevelGrant,
+)
 from radicle.db.models.attachments import Attachment
 from radicle.db.models.base import Base, utcnow
 from radicle.db.models.boards import Board, BoardKind, BoardQuickFilter, Swimlane, WipMode
@@ -90,6 +97,8 @@ __all__ = [
     "SavedFilter",
     "Screen",
     "ScreenOperation",
+    "SecurityLevel",
+    "SecurityLevelGrant",
     "Session",
     "Sprint",
     "SprintCommitment",

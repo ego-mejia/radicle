@@ -1,3 +1,4 @@
+import { Lock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
@@ -62,6 +63,12 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
               {t('ticket.conflictReload')}
             </Button>
           </S.Conflict>
+        )}
+        {ticket.security_level && (
+          <S.Restricted role="note">
+            <Lock size={14} aria-hidden />
+            {t('security.banner', { level: ticket.security_level })}
+          </S.Restricted>
         )}
         <TicketHeader ticket={ticket} actions={actions} can={may} />
         <Description ticket={ticket} actions={actions} canEdit={canEdit} mentions={mentions} />

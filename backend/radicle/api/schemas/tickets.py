@@ -26,10 +26,13 @@ class StatusRef(Output):
 
 
 class TicketRef(Output):
-    key: str
-    title: str
-    type: TicketType
-    status: StatusRef
+    """Null key, title, type and status with `restricted`: a ticket you may not see."""
+
+    key: str | None
+    title: str | None
+    type: TicketType | None
+    status: StatusRef | None
+    restricted: bool = False
 
 
 class ChecklistItemOut(Output):
@@ -114,6 +117,9 @@ class TicketOut(Output):
     moved_from: str | None = Field(
         default=None, description="Set when you asked for an old key of a moved ticket"
     )
+    security_level: str | None = Field(
+        default=None, description="Who may see it is limited by this level"
+    )
     warnings: list[WarningOut] = Field(default_factory=list)
 
 
@@ -158,6 +164,11 @@ class TicketPatch(Input):
     tags: list[str] | None = None
     custom_fields: dict[str, Any] | None = Field(
         default=None, description="Only the keys you send change; null clears a value"
+    )
+    security_level: str | None = Field(
+        default=None,
+        description="Security level name; null makes the ticket public to the project. "
+        "Needs ticket.set_security",
     )
     expected_version: int | None = Field(
         default=None, description="Required unless sent as the If-Match header"

@@ -49,7 +49,7 @@ async def created_vs_resolved(
     created: Counter[date] = Counter()
     resolved: Counter[date] = Counter()
     rows = await db.execute(
-        search.base_query(user)
+        search.base_query(user, include_restricted=True)
         .where(ticket_filter)
         .with_only_columns(Ticket.created_at, Ticket.resolved_at)
     )
@@ -101,7 +101,9 @@ async def distribution(db: AsyncSession, user: User, *, ticket_filter: Any, fiel
         )
         if exists is None:
             raise fail("field", f"There is no custom field '{custom}'.")
-    tickets = list(await db.scalars(search.base_query(user).where(ticket_filter)))
+    tickets = list(
+        await db.scalars(search.base_query(user, include_restricted=True).where(ticket_filter))
+    )
     names = await _names(db, tickets)
     counts: Counter[str] = Counter()
     for t in tickets:

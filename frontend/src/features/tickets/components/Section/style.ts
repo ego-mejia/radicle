@@ -84,3 +84,11 @@ export const Form = styled.form`
     min-width: 120px;
   }
 `;
+
+export const Restricted = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: ${({ theme }) => theme.color.textMuted};
+  font-style: italic;
+`;

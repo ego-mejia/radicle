@@ -1061,6 +1061,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{key}/security-levels": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Levels */
+        get: operations["list_levels_api_v1_projects__key__security_levels_get"];
+        put?: never;
+        /**
+         * Create Level
+         * @description A restricted audience for tickets, e.g. "Legal confidencial". Grant it with PUT
+         *     /security-levels/{id}/grants.
+         */
+        post: operations["create_level_api_v1_projects__key__security_levels_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{key}/settings": {
         parameters: {
             query?: never;
@@ -1234,6 +1256,47 @@ export interface paths {
          */
         get: operations["search_fields_api_v1_search_fields_get"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/security-levels/{level_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Level
+         * @description Only levels no ticket uses.
+         */
+        delete: operations["delete_level_api_v1_security_levels__level_id__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Level */
+        patch: operations["patch_level_api_v1_security_levels__level_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/security-levels/{level_id}/grants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Grants
+         * @description Replace who may see the level's tickets (groups and users).
+         */
+        put: operations["put_grants_api_v1_security_levels__level_id__grants_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -2871,6 +2934,19 @@ export interface components {
             transition: string | null;
             type: components["schemas"]["TicketType"];
         };
+        /** GrantsPut */
+        GrantsPut: {
+            /**
+             * Groups
+             * @description Group names
+             */
+            groups?: string[];
+            /**
+             * Users
+             * @description Handles
+             */
+            users?: string[];
+        };
         /** GroupCreate */
         GroupCreate: {
             /**
@@ -3333,6 +3409,13 @@ export interface components {
         Page_ScreenOut_: {
             /** Items */
             items: components["schemas"]["ScreenOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[SecurityLevelOut] */
+        Page_SecurityLevelOut_: {
+            /** Items */
+            items: components["schemas"]["SecurityLevelOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -3850,6 +3933,50 @@ export interface components {
             /** Position */
             position: number;
         };
+        /** SecurityLevelCreate */
+        SecurityLevelCreate: {
+            /**
+             * Description
+             * @default
+             */
+            description?: string;
+            /**
+             * Include Participants
+             * @default true
+             */
+            include_participants?: boolean;
+            /** Name */
+            name: string;
+        };
+        /** SecurityLevelOut */
+        SecurityLevelOut: {
+            /** Description */
+            description: string;
+            /** Groups */
+            groups: string[];
+            /** Id */
+            id: string;
+            /**
+             * Include Participants
+             * @description Reporter, assignee and collaborators always see their tickets
+             */
+            include_participants: boolean;
+            /** Name */
+            name: string;
+            /** Ticket Count */
+            ticket_count: number;
+            /** Users */
+            users: string[];
+        };
+        /** SecurityLevelPatch */
+        SecurityLevelPatch: {
+            /** Description */
+            description?: string | null;
+            /** Include Participants */
+            include_participants?: boolean | null;
+            /** Name */
+            name?: string | null;
+        };
         /** SettingsConf */
         SettingsConf: {
             /** @default warn */
@@ -4356,6 +4483,11 @@ export interface components {
             resolution: components["schemas"]["Resolution"] | null;
             /** Resolved At */
             resolved_at: string | null;
+            /**
+             * Security Level
+             * @description Who may see it is limited by this level
+             */
+            security_level: string | null;
             /** Spent Hours */
             spent_hours: number;
             /** Start Date */
@@ -4419,6 +4551,11 @@ export interface components {
              * @description Send auto to go back to estimate minus spent
              */
             remaining_mode?: "auto" | null;
+            /**
+             * Security Level
+             * @description Security level name; null makes the ticket public to the project. Needs ticket.set_security
+             */
+            security_level?: string | null;
             /** Start Date */
             start_date?: string | null;
             /** Tags */
@@ -4426,14 +4563,22 @@ export interface components {
             /** Title */
             title?: string | null;
         };
-        /** TicketRef */
+        /**
+         * TicketRef
+         * @description Null key, title, type and status with `restricted`: a ticket you may not see.
+         */
         TicketRef: {
             /** Key */
-            key: string;
-            status: components["schemas"]["StatusRef"];
+            key: string | null;
+            /**
+             * Restricted
+             * @default false
+             */
+            restricted: boolean;
+            status: components["schemas"]["StatusRef"] | null;
             /** Title */
-            title: string;
-            type: components["schemas"]["TicketType"];
+            title: string | null;
+            type: components["schemas"]["TicketType"] | null;
         };
         /**
          * TicketSummary
@@ -7743,6 +7888,72 @@ export interface operations {
             };
         };
     };
+    list_levels_api_v1_projects__key__security_levels_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_SecurityLevelOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_level_api_v1_projects__key__security_levels_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SecurityLevelCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SecurityLevelOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     put_settings_api_v1_projects__key__settings_put: {
         parameters: {
             query?: never;
@@ -8057,6 +8268,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SearchFields"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_level_api_v1_security_levels__level_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                level_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_level_api_v1_security_levels__level_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                level_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SecurityLevelPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SecurityLevelOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_grants_api_v1_security_levels__level_id__grants_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                level_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GrantsPut"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SecurityLevelOut"];
                 };
             };
             /** @description Validation Error */

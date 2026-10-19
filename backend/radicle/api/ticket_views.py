@@ -2,8 +2,9 @@
 
 import uuid
 from dataclasses import dataclass, field
+from typing import Any
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, true
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.api.schemas.tickets import (
@@ -18,12 +19,14 @@ from radicle.api.schemas.tickets import (
     UserRef,
     WarningOut,
 )
+from radicle.core.permissions import can_see, visible_tickets_clause
 from radicle.db.models import (
     Area,
     Attachment,
     CustomFieldDefinition,
     Milestone,
     Project,
+    SecurityLevel,
     Status,
     Ticket,
     TicketEvent,
@@ -159,10 +162,17 @@ async def ticket_out(
     children = await db.scalar(
         select(func.count())
         .select_from(Ticket)
-        .where(Ticket.parent_id == ticket.id, Ticket.deleted_at.is_(None))
+        .where(
+            Ticket.parent_id == ticket.id,
+            Ticket.deleted_at.is_(None),
+            visible_tickets_clause(viewer) if viewer is not None else true(),
+        )
     )
-    links = await relations.links_for(db, ticket)
+    links = await relations.links_for(db, ticket, viewer)
     parent = ctx.parents.get(ticket.parent_id) if ticket.parent_id else None
+    parent_ref = ctx.ref(parent) if parent else None
+    if parent is not None and viewer is not None and not await can_see(db, viewer, parent):
+        parent_ref = RESTRICTED_REF
     return TicketOut(
         key=ctx.key(ticket),
         project=ctx.project_keys[ticket.project_id],
@@ -174,7 +184,7 @@ async def ticket_out(
         priority=ticket.priority,
         area=ctx.areas.get(ticket.area_id) if ticket.area_id else None,
         milestone=ctx.milestones.get(ticket.milestone_id) if ticket.milestone_id else None,
-        parent=ctx.ref(parent) if parent else None,
+        parent=parent_ref,
         assignee=user_ref(ticket.assignee) if ticket.assignee else None,
         collaborators=[user_ref(u) for u in collaborators],
         reporter=user_ref(ticket.reporter),
@@ -208,11 +218,30 @@ async def ticket_out(
         updated_at=ticket.updated_at,
         resolved_at=ticket.resolved_at,
         deleted=ticket.deleted_at is not None,
+        security_level=(
+            await db.scalar(
+                select(SecurityLevel.name).where(SecurityLevel.id == ticket.security_level_id)
+            )
+            if ticket.security_level_id
+            else None
+        ),
         warnings=warnings or [],
     )
 
 
+async def _level_name(db: AsyncSession, ticket: Ticket) -> str | None:
+    if ticket.security_level_id is None:
+        return None
+    level = await db.get(SecurityLevel, ticket.security_level_id)
+    return level.name if level else None
+
+
+RESTRICTED_REF = TicketRef(key=None, title=None, type=None, status=None, restricted=True)
+
+
 def ctx_ref(other: relations.LinkedTicket) -> TicketRef:
+    if other.restricted:
+        return RESTRICTED_REF
     return TicketRef(
         key=other.key,
         title=other.title,
@@ -284,13 +313,14 @@ def attachment_out(attachment: Attachment, key: str) -> AttachmentOut:
     )
 
 
-def event_out(event: TicketEvent) -> EventOut:
+def event_out(event: TicketEvent, values: tuple[Any, Any] | None = None) -> EventOut:
+    old, new = values if values is not None else (event.old_value, event.new_value)
     return EventOut(
         id=event.id,
         event_type=event.event_type,
         field=event.field,
-        old_value=event.old_value,
-        new_value=event.new_value,
+        old_value=old,
+        new_value=new,
         actor=user_ref(event.actor),
         created_at=event.created_at,
     )

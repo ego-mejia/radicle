@@ -9,6 +9,7 @@ from sqlalchemy import select, tuple_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from radicle.core.permissions import can_see
 from radicle.db.models import (
     Comment,
     CommentReaction,
@@ -153,6 +154,8 @@ async def load_comment(
         )
     except NotFound:
         raise not_found from None
+    if not await can_see(db, user, ticket):
+        raise not_found
     return CommentAccess(comment, ticket, access)
 
 

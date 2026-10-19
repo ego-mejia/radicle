@@ -70,6 +70,7 @@ export const TICKET: Ticket = {
   resolved_at: null,
   deleted: false,
   moved_from: null,
+  security_level: null,
   warnings: [],
 };
 

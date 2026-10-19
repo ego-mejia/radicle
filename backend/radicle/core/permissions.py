@@ -8,8 +8,9 @@ membership and the roles of their groups; instance admins are admins everywhere.
 import uuid
 from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import ColumnElement, and_, exists, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import Conflict, Forbidden, NotFound
@@ -20,6 +21,10 @@ from radicle.db.models import (
     ProjectMember,
     ProjectRole,
     ProjectRolePermission,
+    SecurityLevel,
+    SecurityLevelGrant,
+    Ticket,
+    TicketCollaborator,
     User,
 )
 
@@ -212,3 +217,77 @@ async def authorize(
     return check_access(
         project, role, user, need=need, write=write, permissions=perms, permission=permission
     )
+
+
+# --- ticket visibility ----------------------------------------------------------------------
+
+
+def visible_project_ids(user: User) -> Any:
+    """Projects the user belongs to, directly or through a group."""
+    if user.is_instance_admin:
+        return select(Project.id)
+    direct = select(ProjectMember.project_id).where(ProjectMember.user_id == user.id)
+    via_groups = (
+        select(ProjectGroupRole.project_id)
+        .join(GroupMember, GroupMember.group_id == ProjectGroupRole.group_id)
+        .where(GroupMember.user_id == user.id)
+    )
+    return direct.union(via_groups)
+
+
+def admin_project_ids(user: User) -> Any:
+    direct = select(ProjectMember.project_id).where(
+        ProjectMember.user_id == user.id, ProjectMember.role == ProjectRole.admin
+    )
+    via_groups = (
+        select(ProjectGroupRole.project_id)
+        .join(GroupMember, GroupMember.group_id == ProjectGroupRole.group_id)
+        .where(GroupMember.user_id == user.id, ProjectGroupRole.role == ProjectRole.admin)
+    )
+    return direct.union(via_groups)
+
+
+def visible_tickets_clause(user: User) -> ColumnElement[bool]:
+    """The one SQL rule for which tickets a user may see: projects they belong to and, for a
+    ticket with a security level, being granted (directly or by group), being an admin of
+    its project, or taking part in it when the level includes participants.
+
+    Every ticket read goes through this: RQL, fetch by key, boards, reports, MCP..."""
+    in_projects = Ticket.project_id.in_(visible_project_ids(user))
+    if user.is_instance_admin:
+        return in_projects
+    groups = select(GroupMember.group_id).where(GroupMember.user_id == user.id)
+    granted = select(SecurityLevelGrant.level_id).where(
+        or_(SecurityLevelGrant.user_id == user.id, SecurityLevelGrant.group_id.in_(groups))
+    )
+    with_participants = select(SecurityLevel.id).where(SecurityLevel.include_participants.is_(True))
+    participant = or_(
+        Ticket.reporter_id == user.id,
+        Ticket.assignee_id == user.id,
+        exists().where(
+            TicketCollaborator.ticket_id == Ticket.id, TicketCollaborator.user_id == user.id
+        ),
+    )
+    return and_(
+        in_projects,
+        or_(
+            Ticket.security_level_id.is_(None),
+            Ticket.project_id.in_(admin_project_ids(user)),
+            Ticket.security_level_id.in_(granted),
+            and_(Ticket.security_level_id.in_(with_participants), participant),
+        ),
+    )
+
+
+async def can_see(db: AsyncSession, user: User, ticket: Ticket) -> bool:
+    """Whether the user may see this ticket of a project they already can see."""
+    if ticket.security_level_id is None or user.is_instance_admin:
+        return True
+    return await can_see_ticket(db, user, ticket.id)
+
+
+async def can_see_ticket(db: AsyncSession, user: User, ticket_id: uuid.UUID) -> bool:
+    found = await db.scalar(
+        select(Ticket.id).where(Ticket.id == ticket_id, visible_tickets_clause(user))
+    )
+    return found is not None

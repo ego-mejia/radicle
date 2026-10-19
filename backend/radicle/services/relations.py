@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
 from radicle.core.errors import Conflict, NotFound, ValidationFailed
+from radicle.core.permissions import can_see, visible_tickets_clause
 from radicle.db.models import (
     LINK_LABELS,
     Comment,
@@ -33,6 +34,7 @@ class LinkedTicket:
     type: TicketType
     status_name: str
     category: StatusCategory
+    restricted: bool = False
 
 
 @dataclass(frozen=True)
@@ -53,8 +55,9 @@ async def _key(db: AsyncSession, ticket: Ticket) -> str:
     return f"{project_key}-{ticket.number}"
 
 
-async def links_for(db: AsyncSession, ticket: Ticket) -> list[LinkView]:
-    """Links of a ticket from its point of view, skipping deleted tickets."""
+async def links_for(db: AsyncSession, ticket: Ticket, viewer: User | None = None) -> list[LinkView]:
+    """Links of a ticket from its point of view, skipping deleted tickets. Linked tickets
+    the viewer may not see come back with `restricted` and no key or title."""
     other = aliased(Ticket)
     rows = await db.execute(
         select(TicketLink, other, Project.key, Status)
@@ -70,20 +73,34 @@ async def links_for(db: AsyncSession, ticket: Ticket) -> list[LinkView]:
         .where(other.deleted_at.is_(None))
         .order_by(TicketLink.created_at)
     )
+    found = rows.all()
+    hidden: set[uuid.UUID] = set()
+    if viewer is not None and found:
+        ids = {linked.id for _, linked, _, _ in found}
+        seen = set(
+            await db.scalars(
+                select(Ticket.id).where(Ticket.id.in_(ids), visible_tickets_clause(viewer))
+            )
+        )
+        hidden = ids - seen
     views = []
-    for link, linked, project_key, status in rows.all():
+    for link, linked, project_key, status in found:
         outgoing = link.source_id == ticket.id
         views.append(
             LinkView(
                 id=link.id,
                 type=link.type.value,
                 label=label_for(link.type, outgoing=outgoing),
-                other=LinkedTicket(
-                    key=f"{project_key}-{linked.number}",
-                    title=linked.title,
-                    type=linked.type,
-                    status_name=status.name,
-                    category=status.category,
+                other=(
+                    LinkedTicket("", "", linked.type, "", status.category, restricted=True)
+                    if linked.id in hidden
+                    else LinkedTicket(
+                        key=f"{project_key}-{linked.number}",
+                        title=linked.title,
+                        type=linked.type,
+                        status_name=status.name,
+                        category=status.category,
+                    )
                 ),
             )
         )
@@ -182,6 +199,8 @@ async def remove_link(db: AsyncSession, user: User, link_id: uuid.UUID) -> None:
         await access_for(db, user, project, write=True, permission="link.manage")
     except NotFound as exc:
         raise NotFound(f"Link {link_id} not found.", code="link_not_found") from exc
+    if not await can_see(db, user, source) or not await can_see(db, user, target):
+        raise NotFound(f"Link {link_id} not found.", code="link_not_found")
     source_key, target_key = await _key(db, source), await _key(db, target)
     _record_link(db, user, source, target, link, source_key, target_key, added=False)
     await db.delete(link)

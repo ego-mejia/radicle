@@ -7,11 +7,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import Conflict, NotFound, ValidationFailed
+from radicle.core.permissions import effective_role, permissions_for
 from radicle.db.models import (
     EventType,
     Project,
-    ProjectMember,
-    ProjectRole,
     StatusCategory,
     Ticket,
     User,
@@ -144,9 +143,14 @@ async def next_ticket(
     compiled = compile_query(parse(" AND ".join(clauses)), Context(user_id=user.id, now=utcnow()))
     query = search.base_query(user).where(compiled.where)
     if claim and not user.is_instance_admin:
-        writable = select(ProjectMember.project_id).where(
-            ProjectMember.user_id == user.id, ProjectMember.role != ProjectRole.viewer
-        )
+        # Claiming assigns the ticket: only projects where the user may edit tickets.
+        writable = []
+        for p in await db.scalars(
+            select(Project).where(Project.id.in_(search.visible_project_ids(user)))
+        ):
+            role = await effective_role(db, user, p)
+            if "ticket.edit" in await permissions_for(db, p, role):
+                writable.append(p.id)
         query = query.where(Ticket.project_id.in_(writable))
     query = query.order_by(Ticket.rank.asc(), Ticket.id).limit(1)
     if claim:

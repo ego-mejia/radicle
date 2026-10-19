@@ -110,6 +110,9 @@ class Ticket(Base):
     # Copied from the first estimate the ticket ever gets, then never changes.
     original_estimate_hours: Mapped[Decimal | None] = mapped_column(Numeric(7, 2))
     remaining_hours: Mapped[Decimal | None] = mapped_column(Numeric(7, 2))
+    security_level_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("security_levels.id", ondelete="RESTRICT"), index=True
+    )
     remaining_mode: Mapped[RemainingMode] = mapped_column(
         remaining_mode_enum, default=RemainingMode.auto, server_default="auto"
     )

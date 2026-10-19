@@ -20,6 +20,7 @@ import { MoveModal } from '../MoveModal';
 import { StatusButton } from '../StatusButton';
 import { VoteButton } from '../VoteButton';
 import type { Permission } from '../../../../lib/permissions';
+import { SecuritySelect } from '../SecuritySelect';
 import * as S from './style';
 
 type Props = { ticket: Ticket; actions: TicketActions; can: (p: Permission) => boolean };
@@ -74,6 +75,7 @@ export function TicketHeader({ ticket, actions, can }: Props) {
         <StatusButton ticket={ticket} actions={actions} canEdit={can('ticket.transition')} />
         {ticket.blocked && <Badge tone="danger">{t('ticket.blocked')}</Badge>}
         <S.Spacer />
+        <SecuritySelect ticket={ticket} actions={actions} canChange={can('ticket.set_security')} />
         <VoteButton ticket={ticket} canVote={can('vote')} />
         <Menu
           align="end"

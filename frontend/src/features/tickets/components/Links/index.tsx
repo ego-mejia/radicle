@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { Plus, X } from 'lucide-react';
+import { Lock, Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CategoryIcon } from '../../../../components/icons/CategoryIcon';
@@ -92,15 +92,22 @@ export function Links({ ticket, actions, canEdit }: Props) {
           <S.GroupLabel>{t(`ticket.linkLabels.${group.label}`)}</S.GroupLabel>
           {group.links.map((link) => (
             <S.Row key={link.id}>
-              <Link to="/t/$key" params={{ key: link.ticket.key }}>
-                <CategoryIcon
-                  category={link.ticket.status.category}
-                  title={link.ticket.status.name}
-                />
-                <TicketKey>{link.ticket.key}</TicketKey>
-                <span className="title">{link.ticket.title}</span>
-              </Link>
-              {canEdit && (
+              {link.ticket.restricted || !link.ticket.key || !link.ticket.status ? (
+                <S.Restricted>
+                  <Lock size={14} aria-hidden />
+                  {t('ticket.restrictedTicket')}
+                </S.Restricted>
+              ) : (
+                <Link to="/t/$key" params={{ key: link.ticket.key }}>
+                  <CategoryIcon
+                    category={link.ticket.status.category}
+                    title={link.ticket.status.name}
+                  />
+                  <TicketKey>{link.ticket.key}</TicketKey>
+                  <span className="title">{link.ticket.title}</span>
+                </Link>
+              )}
+              {canEdit && !link.ticket.restricted && (
                 <IconButton
                   label={`${t('common.remove')} ${link.ticket.key}`}
                   onClick={() => actions.removeLink.mutate(link.id)}

@@ -112,7 +112,7 @@ async def run(
                 db, user, sprint, today=today, tz=tz, workdays=parse_workdays(workdays)
             )
         if kind == "sprint":
-            return await agile.sprint_report(db, sprint)
+            return await agile.sprint_report(db, user, sprint)
         return await agile.burnup(
             db, user, sprint=sprint, start=p.start, end=p.end, today=today, tz=tz
         )

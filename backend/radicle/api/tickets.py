@@ -21,7 +21,7 @@ from radicle.api.schemas.tickets import (
 from radicle.api.ticket_views import event_out, summaries_out, ticket_out
 from radicle.core.errors import ValidationFailed
 from radicle.db.models import ProjectRole
-from radicle.services import history, tickets, transitions
+from radicle.services import history, security, tickets, transitions
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["tickets"])
@@ -79,12 +79,15 @@ async def patch_ticket(
 ) -> TicketOut:
     """Edit fields. Only the fields sent change and null clears one. Needs the version."""
     expected = _expected_version(body.expected_version, if_match)
-    access, ticket = await tickets.load_ticket(
-        db, principal.user, key, write=True, permission="ticket.edit"
-    )
+    access, ticket = await tickets.load_ticket(db, principal.user, key, write=True)
     changes: dict[str, Any] = body.model_dump(exclude_unset=True, exclude={"expected_version"})
+    level = changes.pop("security_level", ...)
+    if changes or level is ...:
+        access.require("ticket.edit")
     try:
         await tickets.update_ticket(db, access, ticket, changes, expected_version=expected)
+        if level is not ...:
+            await security.set_ticket_level(db, access, ticket, level)
     except tickets.VersionConflict as exc:
         exc.extra["current"] = (await ticket_out(db, exc.ticket, viewer=principal.user)).model_dump(
             mode="json"
@@ -127,7 +130,9 @@ async def set_checklist_item(
 @router.get("/tickets/{key}/children", response_model=Page[TicketSummary])
 async def list_children(key: str, principal: CurrentPrincipal, db: Db) -> Page[TicketSummary]:
     _, ticket = await tickets.load_ticket(db, principal.user, key)
-    return Page(items=await summaries_out(db, await tickets.list_children(db, ticket)))
+    return Page(
+        items=await summaries_out(db, await tickets.list_children(db, ticket, principal.user))
+    )
 
 
 @router.put("/tickets/{key}/collaborators/{handle}", response_model=TicketOut)
@@ -164,7 +169,8 @@ async def get_history(
     events = await history.list_events(db, ticket.id, limit=limit + 1, before_id=before)
     page = events[:limit]
     next_cursor = str(page[-1].id) if len(events) > limit else None
-    return Page(items=[event_out(e) for e in page], next_cursor=next_cursor)
+    values = await history.hide_restricted_keys(db, principal.user, page)
+    return Page(items=[event_out(e, values[e.id]) for e in page], next_cursor=next_cursor)
 
 
 def _int_cursor(cursor: str | None) -> int | None:

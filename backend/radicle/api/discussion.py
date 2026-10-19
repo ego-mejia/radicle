@@ -37,7 +37,7 @@ async def list_links(key: str, principal: CurrentPrincipal, db: Db) -> list[Link
     _, ticket = await tickets.load_ticket(db, principal.user, key)
     return [
         LinkOut(id=str(v.id), type=v.type, label=v.label, ticket=ctx_ref(v.other))
-        for v in await relations.links_for(db, ticket)
+        for v in await relations.links_for(db, ticket, principal.user)
     ]
 
 

@@ -174,7 +174,8 @@
     "moveComment": "Comentario (opcional)",
     "moveCommentRequired": "Comentario (obligatorio en este paso)",
     "moveTo": "Mover a {{status}}",
-    "moreOptions": "Más opciones para mover a {{status}}"
+    "moreOptions": "Más opciones para mover a {{status}}",
+    "restrictedTicket": "Ticket restringido"
   },
   "create": {
     "title": "Crear ticket",
@@ -453,7 +454,8 @@
     "addGroup": "Agregar grupo",
     "groupRole": "Rol del grupo",
     "viaGroups": "por {{groups}}",
-    "effectiveRole": "Rol efectivo"
+    "effectiveRole": "Rol efectivo",
+    "levels": "Niveles"
   },
   "profile": {
     "details": "Datos",
@@ -1185,5 +1187,21 @@
     "inbox.triage": "Hacer triage del Buzón",
     "project.settings": "Cambiar la configuración",
     "members.manage": "Administrar miembros"
+  },
+  "security": {
+    "public": "Visible para el proyecto",
+    "restrictedTo": "Solo {{level}} lo ve",
+    "visibility": "Visibilidad: {{level}}",
+    "banner": "Restringido: solo \"{{level}}\" puede ver este ticket.",
+    "levels": "Niveles de seguridad",
+    "levelsHelp": "Un ticket con nivel solo lo ven sus grupos y personas, los admins del proyecto y, si se marca, su reporter, assignee y colaboradores.",
+    "noLevels": "Todavía no hay niveles.",
+    "ticketCount_one": "{{count}} ticket",
+    "ticketCount_other": "{{count}} tickets",
+    "groups": "Grupos",
+    "users": "Personas",
+    "participants": "Los participantes lo ven",
+    "delete": "Borrar {{name}}",
+    "newLevel": "Nuevo nivel"
   }
 }

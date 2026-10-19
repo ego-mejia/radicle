@@ -46,7 +46,10 @@ def _sprint_days(sprint: Sprint) -> tuple[date, date]:
 async def _visible(db: AsyncSession, user: User, ids: set[uuid.UUID]) -> list[Ticket]:
     if not ids:
         return []
-    return list(await db.scalars(search.base_query(user).where(Ticket.id.in_(ids))))
+    # Sums count restricted tickets too, so the numbers add up; lists never show them.
+    return list(
+        await db.scalars(search.base_query(user, include_restricted=True).where(Ticket.id.in_(ids)))
+    )
 
 
 async def burndown(
@@ -144,7 +147,11 @@ async def burnup(
         title = sprint.name
     elif milestone is not None:
         tickets = list(
-            await db.scalars(search.base_query(user).where(Ticket.milestone_id == milestone.id))
+            await db.scalars(
+                search.base_query(user, include_restricted=True).where(
+                    Ticket.milestone_id == milestone.id
+                )
+            )
         )
         rows = []
         first = start or min(
@@ -244,7 +251,11 @@ async def cumulative_flow(
     so a year of a big project costs one pass over its periods."""
     days = days_between(start, end)
     first_end, last_end = day_ends([start, end], tz)
-    visible = search.base_query(user).where(ticket_filter).with_only_columns(Ticket.id)
+    visible = (
+        search.base_query(user, include_restricted=True)
+        .where(ticket_filter)
+        .with_only_columns(Ticket.id)
+    )
     entered = func.date(func.timezone(tz, TicketStatusPeriod.entered_at))
     exited = func.date(func.timezone(tz, TicketStatusPeriod.exited_at))
     rows = await db.execute(
@@ -382,8 +393,9 @@ async def control_chart(
     return report
 
 
-async def sprint_report(db: AsyncSession, sprint: Sprint) -> Report:
+async def sprint_report(db: AsyncSession, user: User, sprint: Sprint) -> Report:
     data = await sprints.report(db, sprint)
+    visible = await sprints.visible_keys(db, user, data)
     report = Report(
         "sprint",
         f"Sprint report · {sprint.name}",
@@ -391,7 +403,8 @@ async def sprint_report(db: AsyncSession, sprint: Sprint) -> Report:
     )
     for outcome in ("completed", "not_completed", "added_after_start", "removed"):
         for item in data[outcome]:
-            report.rows.append({"outcome": outcome, **item})
+            if item["key"] in visible:  # counts and hours keep them; rows do not
+                report.rows.append({"outcome": outcome, **item})
     report.summary = {
         k: data[k]
         for k in (

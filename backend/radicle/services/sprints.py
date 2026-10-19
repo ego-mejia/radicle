@@ -554,3 +554,14 @@ async def report(db: AsyncSession, sprint: Sprint) -> dict[str, Any]:
     if sprint.state is SprintState.closed and sprint.report is not None:
         return sprint.report
     return await build_report(db, sprint)
+
+
+async def visible_keys(db: AsyncSession, user: User, report_data: dict[str, Any]) -> set[str]:
+    """Keys of the report's tickets that the user may see."""
+    keys = {
+        i["key"]
+        for k in ("completed", "not_completed", "added_after_start", "removed")
+        for i in report_data[k]
+    }
+    rows = await db.execute(search.base_query(user).with_only_columns(Project.key, Ticket.number))
+    return {f"{k}-{n}" for k, n in rows} & keys
