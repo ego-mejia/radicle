@@ -1,8 +1,8 @@
 from datetime import date
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
 
-from radicle.api.schemas.common import Input, UtcDatetime
+from radicle.api.schemas.common import Input, Output, UtcDatetime
 from radicle.db.models import (
     MilestoneStatus,
     ProjectRole,
@@ -13,13 +13,13 @@ from radicle.db.models import (
 )
 
 
-class CategoryCounts(BaseModel):
+class CategoryCounts(Output):
     todo: int = 0
     in_progress: int = 0
     done: int = 0
 
 
-class ProjectOut(BaseModel):
+class ProjectOut(Output):
     key: str
     name: str
     description_md: str
@@ -41,7 +41,7 @@ class ProjectPatch(Input):
     description_md: str | None = None
 
 
-class AreaOut(BaseModel):
+class AreaOut(Output):
     model_config = ConfigDict(from_attributes=True)
 
     name: str
@@ -62,7 +62,7 @@ class AreaPatch(Input):
     archived: bool | None = None
 
 
-class MilestoneOut(BaseModel):
+class MilestoneOut(Output):
     name: str
     description_md: str
     target_date: date | None
@@ -86,7 +86,7 @@ class MilestonePatch(Input):
     position: int | None = None
 
 
-class MemberOut(BaseModel):
+class MemberOut(Output):
     handle: str
     display_name: str
     kind: UserKind
@@ -98,13 +98,13 @@ class MemberPut(Input):
     role: ProjectRole
 
 
-class StatusOut(BaseModel):
+class StatusOut(Output):
     name: str
     category: StatusCategory
     is_initial: bool
 
 
-class TransitionOut(BaseModel):
+class TransitionOut(Output):
     name: str
     from_status: str | None = Field(description="null = from any status not in done")
     to_status: str
@@ -113,7 +113,7 @@ class TransitionOut(BaseModel):
     )
 
 
-class WorkflowOut(BaseModel):
+class WorkflowOut(Output):
     type: TicketType
     statuses: list[StatusOut]
     transitions: list[TransitionOut]

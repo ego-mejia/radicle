@@ -20,3 +20,9 @@ void i18n
   });
 
 export default i18n;
+
+// Keep <html lang> in sync for screen readers and hyphenation.
+const syncLang = (lng: string) => {
+  if (typeof document !== 'undefined') document.documentElement.lang = lng.slice(0, 2);
+};
+i18n.on('languageChanged', syncLang);

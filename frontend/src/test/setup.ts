@@ -17,3 +17,6 @@ if (typeof globalThis.localStorage?.clear !== 'function') {
   };
   Object.defineProperty(globalThis, 'localStorage', { value: memoryStorage, configurable: true });
 }
+
+// jsdom does not implement scrolling; the router calls it on navigation.
+window.scrollTo = () => undefined;

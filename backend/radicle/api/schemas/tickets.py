@@ -1,31 +1,31 @@
 from datetime import date
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
-from radicle.api.schemas.common import Input, UtcDatetime
+from radicle.api.schemas.common import Input, Output, UtcDatetime
 from radicle.db.models import Priority, Resolution, StatusCategory, TicketType, UserKind
 
 
-class UserRef(BaseModel):
+class UserRef(Output):
     handle: str
     display_name: str
     kind: UserKind
 
 
-class StatusRef(BaseModel):
+class StatusRef(Output):
     name: str
     category: StatusCategory
 
 
-class TicketRef(BaseModel):
+class TicketRef(Output):
     key: str
     title: str
     type: TicketType
     status: StatusRef
 
 
-class ChecklistItemOut(BaseModel):
+class ChecklistItemOut(Output):
     index: int
     text: str
     checked: bool
@@ -33,20 +33,20 @@ class ChecklistItemOut(BaseModel):
     assignee_unknown: bool = False
 
 
-class LinkOut(BaseModel):
+class LinkOut(Output):
     id: str
     type: str
     label: str = Field(description="As read from this ticket, e.g. 'is blocked by'")
     ticket: TicketRef
 
 
-class WarningOut(BaseModel):
+class WarningOut(Output):
     code: str
     message: str
     by: list[str] | None = None
 
 
-class TicketOut(BaseModel):
+class TicketOut(Output):
     key: str
     project: str
     type: TicketType
@@ -115,7 +115,7 @@ class ChecklistPatch(Input):
     checked: bool
 
 
-class EventOut(BaseModel):
+class EventOut(Output):
     id: int
     event_type: str
     field: str | None
@@ -125,7 +125,7 @@ class EventOut(BaseModel):
     created_at: UtcDatetime
 
 
-class TicketSummary(BaseModel):
+class TicketSummary(Output):
     """Compact row for lists and search results."""
 
     key: str
@@ -147,7 +147,7 @@ class TicketSummary(BaseModel):
     updated_at: UtcDatetime
 
 
-class TransitionOption(BaseModel):
+class TransitionOption(Output):
     name: str
     to_status: str
     category: StatusCategory
@@ -176,13 +176,13 @@ class LinkCreate(Input):
     target: str = Field(description="Target ticket key, e.g. PA-4")
 
 
-class ReactionOut(BaseModel):
+class ReactionOut(Output):
     emoji: str
     count: int
     users: list[str]
 
 
-class CommentOut(BaseModel):
+class CommentOut(Output):
     id: str
     ticket: str
     author: UserRef

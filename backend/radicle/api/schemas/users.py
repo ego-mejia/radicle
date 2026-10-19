@@ -1,26 +1,26 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import ConfigDict, EmailStr, Field
 
-from radicle.api.schemas.common import Input, UtcDatetime
+from radicle.api.schemas.common import Input, Output, UtcDatetime
 from radicle.db.models import ProjectRole, UserKind
 from radicle.services.auth import IssuedToken
 
 # --- system -------------------------------------------------------------------------------
 
 
-class Health(BaseModel):
+class Health(Output):
     status: str
     database: str
 
 
-class Version(BaseModel):
+class Version(Output):
     version: str
     api_version: str
 
 
-class SetupStatus(BaseModel):
+class SetupStatus(Output):
     needs_setup: bool
 
 
@@ -34,7 +34,7 @@ class SetupIn(Input):
 # --- users --------------------------------------------------------------------------------
 
 
-class UserOut(BaseModel):
+class UserOut(Output):
     model_config = ConfigDict(from_attributes=True)
 
     handle: str
@@ -46,7 +46,7 @@ class UserOut(BaseModel):
     created_at: UtcDatetime
 
 
-class MeProject(BaseModel):
+class MeProject(Output):
     key: str
     name: str
     role: ProjectRole
@@ -92,7 +92,7 @@ class AgentCreate(Input):
 # --- tokens -------------------------------------------------------------------------------
 
 
-class TokenOut(BaseModel):
+class TokenOut(Output):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
@@ -119,7 +119,7 @@ class TokenCreate(Input):
     expires_at: datetime | None = None
 
 
-class AgentCreated(BaseModel):
+class AgentCreated(Output):
     agent: UserOut
     token: TokenCreated
     mcp_url: str

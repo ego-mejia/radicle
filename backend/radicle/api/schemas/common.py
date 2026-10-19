@@ -12,7 +12,14 @@ UtcDatetime = Annotated[datetime, PlainSerializer(_iso_utc, return_type=str)]
 Date = date
 
 
-class Page[T](BaseModel):
+class Output(BaseModel):
+    """Response models: fields with defaults are always present, so the schema marks them
+    required and generated clients do not treat them as optional."""
+
+    model_config = ConfigDict(json_schema_serialization_defaults_required=True)
+
+
+class Page[T](Output):
     items: list[T]
     next_cursor: str | None = None
 

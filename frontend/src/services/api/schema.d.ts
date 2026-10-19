@@ -836,7 +836,7 @@ export interface components {
              * Token Name
              * @default default
              */
-            token_name: string;
+            token_name?: string;
         };
         /** AgentCreated */
         AgentCreated: {
@@ -935,7 +935,7 @@ export interface components {
             /** Id */
             id: string;
             /** Reactions */
-            reactions?: components["schemas"]["ReactionOut"][];
+            reactions: components["schemas"]["ReactionOut"][];
             /** Ticket */
             ticket: string;
         };
@@ -970,7 +970,7 @@ export interface components {
             /** Type */
             type: string;
             /** Values */
-            values?: string[];
+            values: string[];
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1036,7 +1036,7 @@ export interface components {
             is_instance_admin: boolean;
             kind: components["schemas"]["UserKind"];
             /** Projects */
-            projects?: components["schemas"]["MeProject"][];
+            projects: components["schemas"]["MeProject"][];
         };
         /** MePatch */
         MePatch: {
@@ -1076,7 +1076,7 @@ export interface components {
              * Description Md
              * @default
              */
-            description_md: string;
+            description_md?: string;
             /** Name */
             name: string;
             /** Target Date */
@@ -1123,63 +1123,63 @@ export interface components {
             /** Items */
             items: components["schemas"]["AreaOut"][];
             /** Next Cursor */
-            next_cursor?: string | null;
+            next_cursor: string | null;
         };
         /** Page[CommentOut] */
         Page_CommentOut_: {
             /** Items */
             items: components["schemas"]["CommentOut"][];
             /** Next Cursor */
-            next_cursor?: string | null;
+            next_cursor: string | null;
         };
         /** Page[EventOut] */
         Page_EventOut_: {
             /** Items */
             items: components["schemas"]["EventOut"][];
             /** Next Cursor */
-            next_cursor?: string | null;
+            next_cursor: string | null;
         };
         /** Page[MemberOut] */
         Page_MemberOut_: {
             /** Items */
             items: components["schemas"]["MemberOut"][];
             /** Next Cursor */
-            next_cursor?: string | null;
+            next_cursor: string | null;
         };
         /** Page[MilestoneOut] */
         Page_MilestoneOut_: {
             /** Items */
             items: components["schemas"]["MilestoneOut"][];
             /** Next Cursor */
-            next_cursor?: string | null;
+            next_cursor: string | null;
         };
         /** Page[ProjectOut] */
         Page_ProjectOut_: {
             /** Items */
             items: components["schemas"]["ProjectOut"][];
             /** Next Cursor */
-            next_cursor?: string | null;
+            next_cursor: string | null;
         };
         /** Page[TicketSummary] */
         Page_TicketSummary_: {
             /** Items */
             items: components["schemas"]["TicketSummary"][];
             /** Next Cursor */
-            next_cursor?: string | null;
+            next_cursor: string | null;
         };
         /** Page[TokenOut] */
         Page_TokenOut_: {
             /** Items */
             items: components["schemas"]["TokenOut"][];
             /** Next Cursor */
-            next_cursor?: string | null;
+            next_cursor: string | null;
         };
         /** Page[UserOut] */
         Page_UserOut_: {
             /** Items */
             items: components["schemas"]["UserOut"][];
             /** Next Cursor */
-            next_cursor?: string | null;
+            next_cursor: string | null;
         };
         /**
          * Priority
@@ -1192,7 +1192,7 @@ export interface components {
              * Description Md
              * @default
              */
-            description_md: string;
+            description_md?: string;
             /**
              * Key
              * @description 2-10 chars, uppercase letter then letters/digits. Immutable.
@@ -1307,18 +1307,18 @@ export interface components {
             keywords: string[];
             /** Sort Fields */
             sort_fields: string[];
-            values?: components["schemas"]["ProjectValues"] | null;
+            values: components["schemas"]["ProjectValues"] | null;
         };
         /** SearchPage */
         SearchPage: {
             /** Items */
             items: components["schemas"]["TicketSummary"][];
             /** Next Cursor */
-            next_cursor?: string | null;
+            next_cursor: string | null;
             /** Total */
             total: number;
             /** Warnings */
-            warnings?: components["schemas"]["SearchWarningOut"][];
+            warnings: components["schemas"]["SearchWarningOut"][];
         };
         /** SearchWarningOut */
         SearchWarningOut: {
@@ -1385,7 +1385,7 @@ export interface components {
              * Description Md
              * @default
              */
-            description_md: string;
+            description_md?: string;
             /** Due Date */
             due_date?: string | null;
             /** Estimate Hours */
@@ -1398,7 +1398,7 @@ export interface components {
              */
             parent?: string | null;
             /** @default medium */
-            priority: components["schemas"]["Priority"];
+            priority?: components["schemas"]["Priority"];
             /** Tags */
             tags?: string[];
             /** Title */
@@ -1460,7 +1460,7 @@ export interface components {
             /** Version */
             version: number;
             /** Warnings */
-            warnings?: components["schemas"]["WarningOut"][];
+            warnings: components["schemas"]["WarningOut"][];
         };
         /**
          * TicketPatch
@@ -1661,7 +1661,7 @@ export interface components {
              * Is Instance Admin
              * @default false
              */
-            is_instance_admin: boolean;
+            is_instance_admin?: boolean;
             /**
              * Password
              * @description Temporary password the user should change
@@ -1733,7 +1733,7 @@ export interface components {
         /** WarningOut */
         WarningOut: {
             /** By */
-            by?: string[] | null;
+            by: string[] | null;
             /** Code */
             code: string;
             /** Message */

@@ -1,22 +1,23 @@
-from pydantic import BaseModel, Field
+from pydantic import Field
 
+from radicle.api.schemas.common import Output
 from radicle.api.schemas.tickets import TicketSummary
 
 
-class SearchWarningOut(BaseModel):
+class SearchWarningOut(Output):
     code: str
     message: str
     position: int
 
 
-class SearchPage(BaseModel):
+class SearchPage(Output):
     items: list[TicketSummary]
     total: int
     next_cursor: str | None = None
     warnings: list[SearchWarningOut] = Field(default_factory=list)
 
 
-class FieldInfo(BaseModel):
+class FieldInfo(Output):
     name: str
     type: str
     operators: list[str]
@@ -26,7 +27,7 @@ class FieldInfo(BaseModel):
     values: list[str] = Field(default_factory=list)
 
 
-class ProjectValues(BaseModel):
+class ProjectValues(Output):
     project: str
     statuses: list[str]
     areas: list[str]
@@ -35,7 +36,7 @@ class ProjectValues(BaseModel):
     tags: list[str] = Field(description="Most used tags first")
 
 
-class SearchFields(BaseModel):
+class SearchFields(Output):
     fields: list[FieldInfo]
     sort_fields: list[str]
     functions: list[str]

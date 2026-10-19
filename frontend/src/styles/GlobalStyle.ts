@@ -16,7 +16,10 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-font-smoothing: antialiased;
   }
 
-  code, kbd, pre { font-family: ${({ theme }) => theme.fonts.mono}; }
+  code, kbd, pre {
+    font-family: ${({ theme }) => theme.fonts.mono};
+    font-variant-ligatures: none;
+  }
 
   a { color: ${({ theme }) => theme.color.accent}; }
 

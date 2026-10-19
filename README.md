@@ -2,7 +2,7 @@
 
 Ticket tracker open source y self-hosted con servidor MCP desde el día 1: personas y agentes trabajan el mismo proyecto.
 
-> Estado: etapa 1 en construcción (entregable 1.1 listo). Ver [docs/progress.md](docs/progress.md).
+> Estado: etapa 1 completa (entregables 1.1 a 1.8). Ver [docs/progress.md](docs/progress.md).
 
 ## Instalar
 
@@ -13,30 +13,13 @@ cp .env.example .env        # opcional: cambia RADICLE_BASE_URL y POSTGRES_PASSW
 docker compose up -d
 ```
 
-Abre `http://localhost:8000`. La API está en `/api/v1` y su documentación interactiva en `/api/docs`.
-
-### Primer admin
-
-Mientras llega la UI de setup (1.8), se crea por API:
-
-```bash
-curl -c jar -H 'Content-Type: application/json' http://localhost:8000/api/v1/setup \
-  -d '{"handle":"admin","display_name":"Admin","email":"admin@example.com","password":"una-contraseña-larga"}'
-```
-
-`/setup` solo funciona una vez.
+Abre `http://localhost:8000`: la primera vez aparece la pantalla de setup para crear el admin. La API está en `/api/v1` y su documentación interactiva en `/api/docs`.
 
 ### Crear un agente
 
-Como admin de instancia (con la cookie del paso anterior y su token CSRF):
+En **Admin → Agentes → Nuevo agente**. El token (`rdc_...`) se muestra una sola vez, con botón para copiarlo y los snippets de conexión MCP ya llenos. Después agrégalo al proyecto en **Settings → Miembros** con rol Miembro para que pueda trabajar tickets.
 
-```bash
-CSRF=$(awk '$6=="radicle_csrf"{print $7}' jar)
-curl -b jar -H "X-CSRF-Token: $CSRF" -H 'Content-Type: application/json' \
-  http://localhost:8000/api/v1/agents -d '{"handle":"agent-backend","display_name":"Backend agent"}'
-```
-
-La respuesta trae `token.token` (`rdc_...`). Se muestra una sola vez. El agente se autentica con `Authorization: Bearer rdc_...`. Agrégalo como miembro del proyecto (`PUT /api/v1/projects/PA/members/agent-backend` con `{"role": "member"}`) para que pueda trabajar sus tickets.
+Por API, como admin de instancia: `POST /api/v1/agents` con `{"handle": "agent-backend", "display_name": "Backend agent"}`.
 
 ### Conectar un agente por MCP
 
@@ -84,7 +67,7 @@ Tools: `whoami`, `list_projects`, `get_project`, `search_tickets`, `my_tickets`,
 | Parte | Requisitos | Comandos |
 | --- | --- | --- |
 | Backend | Python 3.12, [uv](https://docs.astral.sh/uv/), Docker (tests) | `cd backend && uv sync`, `uv run uvicorn radicle.main:app --reload`, `uv run pytest` |
-| Frontend | Node 22, pnpm 9 | `cd frontend && pnpm install`, `pnpm dev` (proxy a `:8000`), `pnpm check` |
+| Frontend | Node 22, pnpm 9 | `cd frontend && pnpm install`, `pnpm dev` (proxy a `:8000`), `pnpm check`, `pnpm e2e` (Radicle limpio en `:8000`) |
 | Base local | Docker | `docker compose up -d db` y `cd backend && uv run alembic upgrade head` |
 
 - Los tests de backend levantan Postgres 16 con testcontainers; no usan SQLite.

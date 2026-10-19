@@ -176,6 +176,11 @@
             "type": "integer"
           }
         },
+        "required": [
+          "todo",
+          "in_progress",
+          "done"
+        ],
         "title": "CategoryCounts",
         "type": "object"
       },
@@ -214,7 +219,8 @@
           "index",
           "text",
           "checked",
-          "assignee"
+          "assignee",
+          "assignee_unknown"
         ],
         "title": "ChecklistItemOut",
         "type": "object"
@@ -298,7 +304,8 @@
           "body_md",
           "created_at",
           "edited_at",
-          "deleted"
+          "deleted",
+          "reactions"
         ],
         "title": "CommentOut",
         "type": "object"
@@ -393,7 +400,8 @@
           "operators",
           "supports_in",
           "supports_empty",
-          "description"
+          "description",
+          "values"
         ],
         "title": "FieldInfo",
         "type": "object"
@@ -549,7 +557,8 @@
           "email",
           "is_instance_admin",
           "is_active",
-          "created_at"
+          "created_at",
+          "projects"
         ],
         "title": "MeOut",
         "type": "object"
@@ -841,7 +850,8 @@
           }
         },
         "required": [
-          "items"
+          "items",
+          "next_cursor"
         ],
         "title": "Page[AreaOut]",
         "type": "object"
@@ -868,7 +878,8 @@
           }
         },
         "required": [
-          "items"
+          "items",
+          "next_cursor"
         ],
         "title": "Page[CommentOut]",
         "type": "object"
@@ -895,7 +906,8 @@
           }
         },
         "required": [
-          "items"
+          "items",
+          "next_cursor"
         ],
         "title": "Page[EventOut]",
         "type": "object"
@@ -922,7 +934,8 @@
           }
         },
         "required": [
-          "items"
+          "items",
+          "next_cursor"
         ],
         "title": "Page[MemberOut]",
         "type": "object"
@@ -949,7 +962,8 @@
           }
         },
         "required": [
-          "items"
+          "items",
+          "next_cursor"
         ],
         "title": "Page[MilestoneOut]",
         "type": "object"
@@ -976,7 +990,8 @@
           }
         },
         "required": [
-          "items"
+          "items",
+          "next_cursor"
         ],
         "title": "Page[ProjectOut]",
         "type": "object"
@@ -1003,7 +1018,8 @@
           }
         },
         "required": [
-          "items"
+          "items",
+          "next_cursor"
         ],
         "title": "Page[TicketSummary]",
         "type": "object"
@@ -1030,7 +1046,8 @@
           }
         },
         "required": [
-          "items"
+          "items",
+          "next_cursor"
         ],
         "title": "Page[TokenOut]",
         "type": "object"
@@ -1057,7 +1074,8 @@
           }
         },
         "required": [
-          "items"
+          "items",
+          "next_cursor"
         ],
         "title": "Page[UserOut]",
         "type": "object"
@@ -1168,6 +1186,7 @@
           "description_md",
           "role",
           "archived",
+          "open_tickets",
           "created_at",
           "updated_at",
           "areas",
@@ -1220,6 +1239,7 @@
           "description_md",
           "role",
           "archived",
+          "open_tickets",
           "created_at",
           "updated_at"
         ],
@@ -1399,7 +1419,8 @@
           "fields",
           "sort_fields",
           "functions",
-          "keywords"
+          "keywords",
+          "values"
         ],
         "title": "SearchFields",
         "type": "object"
@@ -1438,7 +1459,9 @@
         },
         "required": [
           "items",
-          "total"
+          "total",
+          "next_cursor",
+          "warnings"
         ],
         "title": "SearchPage",
         "type": "object"
@@ -1880,7 +1903,9 @@
           "version",
           "created_at",
           "updated_at",
-          "resolved_at"
+          "resolved_at",
+          "deleted",
+          "warnings"
         ],
         "title": "TicketOut",
         "type": "object"
@@ -2760,7 +2785,8 @@
         },
         "required": [
           "code",
-          "message"
+          "message",
+          "by"
         ],
         "title": "WarningOut",
         "type": "object"

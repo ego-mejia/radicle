@@ -28,32 +28,47 @@ export const api = createClient<paths>({
 });
 api.use(csrf);
 
-/** RFC 9457 problem returned by every API error. */
+/** RFC 9457 problem returned by every API error, plus Radicle's extra members. */
 export type Problem = {
   type: string;
   title: string;
   status: number;
   detail: string;
-  errors: { field?: string; message: string }[];
+  errors: { field?: string; message: string; position?: number }[];
+  position?: number;
+  current?: unknown;
+  current_version?: number;
+  allowed_resolutions?: string[];
+  valid_transitions?: { name: string; to_status: string }[];
+  retry_after?: number;
 };
 
 export class ApiError extends Error {
   constructor(public readonly problem: Problem) {
     super(problem.detail);
   }
+
+  get status(): number {
+    return this.problem.status;
+  }
 }
 
 /** Unwraps an openapi-fetch result, throwing ApiError on problem responses. */
 export function unwrap<T>(result: { data?: T; error?: unknown; response: Response }): T {
   if (result.error !== undefined || !result.response.ok) {
-    const problem = (result.error as Problem | undefined) ?? {
+    const fallback: Problem = {
       type: 'about:blank',
       title: result.response.statusText,
       status: result.response.status,
-      detail: result.response.statusText,
+      detail: result.response.statusText || 'Request failed',
       errors: [],
     };
-    throw new ApiError(problem);
+    const error = result.error as Partial<Problem> | undefined;
+    throw new ApiError({ ...fallback, ...(typeof error === 'object' ? error : {}) });
   }
   return result.data as T;
+}
+
+export function isApiError(error: unknown, status?: number): error is ApiError {
+  return error instanceof ApiError && (status === undefined || error.status === status);
 }

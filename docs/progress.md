@@ -13,7 +13,7 @@ Estado de cada entregable. Se actualiza al cerrar cada uno.
 | 1.5 | Links, comentarios y reacciones | Listo |
 | 1.6 | RQL y búsqueda | Listo |
 | 1.7 | Servidor MCP | Listo |
-| 1.8 | UI web | Pendiente |
+| 1.8 | UI web | Listo |
 
 ### 1.1 Base, auth y usuarios
 
@@ -163,3 +163,27 @@ curl -H "Authorization: Bearer rdc_..." localhost:8000/api/v1/me
 - `tests/mcp/test_agent_flow.py`: el agente hace `whoami`, `my_tickets`, `get_ticket`, mueve PA-4 a In Progress, marca el checklist, comenta, liga PA-4 bloqueando PA-5 y busca; el historial muestra cada evento con el agente como actor.
 - `tests/mcp/test_tools.py`: éxito y error de cada tool, viewer sin permiso de crear, token revocado sin conexión.
 - `scripts/smoke.sh` contra Docker.
+
+### 1.8 UI web
+
+**Qué se hizo**
+
+- SPA en React 18 con TanStack Router y TanStack Query, styled-components con la paleta lima en claro y oscuro, inglés y español (`react-i18next`), organizada como vitaegap ([0001](decisions/0001-frontend-styled-components.md)).
+- Pantallas: setup, login, proyectos, board, lista con RQL, detalle de ticket (página y panel lateral), milestones, settings (general, miembros, áreas, milestones y workflows en solo lectura), mis tickets, admin (usuarios, agentes y proyectos) y perfil.
+- Board con columnas por categoría, tarjetas con key, tipo, prioridad, assignee (bot para agentes), tags, bloqueado y progreso del checklist; Drafts con borde punteado e ícono de semilla; drag and drop con dnd-kit que respeta las transiciones; filtros en la URL.
+- Lista con barra RQL que autocompleta campos, operadores y valores y subraya el error en su posición; columnas ordenables que reescriben el `ORDER BY`; scroll infinito.
+- Detalle: título editable, botón de estado con transiciones y resolutions, menú (cambiar tipo, copiar link, borrar), descripción con CodeMirror 6 y autocompletado de `@handle`, checklist clicable con avatares, campos editables en línea, subtickets, links agrupados, comentarios con reacciones e historial con diff de la descripción. Un 409 muestra "Alguien más cambió este ticket" y recarga sin perder lo escrito.
+- Crear ticket en modal con "Más campos" y "Crear otro"; atajos `c` (crear) y `/` (buscar).
+- Admin de agentes: el token se muestra una vez con botón copiar y los snippets de conexión MCP ya llenos.
+- Estados vacíos con ilustraciones de plantas en línea delgada.
+- Decisión: [0007](decisions/0007-ui-web.md).
+
+**Cómo verificarlo**
+
+```bash
+cd frontend && pnpm check && pnpm build          # tipos, lint, formato y 15 tests de componentes
+docker compose down -v && docker compose up -d --build
+cd frontend && pnpm e2e                           # recorrido completo de la etapa en Playwright
+```
+
+El E2E cubre: setup, login, crear PA con 4 áreas y V1, crear Task, Bug y Draft (PA-1 a PA-3), mover en el board con drag and drop, comentar con mención, ligar "bloquea" y ver el aviso, buscar con RQL con error en posición, convertir Draft a Task y crear un agente copiando su token.
