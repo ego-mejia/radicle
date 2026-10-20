@@ -151,6 +151,18 @@
             ],
             "title": "Color"
           },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Name of an icon from the app's set, like rocket or shield (kebab case)",
+            "title": "Icon"
+          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -179,6 +191,17 @@
             ],
             "title": "Color"
           },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -191,6 +214,7 @@
         "required": [
           "name",
           "color",
+          "icon",
           "position",
           "archived"
         ],
@@ -222,6 +246,18 @@
             ],
             "description": "Hex like #4D7C0F; null clears it",
             "title": "Color"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Name of an icon from the app's set, like rocket or shield (kebab case); null clears it",
+            "title": "Icon"
           },
           "name": {
             "anyOf": [
@@ -14433,7 +14469,7 @@
         ]
       },
       "patch": {
-        "description": "Rename, recolor, reorder, or archive and restore with `archived`.",
+        "description": "Rename, recolor, change the icon, reorder, or archive and restore with `archived`.",
         "operationId": "patch_area_api_v1_projects__key__areas__name__patch",
         "parameters": [
           {

@@ -147,6 +147,7 @@ class Area(Base):
     )
     name: Mapped[str] = mapped_column(Text)
     color: Mapped[str | None] = mapped_column(Text)
+    icon: Mapped[str | None] = mapped_column(Text)
     position: Mapped[int] = mapped_column(Integer, default=0)
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(

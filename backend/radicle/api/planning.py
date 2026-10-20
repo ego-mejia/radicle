@@ -34,7 +34,9 @@ async def create_area(key: str, body: AreaCreate, principal: CurrentPrincipal, d
     access = await project_access(
         db, principal.user, key, write=True, permission="project.settings"
     )
-    area = await planning.create_area(db, access.project, name=body.name, color=body.color)
+    area = await planning.create_area(
+        db, access.project, name=body.name, color=body.color, icon=body.icon
+    )
     return out.area_out(area)
 
 
@@ -42,7 +44,7 @@ async def create_area(key: str, body: AreaCreate, principal: CurrentPrincipal, d
 async def patch_area(
     key: str, name: str, body: AreaPatch, principal: CurrentPrincipal, db: Db
 ) -> AreaOut:
-    """Rename, recolor, reorder, or archive and restore with `archived`."""
+    """Rename, recolor, change the icon, reorder, or archive and restore with `archived`."""
     access = await project_access(
         db, principal.user, key, write=True, permission="project.settings"
     )
@@ -51,6 +53,8 @@ async def patch_area(
         name=body.name,
         color=body.color,
         clear_color="color" in body.model_fields_set and body.color is None,
+        icon=body.icon,
+        clear_icon="icon" in body.model_fields_set and body.icon is None,
         position=body.position,
         archived=body.archived,
     )

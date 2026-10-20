@@ -90,7 +90,7 @@ export const PROJECT: ProjectDetail = {
   open_tickets: 1,
   created_at: '2026-10-18T10:00:00Z',
   updated_at: '2026-10-18T10:00:00Z',
-  areas: [{ name: 'Backend', color: null, position: 0, archived: false }],
+  areas: [{ name: 'Backend', color: null, icon: null, position: 0, archived: false }],
   milestones: [],
   workflows: [],
   members: [
