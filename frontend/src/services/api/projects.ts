@@ -98,3 +98,12 @@ export async function fetchSearchFields(project?: string) {
     await api.GET('/api/v1/search/fields', { params: { query: project ? { project } : {} } }),
   );
 }
+
+/** People, agents and groups that are not in the project yet. */
+export async function fetchMemberCandidates(key: string, q: string) {
+  return unwrap(
+    await api.GET('/api/v1/projects/{key}/member-candidates', {
+      params: { path: { key }, query: { q } },
+    }),
+  );
+}
