@@ -602,3 +602,4 @@ Fuera del spec de etapas, pedidas al probar la app (ADRs 0032 y 0033 para el boa
 - Radi: asistente con la guía de uso y LLM opcional (app o `RADICLE_ASSISTANT_*`), recorridos en pantalla y logo nuevo.
 - Celebración de milestone con recap, confeti e imagen para LinkedIn.
 - El CI de GitHub Actions queda en pausa; los checks se corren local antes de cada push.
+- Tarjetas con área, milestone y subtickets (editables desde la tarjeta), áreas con icono SVG en su color, pegar imágenes al crear un ticket y Done sin modal de resolución.

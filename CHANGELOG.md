@@ -16,6 +16,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Fixed
 
+- Board: soltar una tarjeta en Done la cierra como Done sin pedir resolución.
 - My tickets y List: el encabezado de la tabla ya no se desfasa de las filas.
 - Boards: un ticket en In Review o QA Verified se puede regresar al primer estado (nuevas transiciones *Back to To Do*, *Back to Reported* y *Back to New* en el template default y sus proyectos ligados), y soltar una tarjeta rápido ya no se ignora.
 - Timeline: los tickets con una sola fecha se dibujan como barra, no como punto.
@@ -26,6 +27,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Added
 
+- Áreas con icono: se elige de un set de iconos SVG y se pinta con el color del área; se ve en tarjetas, carriles y timeline.
+- Tarjetas del board con área, milestone y número de subtickets (campos de tarjeta `area`, `milestone` y `children`, prendidos en todos los boards); el área y el milestone se cambian desde la tarjeta.
+- Crear ticket: pegar o soltar imágenes y archivos en la descripción; se suben al crear el ticket.
 - Agentes: crear un agente (LLM o worker) desde Users y elegir con checks qué tools del MCP puede usar; el servidor MCP esconde y rechaza las demás. `GET /api/v1/mcp/tools` describe el catálogo.
 - Radi, el asistente: bolita verde que sigue el cursor, chat con la guía de uso o con un LLM (Anthropic, OpenAI o compatible) configurable en la app o por `RADICLE_ASSISTANT_*`, y recorridos en pantalla que abren páginas, iluminan campos y los explican.
 - Celebración de milestone: al cerrar el último ticket salen confeti, Radi y las métricas, con imagen para compartir en LinkedIn; endpoint `GET /projects/{key}/milestones/{name}/recap`.
