@@ -1,7 +1,8 @@
 import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IconButton } from '../../../../components/ui/Button';
+import { Button, IconButton } from '../../../../components/ui/Button';
+import { Modal } from '../../../../components/ui/Modal';
 import * as S from './style';
 
 function CopyBlock({ label, text }: { label: string; text: string }) {
@@ -27,10 +28,10 @@ function CopyBlock({ label, text }: { label: string; text: string }) {
   );
 }
 
-type Props = { token: string; mcpUrl?: string };
+type Props = { token: string; mcpUrl?: string; onClose: () => void };
 
-/** A freshly created token: shown once, with ready-to-paste MCP connection snippets. */
-export function TokenReveal({ token, mcpUrl }: Props) {
+/** A freshly created token in a dialog: shown once, with ready-to-paste MCP snippets. */
+export function TokenReveal({ token, mcpUrl, onClose }: Props) {
   const { t } = useTranslation();
   const claude = mcpUrl
     ? `claude mcp add --transport http radicle ${mcpUrl} \\\n  --header "Authorization: Bearer ${token}"`
@@ -47,15 +48,27 @@ export function TokenReveal({ token, mcpUrl }: Props) {
       )
     : '';
   return (
-    <S.Box>
-      <S.Warning>{t('admin.tokenOnce')}</S.Warning>
-      <CopyBlock label={t('admin.token')} text={token} />
-      {mcpUrl && (
-        <>
-          <CopyBlock label="Claude Code" text={claude} />
-          <CopyBlock label="JSON" text={json} />
-        </>
-      )}
-    </S.Box>
+    <Modal
+      open
+      width={640}
+      onOpenChange={(open) => !open && onClose()}
+      title={t('admin.tokenTitle')}
+      footer={
+        <Button variant="primary" onClick={onClose}>
+          {t('admin.tokenDone')}
+        </Button>
+      }
+    >
+      <S.Box>
+        <S.Warning>{t('admin.tokenOnce')}</S.Warning>
+        <CopyBlock label={t('admin.token')} text={token} />
+        {mcpUrl && (
+          <>
+            <CopyBlock label="Claude Code" text={claude} />
+            <CopyBlock label="JSON" text={json} />
+          </>
+        )}
+      </S.Box>
+    </Modal>
   );
 }

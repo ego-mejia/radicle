@@ -499,7 +499,9 @@
       "agentHint": "Works over MCP or the API with a token.",
       "agentShort": "Agent"
     },
-    "kind": "Kind"
+    "kind": "Kind",
+    "tokenTitle": "Your new token",
+    "tokenDone": "Done, I copied it"
   },
   "settings": {
     "general": "General",

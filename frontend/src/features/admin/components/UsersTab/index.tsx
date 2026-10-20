@@ -63,7 +63,9 @@ export function UsersTab() {
 
   return (
     <SettingsCard title={t('admin.users')} help={t('admin.usersHelp')}>
-      {reveal && <TokenReveal token={reveal.token} mcpUrl={reveal.mcpUrl} />}
+      {reveal && (
+        <TokenReveal token={reveal.token} mcpUrl={reveal.mcpUrl} onClose={() => setReveal(null)} />
+      )}
       <S.Rows>
         {people.map((user) => (
           <S.Row key={user.handle}>

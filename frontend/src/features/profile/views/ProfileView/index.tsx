@@ -178,7 +178,13 @@ export function ProfileView() {
         </SettingsCard>
 
         <SettingsCard title={t('profile.tokens')} help={t('profile.tokensHelp')}>
-          {revealed && <TokenReveal token={revealed} mcpUrl={`${window.location.origin}/mcp`} />}
+          {revealed && (
+            <TokenReveal
+              token={revealed}
+              mcpUrl={`${window.location.origin}/mcp`}
+              onClose={() => setRevealed(null)}
+            />
+          )}
           <TokenList tokens={tokens.data ?? []} onRevoke={(id) => revoke.mutate(id)} />
           <P.Inline
             onSubmit={(e) => {

@@ -4,13 +4,12 @@ export const Box = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.space.md};
-  padding: ${({ theme }) => theme.space.lg};
-  border: 1px solid ${({ theme }) => theme.color.accent};
-  border-radius: ${({ theme }) => theme.radius.lg};
-  background: ${({ theme }) => theme.color.accentSoft};
 `;
 
 export const Warning = styled.strong`
+  padding: ${({ theme }) => `${theme.space.sm} ${theme.space.md}`};
+  border-radius: ${({ theme }) => theme.radius.md};
+  background: ${({ theme }) => theme.color.accentSoft};
   color: ${({ theme }) => (theme.mode === 'dark' ? theme.color.accent : theme.color.onAccent)};
 `;
 
