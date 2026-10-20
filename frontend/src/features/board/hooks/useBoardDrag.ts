@@ -160,14 +160,15 @@ export function useBoardDrag(
     const only = options[0]!;
     const resolutions = only.allowed_resolutions ?? [];
     const simple = only.available && !only.requires_comment && !only.has_screen;
-    if (options.length === 1 && simple && (only.category !== 'done' || resolutions.length <= 1)) {
+    // A drop in a done column closes as Done; Won't do or Duplicate is picked in the ticket.
+    if (options.length === 1 && simple) {
       before.current = undefined;
       move.mutate({
         ticket: current.ticket.key,
         column: target,
         ...place,
         transition: only.name,
-        resolution: resolutions[0] ?? null,
+        resolution: resolutions.includes('done') ? 'done' : (resolutions[0] ?? null),
       });
     } else {
       setPending({ ticket: current.ticket, column: target, options, place });

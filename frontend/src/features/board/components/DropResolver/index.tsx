@@ -11,7 +11,7 @@ type Props = {
   onCancel: () => void;
 };
 
-/** Shown after a drop when the column has several transitions or needs a resolution. */
+/** Shown after a drop when the column has several transitions, or one that asks for a comment or fields. */
 export function DropResolver({ ticketKey, ticketType, options, onPick, onCancel }: Props) {
   const { t } = useTranslation();
   return (
