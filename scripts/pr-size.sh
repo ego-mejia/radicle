@@ -7,7 +7,7 @@ set -euo pipefail
 
 MAX_LINES=${MAX_LINES:-500}
 MAX_FILES=${MAX_FILES:-100}
-IGNORED='(^|/)(pnpm-lock\.yaml|uv\.lock|openapi\.json|schema\.d\.ts|tsconfig\.tsbuildinfo)$|^docs/images/|^LICENSE$'
+IGNORED='(.*/)?(pnpm-lock\.yaml|uv\.lock|openapi\.json|schema\.d\.ts|tsconfig\.tsbuildinfo)$|docs/images/.*|LICENSE$'
 failed=0
 
 if [[ ! "$BRANCH" =~ ^(feat|minor|fix|refactor|docs)/[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
@@ -15,7 +15,8 @@ if [[ ! "$BRANCH" =~ ^(feat|minor|fix|refactor|docs)/[a-z0-9]+(-[a-z0-9]+)*$ ]];
   failed=1
 fi
 
-stats=$(git diff --numstat "$BASE...$HEAD" | grep -Ev "$(printf '\t')($IGNORED)" || true)
+# numstat lines are "added<TAB>removed<TAB>path"; match the ignored ones on the path.
+stats=$(git diff --numstat "$BASE...$HEAD" | grep -Ev "^[0-9-]+$(printf '\t')[0-9-]+$(printf '\t')($IGNORED)" || true)
 files=$(printf '%s' "$stats" | grep -c . || true)
 # Binary files show "-" instead of line counts.
 lines=$(printf '%s\n' "$stats" | awk '$1 != "-" { n += $1 + $2 } END { print n + 0 }')
