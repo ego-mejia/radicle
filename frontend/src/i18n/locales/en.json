@@ -1466,6 +1466,7 @@
   },
   "celebration": {
     "title": "Milestone complete!",
+    "badge": "Milestone complete",
     "headline": "Congratulations! {{milestone}} is done 🎉",
     "thanks": "Every ticket in {{project}} for this milestone is finished. Thank you for the effort: it shows.",
     "thanksOnTime": "Every ticket in {{project}} for this milestone is finished, and on time. Thank you for the effort: it shows.",
@@ -1481,6 +1482,12 @@
     "people_one": "{{count}} person",
     "people_other": "{{count}} people",
     "agents_one": "{{count}} AI agent",
-    "agents_other": "{{count}} AI agents"
+    "agents_other": "{{count}} AI agents",
+    "brand": "Tracked with Radicle",
+    "download": "Download image",
+    "share": "Share on LinkedIn",
+    "copied": "Image copied: paste it into your LinkedIn post.",
+    "downloaded": "Image downloaded: attach it to your LinkedIn post.",
+    "post": "🎉 We just completed {{milestone}} in {{project}}! {{done}} tickets shipped, {{bugs}} bugs squashed and {{hours}} hours invested by {{team}}. Tracked with Radicle."
   }
 }
