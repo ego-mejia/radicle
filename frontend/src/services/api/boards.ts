@@ -70,6 +70,7 @@ export type CardMove = {
   ticket: string;
   column: number;
   before?: string | null;
+  after?: string | null;
   transition?: string | null;
   resolution?: Resolution | null;
   comment?: string | null;
