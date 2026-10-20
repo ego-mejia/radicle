@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TypeIcon } from '../../../../components/icons/TypeIcon';
-import { MarkdownEditor } from '../../../../components/Markdown/MarkdownEditor';
+import { type EditorApi, MarkdownEditor } from '../../../../components/Markdown/MarkdownEditor';
 import { Button } from '../../../../components/ui/Button';
 import { Field, FormError } from '../../../../components/ui/Field';
 import { Input, Select } from '../../../../components/ui/Input';
@@ -25,7 +25,9 @@ import {
   type TicketType,
 } from '../../../../services/api/types';
 import { useProject } from '../../../projects/hooks/useProject';
+import { usePendingFiles } from '../../hooks/usePendingFiles';
 import { SchemaFields } from '../SchemaFields';
+import { PendingFiles } from './components/PendingFiles';
 import * as S from './style';
 
 type Props = { defaults: CreateTicketDefaults; onClose: () => void };
@@ -57,6 +59,8 @@ export function CreateTicketModal({ defaults, onClose }: Props) {
   const [values, setValues] = useState<Values>(() => initial(defaults));
   const [another, setAnother] = useState(false);
   const [checked, setChecked] = useState(false);
+  const editor = useRef<EditorApi | null>(null);
+  const pending = usePendingFiles(editor);
   const { data: schema } = useQuery({
     queryKey: screenKeys.schema(projectKey, type, 'create'),
     queryFn: () => fetchSchema(projectKey, type, 'create'),
@@ -79,6 +83,7 @@ export function CreateTicketModal({ defaults, onClose }: Props) {
       } as TicketCreate);
     },
     onSuccess: async (ticket) => {
+      await pending.flush(ticket).catch((error) => toast(errorMessage(error), 'error'));
       await queryClient.invalidateQueries({ queryKey: ticketKeys.all });
       await queryClient.invalidateQueries({ queryKey: projectKeys.all });
       toast(
@@ -229,7 +234,10 @@ export function CreateTicketModal({ defaults, onClose }: Props) {
               placeholder={t('create.descriptionPlaceholder')}
               ariaLabel={t('ticket.fields.description')}
               onSubmit={submit}
+              onFiles={pending.add}
+              apiRef={editor}
             />
+            <PendingFiles files={pending.files} onRemove={pending.remove} />
           </Field>
         )}
         {optional.length > 0 && (

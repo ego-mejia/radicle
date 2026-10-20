@@ -55,7 +55,7 @@ export function MarkdownEditor({
         validFor: /^[\w-]*$/,
       };
     };
-    const takeFiles = (list: FileList | undefined | null) => {
+    const takeFiles = (list: FileList | File[] | undefined | null) => {
       const files = Array.from(list ?? []);
       if (!files.length || !latest.current.onFiles) return false;
       latest.current.onFiles(files);
@@ -82,7 +82,17 @@ export function MarkdownEditor({
         placeholder ? placeholderExt(placeholder) : [],
         EditorView.contentAttributes.of({ 'aria-label': ariaLabel, 'aria-multiline': 'true' }),
         EditorView.domEventHandlers({
-          paste: (event) => takeFiles(event.clipboardData?.files),
+          paste: (event) => {
+            // Some browsers put a copied screenshot only in `items`, not in `files`.
+            const items = Array.from(event.clipboardData?.items ?? []);
+            const fromItems = items
+              .filter((i) => i.kind === 'file')
+              .map((i) => i.getAsFile())
+              .filter((f): f is File => f !== null);
+            return event.clipboardData?.files.length
+              ? takeFiles(event.clipboardData.files)
+              : takeFiles(fromItems);
+          },
           drop: (event, editor) => {
             const pos = editor.posAtCoords({ x: event.clientX, y: event.clientY });
             if (pos !== null) editor.dispatch({ selection: { anchor: pos } });
