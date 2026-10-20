@@ -1452,6 +1452,16 @@
       "saved": "Assistant saved",
       "managedByEnv": "Set by RADICLE_ASSISTANT_* environment variables on the server, so it is read-only here."
     },
-    "more": "Ask something else:"
+    "more": "Ask something else:",
+    "tour": {
+      "title": "Radi's tour",
+      "step": "Step {{n}} of {{total}}",
+      "next": "Next",
+      "back": "Back",
+      "done": "Done",
+      "stop": "Stop the tour",
+      "missing": "I can't find this part here. Skip to the next step.",
+      "showMe": "Show me"
+    }
   }
 }

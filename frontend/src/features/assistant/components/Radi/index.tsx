@@ -36,6 +36,12 @@ export function Radi({ open, mood, onClick }: Props) {
       if (reduce) draw(0.2);
     };
     window.addEventListener('pointermove', onMove);
+    // During a tour Radi watches the tour cursor.
+    const onLook = (e: Event) => {
+      const { x, y } = (e as CustomEvent<{ x: number; y: number }>).detail;
+      onMove({ clientX: x, clientY: y } as PointerEvent);
+    };
+    window.addEventListener('radi:look', onLook);
     let frame = 0;
     let last = 0;
     const loop = (now: number) => {
@@ -49,6 +55,7 @@ export function Radi({ open, mood, onClick }: Props) {
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('radi:look', onLook);
     };
   }, []);
 
@@ -74,6 +81,7 @@ export function Radi({ open, mood, onClick }: Props) {
   return (
     <S.Button
       ref={button}
+      data-tour="radi"
       type="button"
       aria-label={open ? t('assistant.close') : t('assistant.open')}
       aria-expanded={open}
