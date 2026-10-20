@@ -45,6 +45,9 @@ class UserOut(Output):
     is_active: bool
     auth_source: str = "local"
     created_at: UtcDatetime
+    mcp_tools: list[str] | None = Field(
+        default=None, description="Agents: the MCP tools it may call; null means all of them"
+    )
 
 
 class MeProject(Output):
@@ -85,12 +88,25 @@ class UserPatch(Input):
     password: str | None = Field(default=None, repr=False)
     is_active: bool | None = None
     is_instance_admin: bool | None = None
+    mcp_tools: list[str] | None = Field(
+        default=None, description="Agents only: MCP tools it may call; null allows all of them"
+    )
 
 
 class AgentCreate(Input):
     handle: str
     display_name: str
     token_name: str = "default"
+    mcp_tools: list[str] | None = Field(
+        default=None, description="MCP tools it may call; leave it out to allow all of them"
+    )
+
+
+class McpToolOut(Output):
+    name: str
+    group: str = Field(description="context, find_work, tickets, collaboration, ...")
+    read_only: bool = Field(description="Never changes anything")
+    description: str
 
 
 # --- tokens -------------------------------------------------------------------------------

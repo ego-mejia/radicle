@@ -12,6 +12,21 @@
             "title": "Handle",
             "type": "string"
           },
+          "mcp_tools": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "MCP tools it may call; leave it out to allow all of them",
+            "title": "Mcp Tools"
+          },
           "token_name": {
             "default": "default",
             "title": "Token Name",
@@ -3517,6 +3532,36 @@
         "title": "LoginIn",
         "type": "object"
       },
+      "McpToolOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "group": {
+            "description": "context, find_work, tickets, collaboration, ...",
+            "title": "Group",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "read_only": {
+            "description": "Never changes anything",
+            "title": "Read Only",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "group",
+          "read_only",
+          "description"
+        ],
+        "title": "McpToolOut",
+        "type": "object"
+      },
       "MeOut": {
         "properties": {
           "auth_source": {
@@ -3558,6 +3603,21 @@
           "kind": {
             "$ref": "#/components/schemas/UserKind"
           },
+          "mcp_tools": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Agents: the MCP tools it may call; null means all of them",
+            "title": "Mcp Tools"
+          },
           "projects": {
             "items": {
               "$ref": "#/components/schemas/MeProject"
@@ -3575,6 +3635,7 @@
           "is_active",
           "auth_source",
           "created_at",
+          "mcp_tools",
           "projects"
         ],
         "title": "MeOut",
@@ -9530,6 +9591,21 @@
           },
           "kind": {
             "$ref": "#/components/schemas/UserKind"
+          },
+          "mcp_tools": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Agents: the MCP tools it may call; null means all of them",
+            "title": "Mcp Tools"
           }
         },
         "required": [
@@ -9540,7 +9616,8 @@
           "is_instance_admin",
           "is_active",
           "auth_source",
-          "created_at"
+          "created_at",
+          "mcp_tools"
         ],
         "title": "UserOut",
         "type": "object"
@@ -9592,6 +9669,21 @@
               }
             ],
             "title": "Is Instance Admin"
+          },
+          "mcp_tools": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Agents only: MCP tools it may call; null allows all of them",
+            "title": "Mcp Tools"
           },
           "password": {
             "anyOf": [
@@ -13016,6 +13108,32 @@
         "summary": "Delete Link",
         "tags": [
           "links and comments"
+        ]
+      }
+    },
+    "/api/v1/mcp/tools": {
+      "get": {
+        "description": "Every MCP tool with its group, for choosing what an agent may call.",
+        "operationId": "list_mcp_tools_api_v1_mcp_tools_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/McpToolOut"
+                  },
+                  "title": "Response List Mcp Tools Api V1 Mcp Tools Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Mcp Tools",
+        "tags": [
+          "users"
         ]
       }
     },
