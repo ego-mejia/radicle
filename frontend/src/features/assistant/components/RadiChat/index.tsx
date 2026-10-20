@@ -53,6 +53,16 @@ export function RadiChat({ onClose, onMood }: Props) {
     ask.mutate(history.map(({ role, content }) => ({ role, content })));
   };
 
+  const suggestions = (
+    <S.Suggestions>
+      {SUGGESTIONS.map((key) => (
+        <button key={key} type="button" onClick={() => send(t(`assistant.suggestions.${key}`))}>
+          {t(`assistant.suggestions.${key}`)}
+        </button>
+      ))}
+    </S.Suggestions>
+  );
+
   return (
     <S.Panel
       role="dialog"
@@ -96,6 +106,12 @@ export function RadiChat({ onClose, onMood }: Props) {
           ),
         )}
         {ask.isPending && <S.Typing>{t('assistant.thinking')}</S.Typing>}
+        {lines.length > 0 && !ask.isPending && (
+          <>
+            <S.Hint>{t('assistant.more')}</S.Hint>
+            {suggestions}
+          </>
+        )}
         <div ref={end} />
       </S.Messages>
       <S.Composer

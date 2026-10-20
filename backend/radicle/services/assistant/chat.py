@@ -27,6 +27,10 @@ NOT_FOUND = {
     "*columnas del board*.",
 }
 RELATED = {"en": "Related", "es": "Relacionado"}
+ANYTHING_ELSE = {
+    "en": "Happy to help! What else would you like to do in Radicle?",
+    "es": "¡Con gusto! ¿Qué más quieres hacer en Radicle?",
+}
 UNAVAILABLE = {
     "en": "My AI is not available right now, so here is what the guide says.",
     "es": "Mi IA no está disponible ahora, así que te comparto lo que dice la guía.",
@@ -41,13 +45,13 @@ class Reply:
     notice: str | None = None
 
 
-def _question(messages: list[llm.Message]) -> str:
-    """The last question, plus the one before for short follow-ups ("and in Spanish?")."""
-    asked = [m.content for m in messages if m.role == "user"]
-    return " ".join(asked[-2:])
+def _asked(messages: list[llm.Message]) -> list[str]:
+    return [m.content for m in messages if m.role == "user"]
 
 
 def from_guide(question: str, lang: Language) -> Reply:
+    if not guide.terms(question):  # "ok", "thanks", "n": nothing to look up
+        return Reply(ANYTHING_ELSE[lang], "guide")
     hits = guide.search(question, lang)
     if not hits:
         return Reply(NOT_FOUND[lang], "guide")
@@ -61,11 +65,14 @@ def from_guide(question: str, lang: Language) -> Reply:
 async def answer(
     db: AsyncSession, messages: list[llm.Message], lang: Language, *, admin: bool = False
 ) -> Reply:
-    question = _question(messages)
+    asked = _asked(messages)
+    question = asked[-1] if asked else ""
     cfg = await config.load(db)
     if not cfg.enabled:
         return from_guide(question, lang)
-    hits = guide.search(question, lang, limit=4)
+    # The model sees the conversation; the excerpts also cover the previous question,
+    # so short follow-ups ("and for bugs?") keep their context.
+    hits = guide.search(" ".join(asked[-2:]), lang, limit=4)
     system = SYSTEM.format(
         language=LANGUAGE_NAMES[lang],
         toc=", ".join(guide.contents(lang)),

@@ -164,3 +164,9 @@ export const Send = styled.button`
     cursor: default;
   }
 `;
+
+export const Hint = styled.p`
+  margin: 4px 0 0;
+  color: ${({ theme }) => theme.color.textMuted};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+`;

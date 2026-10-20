@@ -1451,6 +1451,7 @@
       "test": "Test connection",
       "saved": "Assistant saved",
       "managedByEnv": "Set by RADICLE_ASSISTANT_* environment variables on the server, so it is read-only here."
-    }
+    },
+    "more": "Ask something else:"
   }
 }
