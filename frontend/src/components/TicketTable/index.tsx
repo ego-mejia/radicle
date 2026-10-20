@@ -107,21 +107,19 @@ export function TicketTable({
             })}
           </tr>
         </thead>
-        <tbody>
-          <Rows tickets={tickets} onReorder={onReorder}>
-            {(ticket, handle) => (
-              <TicketRow
-                key={ticket.key}
-                ticket={ticket}
-                onOpen={onOpen}
-                selected={selected}
-                onSelect={onSelect}
-                sortable={Boolean(onReorder)}
-                handle={handle}
-              />
-            )}
-          </Rows>
-        </tbody>
+        <Rows tickets={tickets} onReorder={onReorder}>
+          {(ticket, handle) => (
+            <TicketRow
+              key={ticket.key}
+              ticket={ticket}
+              onOpen={onOpen}
+              selected={selected}
+              onSelect={onSelect}
+              sortable={Boolean(onReorder)}
+              handle={handle}
+            />
+          )}
+        </Rows>
       </S.Table>
       <S.Sentinel ref={sentinel} />
       <S.Footer>
