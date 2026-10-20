@@ -363,6 +363,8 @@ Presiona <kbd>?</kbd> para ver todos los atajos. Los principales:
 
 Cambia entre claro y oscuro con el botón de la luna, y entre inglés y español en tu perfil o desde la paleta. Los atajos se pueden apagar en tu perfil.
 
+**Úsalo como app de escritorio.** Radicle se puede instalar como app propia, con Radi en el Dock y su propia ventana: en Chrome da clic en **Instalar** en la barra de direcciones, o en Safari elige **Archivo → Añadir al Dock**.
+
 ## ⚙️ Configuración
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Las perillas para quien administra Radicle.
