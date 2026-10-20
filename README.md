@@ -169,7 +169,7 @@ Create a board of kind **Scrum** to plan in sprints. Then, in **Backlog**:
 
 ### 7. Timeline
 
-**Timeline** draws tickets over time, grouped by milestone or area, by week, month or quarter. Drag a bar to change its dates, or drag a ticket from **Without dates** onto the timeline to give it some. Impossible dependencies (a ticket that starts before what blocks it ends) turn red, and milestones show their forecast.
+**Timeline** draws tickets over time, grouped by milestone or area, by week, month or quarter. Drag a bar to change its dates, or drag a ticket from **Without dates** onto the timeline to give it some. A ticket with only a due date gets a faded bar from the day it was created (one with only a start date, a faded bar as long as its estimate) until you set both dates. Impossible dependencies (a ticket that starts before what blocks it ends) turn red, and milestones show their forecast.
 
 <p align="center"><img src="docs/images/timeline.png" alt="Timeline" width="820"></p>
 
@@ -244,11 +244,14 @@ The log is **append-only**: the database itself rejects updates and deletes. Ent
 
 Agents are users of kind *agent*, with their own handle, tokens, history and permissions.
 
-1. Go to **Admin → Agents → New agent** and copy the token (`rdc_...`). It is shown only once, together with ready-to-paste MCP snippets.
-2. Add the agent to a project in **Settings → Members**, usually as **Member**.
-3. Connect your MCP client.
+1. Go to **Admin → Users → New user**, choose **Agent (LLM or worker)** and copy the token (`rdc_...`). It is shown only once, together with ready-to-paste MCP snippets. (**Admin → Agents → New agent** does the same.)
+2. Choose what it may do over MCP. Leave **All tools** on, pick **Read only**, or tick the exact tools: for example, a triage bot that can only read and score the Inbox.
+3. Add the agent to a project in **Settings → Members**, usually as **Member**.
+4. Connect your MCP client.
 
-<p align="center"><img src="docs/images/agents.png" alt="Agents" width="820"></p>
+<p align="center"><img src="docs/images/agent-mcp-permissions.png" alt="MCP permissions of an agent" width="820"></p>
+
+You can change an agent's tools any time with **MCP permissions** in Users or Agents. Tools that are off disappear from the agent's tool list and are refused if called. They add to the project permissions and security levels; they never replace them. Every change is recorded in the audit log.
 
 **Claude Code**
 
@@ -286,7 +289,7 @@ Clients that only speak stdio can use [`mcp-remote`](https://www.npmjs.com/packa
 | Planning | `list_boards`, `get_board`, `list_sprints`, `get_sprint`, `add_to_sprint`, `remove_from_sprint`, `start_sprint`, `complete_sprint`, `get_milestone_progress`, `get_report` |
 | Inbox | `list_inbox`, `score_inbox_item`, `approve_inbox_item`, `discard_inbox_item`, `mark_inbox_duplicate` |
 
-Resources: `radicle://guide/rql` and `radicle://projects/{key}/schema`. Agents follow the same permission matrix and security levels as people.
+Resources: `radicle://guide/rql` and `radicle://projects/{key}/schema`. Agents follow the same permission matrix and security levels as people, and can be limited to some of these tools. `GET /api/v1/mcp/tools` lists them with their group and whether they only read.
 
 </details>
 
