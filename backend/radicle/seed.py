@@ -3,7 +3,7 @@
 import random
 import uuid
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -95,6 +95,18 @@ DESCRIPTION = (
     "are in the linked conversation.\n\n- [x] Reproduce it\n- [ ] Ship the fix"
 )
 TAGS = ["backlog", "payments", "ux", "tech-debt", "security", "perf", "mobile", "copy", "infra"]
+
+
+def _dates(rng: random.Random, created: datetime) -> tuple[date | None, date | None]:
+    """A due date for 40% of tickets; most of those also get a start, so the timeline
+    has real bars."""
+    if rng.random() >= 0.4:
+        return None, None
+    due = (created + timedelta(days=rng.randint(1, 90))).date()
+    if rng.random() >= 0.75:
+        return due, None
+    start = max(created.date(), due - timedelta(days=rng.randint(2, 21)))
+    return due, start
 
 
 def _title(rng: random.Random, ticket_type: TicketType) -> tuple[str, str]:
@@ -215,6 +227,7 @@ async def seed(
         ids.append(ticket_id)
         reporter = rng.choice(assignable)
         title, description = _title(rng, ticket_type)
+        due_day, start_day = _dates(rng, created)
         rows.append(
             {
                 "id": ticket_id,
@@ -236,9 +249,8 @@ async def seed(
                 "milestone_id": rng.choice(milestones).id if rng.random() < 0.6 else None,
                 "assignee_id": rng.choice(assignable).id if rng.random() < 0.7 else None,
                 "reporter_id": reporter.id,
-                "due_date": (created + timedelta(days=rng.randint(1, 90))).date()
-                if rng.random() < 0.4
-                else None,
+                "due_date": due_day,
+                "start_date": start_day,
                 "estimate_hours": rng.choice([None, 1, 2, 3, 5, 8, 13]),
                 "tags": rng.sample(TAGS, rng.randint(0, 3)),
                 "rank": current_rank,
