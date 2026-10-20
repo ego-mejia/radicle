@@ -55,6 +55,22 @@ describe('boards', () => {
     expect(optionsFor(first, 1, options, 'task').map((o) => o.name)).toEqual(['Start']);
   });
 
+  it('a status named in a later column wins over an earlier category column', () => {
+    const later = {
+      ...board,
+      columns: [
+        { name: 'In Progress', categories: ['in_progress'], status_ids: [], wip_limit: null },
+        board.columns[1]!,
+      ],
+    } as unknown as Board;
+    const options = [
+      option('Review', 'In Review', 'in_progress'),
+      option('Start', 'Doing', 'in_progress'),
+    ];
+    expect(optionsFor(later, 0, options, 'task').map((o) => o.name)).toEqual(['Start']);
+    expect(optionsFor(later, 1, options, 'task').map((o) => o.name)).toEqual(['Review']);
+  });
+
   it('picks an icon category for mixed columns', () => {
     expect(columnCategory(board, board.columns[0]!)).toBe('todo');
     expect(columnCategory(board, board.columns[2]!)).toBe('in_progress');

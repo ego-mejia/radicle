@@ -251,8 +251,37 @@ def ctx_ref(other: relations.LinkedTicket) -> TicketRef:
     )
 
 
-async def summaries_out(db: AsyncSession, tickets: list[Ticket]) -> list[TicketSummary]:
+async def summaries_out(
+    db: AsyncSession, tickets: list[Ticket], viewer: User | None = None
+) -> list[TicketSummary]:
+    """Rows for lists. With a `viewer`, each row also says its parent (if the viewer may
+    see it) and how many subtickets the viewer may see, so lists can nest them."""
     ctx = await load_context(db, tickets)
+    visible_parents: set[uuid.UUID] = set()
+    child_counts: dict[uuid.UUID, int] = {}
+    if viewer is not None and tickets:
+        missing = {p.project_id for p in ctx.parents.values()} - set(ctx.project_keys)
+        if missing:  # a parent can live in another project after a move
+            rows = await db.execute(select(Project.id, Project.key).where(Project.id.in_(missing)))
+            ctx.project_keys.update({pid: key for pid, key in rows.all()})
+        if ctx.parents:
+            visible_parents = set(
+                await db.scalars(
+                    select(Ticket.id).where(
+                        Ticket.id.in_(ctx.parents), visible_tickets_clause(viewer)
+                    )
+                )
+            )
+        counts = await db.execute(
+            select(Ticket.parent_id, func.count())
+            .where(
+                Ticket.parent_id.in_([t.id for t in tickets]),
+                Ticket.deleted_at.is_(None),
+                visible_tickets_clause(viewer),
+            )
+            .group_by(Ticket.parent_id)
+        )
+        child_counts = {pid: n for pid, n in counts.all() if pid is not None}
     result = []
     for t in tickets:
         items = markdown.parse_checklist(t.description_md)
@@ -285,6 +314,10 @@ async def summaries_out(db: AsyncSession, tickets: list[Ticket]) -> list[TicketS
                 impact=t.impact,
                 effort=t.effort,
                 converted=t.converted_at is not None,
+                parent=(
+                    ctx.key(ctx.parents[t.parent_id]) if t.parent_id in visible_parents else None
+                ),
+                child_count=child_counts.get(t.id, 0) if viewer is not None else None,
             )
         )
     return result

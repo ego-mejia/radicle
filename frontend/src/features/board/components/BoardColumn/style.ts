@@ -8,43 +8,55 @@ export const Column = styled.section<{
   flex-direction: column;
   min-width: 0;
   min-height: 300px;
-  background: ${({ theme }) => (theme.mode === 'dark' ? theme.color.surface : theme.color.surface2)};
-  border: 1px solid
-    ${({ theme, $state, $over }) =>
-      $state === 'over'
-        ? theme.color.accent
-        : $state === 'allowed'
-          ? theme.color.accentSoft
-          : $over
-            ? theme.color.danger
-            : theme.color.border};
-  border-style: ${({ $state }) => ($state === 'allowed' ? 'dashed' : 'solid')};
-  border-radius: ${({ theme }) => theme.radius.lg};
+  background: ${({ theme, $state }) =>
+    $state === 'over'
+      ? theme.color.accentSoft
+      : theme.mode === 'dark'
+        ? theme.color.surface
+        : theme.color.surface2};
+  border-radius: ${({ theme }) => theme.radius.md};
+  box-shadow: ${({ theme, $state, $over }) =>
+    $state === 'allowed' || $state === 'over'
+      ? `inset 0 0 0 2px ${theme.color.accent}`
+      : $over
+        ? `inset 0 0 0 2px ${theme.color.danger}`
+        : 'none'};
   opacity: ${({ $state }) => ($state === 'blocked' ? 0.45 : 1)};
   transition:
-    border-color 0.1s,
+    background 0.1s,
+    box-shadow 0.1s,
     opacity 0.1s;
 `;
 
 export const Head = styled.header`
+  position: sticky;
+  top: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 10px 12px 8px;
+  border-radius: ${({ theme }) => `${theme.radius.md} ${theme.radius.md} 0 0`};
+  background: inherit;
 
   h2 {
     margin: 0;
-    font-size: ${({ theme }) => theme.fontSize.md};
-    font-weight: 700;
+    color: ${({ theme }) => theme.color.textMuted};
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;
 
 export const Count = styled.span<{ $over?: boolean }>`
-  margin-left: auto;
   padding: 0 6px;
   border-radius: ${({ theme }) => theme.radius.full};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: ${({ $over }) => ($over ? 700 : 400)};
+  font-size: 12px;
+  font-weight: 600;
   color: ${({ theme, $over }) => ($over ? theme.color.surface : theme.color.textMuted)};
   background: ${({ theme, $over }) => ($over ? theme.color.danger : 'transparent')};
 `;
@@ -52,8 +64,8 @@ export const Count = styled.span<{ $over?: boolean }>`
 export const Cards = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 0 8px 8px;
+  gap: 8px;
+  padding: 2px 8px 8px;
   overflow-y: auto;
 `;
 

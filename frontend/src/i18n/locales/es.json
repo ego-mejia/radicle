@@ -353,7 +353,11 @@
       "votes": "Votos"
     },
     "quickFiltersHelp": "Interruptores sobre el tablero. Varios activos se combinan con AND.",
-    "deleteConfirm": "¿Borrar el tablero {{name}}? Los tickets no se tocan."
+    "deleteConfirm": "¿Borrar el tablero {{name}}? Los tickets no se tocan.",
+    "collapseAll": "Plegar todos",
+    "expandAll": "Desplegar todos",
+    "laneCount_one": "{{count}} ticket",
+    "laneCount_other": "{{count}} tickets"
   },
   "list": {
     "rqlLabel": "Query RQL",

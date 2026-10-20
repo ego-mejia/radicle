@@ -353,7 +353,11 @@
       "votes": "Votes"
     },
     "quickFiltersHelp": "Toggles above the board. Several active ones combine with AND.",
-    "deleteConfirm": "Delete the board {{name}}? Tickets are not touched."
+    "deleteConfirm": "Delete the board {{name}}? Tickets are not touched.",
+    "collapseAll": "Collapse all",
+    "expandAll": "Expand all",
+    "laneCount_one": "{{count}} ticket",
+    "laneCount_other": "{{count}} tickets"
   },
   "list": {
     "rqlLabel": "RQL query",

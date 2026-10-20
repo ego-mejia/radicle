@@ -11,6 +11,8 @@ jobs:
     env:
       # Creating the app (for the OpenAPI export) needs a key; tests set their own.
       RADICLE_SECRET_KEY: ci-only-not-secret-0123456789abcdef
+      # Shared runners are slower than a real server: double the performance budgets.
+      RADICLE_PERF_BUDGET_FACTOR: "2"
     defaults:
       run:
         working-directory: backend

@@ -5,7 +5,9 @@ from typing import Any
 
 from fastapi import FastAPI
 from mcp.server.mcpserver import Context, MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 from mcp.server.transport_security import TransportSecuritySettings
+from mcp.types import ListToolsResult
 from starlette.routing import Route
 from starlette.types import Receive, Scope, Send
 
@@ -20,7 +22,39 @@ transition_ticket, set_checklist_item, update_ticket and add_comment as you work
 Tickets are referred to by key (PA-4), people by handle, areas and milestones by name.
 Read radicle://guide/rql for the query language. Errors explain what is valid instead."""
 
-server: MCPServer = MCPServer(
+
+class RadicleMCPServer(MCPServer):
+    """Agents limited to some tools (Admin → Users) only see and call those."""
+
+    async def _handle_list_tools(self, ctx: Any, params: Any) -> ListToolsResult:
+        tools = await self.list_tools()
+        allowed = await _allowed_tools(Context(request_context=ctx, mcp_server=self))
+        if allowed is not None:
+            tools = [t for t in tools if t.name in allowed]
+        return ListToolsResult(tools=tools)
+
+    async def call_tool(
+        self, name: str, arguments: dict[str, Any], context: Context | None = None
+    ) -> Any:
+        if context is not None and context.request_context is not None:
+            allowed = await _allowed_tools(context)
+            if allowed is not None and name not in allowed:
+                raise ToolError(
+                    f"The '{name}' tool is turned off for this agent. An instance admin can "
+                    "turn it on in Admin → Users → MCP permissions."
+                )
+        return await super().call_tool(name, arguments, context)
+
+
+async def _allowed_tools(ctx: Context) -> set[str] | None:
+    """The caller's MCP tool limit, or None when it may use them all."""
+    async with api(ctx) as client:
+        me = await client.call("GET", "/me")
+    tools = me.get("mcp_tools")
+    return None if tools is None else set(tools)
+
+
+server: MCPServer = RadicleMCPServer(
     name="radicle", title="Radicle", version=__version__, instructions=INSTRUCTIONS
 )
 tools.register(server)

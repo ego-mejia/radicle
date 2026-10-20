@@ -19,13 +19,21 @@ export function columnHolds(
   return Boolean(match && (column.status_ids ?? []).includes(match.id));
 }
 
-/** The column a status shows in: the first one that holds it, or -1. */
+/**
+ * The column a status shows in, or -1: the first column that names it, else the first
+ * one that covers its category (a status named in a column wins over its category).
+ */
 export function columnIndexOf(
   board: Board,
   status: { name: string; category: Category },
   type: TicketType,
 ): number {
-  return board.columns.findIndex((column) => columnHolds(board, column, status, type));
+  const match = board.statuses.find((s) => s.name === status.name && s.type === type);
+  if (match) {
+    const named = board.columns.findIndex((c) => (c.status_ids ?? []).includes(match.id));
+    if (named >= 0) return named;
+  }
+  return board.columns.findIndex((c) => (c.categories ?? []).includes(status.category));
 }
 
 /** Transitions of a ticket that land in `column`. */

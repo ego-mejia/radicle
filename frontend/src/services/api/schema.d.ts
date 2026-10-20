@@ -700,6 +700,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/mcp/tools": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Mcp Tools
+         * @description Every MCP tool with its group, for choosing what an agent may call.
+         */
+        get: operations["list_mcp_tools_api_v1_mcp_tools_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -2365,6 +2385,11 @@ export interface components {
             /** Handle */
             handle: string;
             /**
+             * Mcp Tools
+             * @description MCP tools it may call; leave it out to allow all of them
+             */
+            mcp_tools?: string[] | null;
+            /**
              * Token Name
              * @default default
              */
@@ -2747,6 +2772,11 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            /**
+             * Child Count
+             * @description Subtickets you can see, in search results and subticket lists
+             */
+            child_count: number | null;
             classification: components["schemas"]["Classification"] | null;
             /**
              * Converted
@@ -2777,6 +2807,11 @@ export interface components {
             /** Milestone */
             milestone: string | null;
             origin: components["schemas"]["Origin"] | null;
+            /**
+             * Parent
+             * @description Parent key, in search results and subticket lists
+             */
+            parent: string | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -3560,6 +3595,23 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** McpToolOut */
+        McpToolOut: {
+            /** Description */
+            description: string;
+            /**
+             * Group
+             * @description context, find_work, tickets, collaboration, ...
+             */
+            group: string;
+            /** Name */
+            name: string;
+            /**
+             * Read Only
+             * @description Never changes anything
+             */
+            read_only: boolean;
+        };
         /** MeOut */
         MeOut: {
             /**
@@ -3580,6 +3632,11 @@ export interface components {
             /** Is Instance Admin */
             is_instance_admin: boolean;
             kind: components["schemas"]["UserKind"];
+            /**
+             * Mcp Tools
+             * @description Agents: the MCP tools it may call; null means all of them
+             */
+            mcp_tools: string[] | null;
             /** Projects */
             projects: components["schemas"]["MeProject"][];
         };
@@ -5165,6 +5222,11 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            /**
+             * Child Count
+             * @description Subtickets you can see, in search results and subticket lists
+             */
+            child_count: number | null;
             classification: components["schemas"]["Classification"] | null;
             /**
              * Converted
@@ -5190,6 +5252,11 @@ export interface components {
             /** Milestone */
             milestone: string | null;
             origin: components["schemas"]["Origin"] | null;
+            /**
+             * Parent
+             * @description Parent key, in search results and subticket lists
+             */
+            parent: string | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -5257,6 +5324,11 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            /**
+             * Child Count
+             * @description Subtickets you can see, in search results and subticket lists
+             */
+            child_count: number | null;
             classification: components["schemas"]["Classification"] | null;
             /**
              * Converted
@@ -5282,6 +5354,11 @@ export interface components {
             /** Milestone */
             milestone: string | null;
             origin: components["schemas"]["Origin"] | null;
+            /**
+             * Parent
+             * @description Parent key, in search results and subticket lists
+             */
+            parent: string | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -5526,6 +5603,11 @@ export interface components {
             /** Is Instance Admin */
             is_instance_admin: boolean;
             kind: components["schemas"]["UserKind"];
+            /**
+             * Mcp Tools
+             * @description Agents: the MCP tools it may call; null means all of them
+             */
+            mcp_tools: string[] | null;
         };
         /** UserPatch */
         UserPatch: {
@@ -5537,6 +5619,11 @@ export interface components {
             is_active?: boolean | null;
             /** Is Instance Admin */
             is_instance_admin?: boolean | null;
+            /**
+             * Mcp Tools
+             * @description Agents only: MCP tools it may call; null allows all of them
+             */
+            mcp_tools?: string[] | null;
             /** Password */
             password?: string | null;
         };
@@ -5658,6 +5745,11 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            /**
+             * Child Count
+             * @description Subtickets you can see, in search results and subticket lists
+             */
+            child_count: number | null;
             classification: components["schemas"]["Classification"] | null;
             /**
              * Converted
@@ -5683,6 +5775,11 @@ export interface components {
             /** Milestone */
             milestone: string | null;
             origin: components["schemas"]["Origin"] | null;
+            /**
+             * Parent
+             * @description Parent key, in search results and subticket lists
+             */
+            parent: string | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -7481,6 +7578,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_mcp_tools_api_v1_mcp_tools_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["McpToolOut"][];
                 };
             };
         };
