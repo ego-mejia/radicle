@@ -364,7 +364,17 @@
     "rqlPlaceholder": "project = PA AND category != done ORDER BY priority DESC",
     "emptyTitle": "Ningún ticket coincide",
     "emptyText": "Prueba con menos condiciones o revisa los nombres en las sugerencias.",
-    "showing": "{{shown}} de {{total}}"
+    "showing": "{{shown}} de {{total}}",
+    "groupNone": {
+      "type": "Sin tipo",
+      "status": "Sin estado",
+      "priority": "Sin prioridad",
+      "assignee": "Sin asignar",
+      "area": "Sin área",
+      "milestone": "Sin milestone"
+    },
+    "subtickets_one": "{{count}} subticket de {{key}}",
+    "subtickets_other": "{{count}} subtickets de {{key}}"
   },
   "milestones": {
     "create": "Nuevo milestone",
