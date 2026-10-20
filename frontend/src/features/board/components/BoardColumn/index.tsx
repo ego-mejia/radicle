@@ -97,7 +97,7 @@ export function BoardColumn({
     >
       {showHeader && (
         <S.Head>
-          <CategoryIcon category={category} size={16} />
+          <CategoryIcon category={category} size={14} />
           <h2>{name}</h2>
           <S.Count
             $over={overLimit}
