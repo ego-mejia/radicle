@@ -98,6 +98,11 @@ export const Card = styled.div<{
     background: ${({ theme }) => (theme.mode === 'dark' ? theme.color.surface2 : '#F7F8F9')};
   }
 
+  &:hover [data-empty],
+  &:focus-within [data-empty] {
+    opacity: 1;
+  }
+
   ${({ $flash }) => $flash && flashes[$flash]}
 
   @media (prefers-reduced-motion: reduce) {

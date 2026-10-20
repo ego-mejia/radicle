@@ -192,6 +192,14 @@
     "filesOnCreate_other": "{{count}} files upload when the ticket is created",
     "removeFile": "Remove {{name}}"
   },
+  "card": {
+    "changeArea": "Change the area",
+    "changeMilestone": "Change the milestone",
+    "addMilestone": "Milestone",
+    "noMilestone": "No milestone",
+    "subtickets_one": "{{count}} subticket",
+    "subtickets_other": "{{count}} subtickets"
+  },
   "comments": {
     "placeholder": "Write a comment. Markdown and @mentions work.",
     "send": "Comment",
@@ -353,7 +361,10 @@
       "estimate": "Estimate",
       "remaining": "Remaining",
       "checklist": "Checklist",
-      "votes": "Votes"
+      "votes": "Votes",
+      "area": "Area",
+      "milestone": "Milestone",
+      "children": "Subtickets"
     },
     "quickFiltersHelp": "Toggles above the board. Several active ones combine with AND.",
     "deleteConfirm": "Delete the board {{name}}? Tickets are not touched.",
