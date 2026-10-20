@@ -8,6 +8,7 @@ import { PageSpinner } from '../../../../components/ui/Spinner';
 import { useMe } from '../../../../hooks/useMe';
 import { fetchProjects, projectKeys } from '../../../../services/api/projects';
 import { CreateProjectModal } from '../../components/CreateProjectModal';
+import { EditProjectModal } from '../../components/EditProjectModal';
 import { ProjectCard } from '../../components/ProjectCard';
 import * as S from './style';
 
@@ -15,6 +16,7 @@ export function ProjectsView() {
   const { t } = useTranslation();
   const me = useMe();
   const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState<string | null>(null);
   const { data: projects, isPending } = useQuery({
     queryKey: projectKeys.list(false),
     queryFn: () => fetchProjects(false),
@@ -37,7 +39,15 @@ export function ProjectsView() {
       ) : projects && projects.length > 0 ? (
         <S.Grid>
           {projects.map((project) => (
-            <ProjectCard key={project.key} project={project} />
+            <ProjectCard
+              key={project.key}
+              project={project}
+              onEdit={
+                me.is_instance_admin || project.role === 'admin'
+                  ? () => setEditing(project.key)
+                  : undefined
+              }
+            />
           ))}
         </S.Grid>
       ) : (
@@ -49,6 +59,7 @@ export function ProjectsView() {
         />
       )}
       <CreateProjectModal open={creating} onOpenChange={setCreating} />
+      {editing && <EditProjectModal projectKey={editing} onClose={() => setEditing(null)} />}
     </>
   );
 }

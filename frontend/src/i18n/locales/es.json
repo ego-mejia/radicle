@@ -268,7 +268,10 @@
       "admin": "Admin",
       "member": "Miembro",
       "viewer": "Viewer"
-    }
+    },
+    "editTitle": "Editar {{key}}",
+    "keyFixed": "La key no se puede cambiar: las keys de los tickets dependen de ella.",
+    "saved": "{{key}} guardado"
   },
   "board": {
     "filters": "Filtros",
