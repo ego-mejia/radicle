@@ -77,7 +77,8 @@ describe('useBoardDrag', () => {
         'b1',
         expect.objectContaining({ ticket: 'PA-1', column: 0, transition: 'Stop' }),
       ),
-    );
+    ); // The moved card flashes; To Do is not a done column, so it is the plain flash.
+    expect(hook.flash).toEqual({ key: 'PA-1', kind: 'moved' });
   });
 });
 
