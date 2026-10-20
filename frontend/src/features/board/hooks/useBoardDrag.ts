@@ -1,12 +1,16 @@
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
-import { optionsFor } from '../../../lib/boards';
+import { useEffect, useRef, useState } from 'react';
+import { columnCategory, optionsFor } from '../../../lib/boards';
 import { moveCard, type CardMove } from '../../../services/api/boards';
 import { projectKeys } from '../../../services/api/projects';
 import { fetchTransitions, ticketKeys } from '../../../services/api/tickets';
 import type { BoardCard, BoardData, TransitionOption } from '../../../services/api/types';
 import { useMoveFeedback } from '../../tickets/hooks/useMoveFeedback';
+import type { Flash } from './flash';
+
+// Long enough for the done flash (TicketCard/style.ts) to play out.
+const FLASH_MS = 1400;
 
 type Drag = { ticket: BoardCard; from: number; options: TransitionOption[] | null };
 
@@ -86,10 +90,19 @@ export function useBoardDrag(
     before.current = undefined;
   };
   const boardId = data?.board.id ?? '';
+  const [flash, setFlash] = useState<Flash | null>(null);
+  useEffect(() => {
+    if (!flash) return;
+    const timer = setTimeout(() => setFlash(null), FLASH_MS);
+    return () => clearTimeout(timer);
+  }, [flash]);
 
   const move = useMutation({
     mutationFn: (body: CardMove) => moveCard(boardId, body),
     onMutate: async (body) => {
+      const column = data?.board.columns[body.column];
+      const done = !!data && !!column && columnCategory(data.board, column) === 'done';
+      setFlash({ key: body.ticket, kind: done ? 'done' : 'moved' });
       // Show the move right away; the server's answer (or an error) settles it.
       await queryClient.cancelQueries({ queryKey });
       queryClient.setQueryData<BoardData>(queryKey, (old) =>
@@ -169,6 +182,7 @@ export function useBoardDrag(
 
   return {
     drag: drag?.ticket ?? null,
+    flash,
     pending,
     columnState,
     onDragStart,

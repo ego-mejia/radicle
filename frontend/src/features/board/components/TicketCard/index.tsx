@@ -17,6 +17,8 @@ type Props = React.HTMLAttributes<HTMLDivElement> & {
   overlay?: boolean;
   /** Another card hovers it: it would be ranked right above. */
   dropTarget?: boolean;
+  /** It just moved: a short flash, brighter when it landed in a done column. */
+  flash?: 'moved' | 'done';
   /** Optional fields the board shows; key, title and type always show. */
   fields?: string[];
 };
@@ -27,6 +29,7 @@ export const TicketCard = forwardRef<HTMLDivElement, Props>(function TicketCard(
     dragging = false,
     overlay = false,
     dropTarget = false,
+    flash,
     fields = DEFAULT_CARD_FIELDS,
     ...rest
   },
@@ -42,6 +45,8 @@ export const TicketCard = forwardRef<HTMLDivElement, Props>(function TicketCard(
       $dragging={dragging}
       $overlay={overlay}
       $dropTarget={dropTarget}
+      $flash={flash}
+      data-flash={flash}
       aria-label={`${ticket.key} ${ticket.title}`}
       {...rest}
     >

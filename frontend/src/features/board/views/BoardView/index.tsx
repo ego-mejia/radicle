@@ -31,6 +31,7 @@ import { BoardLanes } from '../../components/BoardLanes';
 import { BoardToolbar } from '../../components/BoardToolbar';
 import { DropResolver } from '../../components/DropResolver';
 import { TicketCard } from '../../components/TicketCard';
+import { FlashContext } from '../../hooks/flash';
 import { useBoardDrag } from '../../hooks/useBoardDrag';
 import { SprintBanner } from '../../../sprints/components/SprintBanner';
 import * as S from './style';
@@ -124,56 +125,60 @@ export function BoardView() {
           onDragEnd={dnd.onDragEnd}
           onDragCancel={dnd.cancel}
         >
-          {data.swimlane_by !== 'none' ? (
-            <BoardLanes
-              data={data}
-              columnState={dnd.columnState}
-              canDrag={canDrag}
-              onOpen={(ticketKey) => go({ t: ticketKey })}
-            />
-          ) : (
-            <S.Columns
-              style={{ gridTemplateColumns: `repeat(${data.columns.length}, minmax(240px, 1fr))` }}
-            >
-              {data.columns.map((column) => {
-                const category = columnCategory(data.board, data.board.columns[column.index]!);
-                return (
-                  <BoardColumn
-                    key={column.index}
-                    dropId={`col:${column.index}`}
-                    index={column.index}
-                    name={column.name}
-                    category={category}
-                    tickets={column.tickets}
-                    count={column.count}
-                    wipLimit={column.wip_limit}
-                    overLimit={column.over_limit}
-                    state={dnd.columnState(column.index)}
-                    canDrag={canDrag}
-                    onOpen={(ticketKey) => go({ t: ticketKey })}
-                    fields={data.board.card_fields}
-                    footer={
-                      column.done_only && (
-                        <Link
-                          to="/p/$key/list"
-                          params={{ key: projectKey }}
-                          search={{
-                            q: `project = ${projectKey} AND category = done ORDER BY resolved DESC`,
-                          }}
-                        >
-                          {t('board.seeAllDone', { days: data.board.done_window_days })}
-                        </Link>
-                      )
-                    }
-                  />
-                );
-              })}
-            </S.Columns>
-          )}
-          {/* No drop animation: it flew the card back to where the drag began. */}
-          <DragOverlay dropAnimation={null}>
-            {dnd.drag && <TicketCard ticket={dnd.drag} fields={data.board.card_fields} overlay />}
-          </DragOverlay>
+          <FlashContext.Provider value={dnd.flash}>
+            {data.swimlane_by !== 'none' ? (
+              <BoardLanes
+                data={data}
+                columnState={dnd.columnState}
+                canDrag={canDrag}
+                onOpen={(ticketKey) => go({ t: ticketKey })}
+              />
+            ) : (
+              <S.Columns
+                style={{
+                  gridTemplateColumns: `repeat(${data.columns.length}, minmax(240px, 1fr))`,
+                }}
+              >
+                {data.columns.map((column) => {
+                  const category = columnCategory(data.board, data.board.columns[column.index]!);
+                  return (
+                    <BoardColumn
+                      key={column.index}
+                      dropId={`col:${column.index}`}
+                      index={column.index}
+                      name={column.name}
+                      category={category}
+                      tickets={column.tickets}
+                      count={column.count}
+                      wipLimit={column.wip_limit}
+                      overLimit={column.over_limit}
+                      state={dnd.columnState(column.index)}
+                      canDrag={canDrag}
+                      onOpen={(ticketKey) => go({ t: ticketKey })}
+                      fields={data.board.card_fields}
+                      footer={
+                        column.done_only && (
+                          <Link
+                            to="/p/$key/list"
+                            params={{ key: projectKey }}
+                            search={{
+                              q: `project = ${projectKey} AND category = done ORDER BY resolved DESC`,
+                            }}
+                          >
+                            {t('board.seeAllDone', { days: data.board.done_window_days })}
+                          </Link>
+                        )
+                      }
+                    />
+                  );
+                })}
+              </S.Columns>
+            )}
+            {/* No drop animation: it flew the card back to where the drag began. */}
+            <DragOverlay dropAnimation={null}>
+              {dnd.drag && <TicketCard ticket={dnd.drag} fields={data.board.card_fields} overlay />}
+            </DragOverlay>
+          </FlashContext.Provider>
         </DndContext>
       )}
       {dnd.pending && (

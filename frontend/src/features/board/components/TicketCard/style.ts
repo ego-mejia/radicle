@@ -1,4 +1,47 @@
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
+
+// A moved card glows once in the accent; one that reached done glows brighter, grows a
+// little and a shine sweeps across it.
+const glow = (color: string, spread: number) => keyframes`
+  0% { box-shadow: 0 0 0 0 ${color}; }
+  35% { box-shadow: 0 0 0 ${spread / 3}px ${color}, 0 0 ${spread}px ${color}; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+`;
+const pop = keyframes`
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.04); }
+`;
+const sweep = keyframes`
+  from { transform: translateX(-120%) skewX(-20deg); }
+  to { transform: translateX(220%) skewX(-20deg); }
+`;
+
+const flashes = {
+  moved: css`
+    animation: ${({ theme }) => glow(theme.color.accent, 14)} 0.8s ease-out;
+  `,
+  done: css`
+    animation:
+      ${({ theme }) => glow(theme.color.accentFill, 26)} 1.3s ease-out,
+      ${pop} 0.6s ease-out;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: 45%;
+      pointer-events: none;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        ${({ theme }) => theme.color.accentFill},
+        transparent
+      );
+      opacity: 0.55;
+      animation: ${sweep} 0.9s ease-out forwards;
+    }
+  `,
+};
 
 // Jira-like cards: white tiles on a grey column, a soft shadow instead of a border.
 const lift = css`
@@ -13,8 +56,10 @@ export const Card = styled.div<{
   $dragging: boolean;
   $overlay: boolean;
   $dropTarget: boolean;
+  $flash?: 'moved' | 'done';
 }>`
   position: relative;
+  overflow: ${({ $flash }) => ($flash === 'done' ? 'hidden' : 'visible')};
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -51,6 +96,16 @@ export const Card = styled.div<{
 
   &:hover {
     background: ${({ theme }) => (theme.mode === 'dark' ? theme.color.surface2 : '#F7F8F9')};
+  }
+
+  ${({ $flash }) => $flash && flashes[$flash]}
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    &::after {
+      animation: none;
+      opacity: 0;
+    }
   }
 
   &:focus-visible {

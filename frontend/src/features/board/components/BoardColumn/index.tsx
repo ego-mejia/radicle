@@ -2,6 +2,7 @@ import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { useTranslation } from 'react-i18next';
 import { CategoryIcon } from '../../../../components/icons/CategoryIcon';
 import type { Category, TicketSummary } from '../../../../services/api/types';
+import { useFlash } from '../../hooks/flash';
 import { TicketCard } from '../TicketCard';
 import * as S from './style';
 
@@ -23,6 +24,7 @@ function DraggableCard({
   });
   // Each card is also a drop target: dropping on a card of the same column ranks above it.
   const drop = useDroppable({ id: `card:${ticket.key}`, data: { ticket }, disabled });
+  const flash = useFlash(ticket.key);
   return (
     <TicketCard
       ref={(node) => {
@@ -33,6 +35,7 @@ function DraggableCard({
       ticket={ticket}
       fields={fields}
       dragging={isDragging}
+      flash={flash}
       data-nav-item
       {...attributes}
       {...listeners}
