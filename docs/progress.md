@@ -591,3 +591,14 @@ Los criterios de aceptación de la etapa se verifican así:
 | Un agente lista el Buzón, califica un Draft y descarta otro por MCP | `test_mcp_inbox_tools` |
 | Reglas generales del documento de control | CI: ruff, mypy estricto, cobertura, migraciones up/down/up y `alembic check`, E2E |
 
+
+## Después de la etapa 4: mejoras de uso y Radi
+
+Fuera del spec de etapas, pedidas al probar la app (ADRs 0032 y 0033 para el board):
+
+- Board con look de Jira, la tarjeta cae donde se suelta, destello al moverla (más brillante en Done), columna In Review en Main y carriles plegables.
+- List con botón Filter, Group by, filtros guardados en menú y subtickets bajo su padre.
+- Members con buscador de personas, agentes y grupos; edición de proyectos; agentes desde Admin → Users con permisos de tools MCP.
+- Radi: asistente con la guía de uso y LLM opcional (app o `RADICLE_ASSISTANT_*`), recorridos en pantalla y logo nuevo.
+- Celebración de milestone con recap, confeti e imagen para LinkedIn.
+- El CI de GitHub Actions queda en pausa; los checks se corren local antes de cada push.

@@ -12,7 +12,6 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="License: AGPL v3" src="https://img.shields.io/badge/license-AGPLv3-4D7C0F?style=flat-square"></a>
-  <a href="https://github.com/ego-mejia/radicle/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/ego-mejia/radicle/ci.yml?branch=main&style=flat-square&label=CI&color=4D7C0F"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-C6F432?style=flat-square&labelColor=1A2E05"></a>
   <img alt="MCP tools" src="https://img.shields.io/badge/MCP-48%20tools-C6F432?style=flat-square&labelColor=1A2E05">
   <a href="README.es.md"><img alt="Leer en español" src="https://img.shields.io/badge/lee%20en-espa%C3%B1ol-F1F2F4?style=flat-square"></a>
@@ -24,10 +23,14 @@
 
 > 🌱 **Radicle** is named after the radicle: the first root a seed puts out when it sprouts.
 
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Hi! I'm Radi, the green fellow in the corner of the app (and in the logo). I'll walk you through this README: look for my notes at the start of each section.
+
+
 ## Contents
 
 - [Why Radicle](#-why-radicle)
 - [Quick start](#-quick-start)
+- [Meet Radi](#-meet-radi)
 - [User guide](#-user-guide)
   - [1. Create your first project](#1-create-your-first-project)
   - [2. Add people](#2-add-people)
@@ -35,7 +38,7 @@
   - [4. Boards](#4-boards)
   - [5. Search with RQL](#5-search-with-rql)
   - [6. Sprints and backlog](#6-sprints-and-backlog)
-  - [7. Timeline](#7-timeline)
+  - [7. Timeline and milestones](#7-timeline-and-milestones)
   - [8. Reports and dashboards](#8-reports-and-dashboards)
   - [9. Inbox and public form](#9-inbox-and-public-form)
   - [10. Permissions, groups and restricted tickets](#10-permissions-groups-and-restricted-tickets)
@@ -58,10 +61,13 @@
 | 📮 **Hear your users** | Every project can open a public form. Complaints and ideas land in an **Inbox**, you score them on an impact × effort matrix and turn the good ones into tasks or bugs. The sender follows it with a tracking code. |
 | 🔒 **Serious access control** | Groups, a permission matrix per project, restricted tickets that are invisible everywhere (search, boards, reports, MCP), OpenID Connect SSO and an append-only audit log. |
 | 🗺️ **Plan and see** | Kanban and Scrum boards, sprints, a timeline with forecasts, ten agile and general reports and drag-and-drop dashboards. |
+| 🟢 **A guide inside** | Radi, the mascot, answers how-to questions from the usage guide and, with an LLM of your choice, walks you through the screen step by step. |
 | ⚡ **Fast to work in** | A query language (RQL), a command palette, keyboard shortcuts for everything and light and dark themes. In English and Spanish. |
 | 🏠 **Yours** | One `docker compose up`. PostgreSQL, your server, your data. |
 
 ## 🚀 Quick start
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Three commands and you are in. The first visit asks you to create the instance admin.
 
 You need Docker with Compose.
 
@@ -81,9 +87,39 @@ Three containers start: `app` (web app, REST API and MCP), `worker` (background 
 > [!TIP]
 > In production, put Radicle behind HTTPS and set `RADICLE_BASE_URL` to its public URL. Cookies switch to `Secure` on their own.
 
+## 🟢 Meet Radi
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** That's me! Click me in the bottom-right corner of any page and ask how to do something. My eyes follow your pointer, and I get a little bigger when you hover me.
+
+Radi answers questions about using Radicle and shows you where things are.
+
+- **Without any setup** Radi answers from the built-in usage guide (English and Spanish) and offers a ready-made tour for the main topics: click **Show me**.
+- **With an LLM** (Anthropic, OpenAI or any OpenAI-compatible server such as Ollama), Radi writes the answer in the language you asked in and walks you through the screen: a white cursor with a green glow moves to each button, opens pages and dialogs, highlights each field and explains it. It never clicks **Create**, **Save** or **Add** for you; it only points at them.
+- After each answer Radi shows the suggested questions again, so you can keep asking.
+
+<p align="center">
+  <img src="docs/images/radi-chat.png" alt="Radi answering in the chat" width="49%">
+  <img src="docs/images/radi-tour.png" alt="Radi's tour explaining the create project dialog" width="49%">
+</p>
+
+**Set up the LLM** in **Admin → Settings → Assistant**: pick the provider, paste the API key (stored encrypted, never shown again) and optionally the model and base URL, then click **Test**. Environment variables override the app settings, which suits deployments that keep secrets out of the database:
+
+| Variable | What it does |
+| --- | --- |
+| `RADICLE_ASSISTANT_PROVIDER` | `anthropic`, `openai` or `none` |
+| `RADICLE_ASSISTANT_API_KEY` | The provider's API key |
+| `RADICLE_ASSISTANT_MODEL` | Optional; defaults to `claude-haiku-5-5` or `gpt-4o-mini` |
+| `RADICLE_ASSISTANT_BASE_URL` | Optional; for OpenAI-compatible servers, like `http://ollama:11434/v1` |
+
+<p align="center"><img src="docs/images/assistant-settings.png" alt="Assistant settings" width="820"></p>
+
+Radi can only point at a fixed catalog of places in the app, so a model cannot invent buttons. The guide it answers from lives in `backend/radicle/services/assistant/guide/`.
+
 ## 📖 User guide
 
 ### 1. Create your first project
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Ask me "how do I create a project?" and I'll take you to the button and explain every field of the dialog.
 
 From **Projects**, click **Create project**. Give it a name and a short **key** (2 to 10 uppercase letters or digits, like `PAY`). Every ticket gets the key as a prefix (`PAY-12`), and it cannot change later.
 
@@ -93,9 +129,13 @@ Pick a **template**. It brings the workflows (statuses and transitions for Task,
 
 Then, in the project's **Settings**, add **Areas** (Backend, Mobile, Legal...) and **Milestones** (V1, V2...). Every task and bug belongs to an area; milestones are optional.
 
+To rename a project or change its description, hover its card in **Projects** and click the pencil. The key never changes. Projects are never deleted: a project admin can **Archive** one in **Settings → General**, which keeps it read-only with all its history.
+
 ### 2. Add people
 
-People are created by an instance admin in **Admin → Users**, or arrive through [SSO](#11-single-sign-on-sso). To give them access to a project, open **Settings → Members**, type their `@handle` and pick a role:
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Projects are better with company. Here is how to bring people, groups and agents in.
+
+People are created by an instance admin in **Admin → Users**, or arrive through [SSO](#11-single-sign-on-sso). To give them access to a project, open **Settings → Members**, search for a person, agent or group in the dropdown, pick a role and click **Add**. Change a role from the dropdown on each row:
 
 | Role | Can |
 | --- | --- |
@@ -110,6 +150,8 @@ For teams, create a **group** in **Admin → Groups** (for example `legal-team`)
 AI agents are added the same way: see [AI agents over MCP](#13-ai-agents-over-mcp).
 
 ### 3. Work with tickets
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Tickets are where the work lives. Press <kbd>c</kbd> anywhere to create one.
 
 Press <kbd>c</kbd> or click **Create ticket**. There are three types:
 
@@ -130,9 +172,16 @@ A ticket has a markdown description with a **checklist**, plus priority, area, m
 
 ### 4. Boards
 
-Each project starts with a Kanban board called **Main**. Drag cards between columns. Quick filters (**My tickets**, **Only bugs**, `#backlog`, **Blocked**) and the filter bar narrow it down. Swimlanes split it by area, assignee, priority, milestone, parent or type.
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Drag a card and drop it where you want it: it stays right there and glows. Drop it in Done and it shines brighter!
 
-<p align="center"><img src="docs/images/board-dark.png" alt="Board in dark mode" width="820"></p>
+Each project starts with a Kanban board called **Main**, with **To Do**, **In Progress**, **In Review** and **Done**. Drag cards between columns and they land exactly where you drop them; a moved card flashes once, and one that reaches a done column flashes brighter. Quick filters (**My tickets**, **Only bugs**, `#backlog`, **Blocked**) and the filter bar narrow it down.
+
+**Swimlanes** split the board into rows by area, assignee, priority, milestone, parent or type, like several boards stacked. Click a row header to fold it, or use **Collapse all**; Radicle remembers which rows you folded.
+
+<p align="center">
+  <img src="docs/images/board-lanes.png" alt="Board with swimlanes by area" width="49%">
+  <img src="docs/images/board-dark.png" alt="Board in dark mode" width="49%">
+</p>
 
 Admins create more boards with **New board** and set them up in **Configure**:
 
@@ -141,6 +190,8 @@ Admins create more boards with **New board** and set them up in **Configure**:
 - **Card fields** and **quick filters**.
 
 ### 5. Search with RQL
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Want something precise? RQL finds it. In **List**, the **Filter** button builds simple queries for you.
 
 RQL (Radicle Query Language) works in the search bar, in **List**, in boards and in saved filters:
 
@@ -154,9 +205,16 @@ classification = complaint AND origin = user ORDER BY votes DESC
 
 Mistakes are underlined in place, with what was expected, and the editor autocompletes fields and values. Save a query as a **filter** to reuse it, share it or put it on a dashboard. Agents read the full guide as the MCP resource `radicle://guide/rql`.
 
-<p align="center"><img src="docs/images/list-rql.png" alt="List with an RQL query" width="820"></p>
+**List** shows tickets in a table. Click **Filter** above it to filter by type, status, priority, assignee, area or milestone without writing RQL (each filter is a chip you can remove), **Group by** to split the rows into groups you can fold, and **Saved filters** to reuse queries. Tickets with subtickets have an arrow that opens their tasks and bugs right below them.
+
+<p align="center">
+  <img src="docs/images/list-filters.png" alt="List with the filter menu" width="49%">
+  <img src="docs/images/list-rql.png" alt="List with an RQL query" width="49%">
+</p>
 
 ### 6. Sprints and backlog
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Planning in sprints? You need a Scrum board first; ask me and I'll show you where.
 
 Create a board of kind **Scrum** to plan in sprints. Then, in **Backlog**:
 
@@ -167,13 +225,24 @@ Create a board of kind **Scrum** to plan in sprints. Then, in **Backlog**:
 
 <p align="center"><img src="docs/images/backlog.png" alt="Backlog with an active and a future sprint" width="820"></p>
 
-### 7. Timeline
+### 7. Timeline and milestones
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** My favorite part: when the last ticket of a milestone is done, I throw a party.
 
 **Timeline** draws tickets over time, grouped by milestone or area, by week, month or quarter. Drag a bar to change its dates, or drag a ticket from **Without dates** onto the timeline to give it some. A ticket with only a due date gets a faded bar from the day it was created (one with only a start date, a faded bar as long as its estimate) until you set both dates. Impossible dependencies (a ticket that starts before what blocks it ends) turn red, and milestones show their forecast.
 
 <p align="center"><img src="docs/images/timeline.png" alt="Timeline" width="820"></p>
 
+**Milestones** are goals with an optional target date, like a release. When the last open ticket of a milestone reaches done, Radicle celebrates: confetti, Radi cheering and the numbers behind it (tickets shipped, hours invested, bugs squashed, tasks, ideas, days to ship, and the people and AI agents who did it). **Share on LinkedIn** copies a ready-made image to your clipboard and opens a post with the text filled in; **Download image** saves it.
+
+<p align="center">
+  <img src="docs/images/milestone-celebration.png" alt="Milestone celebration" width="49%">
+  <img src="docs/images/milestone-card.png" alt="Image to share on LinkedIn" width="49%">
+</p>
+
 ### 8. Reports and dashboards
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Numbers, charts and a CSV for each one. Every person only sees the tickets they may see.
 
 **Reports** has burndown, burnup, velocity, cumulative flow, control chart, sprint report, created vs resolved, distribution, milestone progress (with a forecast and an "at risk" flag) and time. Each one comes with its data table and **Export CSV**.
 
@@ -184,6 +253,8 @@ Create a board of kind **Scrum** to plan in sprints. Then, in **Backlog**:
 <p align="center"><img src="docs/images/summary.png" alt="Project summary dashboard" width="820"></p>
 
 ### 9. Inbox and public form
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Your users can tell you what they think, even without an account. Their ideas land here.
 
 The **Inbox** collects Drafts: ideas from the team, requests from agents, and complaints, suggestions and ideas from people **without an account** who use the public form.
 
@@ -212,6 +283,8 @@ Every submission gets a **tracking code**. The tracking page shows its state (Re
 
 ### 10. Permissions, groups and restricted tickets
 
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Who sees what, and who can do what. Restricted tickets are invisible everywhere, even to me.
+
 <p align="center"><img src="docs/images/access-model.svg" alt="Who can see and do what" width="900"></p>
 
 - **Permission matrix** (**Settings → Permissions**): switch each of the 20 permissions on or off for members and viewers. They cover creating, editing, moving and deleting tickets, comments, attachments, time, votes, links, security and inbox triage. The same rule applies in the UI (buttons disappear), the API (403 naming the missing permission) and MCP.
@@ -224,6 +297,8 @@ Every submission gets a **tracking code**. The tracking page shows its state (Re
 
 ### 11. Single sign-on (SSO)
 
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Let people sign in with the account they already have.
+
 In **Admin → SSO**, add OpenID Connect providers (Google, Microsoft Entra ID, Okta, Keycloak, Authentik...) with their issuer URL, client ID and secret. Register the callback URL shown in the form with your provider.
 
 - **Allowed domains** decide who gets an account automatically. An existing account with the same verified email is linked.
@@ -234,6 +309,8 @@ In **Admin → SSO**, add OpenID Connect providers (Google, Microsoft Entra ID, 
 
 ### 12. Audit log
 
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Every administrative change, written down forever. Nobody can edit it, not even admins.
+
 **Admin → Audit log** records 39 kinds of administrative actions: users, tokens, agents, projects, members, groups, permissions, security levels, deletions, moves, bulk edits, templates, workflows, Inbox settings and SSO. Each entry says who, when, from which IP, and what changed (before and after). Filter by person, action, project and dates, and export to CSV. Project admins see their projects' entries in **Settings → Audit log**.
 
 The log is **append-only**: the database itself rejects updates and deletes. Entries older than `RADICLE_AUDIT_RETENTION_DAYS` (730 by default) are purged.
@@ -241,6 +318,8 @@ The log is **append-only**: the database itself rejects updates and deletes. Ent
 <p align="center"><img src="docs/images/audit.png" alt="Audit log" width="820"></p>
 
 ### 13. AI agents over MCP
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Agents are teammates here, just like me. Give them a token and a project and they get to work.
 
 Agents are users of kind *agent*, with their own handle, tokens, history and permissions.
 
@@ -295,6 +374,8 @@ Resources: `radicle://guide/rql` and `radicle://projects/{key}/schema`. Agents f
 
 ### 14. Keyboard, command palette and themes
 
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Hands on the keyboard? Press <kbd>?</kbd> to see every shortcut.
+
 Press <kbd>?</kbd> to see every shortcut. The main ones:
 
 | Keys | Action |
@@ -312,6 +393,8 @@ Switch between light and dark with the moon button, and between English and Span
 
 ## ⚙️ Configuration
 
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** The knobs for whoever runs Radicle.
+
 Everything is set with environment variables (see [`.env.example`](.env.example)).
 
 | Variable | Default | What it does |
@@ -326,11 +409,14 @@ Everything is set with environment variables (see [`.env.example`](.env.example)
 | `RADICLE_IMAGE_DEFAULT_RESIZE` | `large` | Default image size: `original`, `large` (2048 px), `medium` or `small`. |
 | `RADICLE_AUDIT_RETENTION_DAYS` | `730` | Days the audit log is kept. |
 | `RADICLE_SESSION_DAYS` | `14` | Session length (sliding). |
+| `RADICLE_ASSISTANT_*` | unset | Radi's LLM; see [Meet Radi](#-meet-radi). Without it, Radi answers from the guide. |
 | `POSTGRES_*` | `radicle` | Database credentials. Change the password in production. |
 
 The `worker` container runs background jobs: template propagation, image variants, large bulk edits, ranking, daily snapshots and audit retention. If it is down, those jobs wait in the queue.
 
 ## 🏗️ Architecture
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** How the pieces fit: one app, one worker, one database.
 
 <p align="center"><img src="docs/images/architecture.svg" alt="Radicle architecture" width="900"></p>
 
@@ -346,6 +432,8 @@ Business logic lives only in `backend/radicle/services/`. The REST routers and t
 
 ## 🧑‍💻 Development
 
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Want to hack on Radicle (or on me)? Start here.
+
 | Part | Needs | Commands |
 | --- | --- | --- |
 | Backend | Python 3.12, [uv](https://docs.astral.sh/uv/), Docker (for tests) | `cd backend && uv sync`, `uv run uvicorn radicle.main:app --reload`, `uv run pytest` |
@@ -353,7 +441,7 @@ Business logic lives only in `backend/radicle/services/`. The REST routers and t
 | Local database | Docker | `docker compose up -d db`, then `cd backend && uv run alembic upgrade head` |
 
 ```bash
-# Everything CI runs
+# Run these before every push (GitHub Actions CI is paused for now)
 cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy radicle && uv run pytest --cov
 cd frontend && pnpm check && pnpm build
 scripts/smoke.sh   # builds the image and runs it from scratch on port 8001
@@ -366,6 +454,8 @@ scripts/smoke.sh   # builds the image and runs it from scratch on port 8001
 
 ## 🗺️ Roadmap and known issues
 
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** What's next. Ideas welcome!
+
 Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning and visibility, and the Inbox with access control. This is what comes next. Ideas and help are very welcome.
 
 **Stage 5: integrations**
@@ -377,7 +467,7 @@ Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning
 - [ ] Import and export (Jira, CSV, JSON).
 - [ ] A plugin system.
 - [ ] A native mobile app with push notifications.
-- [ ] AI helpers: summaries, duplicate detection, triage suggestions.
+- [ ] More AI helpers: summaries, duplicate detection, triage suggestions. (Radi, the in-app guide, already ships.)
 
 **Later, maybe**
 
@@ -393,6 +483,8 @@ Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning
 - [ ] `test_periods.py` can fail now and then when two status changes share the same timestamp.
 
 ## 🤝 Contributing
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Every contribution counts, from a typo to a feature. Come say hi!
 
 Radicle is a community project, and contributions of every size are welcome: bug reports, docs, translations, design and code.
 
@@ -415,6 +507,8 @@ The short version:
 Read **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full guide: setup, code rules, commit messages and how reviews work. New here? Pick something from the [known issues](#%EF%B8%8F-roadmap-and-known-issues) or open an issue to say hi.
 
 ## 📜 License
+
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Free software, and it stays free.
 
 Radicle is free software under the **[GNU Affero General Public License v3.0](LICENSE)** (AGPL-3.0-only).
 

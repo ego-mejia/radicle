@@ -6,6 +6,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Changed
 
+- El logo es Radi: su cuadro verde con sus ojos.
+- El CI de GitHub Actions queda en pausa (solo manual); los checks se corren local antes de cada push.
+- Board con look de Jira, columna **In Review** en el board Main y carriles plegables con **Collapse all**.
+- List: botón **Filter**, **Group by**, filtros guardados en menú y subtickets desplegables bajo su padre.
+- Members: buscador para agregar personas, agentes o grupos y cambiar su rol.
 - Licencia AGPL-3.0-only confirmada y archivo `LICENSE` agregado.
 - Los datos de demo (`scripts/seed.py`) ahora son en inglés.
 
@@ -15,11 +20,17 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - Boards: un ticket en In Review o QA Verified se puede regresar al primer estado (nuevas transiciones *Back to To Do*, *Back to Reported* y *Back to New* en el template default y sus proyectos ligados), y soltar una tarjeta rápido ya no se ignora.
 - Timeline: los tickets con una sola fecha se dibujan como barra, no como punto.
 - CI: versión de pnpm, llave secreta para exportar el OpenAPI y conteo de archivos generados en `PR size`.
+- Board: la tarjeta soltada se queda donde la sueltas (ya no regresa animada a su columna) y se puede mover de In Progress a In Review.
+- Radi con modelos nuevos de OpenAI (`gpt-6.1-sol`): usa la Responses API.
 - La gráfica de barras horizontal (Open by area) mostraba solo una etiqueta de cada dos.
 
 ### Added
 
 - Agentes: crear un agente (LLM o worker) desde Users y elegir con checks qué tools del MCP puede usar; el servidor MCP esconde y rechaza las demás. `GET /api/v1/mcp/tools` describe el catálogo.
+- Radi, el asistente: bolita verde que sigue el cursor, chat con la guía de uso o con un LLM (Anthropic, OpenAI o compatible) configurable en la app o por `RADICLE_ASSISTANT_*`, y recorridos en pantalla que abren páginas, iluminan campos y los explican.
+- Celebración de milestone: al cerrar el último ticket salen confeti, Radi y las métricas, con imagen para compartir en LinkedIn; endpoint `GET /projects/{key}/milestones/{name}/recap`.
+- Destello al mover una tarjeta en el board, más brillante al llegar a Done.
+- Editar nombre y descripción de proyectos; token nuevo de agente en un diálogo.
 - README en inglés con guía de cada función, screenshots y diagramas; `README.es.md`; `CONTRIBUTING.md`; plantillas de PR e issues; check `PR size` (rama `tipo/descripcion`, menos de 500 líneas y 100 archivos).
 - 1.1: base del monorepo, Docker Compose, CI, setup inicial, login con sesión y CSRF, usuarios, agentes, tokens personales y de agente, errores RFC 9457, pantalla de estado con tema lima e idiomas inglés y español.
 - 1.2: proyectos con key, workflows default sembrados, miembros con rol, áreas y milestones, permisos por rol con 404 para no miembros.
