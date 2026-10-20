@@ -17,6 +17,13 @@ import { ticketKeys } from '../../../../services/api/tickets';
 import { BulkBar } from '../../components/BulkBar';
 import { SavedFilters } from '../../components/SavedFilters';
 import { Select } from '../../../../components/ui/Input';
+import { FilterMenu } from '../../components/FilterMenu';
+import {
+  applyFilters,
+  decodeFilters,
+  encodeFilters,
+  type ListFilters,
+} from '../../../../lib/listFilters';
 import { GROUP_BYS, type GroupBy } from '../../../../lib/ticketGroups';
 import { rankTicket } from '../../../../services/api/work';
 import * as S from './style';
@@ -26,17 +33,19 @@ import { useTicketSearch } from '../../hooks/useTicketSearch';
 export function ListView() {
   const { t } = useTranslation();
   const { key } = useParams({ from: '/app/p/$key/list' });
-  const { q, t: openKey, g } = useSearch({ from: '/app/p/$key/list' });
+  const { q, t: openKey, f, g } = useSearch({ from: '/app/p/$key/list' });
   const navigate = useNavigate({ from: '/p/$key/list' });
   const projectKey = key.toUpperCase();
   const query = q ?? `project = ${projectKey} AND category != done ORDER BY updated DESC`;
+  const filters = decodeFilters(f);
   const groupBy = (GROUP_BYS as string[]).includes(g ?? '') ? (g as GroupBy) : 'none';
+  const effective = applyFilters(query, filters);
   const { data: project, isPending } = useProject(projectKey);
   const { data: fields } = useQuery({
     queryKey: projectKeys.fields(projectKey),
     queryFn: () => fetchSearchFields(projectKey),
   });
-  const search = useTicketSearch(query);
+  const search = useTicketSearch(effective);
   const queryClient = useQueryClient();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const select = useCallback((keys: string[], on: boolean) => {
@@ -63,6 +72,8 @@ export function ListView() {
       : null;
   const setQuery = (next: string) =>
     void navigate({ search: (prev) => ({ ...prev, q: next, t: undefined }) });
+  const setFilters = (next: ListFilters) =>
+    void navigate({ search: (prev) => ({ ...prev, f: encodeFilters(next), t: undefined }) });
 
   return (
     <>
@@ -86,6 +97,7 @@ export function ListView() {
         />
       )}
       <S.Toolbar>
+        <FilterMenu project={project} value={filters} onChange={setFilters} />
         <S.Right>
           <S.GroupBy>
             <span>{t('list.groupBy')}</span>
