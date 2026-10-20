@@ -27,7 +27,9 @@ type Palette = Record<
   | 'warning'
   | 'catTodo'
   | 'catProgress'
-  | 'catDone',
+  | 'catDone'
+  | 'radi'
+  | 'radiEye',
   string
 >;
 
@@ -59,6 +61,9 @@ export const lightTheme: Theme = {
     catTodo: '#9CA3AF',
     catProgress: '#C6F432',
     catDone: '#4D7C0F',
+    // Radi, the mascot: the logo is his green with his eyes.
+    radi: '#7BC62D',
+    radiEye: '#FFFFFF',
   },
   fonts,
   space,
@@ -85,6 +90,8 @@ export const darkTheme: Theme = {
     catTodo: '#4B5563',
     catProgress: '#C6F432',
     catDone: '#65A30D',
+    radi: '#7BC62D',
+    radiEye: '#FFFFFF',
   },
 };
 
