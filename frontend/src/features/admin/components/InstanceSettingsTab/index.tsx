@@ -7,6 +7,7 @@ import {
   patchInstanceSettings,
   ssoKeys,
 } from '../../../../services/api/sso';
+import { AssistantSettings } from '../AssistantSettings';
 import * as S from './style';
 
 /** Instance switches: password sign-in on or off, with the way back in. */
@@ -20,18 +21,21 @@ export function InstanceSettingsTab() {
   });
   if (!data) return <PageSpinner />;
   return (
-    <SettingsCard title={t('instance.title')}>
-      <S.Check>
-        <input
-          type="checkbox"
-          checked={data.password_login_enabled}
-          onChange={(e) => save.mutate({ password_login_enabled: e.target.checked })}
-        />
-        {t('instance.passwordLogin')}
-      </S.Check>
-      <S.Note $warn={!data.password_login_enabled}>
-        {t('instance.emergency', { email: data.emergency_admin ?? '—' })}
-      </S.Note>
-    </SettingsCard>
+    <>
+      <SettingsCard title={t('instance.title')}>
+        <S.Check>
+          <input
+            type="checkbox"
+            checked={data.password_login_enabled}
+            onChange={(e) => save.mutate({ password_login_enabled: e.target.checked })}
+          />
+          {t('instance.passwordLogin')}
+        </S.Check>
+        <S.Note $warn={!data.password_login_enabled}>
+          {t('instance.emergency', { email: data.emergency_admin ?? '—' })}
+        </S.Note>
+      </SettingsCard>
+      <AssistantSettings />
+    </>
   );
 }
