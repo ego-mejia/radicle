@@ -2747,6 +2747,11 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            /**
+             * Child Count
+             * @description Subtickets you can see, in search results and subticket lists
+             */
+            child_count: number | null;
             classification: components["schemas"]["Classification"] | null;
             /**
              * Converted
@@ -2777,6 +2782,11 @@ export interface components {
             /** Milestone */
             milestone: string | null;
             origin: components["schemas"]["Origin"] | null;
+            /**
+             * Parent
+             * @description Parent key, in search results and subticket lists
+             */
+            parent: string | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -5165,6 +5175,11 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            /**
+             * Child Count
+             * @description Subtickets you can see, in search results and subticket lists
+             */
+            child_count: number | null;
             classification: components["schemas"]["Classification"] | null;
             /**
              * Converted
@@ -5190,6 +5205,11 @@ export interface components {
             /** Milestone */
             milestone: string | null;
             origin: components["schemas"]["Origin"] | null;
+            /**
+             * Parent
+             * @description Parent key, in search results and subticket lists
+             */
+            parent: string | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -5257,6 +5277,11 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            /**
+             * Child Count
+             * @description Subtickets you can see, in search results and subticket lists
+             */
+            child_count: number | null;
             classification: components["schemas"]["Classification"] | null;
             /**
              * Converted
@@ -5282,6 +5307,11 @@ export interface components {
             /** Milestone */
             milestone: string | null;
             origin: components["schemas"]["Origin"] | null;
+            /**
+             * Parent
+             * @description Parent key, in search results and subticket lists
+             */
+            parent: string | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
@@ -5658,6 +5688,11 @@ export interface components {
             checklist_done: number;
             /** Checklist Total */
             checklist_total: number;
+            /**
+             * Child Count
+             * @description Subtickets you can see, in search results and subticket lists
+             */
+            child_count: number | null;
             classification: components["schemas"]["Classification"] | null;
             /**
              * Converted
@@ -5683,6 +5718,11 @@ export interface components {
             /** Milestone */
             milestone: string | null;
             origin: components["schemas"]["Origin"] | null;
+            /**
+             * Parent
+             * @description Parent key, in search results and subticket lists
+             */
+            parent: string | null;
             priority: components["schemas"]["Priority"];
             /** Rank */
             rank: string;
