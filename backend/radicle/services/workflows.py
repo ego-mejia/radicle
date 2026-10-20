@@ -46,6 +46,7 @@ DEFAULT_WORKFLOWS: dict[TicketType, WorkflowSpec] = {
             TransitionSpec("Stop", "In Progress", "To Do"),
             TransitionSpec("Send to review", "In Progress", "In Review"),
             TransitionSpec("Request changes", "In Review", "In Progress"),
+            TransitionSpec("Back to To Do", "In Review", "To Do"),
             TransitionSpec("Complete", "In Review", "Done"),
             TransitionSpec("Close", None, "Done", (R.wont_do, R.duplicate)),
             TransitionSpec("Reopen", "Done", "To Do"),
@@ -63,6 +64,7 @@ DEFAULT_WORKFLOWS: dict[TicketType, WorkflowSpec] = {
             TransitionSpec("Stop", "In Progress", "Reported"),
             TransitionSpec("Send to QA", "In Progress", "QA Verified"),
             TransitionSpec("QA failed", "QA Verified", "In Progress"),
+            TransitionSpec("Back to Reported", "QA Verified", "Reported"),
             TransitionSpec("Complete", "QA Verified", "Done"),
             TransitionSpec("Close", None, "Done", (R.wont_do, R.duplicate, R.cannot_reproduce)),
             TransitionSpec("Reopen", "Done", "Reported"),
@@ -77,6 +79,7 @@ DEFAULT_WORKFLOWS: dict[TicketType, WorkflowSpec] = {
         ),
         transitions=(
             TransitionSpec("Review", "New", "In Review"),
+            TransitionSpec("Back to New", "In Review", "New"),
             TransitionSpec("Approve", "In Review", "Approved", (R.done,)),
             TransitionSpec("Discard", None, "Discarded", (R.wont_do, R.duplicate)),
             TransitionSpec("Reopen", "Approved", "New"),
