@@ -115,6 +115,7 @@ export function MemberPicker({ projectKey }: { projectKey: string }) {
       <S.Combo>
         <S.Search
           role="combobox"
+          data-tour="members.picker"
           aria-label={t('settings.picker.label')}
           aria-expanded={open}
           aria-controls={listId}
@@ -157,6 +158,7 @@ export function MemberPicker({ projectKey }: { projectKey: string }) {
         value={role}
         onChange={(e) => setRole(e.target.value as ProjectRole)}
         aria-label={t('settings.role')}
+        data-tour="members.role"
       >
         {ROLES.map((r) => (
           <option key={r} value={r}>
@@ -164,7 +166,12 @@ export function MemberPicker({ projectKey }: { projectKey: string }) {
           </option>
         ))}
       </Select>
-      <Button type="submit" variant="primary" disabled={!choice || add.isPending}>
+      <Button
+        type="submit"
+        variant="primary"
+        disabled={!choice || add.isPending}
+        data-tour="members.add"
+      >
         {t('common.add')}
       </Button>
     </S.Bar>

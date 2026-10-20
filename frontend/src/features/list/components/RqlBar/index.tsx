@@ -81,6 +81,7 @@ export function RqlBar({ value, onSubmit, fields, error, warnings = [] }: Props)
             value={text}
             $invalid={!!error}
             aria-label={t('list.rqlLabel')}
+            data-tour="list.rql"
             aria-invalid={!!error || undefined}
             aria-describedby={error ? 'rql-error' : undefined}
             placeholder={t('list.rqlPlaceholder')}

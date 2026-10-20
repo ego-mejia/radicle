@@ -32,7 +32,7 @@ export function SavedFilters({ project, query, onPick }: Props) {
   return (
     <Popover.Root>
       <Popover.Trigger asChild>
-        <Button size="sm">
+        <Button size="sm" data-tour="list.saved-filters">
           <Bookmark />
           {t('list.saved')}
         </Button>

@@ -120,7 +120,7 @@ export function UsersTab() {
         ))}
       </S.Rows>
       <S.Actions>
-        <Button variant="primary" onClick={() => setCreating(true)}>
+        <Button variant="primary" onClick={() => setCreating(true)} data-tour="users.new">
           <Plus />
           {t('admin.newUser')}
         </Button>

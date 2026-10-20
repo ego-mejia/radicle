@@ -41,20 +41,20 @@ export function Sidebar({ open, onClose }: Props) {
         </Brand>
 
         <S.Section aria-label={t('nav.mainNav')}>
-          <NavLink to="/" activeOptions={{ exact: true }}>
+          <NavLink to="/" activeOptions={{ exact: true }} data-tour="nav.projects">
             <FolderKanban />
             <span>{t('nav.projects')}</span>
           </NavLink>
-          <NavLink to="/me/tickets" search={{ t: undefined }}>
+          <NavLink to="/me/tickets" search={{ t: undefined }} data-tour="nav.my-tickets">
             <Inbox />
             <span>{t('nav.myTickets')}</span>
           </NavLink>
-          <NavLink to="/dashboards">
+          <NavLink to="/dashboards" data-tour="nav.dashboards">
             <LayoutDashboard />
             <span>{t('nav.dashboards')}</span>
           </NavLink>
           {me.is_instance_admin && (
-            <NavLink to="/admin" search={{ tab: undefined }}>
+            <NavLink to="/admin" search={{ tab: undefined }} data-tour="nav.admin">
               <Shield />
               <span>{t('nav.admin')}</span>
             </NavLink>

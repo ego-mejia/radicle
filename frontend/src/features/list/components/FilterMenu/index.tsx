@@ -47,7 +47,7 @@ export function FilterMenu({ project, value, onChange }: Props) {
     <S.Wrap>
       <Popover.Root>
         <Popover.Trigger asChild>
-          <Button size="sm" variant={count ? 'primary' : 'secondary'}>
+          <Button size="sm" variant={count ? 'primary' : 'secondary'} data-tour="list.filter">
             <ListFilter />
             {t('list.filter.button')}
             {count > 0 && <S.Badge>{count}</S.Badge>}

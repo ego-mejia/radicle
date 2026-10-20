@@ -40,12 +40,13 @@ export function ProjectHeader({ project, actions }: Props) {
         {actions}
       </S.TitleRow>
       <S.Tabs aria-label={project.name}>
-        <Tab to="/p/$key/summary" params={params}>
+        <Tab to="/p/$key/summary" data-tour="project.tab.summary" params={params}>
           <LayoutDashboard />
           {t('nav.summary')}
         </Tab>
         <Tab
           to="/p/$key/board"
+          data-tour="project.tab.board"
           params={params}
           search={{}}
           activeOptions={{ includeSearch: false }}
@@ -55,6 +56,7 @@ export function ProjectHeader({ project, actions }: Props) {
         </Tab>
         <Tab
           to="/p/$key/backlog"
+          data-tour="project.tab.backlog"
           params={params}
           search={{}}
           activeOptions={{ includeSearch: false }}
@@ -64,6 +66,7 @@ export function ProjectHeader({ project, actions }: Props) {
         </Tab>
         <Tab
           to="/p/$key/inbox"
+          data-tour="project.tab.inbox"
           params={params}
           search={{}}
           activeOptions={{ includeSearch: false }}
@@ -74,12 +77,19 @@ export function ProjectHeader({ project, actions }: Props) {
             <S.Count aria-label={t('inbox.newCount', { count: newItems })}>{newItems}</S.Count>
           )}
         </Tab>
-        <Tab to="/p/$key/list" params={params} search={{}} activeOptions={{ includeSearch: false }}>
+        <Tab
+          to="/p/$key/list"
+          data-tour="project.tab.list"
+          params={params}
+          search={{}}
+          activeOptions={{ includeSearch: false }}
+        >
           <List />
           {t('nav.list')}
         </Tab>
         <Tab
           to="/p/$key/timeline"
+          data-tour="project.tab.timeline"
           params={params}
           search={{}}
           activeOptions={{ includeSearch: false }}
@@ -87,12 +97,13 @@ export function ProjectHeader({ project, actions }: Props) {
           <CalendarRange />
           {t('nav.timeline')}
         </Tab>
-        <Tab to="/p/$key/milestones" params={params}>
+        <Tab to="/p/$key/milestones" data-tour="project.tab.milestones" params={params}>
           <Flag />
           {t('nav.milestones')}
         </Tab>
         <Tab
           to="/p/$key/reports"
+          data-tour="project.tab.reports"
           params={params}
           search={{}}
           activeOptions={{ includeSearch: false }}
@@ -102,6 +113,7 @@ export function ProjectHeader({ project, actions }: Props) {
         </Tab>
         <Tab
           to="/p/$key/settings"
+          data-tour="project.tab.settings"
           params={params}
           search={{}}
           activeOptions={{ includeSearch: false }}

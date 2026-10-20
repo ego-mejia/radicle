@@ -50,7 +50,7 @@ export function BoardToolbar({
           </option>
         ))}
       </Select>
-      <S.Filters role="group" aria-label={t('board.quickFilters')}>
+      <S.Filters role="group" aria-label={t('board.quickFilters')} data-tour="board.quick-filters">
         {board.quick_filters.map((q) => (
           <S.Chip
             key={q.id}
@@ -67,6 +67,7 @@ export function BoardToolbar({
       <S.Spacer />
       <Select
         aria-label={t('board.swimlanes')}
+        data-tour="board.swimlanes"
         value={swimlane}
         onChange={(e) => onSwimlane(e.target.value as Swimlane)}
       >
@@ -78,11 +79,11 @@ export function BoardToolbar({
       </Select>
       {isAdmin && (
         <>
-          <Button size="sm" onClick={onConfigure}>
+          <Button size="sm" onClick={onConfigure} data-tour="board.configure">
             <Settings2 />
             {t('board.configure')}
           </Button>
-          <Button size="sm" variant="ghost" onClick={onCreate}>
+          <Button size="sm" variant="ghost" onClick={onCreate} data-tour="board.new">
             <Plus />
             {t('board.new')}
           </Button>

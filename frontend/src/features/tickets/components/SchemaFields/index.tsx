@@ -54,6 +54,7 @@ function SchemaInput({ field, value, onChange, ...a11y }: InputProps) {
       return (
         <Select
           {...a11y}
+          data-tour={field.kind === 'area' ? 'ticket-form.area' : undefined}
           value={text}
           required={required}
           onChange={(e) => onChange(e.target.value || null)}

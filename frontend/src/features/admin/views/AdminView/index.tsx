@@ -41,6 +41,7 @@ export function AdminView() {
       <S.Stack>
         <Tabs
           label={t('nav.admin')}
+          tour="admin.tab"
           value={current}
           onChange={(next) => void navigate({ search: { tab: next } })}
           tabs={TABS.map((id) => ({ id, label: t(`admin.${id}`) }))}
