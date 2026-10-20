@@ -22,8 +22,10 @@ function happyRadi(): Promise<HTMLImageElement> {
   const radi = new Engine(RIG);
   radi.setExpression('happy');
   let frame = radi.step(0);
-  for (let i = 0; i < 40; i++) frame = radi.step(0.05); // let the smile settle
-  const svg = renderRadi(RIG, frame, 'radi-card');
+  for (let i = 0; i < 60; i++) frame = radi.step(0.05); // let the smile settle
+  // A still picture: Radi at rest and round, not caught mid-bounce.
+  const still = { ...frame, squash: 0, stretchX: 0, tilt: 0, bodyX: 0, bodyY: 0, lift: 0 };
+  const svg = renderRadi(RIG, still, 'radi-card');
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve(image);
