@@ -2,6 +2,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
+import { AreaIcon } from '../../../../components/icons/AreaIcon';
 import { TypeIcon } from '../../../../components/icons/TypeIcon';
 import {
   arrowPath,
@@ -17,7 +18,7 @@ import {
   visibleRange,
   type Zoom,
 } from '../../../../lib/timeline';
-import type { Timeline, TimelineTicket } from '../../../../services/api/types';
+import type { Area, Timeline, TimelineTicket } from '../../../../services/api/types';
 import { ChartHeader } from './components/ChartHeader';
 import { TicketBar } from './components/TicketBar';
 import * as S from './style';
@@ -27,6 +28,8 @@ const HEADER = 40;
 
 type Props = {
   data: Timeline;
+  /** Area colors and icons by name. */
+  areas?: Map<string, Area>;
   zoom: Zoom;
   today: string;
   canEdit: boolean;
@@ -43,6 +46,7 @@ type Props = {
 /** Hand-made Gantt: virtualized rows, bars by category, milestones, today and Blocks arrows. */
 export function TimelineChart({
   data,
+  areas = new Map(),
   zoom,
   today,
   canEdit,
@@ -128,6 +132,12 @@ export function TimelineChart({
                   onClick={() => onToggle(row.key)}
                 >
                   {row.collapsed ? <ChevronRight /> : <ChevronDown />}
+                  {data.group_by === 'area' && row.label && (
+                    <AreaIcon
+                      icon={areas.get(row.label)?.icon}
+                      color={areas.get(row.label)?.color}
+                    />
+                  )}
                   <span>{row.label || t('timeline.noGroup')}</span>
                   <small>{row.count}</small>
                 </S.GroupLabel>
@@ -142,6 +152,14 @@ export function TimelineChart({
                 title={row.ticket.title}
               >
                 <TypeIcon type={row.ticket.type} size={13} />
+                {row.ticket.area && (
+                  <AreaIcon
+                    icon={areas.get(row.ticket.area)?.icon}
+                    color={areas.get(row.ticket.area)?.color}
+                    size={13}
+                    label={row.ticket.area}
+                  />
+                )}
                 <b>{row.key}</b>
                 <span>{row.ticket.title}</span>
               </S.TicketLabel>

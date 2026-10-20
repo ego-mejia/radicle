@@ -1,9 +1,11 @@
 import { ChevronRight, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AreaIcon } from '../../../../components/icons/AreaIcon';
 import { CategoryIcon } from '../../../../components/icons/CategoryIcon';
 import { columnCategory } from '../../../../lib/boards';
 import type { BoardData } from '../../../../services/api/types';
+import { useAreaLook } from '../../../projects/hooks/useAreaLook';
 import { BoardColumn } from '../BoardColumn';
 import * as S from './style';
 
@@ -28,6 +30,7 @@ function readClosed(key: string): Set<string> {
 export function BoardLanes({ data, columnState, canDrag, onOpen }: Props) {
   const { t } = useTranslation();
   const key = storageKey(data);
+  const areas = useAreaLook(data.board.project);
   const [closed, setClosed] = useState<Set<string>>(() => readClosed(key));
   useEffect(() => setClosed(readClosed(key)), [key]);
   useEffect(() => {
@@ -81,6 +84,13 @@ export function BoardLanes({ data, columnState, canDrag, onOpen }: Props) {
               onClick={() => toggle(lane.key)}
             >
               <ChevronRight />
+              {data.swimlane_by === 'area' && lane.label && (
+                <AreaIcon
+                  icon={areas.get(lane.label)?.icon}
+                  color={areas.get(lane.label)?.color}
+                  size={16}
+                />
+              )}
               <strong>{lane.label || t(`board.noLane.${data.swimlane_by}`)}</strong>
               <small>{t('board.laneCount', { count: lane.count })}</small>
             </S.LaneHead>

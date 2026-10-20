@@ -1,8 +1,9 @@
 import { DndContext } from '@dnd-kit/core';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { BoardData } from '../../../../services/api/types';
-import { renderWithProviders } from '../../../../test/renderWithProviders';
+import { PROJECT } from '../../../../test/fixtures';
+import { mockFetch, renderWithProviders } from '../../../../test/renderWithProviders';
 import { BoardLanes } from '.';
 
 const card = (key: string, lane: string) => ({
@@ -21,6 +22,7 @@ const card = (key: string, lane: string) => ({
 const data = {
   board: {
     id: 'b1',
+    project: 'PA',
     statuses: [],
     columns: [{ name: 'To Do', categories: ['todo'], status_ids: [] }],
   },
@@ -56,5 +58,28 @@ describe('BoardLanes', () => {
     expect(screen.queryByText('Ticket PA-2')).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Expand all' }));
     expect(screen.getByText('Ticket PA-1')).toBeInTheDocument();
+  });
+
+  it('shows each area lane with its icon in its color', async () => {
+    mockFetch({
+      'GET /api/v1/projects/PA': {
+        status: 200,
+        body: {
+          ...PROJECT,
+          areas: [
+            { name: 'Backend', color: '#2563EB', icon: 'server', position: 0, archived: false },
+          ],
+        },
+      },
+    });
+    renderWithProviders(
+      <DndContext>
+        <BoardLanes data={data} columnState={() => 'idle'} canDrag onOpen={() => {}} />
+      </DndContext>,
+    );
+    const backend = await screen.findByRole('button', { name: /Backend/ });
+    // The chevron plus the server icon; Mobile has no icon, so only its chevron is an svg.
+    await waitFor(() => expect(backend.querySelectorAll('svg')).toHaveLength(2));
+    expect(screen.getByRole('button', { name: /Mobile/ }).querySelectorAll('svg')).toHaveLength(1);
   });
 });
