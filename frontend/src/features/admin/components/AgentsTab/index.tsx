@@ -136,6 +136,7 @@ export function AgentsTab() {
             const created = await createAgent({
               handle: person.handle,
               display_name: person.display_name,
+              mcp_tools: person.mcp_tools,
             });
             await queryClient.invalidateQueries({ queryKey: adminKeys.users });
             setReveal({
