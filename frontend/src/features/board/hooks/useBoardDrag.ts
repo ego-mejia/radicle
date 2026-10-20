@@ -78,6 +78,13 @@ export function useBoardDrag(
   const [pending, setPending] = useState<PendingDrop | null>(null);
   // The transitions request of the current drag: a quick drop waits for it.
   const request = useRef<Promise<TransitionOption[]> | null>(null);
+  // The board before a cross-column drop: the card shows in its new column at once and
+  // goes back here if the move is not allowed or its dialog is cancelled.
+  const before = useRef<BoardData | undefined>(undefined);
+  const restore = () => {
+    if (before.current) queryClient.setQueryData(queryKey, before.current);
+    before.current = undefined;
+  };
   const boardId = data?.board.id ?? '';
 
   const move = useMutation({
@@ -130,14 +137,18 @@ export function useBoardDrag(
         move.mutate({ ticket: current.ticket.key, column: target, ...place });
       return;
     }
+    before.current = queryClient.getQueryData<BoardData>(queryKey);
+    queryClient.setQueryData<BoardData>(queryKey, (old) =>
+      old ? placeCard(old, current.ticket.key, target, place) : old,
+    );
     const loaded = current.options ?? (await request.current?.catch(() => null));
-    if (!loaded) return;
-    const options = optionsFor(data.board, target, loaded, current.ticket.type);
-    if (options.length === 0) return;
+    const options = loaded ? optionsFor(data.board, target, loaded, current.ticket.type) : [];
+    if (options.length === 0) return restore();
     const only = options[0]!;
     const resolutions = only.allowed_resolutions ?? [];
     const simple = only.available && !only.requires_comment && !only.has_screen;
     if (options.length === 1 && simple && (only.category !== 'done' || resolutions.length <= 1)) {
+      before.current = undefined;
       move.mutate({
         ticket: current.ticket.key,
         column: target,
@@ -163,8 +174,12 @@ export function useBoardDrag(
     onDragStart,
     onDragEnd,
     cancel: () => setDrag(null),
-    closePending: () => setPending(null),
+    closePending: () => {
+      restore();
+      setPending(null);
+    },
     resolve: (body: Omit<CardMove, 'ticket' | 'column'>) => {
+      before.current = undefined;
       if (pending)
         move.mutate({
           ticket: pending.ticket.key,
