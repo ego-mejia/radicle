@@ -14,6 +14,7 @@ export type ProjectDetail = S['ProjectDetail'];
 export type ProjectRole = Project['role'];
 export type Area = S['AreaOut'];
 export type Milestone = S['MilestoneOut'];
+export type MilestoneRecap = S['MilestoneRecapOut'];
 export type Member = S['MemberOut'];
 export type Workflow = S['WorkflowOut'];
 export type Ticket = S['TicketOut'];

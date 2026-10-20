@@ -1,4 +1,5 @@
 import { Assistant } from '../../features/assistant/components/Assistant';
+import { MilestoneCelebration } from '../../features/milestones/components/MilestoneCelebration';
 import { Outlet, useParams } from '@tanstack/react-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,6 +59,7 @@ export function AppPage() {
         )}
         <GlobalShortcuts />
         <Assistant />
+        <MilestoneCelebration />
       </CreateTicketContext.Provider>
     </ShortcutsContext.Provider>
   );
