@@ -148,6 +148,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/assistant/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Assistant Chat
+         * @description Ask Radi how to use Radicle. Answers come from the usage guide, written by the
+         *     configured LLM when there is one.
+         */
+        post: operations["assistant_chat_api_v1_assistant_chat_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/attachments/{attachment_id}": {
         parameters: {
             query?: never;
@@ -2970,6 +2991,51 @@ export interface components {
              * @default 0
              */
             todo: number;
+        };
+        /** ChatIn */
+        ChatIn: {
+            /**
+             * Language
+             * @default en
+             * @enum {string}
+             */
+            language?: "en" | "es";
+            /** Messages */
+            messages: components["schemas"]["ChatMessage"][];
+        };
+        /** ChatMessage */
+        ChatMessage: {
+            /** Content */
+            content: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "user" | "assistant";
+        };
+        /** ChatOut */
+        ChatOut: {
+            /**
+             * Answer
+             * @description Markdown
+             */
+            answer: string;
+            /**
+             * Mode
+             * @description Who wrote it: the LLM or the guide
+             * @enum {string}
+             */
+            mode: "llm" | "guide";
+            /**
+             * Notice
+             * @description Why the LLM was not used
+             */
+            notice: string | null;
+            /**
+             * Sources
+             * @description Guide sections it is based on
+             */
+            sources: string[];
         };
         /** ChecklistItemOut */
         ChecklistItemOut: {
@@ -6309,6 +6375,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AgentCreated"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    assistant_chat_api_v1_assistant_chat_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatOut"];
                 };
             };
             /** @description Validation Error */
