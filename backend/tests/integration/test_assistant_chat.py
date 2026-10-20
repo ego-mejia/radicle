@@ -32,6 +32,7 @@ async def test_without_an_llm_radi_answers_from_the_guide(client: AsyncClient, b
     body = r.json()
     assert body["mode"] == "guide" and body["sources"][0] == "Create a project"
     assert body["answer"].startswith("**Create a project**") and "Create project" in body["answer"]
+    assert body["autoplay"] is False
 
     r = await client.post(
         f"{API}/assistant/chat",
@@ -76,6 +77,8 @@ async def test_with_an_llm_it_writes_from_the_guide(
         "mode": "llm",
         "sources": r.json()["sources"],
         "notice": None,
+        "tour": [],
+        "autoplay": False,
     }
     assert "Crear un proyecto" in r.json()["sources"]
     system = sent[0]["system"]
@@ -122,3 +125,70 @@ async def test_validation_auth_and_rate_limit(client: AsyncClient, board: Team) 
         for _ in range(21)
     ]
     assert codes[:20] == [200] * 20 and codes[20] == 429
+
+
+async def test_the_model_can_walk_the_user_through_the_screen(
+    client: AsyncClient, board: Team, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    sent: list[dict] = []
+
+    def openai(request: httpx.Request) -> httpx.Response:
+        sent.append(json.loads(request.content))
+        steps = [
+            {"target": "projects.create", "action": "click", "text": "Abre el diálogo"},
+            {"target": "project-form.submit", "action": "click", "text": "Guárdalo"},
+            {"target": "made.up", "action": "click", "text": "?"},
+        ]
+        call = {"function": {"name": "show_me", "arguments": json.dumps({"steps": steps})}}
+        return httpx.Response(
+            200, json={"choices": [{"message": {"content": None, "tool_calls": [call]}}]}
+        )
+
+    monkeypatch.setattr(llm, "transport", httpx.MockTransport(openai))
+    await client.put(
+        f"{API}/admin/assistant",
+        headers=board.instance.headers,
+        json={"provider": "openai", "api_key": "k"},
+    )
+    r = await client.post(
+        f"{API}/assistant/chat", headers=board.member.headers, json=ask("crea un proyecto", "es")
+    )
+    body = r.json()
+    assert body["answer"] == "Te muestro." and body["autoplay"] is True
+    assert [(s["target"], s["action"]) for s in body["tour"]] == [
+        ("projects.create", "click"),
+        ("project-form.submit", "point"),
+    ]
+    tool = sent[0]["tools"][0]["function"]
+    assert tool["name"] == "show_me" and "projects.create" in sent[0]["messages"][0]["content"]
+
+
+async def test_anthropic_tool_use_works_too(
+    client: AsyncClient, board: Team, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def anthropic(request: httpx.Request) -> httpx.Response:
+        assert json.loads(request.content)["tools"][0]["name"] == "show_me"
+        return httpx.Response(
+            200,
+            json={
+                "content": [
+                    {"type": "text", "text": "Follow me."},
+                    {
+                        "type": "tool_use",
+                        "name": "show_me",
+                        "input": {"steps": [{"target": "radi", "action": "point", "text": "Hi"}]},
+                    },
+                ]
+            },
+        )
+
+    monkeypatch.setattr(llm, "transport", httpx.MockTransport(anthropic))
+    await client.put(
+        f"{API}/admin/assistant",
+        headers=board.instance.headers,
+        json={"provider": "anthropic", "api_key": "k"},
+    )
+    r = await client.post(
+        f"{API}/assistant/chat", headers=board.member.headers, json=ask("hello radi")
+    )
+    assert r.json()["answer"] == "Follow me." and r.json()["tour"][0]["target"] == "radi"

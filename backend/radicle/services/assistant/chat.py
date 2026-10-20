@@ -5,7 +5,7 @@ from typing import Literal
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.services.assistant import config, guide, llm
+from radicle.services.assistant import config, guide, llm, tours
 
 Language = Literal["en", "es"]
 LANGUAGE_NAMES = {"en": "English", "es": "Spanish"}
@@ -19,7 +19,12 @@ Write button and menu names in **bold**.
 Guide sections: {toc}
 
 Relevant excerpts:
-{excerpts}"""
+{excerpts}
+
+When the user asks how to do something on screen, also call show_me to walk them \
+through it: open the right page or dialog with click steps, then point at each part they \
+need and explain it. Use only these targets:
+{targets}"""
 NOT_FOUND = {
     "en": "I could not find that in the guide. Try other words, like *create a project* or "
     "*board columns*.",
@@ -43,6 +48,9 @@ class Reply:
     mode: Literal["llm", "guide"]
     sources: list[str] = field(default_factory=list)
     notice: str | None = None
+    tour: list[tours.Step] = field(default_factory=list)
+    # Guide tours wait for "Show me"; the model's tours start right away.
+    autoplay: bool = False
 
 
 def _asked(messages: list[llm.Message]) -> list[str]:
@@ -62,6 +70,9 @@ def from_guide(question: str, lang: Language) -> Reply:
     return Reply(text, "guide", [s.title for s in hits])
 
 
+LET_ME_SHOW = {"en": "Let me show you.", "es": "Te muestro."}
+
+
 async def answer(
     db: AsyncSession, messages: list[llm.Message], lang: Language, *, admin: bool = False
 ) -> Reply:
@@ -77,12 +88,15 @@ async def answer(
         language=LANGUAGE_NAMES[lang],
         toc=", ".join(guide.contents(lang)),
         excerpts="\n\n".join(f"## {s.title}\n{s.body}" for s in hits) or "(none matched)",
+        targets=tours.catalog(),
     )
     try:
-        text = await llm.complete(cfg, system, messages[-12:])
+        done = await llm.converse(cfg, system, messages[-12:], tours.SHOW_ME)
     except llm.AssistantUnavailable as exc:
         reply = from_guide(question, lang)
         # Admins can fix the setup, so they see why; everyone else just gets the guide.
         reply.notice = exc.detail if admin else UNAVAILABLE[lang]
         return reply
-    return Reply(text, "llm", [s.title for s in hits])
+    steps = tours.clean((done.tool_input or {}).get("steps"))
+    text = done.text or (LET_ME_SHOW[lang] if steps else "")
+    return Reply(text, "llm", [s.title for s in hits], tour=steps, autoplay=bool(steps))
