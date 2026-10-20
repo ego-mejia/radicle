@@ -25,6 +25,9 @@ describe('RadiChat', () => {
     answer({ answer: 'Go to **Projects**.', mode: 'guide', sources: [], notice: null });
     expect(await screen.findByText('Projects')).toBeInTheDocument();
     await waitFor(() => expect(onMood).toHaveBeenCalledWith('answered'));
+    // The menu comes back to ask something else.
+    expect(screen.getByText('Ask something else:')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'How do I add people to a project?' })).toBeVisible();
   });
 
   it('sends with Enter and closes with Escape', async () => {

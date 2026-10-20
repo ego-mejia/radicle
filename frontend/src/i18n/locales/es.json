@@ -1451,6 +1451,7 @@
       "test": "Probar conexión",
       "saved": "Asistente guardado",
       "managedByEnv": "Lo configuran variables RADICLE_ASSISTANT_* en el servidor, así que aquí es de solo lectura."
-    }
+    },
+    "more": "Pregunta algo más:"
   }
 }
