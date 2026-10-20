@@ -21,6 +21,7 @@ STOPWORDS = frozenset(
 class Section:
     title: str
     body: str
+    key: str | None  # from `## Title {#key}`, the same in every language
     terms: Counter[str]
     title_terms: frozenset[str]
 
@@ -60,11 +61,14 @@ def sections(lang: str) -> tuple[Section, ...]:
     for chunk in re.split(r"^## ", text, flags=re.M):
         if not chunk.strip():
             continue
-        title, _, body = chunk.partition("\n")
+        heading, _, body = chunk.partition("\n")
+        match = re.match(r"(.*?)\s*\{#([a-z-]+)\}\s*$", heading)
+        title, key = (match[1], match[2]) if match else (heading, None)
         out.append(
             Section(
                 title.strip(),
                 body.strip(),
+                key,
                 Counter(terms(f"{title} {body}")),
                 frozenset(terms(title)),
             )

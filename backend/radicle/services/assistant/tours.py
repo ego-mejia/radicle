@@ -5,7 +5,9 @@ web app and the page it lives on ({project} is filled in by the app). Tours neve
 clicking a target marked `submit` is turned into pointing at it.
 """
 
+import json
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Literal
 
 Action = Literal["point", "click"]
@@ -151,3 +153,18 @@ SHOW_ME = {
 def catalog() -> str:
     """The targets as a compact list for the system prompt."""
     return "\n".join(f"- {key}: {t.about}" for key, t in TARGETS.items())
+
+
+# Ready-made tours for the guide (no LLM), by guide section key.
+GUIDE_TOURS: dict[str, list[dict[str, str]]] = json.loads(
+    (Path(__file__).parent / "guide" / "tours.json").read_text(encoding="utf-8")
+)
+
+
+def guide_tour(key: str | None, lang: str) -> list[Step]:
+    return clean(
+        [
+            {"target": r["target"], "action": r["action"], "text": r.get(lang) or r["en"]}
+            for r in GUIDE_TOURS.get(key or "", [])
+        ]
+    )

@@ -67,7 +67,7 @@ def from_guide(question: str, lang: Language) -> Reply:
     text = f"**{best.title}**\n\n{best.body}"
     if others:
         text += f"\n\n{RELATED[lang]}: " + ", ".join(f"*{s.title}*" for s in others)
-    return Reply(text, "guide", [s.title for s in hits])
+    return Reply(text, "guide", [s.title for s in hits], tour=tours.guide_tour(best.key, lang))
 
 
 LET_ME_SHOW = {"en": "Let me show you.", "es": "Te muestro."}

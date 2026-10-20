@@ -32,6 +32,13 @@ async def test_without_an_llm_radi_answers_from_the_guide(client: AsyncClient, b
     body = r.json()
     assert body["mode"] == "guide" and body["sources"][0] == "Create a project"
     assert body["answer"].startswith("**Create a project**") and "Create project" in body["answer"]
+    # The guide offers a ready-made tour, which waits for "Show me".
+    assert body["tour"][0] == {
+        "target": "nav.projects",
+        "action": "click",
+        "page": "/",
+        "text": "Projects live here.",
+    }
     assert body["autoplay"] is False
 
     r = await client.post(
