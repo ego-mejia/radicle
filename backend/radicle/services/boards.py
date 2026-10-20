@@ -1,6 +1,7 @@
 """Configurable boards: columns of statuses, WIP limits, swimlanes and quick filters."""
 
 import uuid
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Any
@@ -26,6 +27,7 @@ from radicle.db.models import (
     StatusCategory,
     Swimlane,
     Ticket,
+    TicketType,
     User,
     WipMode,
     utcnow,
@@ -53,6 +55,28 @@ MAIN_COLUMNS: list[dict[str, Any]] = [
     {"name": "In Progress", "categories": ["in_progress"], "status_ids": [], "wip_limit": None},
     {"name": "Done", "categories": ["done"], "status_ids": [], "wip_limit": None},
 ]
+
+
+def default_columns(statuses: Sequence[Status]) -> list[dict[str, Any]]:
+    """To Do | In Progress | In Review | Done. In Review takes, by name, the in-progress
+    statuses after the first one of each ticket type (In Review, QA Verified...) and any
+    in-progress status called something with "review"."""
+    seen: set[TicketType] = set()
+    review: list[str] = []
+    for status in sorted(statuses, key=lambda s: (s.ticket_type.value, s.position)):
+        if status.category is not StatusCategory.in_progress:
+            continue
+        if status.ticket_type in seen or "review" in status.name.lower():
+            review.append(str(status.id))
+        seen.add(status.ticket_type)
+    columns = [dict(c) for c in MAIN_COLUMNS]
+    if review:
+        columns.insert(
+            2, {"name": "In Review", "categories": [], "status_ids": review, "wip_limit": None}
+        )
+    return columns
+
+
 DEFAULT_QUICK_FILTERS = (
     ("My tickets", "assignee = currentUser()"),
     ("Only bugs", "type = bug"),
@@ -182,7 +206,9 @@ async def create_default_board(db: AsyncSession, project: Project, user: User | 
         name="Main",
         kind=BoardKind.kanban,
         source_rql=f"project = {project.key}",
-        columns=[dict(c) for c in MAIN_COLUMNS],
+        columns=default_columns(
+            list(await db.scalars(select(Status).where(Status.project_id == project.id)))
+        ),
         wip_mode=WipMode.soft,
         swimlane_by=Swimlane.none,
         card_fields=["priority", "assignee", "tags", "checklist"],
@@ -236,7 +262,7 @@ async def create_board(db: AsyncSession, access: ProjectAccess, spec: BoardSpec)
         created_by=access.user.id,
     )
     statuses = await scope_statuses(db, board)
-    board.columns = check_columns(spec.columns or [dict(c) for c in MAIN_COLUMNS], statuses)
+    board.columns = check_columns(spec.columns or default_columns(statuses), statuses)
     db.add(board)
     await db.flush()
     for position, (name, rql) in enumerate(DEFAULT_QUICK_FILTERS):

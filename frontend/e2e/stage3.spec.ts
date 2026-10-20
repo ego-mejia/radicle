@@ -59,19 +59,13 @@ test('a Review column with In Review and QA Verified turns red past WIP 3', asyn
   await page.goto('/p/PA/board');
   await page.getByRole('button', { name: 'Configure' }).click();
   await expect(page.getByRole('heading', { name: 'Main' })).toBeVisible();
-  await page.getByRole('button', { name: 'Add column' }).click();
-  const column = page.getByRole('region', { name: 'Column 4' });
+  // Main comes with In Review (In Review and QA Verified): turn it into Review, WIP 3.
+  const column = page.getByRole('region', { name: 'Column 3' });
   await column.getByLabel('Column name').fill('Review');
   await column.getByLabel('WIP limit').fill('3');
   for (const name of [/In Review/, /QA Verified/]) {
     for (const box of await column.getByRole('checkbox', { name }).all()) await box.check();
   }
-  // Above In Progress, so its statuses land here first.
-  await column.getByRole('button', { name: 'Move up' }).click();
-  await page
-    .getByRole('region', { name: 'Column 3' })
-    .getByRole('button', { name: 'Move up' })
-    .click();
   await page.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByText('Board saved')).toBeVisible();
 

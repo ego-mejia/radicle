@@ -63,7 +63,9 @@ async def to_review(client: AsyncClient, team: Team, key: str, kind: str = "task
 async def test_main_board_is_created_with_projects(client: AsyncClient, board: Team) -> None:
     main = await main_board(client, board)
     assert main["name"] == "Main" and main["kind"] == "kanban"
-    assert [c["name"] for c in main["columns"]] == ["To Do", "In Progress", "Done"]
+    assert [c["name"] for c in main["columns"]] == ["To Do", "In Progress", "In Review", "Done"]
+    review = main["columns"][2]
+    assert sorted(review["status_ids"]) == sorted(status_ids(main, "In Review", "QA Verified"))
     assert [q["name"] for q in main["quick_filters"]] == [
         "My tickets",
         "Only bugs",
@@ -71,6 +73,22 @@ async def test_main_board_is_created_with_projects(client: AsyncClient, board: T
         "Blocked",
     ]
     assert main["unmapped_statuses"] == []
+
+
+async def test_in_progress_to_in_review_on_the_main_board(client: AsyncClient, board: Team) -> None:
+    main = await main_board(client, board)
+    await new_ticket(client, board.member)
+    r = await client.post(
+        f"{API}/tickets/PA-1/transitions",
+        headers=board.member.headers,
+        json={"to_status": "In Progress"},
+    )
+    assert r.status_code == 200, r.text
+    r = await move(client, board.member, main, ticket="PA-1", column=2)
+    assert r.status_code == 200, r.text
+    assert r.json()["ticket"]["status"]["name"] == "In Review"
+    columns = (await data(client, board.viewer, main))["columns"]
+    assert [t["key"] for t in columns[2]["tickets"]] == ["PA-1"]
 
 
 async def test_acceptance_review_column_with_wip_3(
@@ -192,7 +210,7 @@ async def test_done_window_and_unmapped_statuses(client: AsyncClient, board: Tea
         headers=board.member.headers,
         json={"to_status": "Done", "resolution": "wont_do"},
     )
-    assert (await data(client, board.viewer, main))["columns"][2]["count"] == 1
+    assert (await data(client, board.viewer, main))["columns"][3]["count"] == 1
     columns = [
         {"name": "Open", "categories": ["todo", "in_progress"]},
         {"name": "Done", "categories": ["done"]},
@@ -333,7 +351,11 @@ async def test_a_status_named_in_a_column_wins_over_its_category(
 ) -> None:
     main = await main_board(client, board)
     review = {"name": "Review", "status_ids": status_ids(main, "In Review")}
-    by_category = [{"name": c["name"], "categories": c["categories"]} for c in main["columns"]]
+    by_category = [
+        {"name": c["name"], "categories": c["categories"]}
+        for c in main["columns"]
+        if c["categories"]
+    ]
     await new_ticket(client, board.member)
     await to_review(client, board, "PA-1")
     await new_ticket(client, board.member)

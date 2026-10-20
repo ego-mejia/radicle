@@ -95,7 +95,7 @@ test('create a task, a bug and a draft: PA-1, PA-2, PA-3', async () => {
 
 test('drag a card to In Progress following the workflow', async () => {
   const card = page.getByTestId('column-todo').getByLabel('PA-1 API de pagos');
-  const target = page.getByTestId('column-in_progress');
+  const target = page.getByRole('region', { name: 'In Progress', exact: true });
   const from = (await card.boundingBox())!;
   const to = (await target.boundingBox())!;
   await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
