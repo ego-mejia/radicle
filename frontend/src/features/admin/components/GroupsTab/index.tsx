@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Trash2, Users, X } from 'lucide-react';
+import { ChevronRight, Trash2, Users, X } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../../../components/ui/Avatar';
@@ -19,6 +19,7 @@ import {
   fetchGroups,
   removeGroupMember,
 } from '../../../../services/api/access';
+import * as G from './style';
 
 function GroupMembers({ name }: { name: string }) {
   const { t } = useTranslation();
@@ -104,31 +105,43 @@ export function GroupsTab() {
   return (
     <SettingsCard title={t('admin.groups')} help={t('admin.groupsHelp')}>
       <S.Rows>
-        {groups.map((g) => (
-          <div key={g.name}>
-            <S.Row>
-              <S.Grow>
-                <Users size={16} />
-                <button
+        {groups.map((g) => {
+          const expanded = open === g.name;
+          return (
+            <G.Group key={g.name} $open={expanded}>
+              <G.Header>
+                <G.Toggle
                   type="button"
-                  onClick={() => setOpen(open === g.name ? null : g.name)}
-                  aria-expanded={open === g.name}
+                  onClick={() => setOpen(expanded ? null : g.name)}
+                  aria-expanded={expanded}
                 >
-                  <strong>{g.name}</strong>
-                </button>
-                <small>{t('settings.groupMembers', { count: g.member_count })}</small>
-                {g.description && <small>· {g.description}</small>}
-              </S.Grow>
-              <IconButton
-                label={t('admin.deleteGroup', { group: g.name })}
-                onClick={() => setDeleting(g.name)}
-              >
-                <Trash2 />
-              </IconButton>
-            </S.Row>
-            {open === g.name && <GroupMembers name={g.name} />}
-          </div>
-        ))}
+                  <G.Chevron $open={expanded}>
+                    <ChevronRight size={16} />
+                  </G.Chevron>
+                  <G.Icon>
+                    <Users size={16} />
+                  </G.Icon>
+                  <G.Text>
+                    <strong>{g.name}</strong>
+                    {g.description && <small>{g.description}</small>}
+                  </G.Text>
+                  <G.Count>{t('settings.groupMembers', { count: g.member_count })}</G.Count>
+                </G.Toggle>
+                <IconButton
+                  label={t('admin.deleteGroup', { group: g.name })}
+                  onClick={() => setDeleting(g.name)}
+                >
+                  <Trash2 />
+                </IconButton>
+              </G.Header>
+              {expanded && (
+                <G.Members>
+                  <GroupMembers name={g.name} />
+                </G.Members>
+              )}
+            </G.Group>
+          );
+        })}
       </S.Rows>
       <S.Inline
         onSubmit={(e) => {
@@ -137,11 +150,7 @@ export function GroupsTab() {
         }}
       >
         <Field label={t('admin.groupName')}>
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="equipo-legal"
-          />
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="legal-team" />
         </Field>
         <Field label={t('admin.groupDescription')}>
           <Input value={description} onChange={(e) => setDescription(e.target.value)} />
