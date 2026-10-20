@@ -1406,5 +1406,9 @@
     "after": "After",
     "more": "Details",
     "loadMore": "Load more"
+  },
+  "assistant": {
+    "open": "Ask Radi for help",
+    "close": "Close Radi's help"
   }
 }

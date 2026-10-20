@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Engine, kf } from './engine';
+import { renderRadi } from './render';
 
 const run = (engine: Engine, seconds: number) => {
   let frame = engine.step(0);
@@ -45,9 +46,18 @@ describe('Radi engine', () => {
     const thinking = run(radi, 1);
     expect(thinking.browL).toBeGreaterThan(0.5);
     expect(thinking.browR).toBeLessThan(-0.5);
+    expect(renderRadi(radi.rig, thinking)).toContain('rotate(');
     radi.sleepAfter = 1;
     expect(run(radi, 2).sleepy).toBeGreaterThan(0.9);
     radi.look(10, 10);
     expect(radi.current).toBe('thinking');
+  });
+
+  it('draws happy eyes as half moons', () => {
+    const radi = new Engine();
+    radi.setExpression('happy');
+    const svg = renderRadi(radi.rig, run(radi, 1));
+    expect(svg.match(/<mask /g)).toHaveLength(2);
+    expect(svg).toContain('fill="#000"');
   });
 });

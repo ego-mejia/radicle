@@ -1,3 +1,4 @@
+import { Assistant } from '../../features/assistant/components/Assistant';
 import { Outlet, useParams } from '@tanstack/react-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -56,6 +57,7 @@ export function AppPage() {
           <CreateTicketModal defaults={createDefaults} onClose={() => setCreateDefaults(null)} />
         )}
         <GlobalShortcuts />
+        <Assistant />
       </CreateTicketContext.Provider>
     </ShortcutsContext.Provider>
   );
