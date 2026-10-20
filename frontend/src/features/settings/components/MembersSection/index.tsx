@@ -1,22 +1,19 @@
 import { X } from 'lucide-react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../../../components/ui/Avatar';
 import { Badge } from '../../../../components/ui/Badge';
-import { Button, IconButton } from '../../../../components/ui/Button';
-import { Field } from '../../../../components/ui/Field';
-import { Input, Select } from '../../../../components/ui/Input';
+import { IconButton } from '../../../../components/ui/Button';
+import { Select } from '../../../../components/ui/Input';
 import { putMember, removeMember } from '../../../../services/api/projects';
 import type { ProjectDetail, ProjectRole } from '../../../../services/api/types';
 import { useSettingsMutation } from '../../hooks/useSettingsMutation';
+import { MemberPicker } from '../MemberPicker';
 import { SettingsCard, SettingsParts as S } from '../../../../components/ui/SettingsCard';
 
 const ROLES: ProjectRole[] = ['admin', 'member', 'viewer'];
 
 export function MembersSection({ project, isAdmin }: { project: ProjectDetail; isAdmin: boolean }) {
   const { t } = useTranslation();
-  const [handle, setHandle] = useState('');
-  const [role, setRole] = useState<ProjectRole>('member');
   const put = useSettingsMutation(project.key, (v: { handle: string; role: ProjectRole }) =>
     putMember(project.key, v.handle, v.role),
   );
@@ -69,39 +66,7 @@ export function MembersSection({ project, isAdmin }: { project: ProjectDetail; i
           </S.Row>
         ))}
       </S.Rows>
-      {editable && (
-        <S.Inline
-          onSubmit={(e) => {
-            e.preventDefault();
-            put.mutate(
-              { handle: handle.trim().replace(/^@/, ''), role },
-              { onSuccess: () => setHandle('') },
-            );
-          }}
-        >
-          <Field label={t('settings.addMember')}>
-            <Input
-              value={handle}
-              onChange={(e) => setHandle(e.target.value)}
-              placeholder="@handle"
-            />
-          </Field>
-          <Select
-            value={role}
-            onChange={(e) => setRole(e.target.value as ProjectRole)}
-            aria-label={t('settings.role')}
-          >
-            {ROLES.map((r) => (
-              <option key={r} value={r}>
-                {t(`projects.roles.${r}`)}
-              </option>
-            ))}
-          </Select>
-          <Button type="submit" variant="primary" disabled={!handle.trim()}>
-            {t('common.add')}
-          </Button>
-        </S.Inline>
-      )}
+      {editable && <MemberPicker projectKey={project.key} />}
     </SettingsCard>
   );
 }

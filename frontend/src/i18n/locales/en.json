@@ -539,7 +539,16 @@
     "effectiveRole": "Effective role",
     "levels": "Levels",
     "inbox": "Inbox",
-    "audit": "Audit log"
+    "audit": "Audit log",
+    "picker": {
+      "label": "Add people, agents or groups",
+      "placeholder": "Search by name, @handle, email or group",
+      "people": "People and agents",
+      "groups": "Groups",
+      "group": "Group",
+      "agent": "Agent",
+      "empty": "Nobody left to add with that search."
+    }
   },
   "profile": {
     "details": "Details",
