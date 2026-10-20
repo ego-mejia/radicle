@@ -243,6 +243,7 @@ EXEMPT = {
     "/api/v1/audit",
     "/api/v1/audit.csv",
     "/api/v1/mcp/tools",
+    "/api/v1/projects/{key}/member-candidates",
     "/api/v1/openapi.json",
 }
 

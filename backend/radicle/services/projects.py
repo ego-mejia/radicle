@@ -4,11 +4,21 @@ import re
 import uuid
 from dataclasses import dataclass
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core.errors import Conflict, Forbidden, ValidationFailed
-from radicle.db.models import Project, ProjectMember, ProjectRole, TemplateMode, User, utcnow
+from radicle.db.models import (
+    Group,
+    Project,
+    ProjectGroupRole,
+    ProjectMember,
+    ProjectRole,
+    TemplateMode,
+    User,
+    UserKind,
+    utcnow,
+)
 from radicle.services import users as users_service
 from radicle.services.access import ProjectAccess
 
@@ -251,3 +261,40 @@ async def _ensure_other_admin(db: AsyncSession, project: Project, leaving: User)
             f"{project.key} would be left without an admin. Make someone else admin first.",
             code="last_project_admin",
         )
+
+
+@dataclass(frozen=True)
+class Candidates:
+    people: list[User]
+    groups: list[Group]
+
+
+async def member_candidates(
+    db: AsyncSession, project: Project, query: str = "", limit: int = 20
+) -> Candidates:
+    """Active people, agents and groups that could join the project and are not in it yet,
+    matching `query` on handle, name or email (groups: name or description)."""
+    like = f"%{query.strip().lstrip('@')}%"
+    in_project = select(ProjectMember.user_id).where(ProjectMember.project_id == project.id)
+    people = await db.scalars(
+        select(User)
+        .where(
+            User.is_active,
+            User.kind != UserKind.system,
+            User.id.not_in(in_project),
+            or_(User.handle.ilike(like), User.display_name.ilike(like), User.email.ilike(like)),
+        )
+        .order_by(User.kind, func.lower(User.display_name))
+        .limit(limit)
+    )
+    with_role = select(ProjectGroupRole.group_id).where(ProjectGroupRole.project_id == project.id)
+    groups = await db.scalars(
+        select(Group)
+        .where(
+            Group.id.not_in(with_role),
+            or_(Group.name.ilike(like), Group.description.ilike(like)),
+        )
+        .order_by(Group.name)
+        .limit(limit)
+    )
+    return Candidates(people=list(people), groups=list(groups))

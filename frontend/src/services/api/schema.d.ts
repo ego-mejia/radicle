@@ -1089,6 +1089,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/projects/{key}/member-candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Member Candidates
+         * @description People, agents and groups not in the project yet, to add them from Settings → Members.
+         */
+        get: operations["member_candidates_api_v1_projects__key__member_candidates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{key}/members": {
         parameters: {
             query?: never;
@@ -2761,6 +2781,21 @@ export interface components {
             /** Ok */
             ok: boolean;
         };
+        /** CandidateGroup */
+        CandidateGroup: {
+            /** Description */
+            description: string;
+            /** Name */
+            name: string;
+        };
+        /** CandidatePerson */
+        CandidatePerson: {
+            /** Display Name */
+            display_name: string;
+            /** Handle */
+            handle: string;
+            kind: components["schemas"]["UserKind"];
+        };
         /** Card */
         Card: {
             /** Area */
@@ -3662,6 +3697,13 @@ export interface components {
             permissions: string[];
             /** @description Effective role: direct or through a group */
             role: components["schemas"]["ProjectRole"];
+        };
+        /** MemberCandidates */
+        MemberCandidates: {
+            /** Groups */
+            groups: components["schemas"]["CandidateGroup"][];
+            /** People */
+            people: components["schemas"]["CandidatePerson"][];
         };
         /** MemberOut */
         MemberOut: {
@@ -8536,6 +8578,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["InboxSettingsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    member_candidates_api_v1_projects__key__member_candidates_get: {
+        parameters: {
+            query?: {
+                q?: string;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MemberCandidates"];
                 };
             };
             /** @description Validation Error */

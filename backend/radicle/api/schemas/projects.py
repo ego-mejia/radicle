@@ -112,6 +112,22 @@ class MemberPut(Input):
     role: ProjectRole
 
 
+class CandidatePerson(Output):
+    handle: str
+    display_name: str
+    kind: UserKind
+
+
+class CandidateGroup(Output):
+    name: str
+    description: str
+
+
+class MemberCandidates(Output):
+    people: list[CandidatePerson]
+    groups: list[CandidateGroup]
+
+
 class StatusOut(Output):
     ref: str | None = Field(description="Stable slug; renames keep it")
     name: str
