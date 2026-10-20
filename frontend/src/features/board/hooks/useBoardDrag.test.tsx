@@ -3,7 +3,7 @@ import { act, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { BoardData, TransitionOption } from '../../../services/api/types';
 import { renderWithProviders } from '../../../test/renderWithProviders';
-import { useBoardDrag } from './useBoardDrag';
+import { placeCard, useBoardDrag } from './useBoardDrag';
 
 const moveCard = vi.fn();
 let resolveTransitions: (options: TransitionOption[]) => void = () => {};
@@ -43,7 +43,7 @@ const backToTodo = {
 
 let hook: ReturnType<typeof useBoardDrag>;
 function Probe() {
-  hook = useBoardDrag(data, 'PA');
+  hook = useBoardDrag(data, 'PA', ['tickets', 'board', 'b1', {}]);
   return null;
 }
 
@@ -77,5 +77,43 @@ describe('useBoardDrag', () => {
         expect.objectContaining({ ticket: 'PA-1', column: 0, transition: 'Stop' }),
       ),
     );
+  });
+});
+
+describe('placeCard', () => {
+  const board = (cols: string[][]) =>
+    ({
+      columns: cols.map((keys, index) => ({
+        index,
+        count: keys.length,
+        tickets: keys.map((key) => ({ key })),
+      })),
+    }) as unknown as BoardData;
+  const keys = (b: BoardData) => b.columns.map((c) => c.tickets.map((t) => t.key));
+
+  it('drops the card right where it was let go', () => {
+    const b = board([
+      ['A', 'B'],
+      ['C', 'D', 'E'],
+    ]);
+    expect(keys(placeCard(b, 'A', 1, { before: 'D', after: null }))).toEqual([
+      ['B'],
+      ['C', 'A', 'D', 'E'],
+    ]);
+    expect(keys(placeCard(b, 'A', 1, { before: null, after: 'D' }))).toEqual([
+      ['B'],
+      ['C', 'D', 'A', 'E'],
+    ]);
+    expect(keys(placeCard(b, 'A', 1, { before: null, after: null }))).toEqual([
+      ['B'],
+      ['C', 'D', 'E', 'A'],
+    ]);
+    const moved = placeCard(b, 'A', 1, { before: 'C', after: null });
+    expect(moved.columns.map((c) => c.count)).toEqual([1, 4]);
+  });
+
+  it('reorders inside a column', () => {
+    const b = board([['A', 'B', 'C']]);
+    expect(keys(placeCard(b, 'C', 0, { before: 'A', after: null }))).toEqual([['C', 'A', 'B']]);
   });
 });

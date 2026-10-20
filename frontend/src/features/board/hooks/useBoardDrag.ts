@@ -9,14 +9,69 @@ import type { BoardCard, BoardData, TransitionOption } from '../../../services/a
 import { useMoveFeedback } from '../../tickets/hooks/useMoveFeedback';
 
 type Drag = { ticket: BoardCard; from: number; options: TransitionOption[] | null };
-export type PendingDrop = { ticket: BoardCard; column: number; options: TransitionOption[] };
+
+/** Above or below the card under the pointer (by its middle), or last in an empty spot. */
+function dropPlace(
+  data: BoardData,
+  event: DragEndEvent,
+  column: number,
+  dragged: string,
+  over: BoardCard | undefined,
+): { before: string | null; after: string | null } {
+  if (over && over.key !== dragged) {
+    const rect = event.over!.rect;
+    const moved = event.active.rect.current.translated;
+    const y = moved ? moved.top + moved.height / 2 : rect.top;
+    return y < rect.top + rect.height / 2
+      ? { before: over.key, after: null }
+      : { before: null, after: over.key };
+  }
+  const rest = data.columns[column]?.tickets.filter((t) => t.key !== dragged) ?? [];
+  return { before: null, after: rest.at(-1)?.key ?? null };
+}
+export type PendingDrop = {
+  ticket: BoardCard;
+  column: number;
+  options: TransitionOption[];
+  place: Place;
+};
+type Place = { before: string | null; after: string | null };
 
 function columnOf(data: BoardData, key: string): number {
   return data.columns.find((c) => c.tickets.some((t) => t.key === key))?.index ?? -1;
 }
 
+/** The board right after a move, so the card lands where it was dropped at once. */
+export function placeCard(data: BoardData, key: string, column: number, place: Place): BoardData {
+  const card = data.columns.flatMap((c) => c.tickets).find((t) => t.key === key);
+  if (!card) return data;
+  return {
+    ...data,
+    columns: data.columns.map((c) => {
+      const had = c.tickets.some((t) => t.key === key);
+      let tickets = c.tickets.filter((t) => t.key !== key);
+      if (c.index === column) {
+        let at = tickets.length;
+        if (place.before)
+          at = Math.max(
+            0,
+            tickets.findIndex((t) => t.key === place.before),
+          );
+        else if (place.after) at = tickets.findIndex((t) => t.key === place.after) + 1 || at;
+        tickets = [...tickets.slice(0, at), card, ...tickets.slice(at)];
+      }
+      const count = c.count + (c.index === column ? 1 : 0) - (had ? 1 : 0);
+      return { ...c, tickets, count };
+    }),
+  };
+}
+
 /** Drag and drop on a board: rank inside a column, move across columns through the API. */
-export function useBoardDrag(data: BoardData | undefined, project: string) {
+export function useBoardDrag(
+  data: BoardData | undefined,
+  project: string,
+  queryKey: readonly unknown[],
+) {
   const queryClient = useQueryClient();
   const feedback = useMoveFeedback();
   const [drag, setDrag] = useState<Drag | null>(null);
@@ -27,6 +82,18 @@ export function useBoardDrag(data: BoardData | undefined, project: string) {
 
   const move = useMutation({
     mutationFn: (body: CardMove) => moveCard(boardId, body),
+    onMutate: async (body) => {
+      // Show the move right away; the server's answer (or an error) settles it.
+      await queryClient.cancelQueries({ queryKey });
+      queryClient.setQueryData<BoardData>(queryKey, (old) =>
+        old
+          ? placeCard(old, body.ticket, body.column, {
+              before: body.before ?? null,
+              after: body.after ?? null,
+            })
+          : old,
+      );
+    },
     onSuccess: (out) => feedback.warnings({ ...out.ticket, warnings: out.warnings } as never),
     onError: (error, body) => feedback.error(error, () => move.mutate({ ...body, force: true })),
     onSettled: () => {
@@ -57,9 +124,10 @@ export function useBoardDrag(data: BoardData | undefined, project: string) {
       ? columnOf(data, overTicket.key)
       : (event.over?.data.current?.column as number | undefined);
     if (target === undefined || target < 0) return;
-    const before = overTicket && overTicket.key !== current.ticket.key ? overTicket.key : null;
+    const place = dropPlace(data, event, target, current.ticket.key, overTicket);
     if (target === current.from) {
-      if (before) move.mutate({ ticket: current.ticket.key, column: target, before });
+      if (place.before || place.after)
+        move.mutate({ ticket: current.ticket.key, column: target, ...place });
       return;
     }
     const loaded = current.options ?? (await request.current?.catch(() => null));
@@ -73,12 +141,12 @@ export function useBoardDrag(data: BoardData | undefined, project: string) {
       move.mutate({
         ticket: current.ticket.key,
         column: target,
-        before,
+        ...place,
         transition: only.name,
         resolution: resolutions[0] ?? null,
       });
     } else {
-      setPending({ ticket: current.ticket, column: target, options });
+      setPending({ ticket: current.ticket, column: target, options, place });
     }
   };
 
@@ -97,7 +165,13 @@ export function useBoardDrag(data: BoardData | undefined, project: string) {
     cancel: () => setDrag(null),
     closePending: () => setPending(null),
     resolve: (body: Omit<CardMove, 'ticket' | 'column'>) => {
-      if (pending) move.mutate({ ticket: pending.ticket.key, column: pending.column, ...body });
+      if (pending)
+        move.mutate({
+          ticket: pending.ticket.key,
+          column: pending.column,
+          ...pending.place,
+          ...body,
+        });
       setPending(null);
     },
   };

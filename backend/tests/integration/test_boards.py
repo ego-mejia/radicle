@@ -328,7 +328,7 @@ async def test_several_transitions_ask_which(
     assert r.json()["ticket"]["resolution"] == "done"
 
 
-async def test_a_status_shows_in_the_first_column_that_holds_it(
+async def test_a_status_named_in_a_column_wins_over_its_category(
     client: AsyncClient, board: Team
 ) -> None:
     main = await main_board(client, board)
@@ -336,18 +336,36 @@ async def test_a_status_shows_in_the_first_column_that_holds_it(
     by_category = [{"name": c["name"], "categories": c["categories"]} for c in main["columns"]]
     await new_ticket(client, board.member)
     await to_review(client, board, "PA-1")
+    await new_ticket(client, board.member)
+    await to_review(client, board, "PA-2", kind="task")
+    r = await client.post(
+        f"{API}/tickets/PA-2/transitions",
+        headers=board.member.headers,
+        json={"to_status": "In Progress"},
+    )
+    assert r.status_code == 200, r.text
 
-    async def where_is(columns: list) -> list[str]:  # type: ignore[type-arg]
+    async def where_is(columns: list) -> dict[str, list[str]]:  # type: ignore[type-arg]
         r = await client.patch(
             f"{API}/boards/{main['id']}", headers=board.admin.headers, json={"columns": columns}
         )
         assert r.status_code == 200, r.text
         result = await data(client, board.viewer, main)
-        return [c["name"] for c in result["columns"] if c["tickets"]]
+        return {
+            c["name"]: [t["key"] for t in c["tickets"]] for c in result["columns"] if c["tickets"]
+        }
 
-    # Review first: it takes In Review away from the In Progress category column.
-    assert await where_is([by_category[0], review, *by_category[1:]]) == ["Review"]
-    # Review after In Progress: the category column got it first.
-    assert await where_is([*by_category, review]) == ["In Progress"]
+    # Wherever Review sits, In Review tickets go there and not to the category column.
+    assert await where_is([by_category[0], review, *by_category[1:]]) == {
+        "Review": ["PA-1"],
+        "In Progress": ["PA-2"],
+    }
+    columns = [*by_category[:2], review, by_category[2]]
+    assert await where_is(columns) == {"In Progress": ["PA-2"], "Review": ["PA-1"]}
     r = await client.get(f"{API}/boards/{main['id']}", headers=board.viewer.headers)
     assert r.json()["unmapped_statuses"] == []
+
+    # And a card moves from In Progress to that Review column.
+    r = await move(client, board.member, main, ticket="PA-2", column=2)
+    assert r.status_code == 200, r.text
+    assert r.json()["ticket"]["status"]["name"] == "In Review"

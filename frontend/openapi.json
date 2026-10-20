@@ -1194,6 +1194,18 @@
             "title": "Checklist Total",
             "type": "integer"
           },
+          "child_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Subtickets you can see, in search results and subticket lists",
+            "title": "Child Count"
+          },
           "classification": {
             "anyOf": [
               {
@@ -1300,6 +1312,18 @@
               }
             ]
           },
+          "parent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Parent key, in search results and subticket lists",
+            "title": "Parent"
+          },
           "priority": {
             "$ref": "#/components/schemas/Priority"
           },
@@ -1387,6 +1411,8 @@
           "impact",
           "effort",
           "converted",
+          "parent",
+          "child_count",
           "lane"
         ],
         "title": "Card",
@@ -8514,6 +8540,18 @@
             "title": "Checklist Total",
             "type": "integer"
           },
+          "child_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Subtickets you can see, in search results and subticket lists",
+            "title": "Child Count"
+          },
           "classification": {
             "anyOf": [
               {
@@ -8615,6 +8653,18 @@
               }
             ]
           },
+          "parent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Parent key, in search results and subticket lists",
+            "title": "Parent"
+          },
           "priority": {
             "$ref": "#/components/schemas/Priority"
           },
@@ -8701,7 +8751,9 @@
           "classification",
           "impact",
           "effort",
-          "converted"
+          "converted",
+          "parent",
+          "child_count"
         ],
         "title": "TicketSummary",
         "type": "object"
@@ -8832,6 +8884,18 @@
             "title": "Checklist Total",
             "type": "integer"
           },
+          "child_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Subtickets you can see, in search results and subticket lists",
+            "title": "Child Count"
+          },
           "classification": {
             "anyOf": [
               {
@@ -8933,6 +8997,18 @@
               }
             ]
           },
+          "parent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Parent key, in search results and subticket lists",
+            "title": "Parent"
+          },
           "priority": {
             "$ref": "#/components/schemas/Priority"
           },
@@ -9025,6 +9101,8 @@
           "impact",
           "effort",
           "converted",
+          "parent",
+          "child_count",
           "version"
         ],
         "title": "TimelineTicket",
@@ -10038,6 +10116,18 @@
             "title": "Checklist Total",
             "type": "integer"
           },
+          "child_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Subtickets you can see, in search results and subticket lists",
+            "title": "Child Count"
+          },
           "classification": {
             "anyOf": [
               {
@@ -10139,6 +10229,18 @@
               }
             ]
           },
+          "parent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Parent key, in search results and subticket lists",
+            "title": "Parent"
+          },
           "priority": {
             "$ref": "#/components/schemas/Priority"
           },
@@ -10226,6 +10328,8 @@
           "impact",
           "effort",
           "converted",
+          "parent",
+          "child_count",
           "blocked_by"
         ],
         "title": "WidgetTicket",
