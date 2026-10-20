@@ -374,7 +374,17 @@
       "milestone": "Sin milestone"
     },
     "subtickets_one": "{{count}} subticket de {{key}}",
-    "subtickets_other": "{{count}} subtickets de {{key}}"
+    "subtickets_other": "{{count}} subtickets de {{key}}",
+    "groupBy": "Agrupar por",
+    "groups": {
+      "none": "Nada",
+      "type": "Tipo",
+      "status": "Estado",
+      "priority": "Prioridad",
+      "assignee": "Asignado",
+      "area": "Área",
+      "milestone": "Milestone"
+    }
   },
   "milestones": {
     "create": "Nuevo milestone",
