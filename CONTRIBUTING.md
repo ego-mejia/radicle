@@ -102,6 +102,8 @@ Draft PRs are welcome when you want early feedback.
 ```bash
 cp .env.example .env
 echo "RADICLE_SECRET_KEY=$(openssl rand -hex 32)" >> .env
+# Dev containers, volumes and image get their own names, apart from an everyday install
+printf "COMPOSE_PROJECT_NAME=radicle-dev\nRADICLE_IMAGE=radicle-dev\n" >> .env
 cp .env backend/.env
 
 # Database and migrations

@@ -6,6 +6,8 @@
 set -euo pipefail
 
 export COMPOSE_PROJECT_NAME="${SMOKE_PROJECT:-radicle-smoke}"
+# Its own image too, so a smoke build never replaces the image of your everyday install.
+export RADICLE_IMAGE="${SMOKE_IMAGE:-radicle-smoke}"
 export RADICLE_PORT="${SMOKE_PORT:-8001}"
 BASE_URL="${1:-http://localhost:${RADICLE_PORT}}"
 JAR="$(mktemp)"

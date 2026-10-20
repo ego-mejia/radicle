@@ -1,7 +1,9 @@
 services:
   app:
     build: .
-    image: radicle:latest
+    # RADICLE_IMAGE names the image, so a dev checkout (radicle-dev) never replaces
+    # the everyday install's image (radicle).
+    image: ${RADICLE_IMAGE:-radicle}:latest
     ports:
       - "${RADICLE_PORT:-8000}:8000"
     environment: &app-env
@@ -28,7 +30,7 @@ services:
   # Background jobs (template sync, image variants, bulk edits). Same image as app;
   # it starts after app so migrations have already run.
   worker:
-    image: radicle:latest
+    image: ${RADICLE_IMAGE:-radicle}:latest
     command: ["radicle", "worker"]
     environment:
       <<: *app-env
