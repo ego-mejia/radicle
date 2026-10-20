@@ -130,6 +130,28 @@ describe('a cross-column drop', () => {
     expect(where(client)).toEqual([[], ['PA-1']]);
     expect(moveCard).not.toHaveBeenCalled();
   });
+
+  it('closes as Done without asking when the column allows several resolutions', async () => {
+    const client = makeClient();
+    const { drop } = await dropInTodo(client);
+    // To Do stands in for a done column here; only the resolutions matter.
+    const finish = {
+      ...backToTodo,
+      name: 'Finish',
+      allowed_resolutions: ['wont_do', 'done', 'duplicate'],
+    } as unknown as TransitionOption;
+    await act(async () => {
+      resolveTransitions([finish]);
+      await drop;
+    });
+    expect(hook.pending).toBeNull();
+    await waitFor(() =>
+      expect(moveCard).toHaveBeenCalledWith(
+        'b1',
+        expect.objectContaining({ transition: 'Finish', resolution: 'done' }),
+      ),
+    );
+  });
 });
 
 describe('placeCard', () => {
