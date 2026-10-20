@@ -1,9 +1,12 @@
 name: CI
 
+# Paused: checks run locally before each push (see CONTRIBUTING.md). To turn CI back on,
+# replace workflow_dispatch with the original triggers:
+#   push:
+#     branches: [main]
+#   pull_request:
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   backend:
