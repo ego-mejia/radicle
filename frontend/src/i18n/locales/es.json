@@ -399,7 +399,8 @@
         "area": "Área",
         "milestone": "Milestone"
       }
-    }
+    },
+    "saved": "Filtros guardados"
   },
   "milestones": {
     "create": "Nuevo milestone",

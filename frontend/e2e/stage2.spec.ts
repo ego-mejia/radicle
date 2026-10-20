@@ -214,11 +214,14 @@ test('bulk-tag two tickets with a preview, then save the filter', async () => {
   await expect(bulk.getByText('2 changed, 0 failed.')).toBeVisible();
   await bulk.getByRole('button', { name: 'Close' }).first().click();
 
+  await page.getByRole('button', { name: 'Saved filters' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).first().click();
   const save = page.getByRole('dialog', { name: 'Save current filter' });
   await save.getByLabel('Name').fill('Con e2e');
   await save.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByRole('button', { name: 'Con e2e', exact: true })).toBeVisible();
+  const saved = page.getByRole('button', { name: 'Con e2e', exact: true });
+  if (!(await saved.isVisible())) await page.getByRole('button', { name: 'Saved filters' }).click();
+  await expect(saved).toBeVisible();
 });
 
 test('daily work with the keyboard only', async () => {
