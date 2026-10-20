@@ -1463,5 +1463,24 @@
       "missing": "I can't find this part here. Skip to the next step.",
       "showMe": "Show me"
     }
+  },
+  "celebration": {
+    "title": "Milestone complete!",
+    "headline": "Congratulations! {{milestone}} is done 🎉",
+    "thanks": "Every ticket in {{project}} for this milestone is finished. Thank you for the effort: it shows.",
+    "thanksOnTime": "Every ticket in {{project}} for this milestone is finished, and on time. Thank you for the effort: it shows.",
+    "stats": {
+      "shipped": "Tickets shipped",
+      "hours": "Hours invested",
+      "bugs": "Bugs squashed",
+      "tasks": "Tasks completed",
+      "ideas": "Ideas captured",
+      "days": "Days to ship",
+      "comments": "Conversations"
+    },
+    "people_one": "{{count}} person",
+    "people_other": "{{count}} people",
+    "agents_one": "{{count}} AI agent",
+    "agents_other": "{{count}} AI agents"
   }
 }

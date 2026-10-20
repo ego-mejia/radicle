@@ -1463,5 +1463,24 @@
       "missing": "No encuentro esta parte aquí. Pasa al siguiente paso.",
       "showMe": "Muéstrame"
     }
+  },
+  "celebration": {
+    "title": "¡Milestone completado!",
+    "headline": "¡Felicidades! {{milestone}} está listo 🎉",
+    "thanks": "Todos los tickets de este milestone en {{project}} están terminados. Gracias por el esfuerzo: se nota.",
+    "thanksOnTime": "Todos los tickets de este milestone en {{project}} están terminados, y a tiempo. Gracias por el esfuerzo: se nota.",
+    "stats": {
+      "shipped": "Tickets entregados",
+      "hours": "Horas invertidas",
+      "bugs": "Bugs aplastados",
+      "tasks": "Tareas completadas",
+      "ideas": "Ideas capturadas",
+      "days": "Días para entregar",
+      "comments": "Conversaciones"
+    },
+    "people_one": "{{count}} persona",
+    "people_other": "{{count}} personas",
+    "agents_one": "{{count}} agente de IA",
+    "agents_other": "{{count}} agentes de IA"
   }
 }

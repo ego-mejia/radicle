@@ -93,6 +93,14 @@ export async function patchMilestone(
   );
 }
 
+export async function fetchMilestoneRecap(key: string, name: string) {
+  return unwrap(
+    await api.GET('/api/v1/projects/{key}/milestones/{name}/recap', {
+      params: { path: { key, name } },
+    }),
+  );
+}
+
 export async function fetchSearchFields(project?: string) {
   return unwrap(
     await api.GET('/api/v1/search/fields', { params: { query: project ? { project } : {} } }),

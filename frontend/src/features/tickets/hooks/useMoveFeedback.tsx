@@ -4,6 +4,7 @@ import { useErrorMessage } from '../../../hooks/useErrorMessage';
 import { useToast } from '../../../hooks/useToast';
 import { ApiError } from '../../../services/api/client';
 import type { Ticket } from '../../../services/api/types';
+import { announceDone } from '../../milestones/lib/celebrate';
 
 /**
  * Toasts after a status change: warnings (blocked, forced), the exact rules that failed,
@@ -15,6 +16,8 @@ export function useMoveFeedback() {
   const errorMessage = useErrorMessage();
   return {
     warnings(ticket: Ticket) {
+      // Every successful move lands here: the last ticket of a milestone starts the party.
+      announceDone(ticket);
       for (const w of ticket.warnings ?? []) {
         const keys = (w.by ?? []).join(', ');
         const text =
