@@ -6,6 +6,7 @@ from radicle.api.schemas.common import Input, Output, UtcDatetime
 from radicle.api.schemas.sprints import SprintOut
 from radicle.api.schemas.tickets import TicketSummary, WarningOut
 from radicle.db.models import BoardKind, Resolution, StatusCategory, Swimlane, TicketType, WipMode
+from radicle.services.boards import DEFAULT_CARD_FIELDS
 
 
 class ColumnConf(Input):
@@ -71,7 +72,7 @@ class BoardCreate(Input):
     columns: list[ColumnConf] | None = None
     wip_mode: WipMode = WipMode.soft
     swimlane_by: Swimlane = Swimlane.none
-    card_fields: list[str] = Field(default_factory=lambda: ["priority", "assignee", "tags"])
+    card_fields: list[str] = Field(default_factory=lambda: list(DEFAULT_CARD_FIELDS))
     done_window_days: int = 14
 
 

@@ -201,7 +201,7 @@ async def board_data(
     out_columns = []
     lane_counts: dict[tuple[str, str], int] = {}
     for c in data.columns:
-        summaries = await summaries_out(db, c.tickets)
+        summaries = await summaries_out(db, c.tickets, principal.user)
         cards = []
         for ticket, summary in zip(c.tickets, summaries, strict=True):
             lane = data.lanes.get(ticket.id, boards.NO_LANE)
@@ -259,7 +259,7 @@ async def move_card(
         force=body.force,
         timezone=settings.timezone,
     )
-    summary = (await summaries_out(db, [result.ticket]))[0]
+    summary = (await summaries_out(db, [result.ticket], principal.user))[0]
     return BoardMoveOut(
         ticket=summary,
         warnings=[WarningOut(code=w.code, message=w.message, by=w.by) for w in result.warnings],
