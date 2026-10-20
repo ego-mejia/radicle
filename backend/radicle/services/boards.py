@@ -49,7 +49,11 @@ CARD_FIELDS = (
     "remaining",
     "checklist",
     "votes",
+    "area",
+    "milestone",
+    "children",
 )
+DEFAULT_CARD_FIELDS = ["area", "milestone", "children", "priority", "assignee", "tags", "checklist"]
 MAIN_COLUMNS: list[dict[str, Any]] = [
     {"name": "To Do", "categories": ["todo"], "status_ids": [], "wip_limit": None},
     {"name": "In Progress", "categories": ["in_progress"], "status_ids": [], "wip_limit": None},
@@ -211,7 +215,7 @@ async def create_default_board(db: AsyncSession, project: Project, user: User | 
         ),
         wip_mode=WipMode.soft,
         swimlane_by=Swimlane.none,
-        card_fields=["priority", "assignee", "tags", "checklist"],
+        card_fields=list(DEFAULT_CARD_FIELDS),
         done_window_days=14,
         created_by=user.id if user else None,
     )
@@ -231,7 +235,7 @@ class BoardSpec:
     columns: list[dict[str, Any]] | None = None
     wip_mode: WipMode = WipMode.soft
     swimlane_by: Swimlane = Swimlane.none
-    card_fields: list[str] = field(default_factory=lambda: ["priority", "assignee", "tags"])
+    card_fields: list[str] = field(default_factory=lambda: list(DEFAULT_CARD_FIELDS))
     done_window_days: int = 14
 
 

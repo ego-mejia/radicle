@@ -73,6 +73,7 @@ async def test_main_board_is_created_with_projects(client: AsyncClient, board: T
         "Blocked",
     ]
     assert main["unmapped_statuses"] == []
+    assert main["card_fields"][:3] == ["area", "milestone", "children"]
 
 
 async def test_in_progress_to_in_review_on_the_main_board(client: AsyncClient, board: Team) -> None:
@@ -157,6 +158,17 @@ async def test_hard_wip_limit_and_admin_force(
     assert r.status_code == 200
     history = (await client.get(f"{API}/tickets/PA-4/history", headers=board.member.headers)).json()
     assert history["items"][0]["new_value"]["wip_forced"] == "Review"
+
+
+async def test_cards_count_their_subtickets(client: AsyncClient, board: Team) -> None:
+    main = await main_board(client, board)
+    parent = await new_ticket(client, board.member, title="Parent")
+    for i in range(2):
+        await new_ticket(client, board.member, title=f"child {i}", parent=parent["key"])
+    todo = (await data(client, board.member, main))["columns"][0]["tickets"]
+    counts = {t["key"]: t["child_count"] for t in todo}
+    assert counts[parent["key"]] == 2
+    assert counts["PA-2"] == 0
 
 
 async def test_rank_within_a_column(client: AsyncClient, board: Team) -> None:
