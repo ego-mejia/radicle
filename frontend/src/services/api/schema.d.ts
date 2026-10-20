@@ -1254,6 +1254,26 @@ export interface paths {
         patch: operations["patch_milestone_api_v1_projects__key__milestones__name__patch"];
         trace?: never;
     };
+    "/api/v1/projects/{key}/milestones/{name}/recap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Milestone Recap
+         * @description Hours, tickets, people and days behind a milestone, for its celebration card.
+         */
+        get: operations["get_milestone_recap_api_v1_projects__key__milestones__name__recap_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/projects/{key}/permissions": {
         parameters: {
             query?: never;
@@ -3950,6 +3970,62 @@ export interface components {
              * @description null clears it
              */
             target_date?: string | null;
+        };
+        /**
+         * MilestoneRecapOut
+         * @description A milestone's numbers, for the celebration card when its last ticket is done.
+         */
+        MilestoneRecapOut: {
+            /** Agents */
+            agents: number;
+            /** Bugs */
+            bugs: number;
+            /** Comments */
+            comments: number;
+            /**
+             * Complete
+             * @description Every ticket is done (and there is at least one)
+             */
+            complete: boolean;
+            /** Days */
+            days: number | null;
+            /** Done */
+            done: number;
+            /** Finished At */
+            finished_at: string | null;
+            /** Humans */
+            humans: number;
+            /**
+             * Ideas
+             * @description Drafts: ideas captured along the way
+             */
+            ideas: number;
+            /** Milestone */
+            milestone: string;
+            /** Minutes Logged */
+            minutes_logged: number;
+            /**
+             * On Time
+             * @description Finished by the target date; null if unknown
+             */
+            on_time: boolean | null;
+            /**
+             * People
+             * @description Up to 8 people who worked on it
+             */
+            people: components["schemas"]["UserRef"][];
+            /** Project Key */
+            project_key: string;
+            /** Project Name */
+            project_name: string;
+            /** Started At */
+            started_at: string | null;
+            /** Target Date */
+            target_date: string | null;
+            /** Tasks */
+            tasks: number;
+            /** Tickets */
+            tickets: number;
         };
         /**
          * MilestoneStatus
@@ -9134,6 +9210,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MilestoneOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_milestone_recap_api_v1_projects__key__milestones__name__recap_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MilestoneRecapOut"];
                 };
             };
             /** @description Validation Error */

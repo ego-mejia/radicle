@@ -4297,6 +4297,153 @@
         "title": "MilestonePatch",
         "type": "object"
       },
+      "MilestoneRecapOut": {
+        "description": "A milestone's numbers, for the celebration card when its last ticket is done.",
+        "properties": {
+          "agents": {
+            "title": "Agents",
+            "type": "integer"
+          },
+          "bugs": {
+            "title": "Bugs",
+            "type": "integer"
+          },
+          "comments": {
+            "title": "Comments",
+            "type": "integer"
+          },
+          "complete": {
+            "description": "Every ticket is done (and there is at least one)",
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Days"
+          },
+          "done": {
+            "title": "Done",
+            "type": "integer"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "humans": {
+            "title": "Humans",
+            "type": "integer"
+          },
+          "ideas": {
+            "description": "Drafts: ideas captured along the way",
+            "title": "Ideas",
+            "type": "integer"
+          },
+          "milestone": {
+            "title": "Milestone",
+            "type": "string"
+          },
+          "minutes_logged": {
+            "title": "Minutes Logged",
+            "type": "integer"
+          },
+          "on_time": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Finished by the target date; null if unknown",
+            "title": "On Time"
+          },
+          "people": {
+            "description": "Up to 8 people who worked on it",
+            "items": {
+              "$ref": "#/components/schemas/UserRef"
+            },
+            "title": "People",
+            "type": "array"
+          },
+          "project_key": {
+            "title": "Project Key",
+            "type": "string"
+          },
+          "project_name": {
+            "title": "Project Name",
+            "type": "string"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "target_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Date"
+          },
+          "tasks": {
+            "title": "Tasks",
+            "type": "integer"
+          },
+          "tickets": {
+            "title": "Tickets",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "milestone",
+          "project_key",
+          "project_name",
+          "target_date",
+          "complete",
+          "on_time",
+          "tickets",
+          "done",
+          "tasks",
+          "bugs",
+          "ideas",
+          "minutes_logged",
+          "comments",
+          "humans",
+          "agents",
+          "people",
+          "started_at",
+          "finished_at",
+          "days"
+        ],
+        "title": "MilestoneRecapOut",
+        "type": "object"
+      },
       "MilestoneStatus": {
         "enum": [
           "open",
@@ -15494,6 +15641,58 @@
           }
         },
         "summary": "Patch Milestone",
+        "tags": [
+          "areas and milestones"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/milestones/{name}/recap": {
+      "get": {
+        "description": "Hours, tickets, people and days behind a milestone, for its celebration card.",
+        "operationId": "get_milestone_recap_api_v1_projects__key__milestones__name__recap_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilestoneRecapOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Milestone Recap",
         "tags": [
           "areas and milestones"
         ]

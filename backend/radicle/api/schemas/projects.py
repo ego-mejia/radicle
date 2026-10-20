@@ -6,6 +6,7 @@ from pydantic import ConfigDict, Field
 
 from radicle.api.schemas.common import Input, Output, UtcDatetime
 from radicle.api.schemas.fields import CustomFieldOut
+from radicle.api.schemas.tickets import UserRef
 from radicle.db.models import (
     BlockedPolicy,
     MilestoneStatus,
@@ -184,3 +185,27 @@ class ProjectDetail(ProjectOut):
     permissions: list[str] = Field(
         default_factory=list, description="What you may do here, from the permission matrix"
     )
+
+
+class MilestoneRecapOut(Output):
+    """A milestone's numbers, for the celebration card when its last ticket is done."""
+
+    milestone: str
+    project_key: str
+    project_name: str
+    target_date: date | None
+    complete: bool = Field(description="Every ticket is done (and there is at least one)")
+    on_time: bool | None = Field(description="Finished by the target date; null if unknown")
+    tickets: int
+    done: int
+    tasks: int
+    bugs: int
+    ideas: int = Field(description="Drafts: ideas captured along the way")
+    minutes_logged: int
+    comments: int
+    humans: int
+    agents: int
+    people: list[UserRef] = Field(description="Up to 8 people who worked on it")
+    started_at: UtcDatetime | None
+    finished_at: UtcDatetime | None
+    days: int | None
