@@ -104,6 +104,7 @@ export function ListView() {
             <Select
               value={groupBy}
               aria-label={t('list.groupBy')}
+              data-tour="list.group-by"
               onChange={(e) =>
                 void navigate({
                   search: (prev) => ({

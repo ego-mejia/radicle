@@ -88,7 +88,7 @@ export function Topbar({ project, onMenu }: Props) {
           </>
         )}
       </S.Crumbs>
-      <S.Search onSubmit={submit} role="search">
+      <S.Search onSubmit={submit} role="search" data-tour="topbar.search">
         <Input
           ref={searchRef}
           value={query}
@@ -98,7 +98,12 @@ export function Topbar({ project, onMenu }: Props) {
         />
       </S.Search>
       <S.Actions>
-        <Button variant="primary" onClick={() => openCreate()} title="C">
+        <Button
+          variant="primary"
+          onClick={() => openCreate()}
+          title="C"
+          data-tour="topbar.create-ticket"
+        >
           <Plus />
           <span className="label">{t('nav.createTicket')}</span>
         </Button>

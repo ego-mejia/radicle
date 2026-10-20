@@ -140,6 +140,7 @@ export function CreateTicketModal({ defaults, onClose }: Props) {
             variant="primary"
             type="submit"
             form="create-ticket"
+            data-tour="ticket-form.submit"
             disabled={mutation.isPending || !projectKey}
           >
             {t('create.submit')}
@@ -167,7 +168,11 @@ export function CreateTicketModal({ defaults, onClose }: Props) {
             </Select>
           </Field>
           <Field label={t('ticket.fields.type')} group>
-            <S.Types role="radiogroup" aria-label={t('ticket.fields.type')}>
+            <S.Types
+              role="radiogroup"
+              aria-label={t('ticket.fields.type')}
+              data-tour="ticket-form.type"
+            >
               {TICKET_TYPES.map((value) => (
                 <S.TypeOption
                   key={value}
@@ -200,6 +205,7 @@ export function CreateTicketModal({ defaults, onClose }: Props) {
         )}
         <Field label={`${t('ticket.fields.title')} *`} error={errors.title}>
           <Input
+            data-tour="ticket-form.title"
             value={String(values.title ?? '')}
             onChange={(e) => set('title', e.target.value)}
             placeholder={t('create.titlePlaceholder')}

@@ -7,9 +7,11 @@ type Props<T extends string> = {
   value: T;
   onChange: (id: T) => void;
   label: string;
+  /** data-tour prefix for Radi's tours: `${tour}.${id}`. */
+  tour?: string;
 };
 
-export function Tabs<T extends string>({ tabs, value, onChange, label }: Props<T>) {
+export function Tabs<T extends string>({ tabs, value, onChange, label, tour }: Props<T>) {
   return (
     <S.List role="tablist" aria-label={label}>
       {tabs.map((tab) => (
@@ -17,6 +19,7 @@ export function Tabs<T extends string>({ tabs, value, onChange, label }: Props<T
           key={tab.id}
           role="tab"
           aria-selected={tab.id === value}
+          data-tour={tour ? `${tour}.${tab.id}` : undefined}
           $active={tab.id === value}
           onClick={() => onChange(tab.id)}
         >

@@ -53,7 +53,13 @@ export function NewUserModal({ kind, choose = false, onClose, onCreate }: Props)
       footer={
         <>
           <Button onClick={onClose}>{t('common.cancel')}</Button>
-          <Button variant="primary" type="submit" form="new-person" disabled={mutation.isPending}>
+          <Button
+            variant="primary"
+            type="submit"
+            form="new-person"
+            disabled={mutation.isPending}
+            data-tour="user-form.submit"
+          >
             {t('common.create')}
           </Button>
         </>
@@ -68,7 +74,7 @@ export function NewUserModal({ kind, choose = false, onClose, onCreate }: Props)
       >
         <FormError>{mutation.error ? errorMessage(mutation.error) : null}</FormError>
         {choose && (
-          <S.Kinds role="radiogroup" aria-label={t('admin.kind')}>
+          <S.Kinds role="radiogroup" aria-label={t('admin.kind')} data-tour="user-form.kind">
             {(['human', 'agent'] as const).map((k) => (
               <S.Kind key={k} $active={form.kind === k}>
                 <input
@@ -86,12 +92,19 @@ export function NewUserModal({ kind, choose = false, onClose, onCreate }: Props)
           </S.Kinds>
         )}
         <Field label={t('auth.displayName')}>
-          <Input value={form.display_name} onChange={set('display_name')} required autoFocus />
+          <Input
+            value={form.display_name}
+            onChange={set('display_name')}
+            required
+            autoFocus
+            data-tour="user-form.name"
+          />
         </Field>
         <Field label={t('auth.handle')} hint={t('auth.handleHint')}>
           <Input
             value={form.handle}
             onChange={set('handle')}
+            data-tour="user-form.handle"
             required
             placeholder={human ? 'ana' : 'agent-backend'}
           />
@@ -108,10 +121,12 @@ export function NewUserModal({ kind, choose = false, onClose, onCreate }: Props)
         )}
         {!human && (
           <Field label={t('admin.mcp.title')} hint={t('admin.mcp.help')} group>
-            <McpToolPicker
-              value={form.mcp_tools}
-              onChange={(mcp_tools) => setForm({ ...form, mcp_tools })}
-            />
+            <div data-tour="user-form.mcp">
+              <McpToolPicker
+                value={form.mcp_tools}
+                onChange={(mcp_tools) => setForm({ ...form, mcp_tools })}
+              />
+            </div>
           </Field>
         )}
       </S.Form>

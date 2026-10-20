@@ -57,6 +57,7 @@ export function CreateProjectModal({ open, onOpenChange }: Props) {
             variant="primary"
             type="submit"
             form="create-project"
+            data-tour="project-form.submit"
             disabled={mutation.isPending}
           >
             {t('common.create')}
@@ -78,10 +79,12 @@ export function CreateProjectModal({ open, onOpenChange }: Props) {
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             required
             autoFocus
+            data-tour="project-form.name"
           />
         </Field>
         <Field label={t('projects.key')} hint={t('projects.keyHint')}>
           <S.KeyInput
+            data-tour="project-form.key"
             value={form.key}
             onChange={(e) => setForm({ ...form, key: e.target.value.toUpperCase() })}
             required
@@ -90,7 +93,11 @@ export function CreateProjectModal({ open, onOpenChange }: Props) {
           />
         </Field>
         <Field label={t('templates.template')}>
-          <Select value={selected} onChange={(e) => setTemplateId(e.target.value)}>
+          <Select
+            value={selected}
+            onChange={(e) => setTemplateId(e.target.value)}
+            data-tour="project-form.template"
+          >
             {templates.map((tpl) => (
               <option key={tpl.id} value={tpl.id}>
                 {tpl.name}
@@ -100,7 +107,7 @@ export function CreateProjectModal({ open, onOpenChange }: Props) {
         </Field>
         {selected && <TemplatePreview templateId={selected} />}
         <Field label={t('templates.mode')} group>
-          <S.Modes>
+          <S.Modes data-tour="project-form.mode">
             {(['linked', 'detached'] as const).map((value) => (
               <label key={value}>
                 <input
@@ -119,6 +126,7 @@ export function CreateProjectModal({ open, onOpenChange }: Props) {
         </Field>
         <Field label={`${t('projects.description')} (${t('common.optional')})`}>
           <Textarea
+            data-tour="project-form.description"
             value={form.description_md}
             onChange={(e) => setForm({ ...form, description_md: e.target.value })}
           />

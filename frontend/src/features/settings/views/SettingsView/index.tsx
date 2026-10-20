@@ -120,6 +120,7 @@ function SettingsTabs({ current, onChange }: { current: Tab; onChange: (tab: Tab
   return (
     <Tabs
       label={t('nav.settings')}
+      tour="settings.tab"
       value={current}
       onChange={onChange}
       tabs={TABS.map((id) => ({ id, label: t(`settings.${id}`) }))}

@@ -125,8 +125,10 @@ export function AssistantSettings() {
   const { t } = useTranslation();
   const { data } = useQuery({ queryKey: assistantKeys.settings, queryFn: fetchAssistantSettings });
   return (
-    <SettingsCard title={t('assistant.admin.title')} help={t('assistant.admin.help')}>
-      {data ? <Form key={JSON.stringify(data)} data={data} /> : <PageSpinner />}
-    </SettingsCard>
+    <div data-tour="assistant.settings">
+      <SettingsCard title={t('assistant.admin.title')} help={t('assistant.admin.help')}>
+        {data ? <Form key={JSON.stringify(data)} data={data} /> : <PageSpinner />}
+      </SettingsCard>
+    </div>
   );
 }

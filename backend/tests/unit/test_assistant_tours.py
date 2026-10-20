@@ -1,3 +1,8 @@
+import re
+from pathlib import Path
+
+import pytest
+
 from radicle.services.assistant import guide, tours
 
 
@@ -36,3 +41,21 @@ def test_the_tool_lists_every_target() -> None:
     schema = tours.SHOW_ME["parameters"]["properties"]["steps"]["items"]["properties"]  # type: ignore[index]
     assert schema["target"]["enum"] == list(tours.TARGETS)
     assert "projects.create" in tours.catalog()
+
+
+def test_every_target_is_marked_in_the_web_app() -> None:
+    """Each catalog target needs a `data-tour` in the frontend, or tours point at nothing."""
+    src = Path(__file__).resolve().parents[3] / "frontend" / "src"
+    if not src.is_dir():  # pragma: no cover - the backend alone, as in the Docker image
+        pytest.skip("frontend sources not available")
+    code = "\n".join(p.read_text(encoding="utf-8") for p in src.rglob("*.tsx"))
+    marked = set(re.findall(r'data-tour="([\w.-]+)"', code))
+    # data-tour={cond ? 'ticket-form.area' : undefined}: every quoted name counts.
+    for expression in re.findall(r"data-tour=\{([^}]*)\}", code):
+        marked.update(re.findall(r"'([\w.-]+)'", expression))
+    # <Tabs tour="settings.tab"> marks each tab as settings.tab.<id>.
+    prefixes = set(re.findall(r'\btour="([\w.-]+)"', code))
+    missing = [
+        key for key in tours.TARGETS if key not in marked and key.rsplit(".", 1)[0] not in prefixes
+    ]
+    assert not missing, f"Add data-tour to these targets: {missing}"

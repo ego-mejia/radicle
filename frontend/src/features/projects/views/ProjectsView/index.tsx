@@ -22,7 +22,7 @@ export function ProjectsView() {
     queryFn: () => fetchProjects(false),
   });
   const createButton = me.is_instance_admin && (
-    <Button variant="primary" onClick={() => setCreating(true)}>
+    <Button variant="primary" onClick={() => setCreating(true)} data-tour="projects.create">
       <Plus />
       {t('projects.create')}
     </Button>
