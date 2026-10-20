@@ -32,6 +32,13 @@ async def test_without_an_llm_radi_answers_from_the_guide(client: AsyncClient, b
     body = r.json()
     assert body["mode"] == "guide" and body["sources"][0] == "Create a project"
     assert body["answer"].startswith("**Create a project**") and "Create project" in body["answer"]
+    # The guide offers a ready-made tour, which waits for "Show me".
+    assert body["tour"][0] == {
+        "target": "nav.projects",
+        "action": "click",
+        "page": "/",
+        "text": "Projects live here.",
+    }
     assert body["autoplay"] is False
 
     r = await client.post(
@@ -72,15 +79,10 @@ async def test_with_an_llm_it_writes_from_the_guide(
         "language": "es",
     }
     r = await client.post(f"{API}/assistant/chat", headers=board.member.headers, json=conversation)
-    assert r.json() == {
-        "answer": "Go to **Projects**.",
-        "mode": "llm",
-        "sources": r.json()["sources"],
-        "notice": None,
-        "tour": [],
-        "autoplay": False,
-    }
+    assert r.json()["answer"] == "Go to **Projects**." and r.json()["mode"] == "llm"
     assert "Crear un proyecto" in r.json()["sources"]
+    # No walkthrough from the model: the guide's tour is offered (not autoplayed).
+    assert r.json()["tour"][0]["target"] == "nav.projects" and r.json()["autoplay"] is False
     system = sent[0]["system"]
     assert "Reply in Spanish" in system and "## Crear un proyecto" in system
     assert [m["role"] for m in sent[0]["messages"]] == ["user", "assistant", "user"]

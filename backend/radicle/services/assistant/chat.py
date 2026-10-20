@@ -21,9 +21,11 @@ Guide sections: {toc}
 Relevant excerpts:
 {excerpts}
 
-When the user asks how to do something on screen, also call show_me to walk them \
-through it: open the right page or dialog with click steps, then point at each part they \
-need and explain it. Use only these targets:
+Whenever the user asks how to do something in Radicle ("how do I...", "where is...", \
+"cómo...", "dónde..."), you must also call show_me: open the right page or dialog with \
+click steps, then point at each part they need and explain it. The app may be in Spanish, \
+so describe buttons by what they do instead of quoting English labels; the tour highlights \
+them. Use only these targets:
 {targets}"""
 NOT_FOUND = {
     "en": "I could not find that in the guide. Try other words, like *create a project* or "
@@ -67,7 +69,7 @@ def from_guide(question: str, lang: Language) -> Reply:
     text = f"**{best.title}**\n\n{best.body}"
     if others:
         text += f"\n\n{RELATED[lang]}: " + ", ".join(f"*{s.title}*" for s in others)
-    return Reply(text, "guide", [s.title for s in hits])
+    return Reply(text, "guide", [s.title for s in hits], tour=tours.guide_tour(best.key, lang))
 
 
 LET_ME_SHOW = {"en": "Let me show you.", "es": "Te muestro."}
@@ -99,4 +101,8 @@ async def answer(
         return reply
     steps = tours.clean((done.tool_input or {}).get("steps"))
     text = done.text or (LET_ME_SHOW[lang] if steps else "")
-    return Reply(text, "llm", [s.title for s in hits], tour=steps, autoplay=bool(steps))
+    if steps:
+        return Reply(text, "llm", [s.title for s in hits], tour=steps, autoplay=True)
+    # The model did not offer a walkthrough: offer the guide's, if the topic has one.
+    fallback = tours.guide_tour(hits[0].key, lang) if hits else []
+    return Reply(text, "llm", [s.title for s in hits], tour=fallback)

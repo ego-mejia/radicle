@@ -1,19 +1,19 @@
 ## Getting started
 Radicle is a ticket tracker for people and AI agents. The left menu has Projects, My tickets, Dashboards and, for admins, Admin. Press `?` to see every keyboard shortcut and `⌘K` (or Ctrl+K) to open the command palette.
 
-## Create a project
+## Create a project {#create-project}
 Go to **Projects** and click **Create project**. Give it a name and a short key of 2 to 10 uppercase letters or digits, like PAY: every ticket gets it as a prefix (PAY-12) and it cannot change later. Pick a template: **Linked** keeps receiving the template's changes, **Independent** copies it once. Then add **Areas** and **Milestones** in the project's **Settings**. Only instance admins create projects.
 
 ## Edit a project
 On **Projects**, hover a card and click the pencil to change its name or description. The key never changes. Project admins and instance admins can edit.
 
-## Add people to a project
+## Add people to a project {#add-people}
 Open the project's **Settings → Members**. Use the search box to find people, agents or groups, pick a role and click **Add**. Roles: **Viewer** reads and votes, **Member** works tickets, **Admin** also manages members, settings and permissions. Change someone's role with the dropdown on their row, or remove them with the ×. New people are created by an instance admin in **Admin → Users**.
 
 ## Groups
 In **Admin → Groups** create a group (for example legal-team) and add people. Then add the group to a project in **Settings → Members** with a role: everyone in it gets access, also people who join later. When someone has several roles, the highest one wins.
 
-## Create a ticket
+## Create a ticket {#create-ticket}
 Press `c` or click **Create ticket**. Types: **Task** (work to do), **Bug** (something broken) and **Draft** (an idea not decided yet, it goes to the Inbox). Tasks and bugs need an area. The description is markdown; lines like `- [ ] step` become a checklist.
 
 ## Work on a ticket
@@ -25,13 +25,13 @@ Each ticket type has its own workflow. Tasks go To Do → In Progress → In Rev
 ## Board
 **Board** shows tickets as cards in columns: To Do, In Progress, In Review and Done. Drag a card to another column to change its status, or up and down to reorder; it lands where you drop it. If a move needs more information, a dialog asks for it. Quick filters (My tickets, Only bugs, #backlog, Blocked) and the filter bar narrow the board.
 
-## Swimlanes
+## Swimlanes {#swimlanes}
 Split the board in rows with the swimlanes selector: by area, assignee, priority, milestone, parent or type. Click a row header to hide or show it, or use **Collapse all**. Radicle remembers which rows you hid.
 
 ## Configure a board
 Admins click **Configure** on the board. The source is an RQL query, so a board can cover one area or several projects. Columns hold statuses by category or by name; a status named in a column goes there even if another column covers its category. Set WIP limits (soft turns the column red, hard blocks), card fields and quick filters. **New board** creates another one; a board of kind Scrum adds sprints.
 
-## List and filters
+## List and filters {#list-filters}
 **List** shows tickets in a table. Click **Filter** above the table to filter by type, status, priority, assignee, area or milestone; each filter shows as a chip you can remove. **Group by** splits the rows in groups you can fold. Tickets with subtickets have an arrow to open their tasks and bugs. **Saved filters** keeps queries you reuse.
 
 ## Search with RQL
@@ -64,7 +64,7 @@ In **Admin → SSO** add an OpenID Connect provider (Google, Microsoft, Okta, Ke
 ## Audit log
 **Admin → Audit log** lists administrative changes: who, when, from which IP and what changed. Filter by person, action, project and dates, and export to CSV. Project admins see their projects' entries in **Settings → Audit log**. Nobody can edit or delete it.
 
-## AI agents and MCP
+## AI agents and MCP {#agents}
 Agents are users for AI tools. In **Admin → Users** click **New user** and choose **Agent (LLM or worker)**, or use **Admin → Agents**. Copy the token: it is shown only once. Add the agent to a project in **Settings → Members**, then connect your MCP client to `/mcp` with the header `Authorization: Bearer <token>`. With Claude Code: `claude mcp add --transport http radicle <url>/mcp --header "Authorization: Bearer <token>"`.
 
 ## Agent MCP permissions
@@ -76,5 +76,5 @@ Each agent can be limited to some MCP tools. Use **MCP permissions** on the agen
 ## Profile, language and theme
 Click your name at the bottom left to open your profile: change your name, password, language (English or Spanish) and personal API tokens. The moon button at the top switches light and dark mode.
 
-## Radi, the assistant
+## Radi, the assistant {#radi}
 Radi is the green ball at the bottom right. Click it to ask how to use Radicle. An instance admin can connect an LLM in **Admin → Settings → Assistant** (Anthropic or any OpenAI-compatible server, like Ollama); without one, Radi answers from this guide.

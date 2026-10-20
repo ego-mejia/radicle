@@ -1,0 +1,208 @@
+{
+  "create-project": [
+    {
+      "target": "nav.projects",
+      "action": "click",
+      "en": "Projects live here.",
+      "es": "Los proyectos viven aquí."
+    },
+    {
+      "target": "projects.create",
+      "action": "click",
+      "en": "Click Create project.",
+      "es": "Da clic en Create project."
+    },
+    {
+      "target": "project-form.name",
+      "action": "point",
+      "en": "Give it a name people recognize.",
+      "es": "Ponle un nombre que la gente reconozca."
+    },
+    {
+      "target": "project-form.key",
+      "action": "point",
+      "en": "A short key like PAY: every ticket starts with it, and it can't change.",
+      "es": "Una key corta como PAY: cada ticket empieza con ella y no cambia."
+    },
+    {
+      "target": "project-form.template",
+      "action": "point",
+      "en": "The template brings workflows and fields.",
+      "es": "El template trae workflows y campos."
+    },
+    {
+      "target": "project-form.mode",
+      "action": "point",
+      "en": "Linked keeps getting template changes; Independent copies it once.",
+      "es": "Linked recibe los cambios del template; Independent lo copia una vez."
+    },
+    {
+      "target": "project-form.submit",
+      "action": "point",
+      "en": "Create it when you're ready.",
+      "es": "Créalo cuando estés listo."
+    }
+  ],
+  "add-people": [
+    {
+      "target": "project.tab.settings",
+      "action": "click",
+      "en": "Open the project's Settings.",
+      "es": "Abre Settings del proyecto."
+    },
+    {
+      "target": "settings.tab.members",
+      "action": "click",
+      "en": "Members lists who works here.",
+      "es": "Members muestra quién trabaja aquí."
+    },
+    {
+      "target": "members.picker",
+      "action": "point",
+      "en": "Search people, agents or groups.",
+      "es": "Busca personas, agentes o grupos."
+    },
+    {
+      "target": "members.role",
+      "action": "point",
+      "en": "Pick their role: Viewer, Member or Admin.",
+      "es": "Elige su rol: Viewer, Member o Admin."
+    },
+    {
+      "target": "members.add",
+      "action": "point",
+      "en": "Then click Add.",
+      "es": "Luego da clic en Add."
+    }
+  ],
+  "create-ticket": [
+    {
+      "target": "topbar.create-ticket",
+      "action": "click",
+      "en": "Create ticket works from any page (or press c).",
+      "es": "Create ticket funciona en cualquier página (o presiona c)."
+    },
+    {
+      "target": "ticket-form.type",
+      "action": "point",
+      "en": "Task, Bug or Draft (an idea for the Inbox).",
+      "es": "Task, Bug o Draft (una idea para el Buzón)."
+    },
+    {
+      "target": "ticket-form.title",
+      "action": "point",
+      "en": "A short, clear title.",
+      "es": "Un título corto y claro."
+    },
+    {
+      "target": "ticket-form.area",
+      "action": "point",
+      "en": "Tasks and bugs need an area.",
+      "es": "Tasks y bugs necesitan área."
+    },
+    {
+      "target": "ticket-form.submit",
+      "action": "point",
+      "en": "Create it when you're ready.",
+      "es": "Créalo cuando estés listo."
+    }
+  ],
+  "swimlanes": [
+    {
+      "target": "project.tab.board",
+      "action": "click",
+      "en": "Open the board.",
+      "es": "Abre el board."
+    },
+    {
+      "target": "board.swimlanes",
+      "action": "point",
+      "en": "Choose rows by area, assignee and more; click a row to hide it.",
+      "es": "Elige filas por área, asignado y más; da clic en una fila para ocultarla."
+    }
+  ],
+  "list-filters": [
+    {
+      "target": "project.tab.list",
+      "action": "click",
+      "en": "Open the list.",
+      "es": "Abre la lista."
+    },
+    {
+      "target": "list.filter",
+      "action": "click",
+      "en": "Filter opens the filter panel.",
+      "es": "Filter abre el panel de filtros."
+    },
+    {
+      "target": "list.group-by",
+      "action": "point",
+      "en": "Group by folds rows by type, area...",
+      "es": "Group by agrupa filas por tipo, área..."
+    },
+    {
+      "target": "list.saved-filters",
+      "action": "point",
+      "en": "Keep queries you reuse here.",
+      "es": "Guarda aquí las queries que reusas."
+    }
+  ],
+  "agents": [
+    {
+      "target": "nav.admin",
+      "action": "click",
+      "en": "Agents are created in Admin.",
+      "es": "Los agentes se crean en Admin."
+    },
+    {
+      "target": "admin.tab.users",
+      "action": "click",
+      "en": "Users has people and agents.",
+      "es": "Users tiene personas y agentes."
+    },
+    {
+      "target": "users.new",
+      "action": "click",
+      "en": "Click New user.",
+      "es": "Da clic en New user."
+    },
+    {
+      "target": "user-form.kind",
+      "action": "point",
+      "en": "Choose Agent (LLM or worker).",
+      "es": "Elige Agent (LLM or worker)."
+    },
+    {
+      "target": "user-form.mcp",
+      "action": "point",
+      "en": "Pick the MCP tools it may use.",
+      "es": "Elige las tools de MCP que puede usar."
+    },
+    {
+      "target": "user-form.submit",
+      "action": "point",
+      "en": "Create it and copy its token.",
+      "es": "Créalo y copia su token."
+    }
+  ],
+  "radi": [
+    {
+      "target": "nav.admin",
+      "action": "click",
+      "en": "My brain is configured in Admin.",
+      "es": "Mi cerebro se configura en Admin."
+    },
+    {
+      "target": "admin.tab.settings",
+      "action": "click",
+      "en": "Open Settings.",
+      "es": "Abre Settings."
+    },
+    {
+      "target": "assistant.settings",
+      "action": "point",
+      "en": "Pick a provider, paste a key and test it.",
+      "es": "Elige proveedor, pega una key y pruébala."
+    }
+  ]
+}

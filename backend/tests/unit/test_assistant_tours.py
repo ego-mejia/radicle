@@ -1,4 +1,4 @@
-from radicle.services.assistant import tours
+from radicle.services.assistant import guide, tours
 
 
 def test_clean_keeps_known_targets_and_never_submits() -> None:
@@ -21,6 +21,15 @@ def test_clean_keeps_known_targets_and_never_submits() -> None:
     many = [{"target": "radi", "action": "point", "text": "hi"}] * 30
     assert len(tours.clean(many)) == 12
     assert steps[0].view()["page"] == "/"
+
+
+def test_every_guide_tour_is_valid_in_both_languages() -> None:
+    keys = {s.key for s in guide.sections("en")} & {s.key for s in guide.sections("es")}
+    for key, rows in tours.GUIDE_TOURS.items():
+        assert key in keys, f"no guide section {key}"
+        for lang in ("en", "es"):
+            assert len(tours.guide_tour(key, lang)) == len(rows), (key, lang)
+    assert tours.guide_tour("create-project", "es")[0].text == "Los proyectos viven aquí."
 
 
 def test_the_tool_lists_every_target() -> None:
