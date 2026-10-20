@@ -15,4 +15,8 @@ describe('app manifest', () => {
     const html = readFileSync(resolve(publicDir, '../index.html'), 'utf8');
     expect(html).toContain('<link rel="manifest" href="/manifest.json" />');
   });
+
+  it('has a real favicon.ico, so /favicon.ico is not the HTML page', () => {
+    expect(existsSync(resolve(publicDir, 'favicon.ico'))).toBe(true);
+  });
 });
