@@ -170,7 +170,8 @@ export function BoardView() {
               })}
             </S.Columns>
           )}
-          <DragOverlay>
+          {/* No drop animation: it flew the card back to where the drag began. */}
+          <DragOverlay dropAnimation={null}>
             {dnd.drag && <TicketCard ticket={dnd.drag} fields={data.board.card_fields} overlay />}
           </DragOverlay>
         </DndContext>
