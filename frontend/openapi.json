@@ -1159,6 +1159,46 @@
         "title": "BulkTicketResult",
         "type": "object"
       },
+      "CandidateGroup": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ],
+        "title": "CandidateGroup",
+        "type": "object"
+      },
+      "CandidatePerson": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "handle": {
+            "title": "Handle",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/UserKind"
+          }
+        },
+        "required": [
+          "handle",
+          "display_name",
+          "kind"
+        ],
+        "title": "CandidatePerson",
+        "type": "object"
+      },
       "Card": {
         "properties": {
           "area": {
@@ -3737,6 +3777,30 @@
           "permissions"
         ],
         "title": "MeProject",
+        "type": "object"
+      },
+      "MemberCandidates": {
+        "properties": {
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateGroup"
+            },
+            "title": "Groups",
+            "type": "array"
+          },
+          "people": {
+            "items": {
+              "$ref": "#/components/schemas/CandidatePerson"
+            },
+            "title": "People",
+            "type": "array"
+          }
+        },
+        "required": [
+          "people",
+          "groups"
+        ],
+        "title": "MemberCandidates",
         "type": "object"
       },
       "MemberOut": {
@@ -14619,6 +14683,59 @@
         "summary": "Put Inbox Settings",
         "tags": [
           "inbox"
+        ]
+      }
+    },
+    "/api/v1/projects/{key}/member-candidates": {
+      "get": {
+        "description": "People, agents and groups not in the project yet, to add them from Settings \u2192 Members.",
+        "operationId": "member_candidates_api_v1_projects__key__member_candidates_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "title": "Q",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemberCandidates"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Member Candidates",
+        "tags": [
+          "projects"
         ]
       }
     },

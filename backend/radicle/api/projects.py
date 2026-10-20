@@ -4,6 +4,9 @@ from radicle.api import serializers as out
 from radicle.api.deps import CurrentPrincipal, Db
 from radicle.api.schemas.common import Page
 from radicle.api.schemas.projects import (
+    CandidateGroup,
+    CandidatePerson,
+    MemberCandidates,
     MemberOut,
     MemberPut,
     ProjectCreate,
@@ -137,6 +140,22 @@ async def list_members(key: str, principal: CurrentPrincipal, db: Db) -> Page[Me
     access = await project_access(db, principal.user, key)
     members = await projects.member_rows(db, access.project)
     return Page(items=[out.member_out(m) for m in members])
+
+
+@router.get("/{key}/member-candidates", response_model=MemberCandidates)
+async def member_candidates(
+    key: str, principal: CurrentPrincipal, db: Db, q: str = ""
+) -> MemberCandidates:
+    """People, agents and groups not in the project yet, to add them from Settings → Members."""
+    access = await project_access(db, principal.user, key, permission="members.manage")
+    found = await projects.member_candidates(db, access.project, q)
+    return MemberCandidates(
+        people=[
+            CandidatePerson(handle=u.handle, display_name=u.display_name, kind=u.kind)
+            for u in found.people
+        ],
+        groups=[CandidateGroup(name=g.name, description=g.description) for g in found.groups],
+    )
 
 
 @router.put("/{key}/members/{handle}", response_model=MemberOut)
