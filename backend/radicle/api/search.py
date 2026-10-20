@@ -42,7 +42,7 @@ async def search_tickets(
         db, principal.user, q, limit=limit, cursor=cursor, timezone=settings.timezone
     )
     return SearchPage(
-        items=await summaries_out(db, result.tickets),
+        items=await summaries_out(db, result.tickets, viewer=principal.user),
         total=result.total,
         next_cursor=result.next_cursor,
         warnings=[

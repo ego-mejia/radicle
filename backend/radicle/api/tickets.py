@@ -165,7 +165,9 @@ async def set_checklist_item(
 async def list_children(key: str, principal: CurrentPrincipal, db: Db) -> Page[TicketSummary]:
     _, ticket = await tickets.load_ticket(db, principal.user, key)
     return Page(
-        items=await summaries_out(db, await tickets.list_children(db, ticket, principal.user))
+        items=await summaries_out(
+            db, await tickets.list_children(db, ticket, principal.user), viewer=principal.user
+        )
     )
 
 
