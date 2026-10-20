@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   arrowPath,
+  barDates,
   dayRange,
   dragDates,
   flatten,
@@ -29,6 +30,33 @@ describe('timeline', () => {
     expect(spanOf('2026-11-02', '2026-11-06')).toMatchObject({ point: false });
     expect(spanOf(null, '2026-11-06')).toMatchObject({ point: true });
     expect(spanOf(null, null)).toBeNull();
+  });
+
+  it('fills in the missing end of a bar', () => {
+    const base = { created_at: '2026-10-20T15:00:00Z', estimate_hours: 20 };
+    expect(barDates({ ...base, start_date: '2026-11-02', due_date: '2026-11-06' })).toEqual({
+      start: '2026-11-02',
+      due: '2026-11-06',
+      inferred: null,
+    });
+    // Only a due date: from the day it was created.
+    expect(barDates({ ...base, start_date: null, due_date: '2026-11-06' })).toEqual({
+      start: '2026-10-20',
+      due: '2026-11-06',
+      inferred: 'start',
+    });
+    // Created after its due date: a one-day bar.
+    expect(barDates({ ...base, start_date: null, due_date: '2026-10-01' })?.start).toBe(
+      '2026-10-01',
+    );
+    // Only a start: 20 h at 8 h a day is 3 days.
+    expect(barDates({ ...base, start_date: '2026-11-02', due_date: null })).toEqual({
+      start: '2026-11-02',
+      due: '2026-11-04',
+      inferred: 'due',
+    });
+    expect(barDates({ start_date: '2026-11-02', due_date: null })?.due).toBe('2026-11-02');
+    expect(barDates({ start_date: null, due_date: null })).toBeNull();
   });
 
   it('drags the bar or one edge without crossing', () => {
