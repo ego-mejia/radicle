@@ -43,6 +43,8 @@ const done = { project: 'PA', milestone: 'V1', status: { category: 'done' } };
 describe('MilestoneCelebration', () => {
   beforeEach(() => {
     localStorage.clear();
+    // jsdom has no canvas: the confetti simply does not draw.
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
     fetchRecap.mockReset().mockResolvedValue(RECAP);
   });
 

@@ -4,11 +4,15 @@ import { Modal } from '../../../../components/ui/Modal';
 import { fetchMilestoneRecap } from '../../../../services/api/projects';
 import type { MilestoneRecap } from '../../../../services/api/types';
 import { firstTime, recapStats, teamLine, TICKET_DONE, type TicketDone } from '../../lib/celebrate';
+import { Confetti } from './components/Confetti';
 import { RadiCheer } from './components/RadiCheer';
 import { RecapStats } from './components/RecapStats';
 import * as S from './style';
 
-/** When the last ticket of a milestone reaches done: Radi cheering and the numbers behind it. */
+/**
+ * When the last ticket of a milestone reaches done: confetti, Radi cheering and the numbers
+ * behind it.
+ */
 export function MilestoneCelebration() {
   const { t } = useTranslation();
   const [recap, setRecap] = useState<MilestoneRecap | null>(null);
@@ -32,20 +36,23 @@ export function MilestoneCelebration() {
   const vars = { milestone: recap.milestone, project: recap.project_name };
 
   return (
-    <Modal
-      open
-      onOpenChange={(open) => !open && setRecap(null)}
-      title={t('celebration.title')}
-      width={560}
-    >
-      <S.Hero>
-        <RadiCheer />
-        <S.Headline>{t('celebration.headline', vars)}</S.Headline>
-        <S.Thanks>
-          {t(recap.on_time ? 'celebration.thanksOnTime' : 'celebration.thanks', vars)}
-        </S.Thanks>
-      </S.Hero>
-      <RecapStats recap={recap} stats={stats} team={team} />
-    </Modal>
+    <>
+      <Confetti />
+      <Modal
+        open
+        onOpenChange={(open) => !open && setRecap(null)}
+        title={t('celebration.title')}
+        width={560}
+      >
+        <S.Hero>
+          <RadiCheer />
+          <S.Headline>{t('celebration.headline', vars)}</S.Headline>
+          <S.Thanks>
+            {t(recap.on_time ? 'celebration.thanksOnTime' : 'celebration.thanks', vars)}
+          </S.Thanks>
+        </S.Hero>
+        <RecapStats recap={recap} stats={stats} team={team} />
+      </Modal>
+    </>
   );
 }
