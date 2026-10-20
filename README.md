@@ -391,6 +391,8 @@ Press <kbd>?</kbd> to see every shortcut. The main ones:
 
 Switch between light and dark with the moon button, and between English and Spanish in your profile or from the palette. You can turn shortcuts off in your profile.
 
+**Use it as a desktop app.** Radicle can be installed as its own app, with Radi in the Dock and its own window: in Chrome click **Install** in the address bar, or in Safari choose **File → Add to Dock**.
+
 ## ⚙️ Configuration
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** The knobs for whoever runs Radicle.
