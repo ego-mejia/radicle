@@ -384,6 +384,21 @@
       "assignee": "Asignado",
       "area": "Área",
       "milestone": "Milestone"
+    },
+    "filter": {
+      "button": "Filtrar",
+      "clear": "Quitar todos",
+      "me": "Yo",
+      "unassigned": "Sin asignar",
+      "remove": "Quitar {{value}}",
+      "fields": {
+        "type": "Tipo",
+        "category": "Estado",
+        "priority": "Prioridad",
+        "assignee": "Asignado",
+        "area": "Área",
+        "milestone": "Milestone"
+      }
     }
   },
   "milestones": {

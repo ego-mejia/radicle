@@ -384,6 +384,21 @@
       "assignee": "Assignee",
       "area": "Area",
       "milestone": "Milestone"
+    },
+    "filter": {
+      "button": "Filter",
+      "clear": "Clear all",
+      "me": "Me",
+      "unassigned": "Unassigned",
+      "remove": "Remove {{value}}",
+      "fields": {
+        "type": "Type",
+        "category": "Status",
+        "priority": "Priority",
+        "assignee": "Assignee",
+        "area": "Area",
+        "milestone": "Milestone"
+      }
     }
   },
   "milestones": {
