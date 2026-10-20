@@ -5,6 +5,7 @@ import { useTheme } from 'styled-components';
 import { TypeIcon } from '../../../../components/icons/TypeIcon';
 import {
   arrowPath,
+  barDates,
   dayRange,
   DRAG_TYPE,
   flatten,
@@ -63,7 +64,10 @@ export function TimelineChart({
       data.groups.flatMap((g) => [
         g.milestone?.target_date,
         g.milestone?.forecast_date,
-        ...g.tickets.flatMap((tk) => [tk.start_date, tk.due_date]),
+        ...g.tickets.flatMap((tk) => {
+          const bar = barDates(tk);
+          return bar ? [bar.start, bar.due] : [];
+        }),
       ]),
     [data.groups],
   );
@@ -246,8 +250,10 @@ export function TimelineChart({
             const blocker = rows[a];
             const blocked = rows[b];
             if (blocker?.kind !== 'ticket' || blocked?.kind !== 'ticket') return null;
-            const sa = spanOf(blocker.ticket.start_date, blocker.ticket.due_date);
-            const sb = spanOf(blocked.ticket.start_date, blocked.ticket.due_date);
+            const ba = barDates(blocker.ticket);
+            const bb = barDates(blocked.ticket);
+            const sa = ba && spanOf(ba.start, ba.due);
+            const sb = bb && spanOf(bb.start, bb.due);
             if (!sa || !sb) return null;
             const color = d.conflict ? theme.color.danger : theme.color.textMuted;
             return (

@@ -47,6 +47,34 @@ export function spanOf(start: string | null, due: string | null): Span | null {
   return { start: toDay(only), end: toDay(only), point: true };
 }
 
+export type BarDates = { start: string; due: string; inferred: 'start' | 'due' | null };
+const HOURS_PER_DAY = 8;
+
+/**
+ * The dates a ticket's bar spans. A missing start is its creation day (or the due date,
+ * if it was created later); a missing due is the start plus its estimate at 8 h a day,
+ * at least one day. `inferred` says which end was filled in, so it can be drawn faded.
+ */
+export function barDates(ticket: {
+  start_date: string | null;
+  due_date: string | null;
+  created_at?: string | null;
+  estimate_hours?: number | null;
+}): BarDates | null {
+  const { start_date: start, due_date: due } = ticket;
+  if (start && due) return { start, due, inferred: null };
+  if (due) {
+    const created = ticket.created_at?.slice(0, 10);
+    const from = created && created < due ? created : due;
+    return { start: from, due, inferred: 'start' };
+  }
+  if (start) {
+    const days = Math.max(1, Math.ceil((ticket.estimate_hours ?? 0) / HOURS_PER_DAY));
+    return { start, due: toIso(toDay(start) + days - 1), inferred: 'due' };
+  }
+  return null;
+}
+
 export type DragMode = 'move' | 'start' | 'end';
 
 /** New dates after dragging the bar (`move`) or one of its edges by `delta` days. */
