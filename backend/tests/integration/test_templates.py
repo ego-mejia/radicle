@@ -554,5 +554,7 @@ async def test_new_projects_follow_radicle_default(client: AsyncClient, board: T
     close = next(t for t in task["transitions"] if t["name"] == "Close")
     assert (close["ref"], close["from_ref"], close["to_ref"]) == ("close", None, "done")
     draft = next(w for w in pa["workflows"] if w["type"] == "draft")
-    assert [t["ref"] for t in draft["transitions"]][-2:] == ["reopen", "reopen_discarded"]
+    refs = [t["ref"] for t in draft["transitions"]]
+    assert refs[refs.index("reopen") :][:2] == ["reopen", "reopen_discarded"]
+    assert "back_to_new" in refs
     await new_ticket(client, board.member)
