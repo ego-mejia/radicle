@@ -114,7 +114,7 @@ Elige un **template**: trae los workflows (estados y transiciones de Task, Bug y
 
 <p align="center"><img src="docs/images/create-project.png" alt="Crear proyecto" width="820"></p>
 
-Luego, en **Settings** del proyecto, agrega **Areas** (Backend, Mobile, Legal...) y **Milestones** (V1, V2...). Toda task y todo bug pertenecen a un área; los milestones son opcionales.
+Luego, en **Settings** del proyecto, agrega **Areas** (Backend, Mobile, Legal...) y **Milestones** (V1, V2...). Toda task y todo bug pertenecen a un área; los milestones son opcionales. Dale a cada área un color y un icono (clic en el cuadro junto a su nombre): se ven en las tarjetas del board, los carriles y el timeline.
 
 Para cambiar el nombre o la descripción de un proyecto, pasa el cursor sobre su tarjeta en **Projects** y da clic en el lápiz. La key nunca cambia. Los proyectos no se borran: un admin del proyecto puede darle **Archive** en **Settings → General**, y queda de solo lectura con todo su historial.
 
@@ -161,7 +161,9 @@ Un ticket tiene descripción en markdown con **checklist**, además de prioridad
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Arrastra una tarjeta y suéltala donde quieras: ahí se queda y brilla. ¡Si la sueltas en Done brilla todavía más!
 
-Cada proyecto empieza con un board Kanban llamado **Main**, con **To Do**, **In Progress**, **In Review** y **Done**. Arrastra tarjetas entre columnas y caen justo donde las sueltas; la tarjeta movida destella una vez, y la que llega a una columna de terminado destella más fuerte. Los quick filters (**My tickets**, **Only bugs**, `#backlog`, **Blocked**) y la barra de filtros lo acotan.
+Cada proyecto empieza con un board Kanban llamado **Main**, con **To Do**, **In Progress**, **In Review** y **Done**. Arrastra tarjetas entre columnas y caen justo donde las sueltas; la tarjeta movida destella una vez, y la que llega a una columna de terminado destella más fuerte. Soltar una tarjeta en **Done** la cierra como *Done* sin preguntar; *Won't do* o *Duplicate* se eligen desde el ticket. Los quick filters (**My tickets**, **Only bugs**, `#backlog`, **Blocked**) y la barra de filtros lo acotan.
+
+Las tarjetas muestran su área (con su icono) y su milestone como etiquetas al estilo Jira, y cuántos subtickets tienen. Da clic en el área o el milestone de una tarjeta para cambiarlo desde un menú, sin abrir el ticket.
 
 Los **carriles** (swimlanes) dividen el board en filas por área, assignee, prioridad, milestone, padre o tipo, como varios boards apilados. Da clic en el encabezado de una fila para plegarla, o usa **Collapse all**; Radicle recuerda cuáles plegaste.
 

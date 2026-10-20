@@ -127,7 +127,7 @@ Pick a **template**. It brings the workflows (statuses and transitions for Task,
 
 <p align="center"><img src="docs/images/create-project.png" alt="Create project dialog" width="820"></p>
 
-Then, in the project's **Settings**, add **Areas** (Backend, Mobile, Legal...) and **Milestones** (V1, V2...). Every task and bug belongs to an area; milestones are optional.
+Then, in the project's **Settings**, add **Areas** (Backend, Mobile, Legal...) and **Milestones** (V1, V2...). Every task and bug belongs to an area; milestones are optional. Give each area a color and an icon (click the square next to its name): they show on board cards, swimlanes and the timeline.
 
 To rename a project or change its description, hover its card in **Projects** and click the pencil. The key never changes. Projects are never deleted: a project admin can **Archive** one in **Settings → General**, which keeps it read-only with all its history.
 
@@ -174,7 +174,9 @@ A ticket has a markdown description with a **checklist**, plus priority, area, m
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Drag a card and drop it where you want it: it stays right there and glows. Drop it in Done and it shines brighter!
 
-Each project starts with a Kanban board called **Main**, with **To Do**, **In Progress**, **In Review** and **Done**. Drag cards between columns and they land exactly where you drop them; a moved card flashes once, and one that reaches a done column flashes brighter. Quick filters (**My tickets**, **Only bugs**, `#backlog`, **Blocked**) and the filter bar narrow it down.
+Each project starts with a Kanban board called **Main**, with **To Do**, **In Progress**, **In Review** and **Done**. Drag cards between columns and they land exactly where you drop them; a moved card flashes once, and one that reaches a done column flashes brighter. Dropping a card in **Done** closes it as *Done* without asking; pick *Won't do* or *Duplicate* from the ticket itself. Quick filters (**My tickets**, **Only bugs**, `#backlog`, **Blocked**) and the filter bar narrow it down.
+
+Cards show their area (with its icon) and milestone like Jira's labels, plus how many subtickets they have. Click the area or milestone on a card to change it from a menu, without opening the ticket.
 
 **Swimlanes** split the board into rows by area, assignee, priority, milestone, parent or type, like several boards stacked. Click a row header to fold it, or use **Collapse all**; Radicle remembers which rows you folded.
 
