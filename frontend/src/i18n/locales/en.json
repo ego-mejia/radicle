@@ -1409,6 +1409,19 @@
   },
   "assistant": {
     "open": "Ask Radi for help",
-    "close": "Close Radi's help"
+    "close": "Close Radi's help",
+    "title": "Radi, help with Radicle",
+    "subtitle": "Help with Radicle",
+    "greeting": "Hi! I'm Radi. Ask me how to do anything in Radicle.",
+    "placeholder": "How do I…",
+    "ask": "Your question",
+    "send": "Send",
+    "thinking": "Radi is thinking…",
+    "suggestions": {
+      "project": "How do I create a project?",
+      "people": "How do I add people to a project?",
+      "board": "How do I move cards on the board?",
+      "agent": "How do I connect an AI agent?"
+    }
   }
 }
