@@ -28,6 +28,9 @@ def fake_llm(monkeypatch: pytest.MonkeyPatch) -> list[httpx.Request]:
             return httpx.Response(401, json={"error": "invalid key"})
         if request.url.path.endswith("/v1/messages"):
             return httpx.Response(200, json={"content": [{"type": "text", "text": "OK"}]})
+        if request.url.path.endswith("/responses"):
+            message = {"type": "message", "content": [{"type": "output_text", "text": "OK"}]}
+            return httpx.Response(200, json={"output": [message]})
         return httpx.Response(200, json={"choices": [{"message": {"content": "OK"}}]})
 
     monkeypatch.setattr(llm, "transport", httpx.MockTransport(handler))

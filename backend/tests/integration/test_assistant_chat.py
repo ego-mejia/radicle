@@ -141,10 +141,12 @@ async def test_the_model_can_walk_the_user_through_the_screen(
             {"target": "project-form.submit", "action": "click", "text": "Guárdalo"},
             {"target": "made.up", "action": "click", "text": "?"},
         ]
-        call = {"function": {"name": "show_me", "arguments": json.dumps({"steps": steps})}}
-        return httpx.Response(
-            200, json={"choices": [{"message": {"content": None, "tool_calls": [call]}}]}
-        )
+        call = {
+            "type": "function_call",
+            "name": "show_me",
+            "arguments": json.dumps({"steps": steps}),
+        }
+        return httpx.Response(200, json={"output": [{"type": "reasoning"}, call]})
 
     monkeypatch.setattr(llm, "transport", httpx.MockTransport(openai))
     await client.put(
@@ -161,8 +163,9 @@ async def test_the_model_can_walk_the_user_through_the_screen(
         ("projects.create", "click"),
         ("project-form.submit", "point"),
     ]
-    tool = sent[0]["tools"][0]["function"]
-    assert tool["name"] == "show_me" and "projects.create" in sent[0]["messages"][0]["content"]
+    # OpenAI itself gets the Responses API, which takes tools on every model.
+    tool = sent[0]["tools"][0]
+    assert tool["name"] == "show_me" and "projects.create" in sent[0]["instructions"]
 
 
 async def test_anthropic_tool_use_works_too(
