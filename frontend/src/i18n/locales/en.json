@@ -394,7 +394,7 @@
     "users": "Users",
     "agents": "Agents",
     "projects": "Projects",
-    "usersHelp": "People sign in with email and password. New users get a temporary password to change in their profile.",
+    "usersHelp": "People and agents of this instance. People sign in with email and password (or SSO); agents (an LLM or a worker) use a token over MCP or the API. New people get a temporary password to change in their profile.",
     "agentsHelp": "Agents work through MCP with a token. Add them to projects like any member.",
     "newUser": "New user",
     "newAgent": "New agent",
@@ -428,7 +428,39 @@
     "removeFromGroup": "Remove @{{handle}} from {{group}}",
     "sso": "SSO",
     "settings": "Settings",
-    "audit": "Audit log"
+    "audit": "Audit log",
+    "mcp": {
+      "title": "MCP permissions",
+      "titleFor": "MCP permissions of {{name}}",
+      "help": "Choose which MCP tools this agent may call. Project permissions and security levels still apply to everything it does.",
+      "all": "All tools",
+      "allHint": "Including tools added in future versions.",
+      "readOnly": "Read only",
+      "none": "None",
+      "count": "{{count}} of {{total}} tools allowed",
+      "read": "read",
+      "summaryAll": "All MCP tools",
+      "summarySome_one": "{{count}} MCP tool",
+      "summarySome_other": "{{count}} MCP tools",
+      "saved": "MCP permissions saved for @{{handle}}",
+      "groups": {
+        "context": "Context",
+        "find_work": "Find work",
+        "tickets": "Tickets",
+        "collaboration": "Collaboration",
+        "files_and_time": "Files and time",
+        "planning": "Planning",
+        "inbox": "Inbox"
+      }
+    },
+    "kinds": {
+      "human": "Person",
+      "humanHint": "Signs in with email and password, or SSO.",
+      "agent": "Agent (LLM or worker)",
+      "agentHint": "Works over MCP or the API with a token.",
+      "agentShort": "Agent"
+    },
+    "kind": "Kind"
   },
   "settings": {
     "general": "General",
