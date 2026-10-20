@@ -16,6 +16,8 @@ import { TicketPanel } from '../../../tickets/components/TicketPanel';
 import { ticketKeys } from '../../../../services/api/tickets';
 import { BulkBar } from '../../components/BulkBar';
 import { SavedFilters } from '../../components/SavedFilters';
+import { Select } from '../../../../components/ui/Input';
+import { GROUP_BYS, type GroupBy } from '../../../../lib/ticketGroups';
 import { rankTicket } from '../../../../services/api/work';
 import * as S from './style';
 import { RqlBar } from '../../components/RqlBar';
@@ -24,10 +26,11 @@ import { useTicketSearch } from '../../hooks/useTicketSearch';
 export function ListView() {
   const { t } = useTranslation();
   const { key } = useParams({ from: '/app/p/$key/list' });
-  const { q, t: openKey } = useSearch({ from: '/app/p/$key/list' });
+  const { q, t: openKey, g } = useSearch({ from: '/app/p/$key/list' });
   const navigate = useNavigate({ from: '/p/$key/list' });
   const projectKey = key.toUpperCase();
   const query = q ?? `project = ${projectKey} AND category != done ORDER BY updated DESC`;
+  const groupBy = (GROUP_BYS as string[]).includes(g ?? '') ? (g as GroupBy) : 'none';
   const { data: project, isPending } = useProject(projectKey);
   const { data: fields } = useQuery({
     queryKey: projectKeys.fields(projectKey),
@@ -58,7 +61,8 @@ export function ListView() {
     isApiError(search.error, 422) && search.error.problem.position !== undefined
       ? { message: search.error.message, position: search.error.problem.position }
       : null;
-  const setQuery = (next: string) => void navigate({ search: { q: next, t: undefined } });
+  const setQuery = (next: string) =>
+    void navigate({ search: (prev) => ({ ...prev, q: next, t: undefined }) });
 
   return (
     <>
@@ -81,6 +85,31 @@ export function ListView() {
           }}
         />
       )}
+      <S.Toolbar>
+        <S.Right>
+          <S.GroupBy>
+            <span>{t('list.groupBy')}</span>
+            <Select
+              value={groupBy}
+              aria-label={t('list.groupBy')}
+              onChange={(e) =>
+                void navigate({
+                  search: (prev) => ({
+                    ...prev,
+                    g: e.target.value === 'none' ? undefined : e.target.value,
+                  }),
+                })
+              }
+            >
+              {GROUP_BYS.map((by) => (
+                <option key={by} value={by}>
+                  {t(`list.groups.${by}`)}
+                </option>
+              ))}
+            </Select>
+          </S.GroupBy>
+        </S.Right>
+      </S.Toolbar>
       <S.Body>
         <SavedFilters project={projectKey} query={query} onPick={setQuery} />
         <S.Results>
@@ -94,7 +123,10 @@ export function ListView() {
               total={search.total}
               sort={currentOrder(query)}
               onSort={(field) => setQuery(withOrder(query, field))}
-              onOpen={(ticketKey) => void navigate({ search: { q, t: ticketKey } })}
+              onOpen={(ticketKey) =>
+                void navigate({ search: (prev) => ({ ...prev, t: ticketKey }) })
+              }
+              groupBy={groupBy}
               nest
               hasMore={!!hasNextPage}
               loadingMore={isFetchingNextPage}
@@ -115,7 +147,7 @@ export function ListView() {
       </S.Body>
       <TicketPanel
         ticketKey={openKey}
-        onClose={() => void navigate({ search: { q, t: undefined } })}
+        onClose={() => void navigate({ search: (prev) => ({ ...prev, t: undefined }) })}
       />
     </>
   );

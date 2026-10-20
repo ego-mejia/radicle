@@ -232,9 +232,10 @@ const listRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/p/$key/list',
   component: ListView,
-  validateSearch: (search: Record<string, unknown>): { q?: string; t?: string } => ({
+  validateSearch: (search: Record<string, unknown>): { q?: string; t?: string; g?: string } => ({
     q: str(search.q),
     t: str(search.t),
+    g: str(search.g),
   }),
 });
 
