@@ -13,6 +13,9 @@ from radicle.db.models import Area, Milestone, MilestoneStatus, Project, utcnow
 from radicle.services.projects import check_description, normalize_name
 
 COLOR_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")
+# Icons are names from the web app's fixed set; the server never stores SVG markup.
+ICON_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+ICON_MAX = 40
 NAME_MAX = 80
 
 
@@ -29,6 +32,17 @@ def _color(value: str | None) -> str | None:
             errors=[{"field": "color", "message": "invalid hex color"}],
         )
     return value.upper()
+
+
+def _icon(value: str | None) -> str | None:
+    if value is None or value == "":
+        return None
+    if len(value) > ICON_MAX or not ICON_RE.fullmatch(value):
+        raise ValidationFailed(
+            f"Invalid icon '{value}'. Use an icon name in kebab case, like rocket or bar-chart.",
+            errors=[{"field": "icon", "message": "invalid icon name"}],
+        )
+    return value
 
 
 # --- areas -------------------------------------------------------------------------------
@@ -51,12 +65,19 @@ async def get_area(db: AsyncSession, project: Project, name: str) -> Area:
 
 
 async def create_area(
-    db: AsyncSession, project: Project, *, name: str, color: str | None = None
+    db: AsyncSession,
+    project: Project,
+    *,
+    name: str,
+    color: str | None = None,
+    icon: str | None = None,
 ) -> Area:
     name = _name(name)
     await _ensure_free_name(db, Area, project, name)
     position = await _next_position(db, Area, project.id)
-    area = Area(project_id=project.id, name=name, color=_color(color), position=position)
+    area = Area(
+        project_id=project.id, name=name, color=_color(color), icon=_icon(icon), position=position
+    )
     db.add(area)
     await db.flush()
     return area
@@ -67,6 +88,8 @@ class AreaChanges:
     name: str | None = None
     color: str | None = None
     clear_color: bool = False
+    icon: str | None = None
+    clear_icon: bool = False
     position: int | None = None
     archived: bool | None = None
 
@@ -82,6 +105,10 @@ async def update_area(db: AsyncSession, project: Project, area: Area, ch: AreaCh
         area.color = None
     elif ch.color is not None:
         area.color = _color(ch.color)
+    if ch.clear_icon:
+        area.icon = None
+    elif ch.icon is not None:
+        area.icon = _icon(ch.icon)
     if ch.position is not None:
         area.position = ch.position
     if ch.archived is not None:

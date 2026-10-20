@@ -54,11 +54,15 @@ class ProjectPatch(Input):
     description_md: str | None = None
 
 
+ICON_HELP = "Name of an icon from the app's set, like rocket or shield (kebab case)"
+
+
 class AreaOut(Output):
     model_config = ConfigDict(from_attributes=True)
 
     name: str
     color: str | None
+    icon: str | None
     position: int
     archived: bool
 
@@ -66,11 +70,13 @@ class AreaOut(Output):
 class AreaCreate(Input):
     name: str
     color: str | None = None
+    icon: str | None = Field(default=None, description=ICON_HELP)
 
 
 class AreaPatch(Input):
     name: str | None = None
     color: str | None = Field(default=None, description="Hex like #4D7C0F; null clears it")
+    icon: str | None = Field(default=None, description=f"{ICON_HELP}; null clears it")
     position: int | None = None
     archived: bool | None = None
 

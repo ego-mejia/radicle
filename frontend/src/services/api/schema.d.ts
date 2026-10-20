@@ -964,7 +964,7 @@ export interface paths {
         head?: never;
         /**
          * Patch Area
-         * @description Rename, recolor, reorder, or archive and restore with `archived`.
+         * @description Rename, recolor, change the icon, reorder, or archive and restore with `archived`.
          */
         patch: operations["patch_area_api_v1_projects__key__areas__name__patch"];
         trace?: never;
@@ -2527,6 +2527,11 @@ export interface components {
         AreaCreate: {
             /** Color */
             color?: string | null;
+            /**
+             * Icon
+             * @description Name of an icon from the app's set, like rocket or shield (kebab case)
+             */
+            icon?: string | null;
             /** Name */
             name: string;
         };
@@ -2536,6 +2541,8 @@ export interface components {
             archived: boolean;
             /** Color */
             color: string | null;
+            /** Icon */
+            icon: string | null;
             /** Name */
             name: string;
             /** Position */
@@ -2550,6 +2557,11 @@ export interface components {
              * @description Hex like #4D7C0F; null clears it
              */
             color?: string | null;
+            /**
+             * Icon
+             * @description Name of an icon from the app's set, like rocket or shield (kebab case); null clears it
+             */
+            icon?: string | null;
             /** Name */
             name?: string | null;
             /** Position */

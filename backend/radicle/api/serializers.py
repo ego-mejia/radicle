@@ -49,6 +49,7 @@ def area_out(area: Area) -> AreaOut:
     return AreaOut(
         name=area.name,
         color=area.color,
+        icon=area.icon,
         position=area.position,
         archived=area.archived_at is not None,
     )

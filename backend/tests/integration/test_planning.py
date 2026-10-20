@@ -9,7 +9,13 @@ async def test_area_crud(client: AsyncClient, team: Team) -> None:
     h = team.admin.headers
     r = await client.post(f"{API}/areas", headers=h, json={"name": " Legal ", "color": "#4d7c0f"})
     assert r.status_code == 201
-    assert r.json() == {"name": "Legal", "color": "#4D7C0F", "position": 0, "archived": False}
+    assert r.json() == {
+        "name": "Legal",
+        "color": "#4D7C0F",
+        "icon": None,
+        "position": 0,
+        "archived": False,
+    }
     r = await client.post(f"{API}/areas", headers=h, json={"name": "legal"})
     assert r.status_code == 409
     r = await client.patch(f"{API}/areas/LEGAL", headers=h, json={"name": "Legal y Compliance"})
@@ -18,6 +24,26 @@ async def test_area_crud(client: AsyncClient, team: Team) -> None:
     assert r.json()["color"] is None
     r = await client.post(f"{API}/areas", headers=h, json={"name": "X", "color": "red"})
     assert r.status_code == 422
+
+
+async def test_area_icon(client: AsyncClient, team: Team) -> None:
+    h = team.admin.headers
+    r = await client.post(f"{API}/areas", headers=h, json={"name": "Infra", "icon": "server"})
+    assert r.status_code == 201 and r.json()["icon"] == "server"
+    r = await client.patch(f"{API}/areas/Infra", headers=h, json={"icon": "bar-chart"})
+    assert r.json()["icon"] == "bar-chart"
+    r = await client.patch(f"{API}/areas/Infra", headers=h, json={"name": "Infra 2"})
+    assert r.json()["icon"] == "bar-chart"  # left alone when not sent
+    r = await client.patch(f"{API}/areas/Infra 2", headers=h, json={"icon": None})
+    assert r.json()["icon"] is None
+    for bad in ["<svg onload=alert(1)>", "Rocket", "a" * 41]:
+        r = await client.patch(f"{API}/areas/Infra 2", headers=h, json={"icon": bad})
+        assert r.status_code == 422, bad
+        assert r.json()["errors"][0]["field"] == "icon"
+    r = await client.patch(
+        f"{API}/areas/Infra 2", headers=team.member.headers, json={"icon": "rocket"}
+    )
+    assert r.status_code == 403
 
 
 async def test_area_archive_and_restore(client: AsyncClient, team: Team) -> None:
