@@ -390,7 +390,7 @@
     "users": "Usuarios",
     "agents": "Agentes",
     "projects": "Proyectos",
-    "usersHelp": "Las personas entran con email y contraseña. Los usuarios nuevos reciben una contraseña temporal para cambiar en su perfil.",
+    "usersHelp": "Personas y agentes de esta instancia. Las personas entran con email y password (o SSO); los agentes (un LLM o un worker) usan un token por MCP o la API. Las personas nuevas reciben una contraseña temporal para cambiar en su perfil.",
     "agentsHelp": "Los agentes trabajan por MCP con un token. Agrégalos a los proyectos como a cualquier miembro.",
     "newUser": "Nuevo usuario",
     "newAgent": "Nuevo agente",
@@ -424,7 +424,39 @@
     "removeFromGroup": "Quitar a @{{handle}} de {{group}}",
     "sso": "SSO",
     "settings": "Ajustes",
-    "audit": "Audit log"
+    "audit": "Audit log",
+    "mcp": {
+      "title": "Permisos de MCP",
+      "titleFor": "Permisos de MCP de {{name}}",
+      "help": "Elige qué tools del MCP puede llamar este agente. Los permisos del proyecto y los niveles de seguridad siguen aplicando a todo lo que haga.",
+      "all": "Todas las tools",
+      "allHint": "Incluye las que lleguen en versiones futuras.",
+      "readOnly": "Solo lectura",
+      "none": "Ninguna",
+      "count": "{{count}} de {{total}} tools permitidas",
+      "read": "lee",
+      "summaryAll": "Todas las tools de MCP",
+      "summarySome_one": "{{count}} tool de MCP",
+      "summarySome_other": "{{count}} tools de MCP",
+      "saved": "Permisos de MCP guardados para @{{handle}}",
+      "groups": {
+        "context": "Contexto",
+        "find_work": "Encontrar trabajo",
+        "tickets": "Tickets",
+        "collaboration": "Colaboración",
+        "files_and_time": "Archivos y tiempo",
+        "planning": "Planeación",
+        "inbox": "Buzón"
+      }
+    },
+    "kinds": {
+      "human": "Persona",
+      "humanHint": "Entra con email y password, o SSO.",
+      "agent": "Agente (LLM o worker)",
+      "agentHint": "Trabaja por MCP o la API con un token.",
+      "agentShort": "Agente"
+    },
+    "kind": "Tipo"
   },
   "settings": {
     "general": "General",

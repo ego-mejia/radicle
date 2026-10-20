@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Bot, KeyRound, Plus } from 'lucide-react';
+import { Bot, KeyRound, Plus, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../../../components/ui/Avatar';
@@ -18,6 +18,9 @@ import {
   patchUser,
   revokeUserToken,
 } from '../../../../services/api/admin';
+import { mcpSummary } from '../../../../lib/mcp';
+import type { User } from '../../../../services/api/types';
+import { McpPermissionsModal } from '../McpPermissionsModal';
 import { NewUserModal } from '../NewUserModal';
 import { TokenList } from '../TokenList';
 import { TokenReveal } from '../TokenReveal';
@@ -67,6 +70,7 @@ export function AgentsTab() {
   const errorMessage = useErrorMessage();
   const [creating, setCreating] = useState(false);
   const [reveal, setReveal] = useState<Reveal | null>(null);
+  const [editing, setEditing] = useState<User | null>(null);
   const { data: users, isPending } = useQuery({ queryKey: adminKeys.users, queryFn: fetchUsers });
   const toggle = useMutation({
     mutationFn: (v: { handle: string; active: boolean }) =>
@@ -97,6 +101,15 @@ export function AgentsTab() {
               {agent.is_active ? t('admin.deactivate') : t('admin.activate')}
             </Button>
           </S.Row>
+          <S.Row>
+            <S.Grow>
+              <ShieldCheck size={16} />
+              {mcpSummary(t, agent)}
+            </S.Grow>
+            <Button size="sm" onClick={() => setEditing(agent)}>
+              {t('admin.mcp.title')}
+            </Button>
+          </S.Row>
           <AgentTokens handle={agent.handle} onReveal={setReveal} />
         </SettingsCard>
       ))}
@@ -114,6 +127,7 @@ export function AgentsTab() {
           {t('admin.newAgent')}
         </Button>
       </S.Actions>
+      {editing && <McpPermissionsModal agent={editing} onClose={() => setEditing(null)} />}
       {creating && (
         <NewUserModal
           kind="agent"
