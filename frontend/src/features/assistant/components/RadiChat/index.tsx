@@ -1,23 +1,32 @@
 import { useMutation } from '@tanstack/react-query';
-import { Send, X } from 'lucide-react';
+import { MousePointer2, Send, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarkdownView } from '../../../../components/Markdown/MarkdownView';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { askRadi, type ChatMessage } from '../../../../services/api/assistant';
+import type { TourStep } from '../../lib/tour';
 import type { RadiMood } from '../Radi';
 import * as S from './style';
 
-type Line = ChatMessage & { notice?: string | null };
-type Props = { onClose: () => void; onMood: (mood: RadiMood) => void };
+type Line = ChatMessage & { notice?: string | null; tour?: TourStep[] };
+type Props = {
+  onClose: () => void;
+  onMood: (mood: RadiMood) => void;
+  /** Start a tour; Radi's own tours (from the LLM) start right away. */
+  onTour: (steps: TourStep[]) => void;
+  /** Kept by the parent so the conversation survives a tour. */
+  lines: Line[];
+  setLines: React.Dispatch<React.SetStateAction<Line[]>>;
+};
+export type { Line as ChatLine };
 
 const SUGGESTIONS = ['project', 'people', 'board', 'agent'] as const;
 
 /** The help chat that opens out of Radi. */
-export function RadiChat({ onClose, onMood }: Props) {
+export function RadiChat({ onClose, onMood, onTour, lines, setLines }: Props) {
   const { t, i18n } = useTranslation();
   const errorMessage = useErrorMessage();
-  const [lines, setLines] = useState<Line[]>([]);
   const [draft, setDraft] = useState('');
   const input = useRef<HTMLTextAreaElement>(null);
   const end = useRef<HTMLDivElement>(null);
@@ -27,9 +36,10 @@ export function RadiChat({ onClose, onMood }: Props) {
     onSuccess: (reply) => {
       setLines((prev) => [
         ...prev,
-        { role: 'assistant', content: reply.answer, notice: reply.notice },
+        { role: 'assistant', content: reply.answer, notice: reply.notice, tour: reply.tour },
       ]);
       onMood('answered');
+      if (reply.autoplay && reply.tour.length) onTour(reply.tour);
     },
     onError: (error) => {
       setLines((prev) => [...prev, { role: 'assistant', content: errorMessage(error) }]);
@@ -102,6 +112,12 @@ export function RadiChat({ onClose, onMood }: Props) {
             <S.Bubble key={i} $mine={false}>
               <MarkdownView readOnly>{line.content}</MarkdownView>
               {line.notice && <S.Notice>{line.notice}</S.Notice>}
+              {line.tour && line.tour.length > 0 && (
+                <S.ShowMe type="button" onClick={() => onTour(line.tour!)}>
+                  <MousePointer2 size={14} />
+                  {t('assistant.tour.showMe')}
+                </S.ShowMe>
+              )}
             </S.Bubble>
           ),
         )}

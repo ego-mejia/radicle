@@ -170,3 +170,19 @@ export const Hint = styled.p`
   color: ${({ theme }) => theme.color.textMuted};
   font-size: ${({ theme }) => theme.fontSize.sm};
 `;
+
+export const ShowMe = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: ${({ theme }) => theme.color.accentFill};
+  color: ${({ theme }) => theme.color.onAccent};
+  font: inherit;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 600;
+  cursor: pointer;
+`;
