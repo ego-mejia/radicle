@@ -1,6 +1,6 @@
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { optionsFor } from '../../../lib/boards';
 import { moveCard, type CardMove } from '../../../services/api/boards';
 import { projectKeys } from '../../../services/api/projects';
@@ -21,6 +21,8 @@ export function useBoardDrag(data: BoardData | undefined, project: string) {
   const feedback = useMoveFeedback();
   const [drag, setDrag] = useState<Drag | null>(null);
   const [pending, setPending] = useState<PendingDrop | null>(null);
+  // The transitions request of the current drag: a quick drop waits for it.
+  const request = useRef<Promise<TransitionOption[]> | null>(null);
   const boardId = data?.board.id ?? '';
 
   const move = useMutation({
@@ -37,15 +39,16 @@ export function useBoardDrag(data: BoardData | undefined, project: string) {
     if (!data) return;
     const ticket = event.active.data.current?.ticket as BoardCard;
     setDrag({ ticket, from: columnOf(data, ticket.key), options: null });
-    const options = await queryClient.fetchQuery({
+    request.current = queryClient.fetchQuery({
       queryKey: [...ticketKeys.transitions(ticket.key), 'drag'],
       queryFn: () => fetchTransitions(ticket.key),
       staleTime: 0,
     });
+    const options = await request.current;
     setDrag((cur) => (cur?.ticket.key === ticket.key ? { ...cur, options } : cur));
   };
 
-  const onDragEnd = (event: DragEndEvent) => {
+  const onDragEnd = async (event: DragEndEvent) => {
     const current = drag;
     setDrag(null);
     if (!current || !data) return;
@@ -59,8 +62,9 @@ export function useBoardDrag(data: BoardData | undefined, project: string) {
       if (before) move.mutate({ ticket: current.ticket.key, column: target, before });
       return;
     }
-    if (!current.options) return;
-    const options = optionsFor(data.board, target, current.options, current.ticket.type);
+    const loaded = current.options ?? (await request.current?.catch(() => null));
+    if (!loaded) return;
+    const options = optionsFor(data.board, target, loaded, current.ticket.type);
     if (options.length === 0) return;
     const only = options[0]!;
     const resolutions = only.allowed_resolutions ?? [];
