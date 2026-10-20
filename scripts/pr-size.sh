@@ -2,8 +2,12 @@
 # Checks a pull request against CONTRIBUTING.md: branch named type/short-description,
 # fewer than MAX_LINES changed lines and fewer than MAX_FILES files. Generated files
 # (lockfiles, OpenAPI types) and images do not count.
-# Locally: BASE=origin/main HEAD=HEAD BRANCH=$(git branch --show-current) scripts/pr-size.sh
+# Locally: scripts/pr-size.sh (BASE defaults to origin/main, HEAD and BRANCH to the checkout).
 set -euo pipefail
+
+BASE=${BASE:-origin/main}
+HEAD=${HEAD:-HEAD}
+BRANCH=${BRANCH:-$(git branch --show-current)}
 
 MAX_LINES=${MAX_LINES:-500}
 MAX_FILES=${MAX_FILES:-100}

@@ -35,9 +35,9 @@ Small and focused PRs get reviewed fast and break less. Every PR must:
 | **Change fewer than 500 lines** (added + removed). | A reviewer can read it carefully in one sitting. |
 | **Touch fewer than 100 files.** | Same reason, and it keeps conflicts small. |
 | **Include tests** for what it adds or fixes. | It proves the change works and keeps it working. |
-| **Pass CI**: lint, types, unit, integration and E2E tests. | `main` is always releasable. |
+| **Pass the checks**: lint, types, unit, integration and E2E tests. | `main` is always releasable. |
 
-Generated and vendored files do not count toward the limits: `pnpm-lock.yaml`, `uv.lock`, `frontend/openapi.json`, `frontend/src/services/api/schema.d.ts`, `frontend/tsconfig.tsbuildinfo` and images in `docs/images/`. A CI check (`PR size`) measures every PR.
+Generated and vendored files do not count toward the limits: `pnpm-lock.yaml`, `uv.lock`, `frontend/openapi.json`, `frontend/src/services/api/schema.d.ts`, `frontend/tsconfig.tsbuildinfo` and images in `docs/images/`. Measure it with `scripts/pr-size.sh` before opening the PR.
 
 **Bigger work?** Split it into a chain of PRs, each one useful and green on its own. For example: first the migration and the service with tests, then the API, then the UI. If something cannot be split, explain why in the PR and a maintainer can make an exception.
 
@@ -53,7 +53,7 @@ Name branches `type/short-description`, in lowercase with dashes:
 | `refactor/` | Reordering or cleaning code **without** changing behavior. | `refactor/split-ticket-service` |
 | `docs/` | Documentation only. | `docs/sso-okta-guide` |
 
-The `PR size` check also validates the branch name.
+`scripts/pr-size.sh` also validates the branch name.
 
 ## Commit messages
 
@@ -87,7 +87,7 @@ Tests can go in the same commit or in a `test:` commit in the same PR. PRs are s
    ```
 3. **Make the change** with its tests. Run the checks locally (see [Tests](#tests)).
 4. **Push** and open a **pull request** against `main`. Fill in the template: what changes, why, how you tested it and screenshots for UI changes. Link the issue (`Closes #123`).
-5. **Keep it green.** If CI fails, push fixes to the same branch.
+5. **Keep it green.** If a check fails, push fixes to the same branch.
 6. **Address the review**, then a maintainer squash-merges it. 🎉
 
 Draft PRs are welcome when you want early feedback.
@@ -151,7 +151,7 @@ Each PR brings tests for what it changes:
 - **UI**: Vitest tests for components with logic. User journeys that cross screens go in Playwright (`frontend/e2e/`).
 - Coverage stays at **85% or more** in `services/` and `query/`, and **70% or more** overall.
 
-Run what CI runs:
+GitHub Actions CI is paused for now, so run the checks yourself before every push:
 
 ```bash
 cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy radicle && uv run pytest --cov
@@ -159,13 +159,13 @@ cd frontend && pnpm check && pnpm build
 scripts/smoke.sh
 ```
 
-Backend tests start PostgreSQL in Docker with testcontainers. Tests marked `slow` (SSO with Keycloak, performance) can be skipped locally with `-m "not slow"`. CI runs them all.
+Backend tests start PostgreSQL in Docker with testcontainers. Tests marked `slow` (SSO with Keycloak, performance) can be skipped while iterating with `-m "not slow"`; run them all before merging.
 
 ## Reviews and merging
 
 - A maintainer reviews within a few days. A friendly ping on the PR after a week is fine.
 - Reviews are about the code, never the person. Ask questions, explain the why, and suggest instead of demanding.
-- At least one approval and green CI are needed to merge. PRs are squash-merged into `main`.
+- At least one approval and green local checks are needed to merge. PRs are squash-merged into `main`.
 
 ## Reporting bugs and security issues
 

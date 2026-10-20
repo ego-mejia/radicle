@@ -1,8 +1,10 @@
 name: PR size
 
+# Paused with CI: run scripts/pr-size.sh locally. To turn it back on, use again:
+#   pull_request:
+#     types: [opened, synchronize, reopened, edited]
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, edited]
+  workflow_dispatch:
 
 jobs:
   size:
