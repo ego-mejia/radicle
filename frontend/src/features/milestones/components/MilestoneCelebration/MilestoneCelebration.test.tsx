@@ -6,6 +6,9 @@ import { announceDone } from '../../lib/celebrate';
 import { MilestoneCelebration } from '.';
 
 const fetchRecap = vi.fn();
+vi.mock('../../lib/shareCard', () => ({
+  drawShareCard: () => Promise.resolve(new Blob(['png'], { type: 'image/png' })),
+}));
 vi.mock('../../../../services/api/projects', async (original) => ({
   ...(await original<typeof import('../../../../services/api/projects')>()),
   fetchMilestoneRecap: (...args: unknown[]) => fetchRecap(...args),
@@ -62,6 +65,29 @@ describe('MilestoneCelebration', () => {
     await act(async () => announceDone(done));
     await waitFor(() => expect(fetchRecap).toHaveBeenCalledTimes(2));
     expect(screen.queryByText(/Congratulations/)).not.toBeInTheDocument();
+  });
+
+  it('shares the card on LinkedIn', async () => {
+    const write = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { write } });
+    vi.stubGlobal(
+      'ClipboardItem',
+      class {
+        constructor(public items: Record<string, Blob>) {}
+      },
+    );
+    const tab = { location: { href: '' } };
+    vi.spyOn(window, 'open').mockReturnValue(tab as unknown as Window);
+    await mount();
+    await act(async () => announceDone(done));
+    await act(async () =>
+      (await screen.findByRole('button', { name: /Share on LinkedIn/ })).click(),
+    );
+    await waitFor(() => expect(tab.location.href).toContain('linkedin.com/feed/?shareActive=true'));
+    expect(write).toHaveBeenCalledTimes(1);
+    expect(decodeURIComponent(tab.location.href)).toContain('completed V1 in ProyectoA');
+    expect(await screen.findByText(/Image copied/)).toBeInTheDocument();
+    vi.unstubAllGlobals();
   });
 
   it('stays quiet while tickets remain or the ticket is not done', async () => {
