@@ -203,6 +203,7 @@ COVERED: dict[str, list[str]] = {
     "/api/v1/projects/{key}": ["/projects/PA"],
     "/api/v1/projects/{key}/milestones": ["/projects/PA/milestones"],
     "/api/v1/projects/{key}/milestones/{name}": ["/projects/PA/milestones/V1"],
+    "/api/v1/projects/{key}/milestones/{name}/recap": ["/projects/PA/milestones/V1/recap"],
     "/api/v1/filters": ["/filters"],
     "/api/v1/search/fields": ["/search/fields?project=PA"],
     "/api/v1/projects/{key}/inbox": ["/projects/PA/inbox", "/projects/PA/inbox?tab=approved"],

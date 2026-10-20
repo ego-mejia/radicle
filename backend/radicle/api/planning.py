@@ -10,9 +10,11 @@ from radicle.api.schemas.projects import (
     MilestoneCreate,
     MilestoneOut,
     MilestonePatch,
+    MilestoneRecapOut,
 )
+from radicle.api.schemas.tickets import UserRef
 from radicle.db.models import MilestoneStatus
-from radicle.services import planning
+from radicle.services import milestone_recap, planning
 from radicle.services.access import project_access
 
 router = APIRouter(prefix="/projects/{key}", tags=["areas and milestones"])
@@ -97,6 +99,39 @@ async def get_milestone(key: str, name: str, principal: CurrentPrincipal, db: Db
     access = await project_access(db, principal.user, key)
     milestone = await planning.get_milestone(db, access.project, name)
     return (await out.milestones_out(db, [milestone]))[0]
+
+
+@router.get("/milestones/{name}/recap", response_model=MilestoneRecapOut)
+async def get_milestone_recap(
+    key: str, name: str, principal: CurrentPrincipal, db: Db
+) -> MilestoneRecapOut:
+    """Hours, tickets, people and days behind a milestone, for its celebration card."""
+    access = await project_access(db, principal.user, key)
+    milestone = await planning.get_milestone(db, access.project, name)
+    r = await milestone_recap.recap(db, access.project, milestone)
+    return MilestoneRecapOut(
+        milestone=milestone.name,
+        project_key=access.project.key,
+        project_name=access.project.name,
+        target_date=milestone.target_date,
+        complete=r.complete,
+        on_time=r.on_time,
+        tickets=r.tickets,
+        done=r.done,
+        tasks=r.by_type.get("task", 0),
+        bugs=r.by_type.get("bug", 0),
+        ideas=r.by_type.get("draft", 0),
+        minutes_logged=r.minutes_logged,
+        comments=r.comments,
+        humans=r.humans,
+        agents=r.agents,
+        people=[
+            UserRef(handle=u.handle, display_name=u.display_name, kind=u.kind) for u in r.people
+        ],
+        started_at=r.started_at,
+        finished_at=r.finished_at,
+        days=r.days,
+    )
 
 
 @router.patch("/milestones/{name}", response_model=MilestoneOut)
