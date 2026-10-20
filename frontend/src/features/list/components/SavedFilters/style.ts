@@ -1,17 +1,19 @@
+import * as Popover from '@radix-ui/react-popover';
 import styled from 'styled-components';
 
-export const Panel = styled.aside`
+export const Panel = styled(Popover.Content)`
+  z-index: 50;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.space.md};
+  width: 280px;
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
   padding: ${({ theme }) => theme.space.md};
-  border-right: 1px solid ${({ theme }) => theme.color.border};
-  min-width: 0;
-
-  @media (max-width: 900px) {
-    border-right: 0;
-    border-bottom: 1px solid ${({ theme }) => theme.color.border};
-  }
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.lg};
+  background: ${({ theme }) => theme.color.surface};
+  box-shadow: 0 16px 36px rgba(17, 24, 39, 0.16);
 `;
 
 export const Head = styled.div`

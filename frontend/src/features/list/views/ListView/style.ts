@@ -31,13 +31,7 @@ export const GroupBy = styled.label`
 `;
 
 export const Body = styled.div`
-  display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  align-items: start;
-
-  @media (max-width: 900px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  min-width: 0;
 `;
 
 export const Results = styled.div`

@@ -120,10 +120,10 @@ export function ListView() {
               ))}
             </Select>
           </S.GroupBy>
+          <SavedFilters project={projectKey} query={query} onPick={setQuery} />
         </S.Right>
       </S.Toolbar>
       <S.Body>
-        <SavedFilters project={projectKey} query={query} onPick={setQuery} />
         <S.Results>
           {search.isPending ? (
             <PageSpinner />
