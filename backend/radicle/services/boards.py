@@ -319,14 +319,17 @@ class Column:
     wip_limit: int | None
     done_only: bool
     categories: set[StatusCategory] = field(default_factory=set)
-    # A status sits in the first column that holds it: what earlier columns took.
+    # Statuses this column can't hold: picked by name in another column, or taken by an
+    # earlier one; and categories an earlier column already covers.
     taken_ids: set[uuid.UUID] = field(default_factory=set)
     taken_categories: set[StatusCategory] = field(default_factory=set)
 
     def holds(self, status: Status) -> bool:
+        if status.id in self.status_ids:
+            return True
         if status.id in self.taken_ids or status.category in self.taken_categories:
             return False
-        return status.id in self.status_ids or status.category in self.categories
+        return status.category in self.categories
 
     tickets: list[Ticket] = field(default_factory=list)
     total: int = 0
@@ -346,19 +349,26 @@ class BoardData:
 
 
 def resolve_columns(board: Board, statuses: list[Status]) -> list[Column]:
+    """Which statuses each column shows. A status picked by name goes to the first column
+    that names it, even if an earlier column covers its whole category; the rest go to
+    the first column whose categories include theirs."""
+    named: dict[uuid.UUID, int] = {}
+    for index, raw in enumerate(board.columns):
+        for i in raw.get("status_ids") or []:
+            named.setdefault(uuid.UUID(i), index)
     columns = []
     taken_ids: set[uuid.UUID] = set()
     taken_categories: set[StatusCategory] = set()
     for index, raw in enumerate(board.columns):
         categories = {StatusCategory(c) for c in raw.get("categories") or []}
-        ids = {uuid.UUID(i) for i in raw.get("status_ids") or []}
-        ids |= {s.id for s in statuses if s.category in categories}
-        ids = {
-            i
-            for i in ids
-            if i not in taken_ids
-            and not any(s.id == i and s.category in taken_categories for s in statuses)
+        own = {i for i, owner in named.items() if owner == index}
+        elsewhere = {i for i, owner in named.items() if owner != index}
+        by_category = {
+            s.id
+            for s in statuses
+            if s.category in categories and s.category not in taken_categories
         }
+        ids = own | (by_category - elsewhere - taken_ids)
         in_column = [s for s in statuses if s.id in ids]
         done_only = bool(in_column) and all(s.category is StatusCategory.done for s in in_column)
         columns.append(
@@ -369,7 +379,7 @@ def resolve_columns(board: Board, statuses: list[Status]) -> list[Column]:
                 raw.get("wip_limit"),
                 done_only,
                 categories - taken_categories,
-                set(taken_ids),
+                (taken_ids | elsewhere) - own,
                 set(taken_categories),
             )
         )

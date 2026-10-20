@@ -56,12 +56,13 @@ export function BoardView() {
   const boardId = boardParam ?? boards?.[0]?.id;
   const q = filterClauses(filters).join(' AND ');
   const params = { quick_filters: quickFilters, swimlane: lane as Swimlane | undefined, q };
+  const dataKey = boardKeys.data(boardId ?? '', params);
   const { data, isPending } = useQuery({
-    queryKey: boardKeys.data(boardId ?? '', params),
+    queryKey: dataKey,
     queryFn: () => fetchBoardData(boardId!, params),
     enabled: Boolean(boardId),
   });
-  const dnd = useBoardDrag(data, projectKey);
+  const dnd = useBoardDrag(data, projectKey, dataKey);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor),

@@ -238,6 +238,12 @@ class TicketSummary(Output):
     impact: int | None = None
     effort: int | None = None
     converted: bool = False
+    parent: str | None = Field(
+        default=None, description="Parent key, in search results and subticket lists"
+    )
+    child_count: int | None = Field(
+        default=None, description="Subtickets you can see, in search results and subticket lists"
+    )
 
 
 class RuleFailureOut(Output):

@@ -8,6 +8,7 @@ from radicle.api.schemas.common import Page
 from radicle.api.schemas.users import (
     AgentCreate,
     AgentCreated,
+    McpToolOut,
     TokenCreate,
     TokenCreated,
     TokenOut,
@@ -15,6 +16,7 @@ from radicle.api.schemas.users import (
     UserOut,
     UserPatch,
 )
+from radicle.core import mcp_catalog
 from radicle.core.errors import ValidationFailed
 from radicle.db.models import User, UserKind
 from radicle.services import audit, auth, users
@@ -62,6 +64,7 @@ def _user_view(user: User) -> dict[str, object]:
         "email": user.email,
         "is_instance_admin": user.is_instance_admin,
         "is_active": user.is_active,
+        "mcp_tools": user.mcp_tools,
     }
 
 
@@ -71,7 +74,11 @@ async def create_agent(
 ) -> AgentCreated:
     """Create an agent and its first token. The token value is returned only here."""
     agent, issued = await users.create_agent(
-        db, handle=body.handle, display_name=body.display_name, token_name=body.token_name
+        db,
+        handle=body.handle,
+        display_name=body.display_name,
+        token_name=body.token_name,
+        mcp_tools=body.mcp_tools,
     )
     audit.record(
         db,
@@ -97,6 +104,23 @@ async def create_agent(
     )
 
 
+@router.get("/mcp/tools", response_model=list[McpToolOut])
+async def list_mcp_tools(_: InstanceAdmin) -> list[McpToolOut]:
+    """Every MCP tool with its group, for choosing what an agent may call."""
+    from radicle.mcp.server import server  # the MCP server mounts after the routers
+
+    described = {tool.name: tool.description or "" for tool in await server.list_tools()}
+    return [
+        McpToolOut(
+            name=name,
+            group=mcp_catalog.GROUP_OF[name],
+            read_only=name in mcp_catalog.READ_ONLY,
+            description=described.get(name, ""),
+        )
+        for name in mcp_catalog.TOOLS
+    ]
+
+
 @router.get("/users/{handle}", response_model=UserOut)
 async def get_user(handle: str, _: InstanceAdmin, db: Db) -> UserOut:
     return UserOut.model_validate(await users.get_by_handle(db, handle))
@@ -112,6 +136,8 @@ async def patch_user(handle: str, body: UserPatch, admin: InstanceAdmin, db: Db)
         password=body.password,
         is_active=body.is_active,
         is_instance_admin=body.is_instance_admin,
+        set_mcp_tools="mcp_tools" in body.model_fields_set,
+        mcp_tools=body.mcp_tools,
     )
     await users.update_user(db, user, changes)
     after = _user_view(user)
