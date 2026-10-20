@@ -63,7 +63,7 @@ export async function createArea(key: string, body: { name: string; color?: stri
 export async function patchArea(
   key: string,
   name: string,
-  body: { name?: string; color?: string | null; archived?: boolean },
+  body: { name?: string; color?: string | null; icon?: string | null; archived?: boolean },
 ) {
   return unwrap(
     await api.PATCH('/api/v1/projects/{key}/areas/{name}', {

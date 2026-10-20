@@ -18,6 +18,7 @@ import type { TimelineTicket } from '../../../../services/api/types';
 import { RqlBar } from '../../../list/components/RqlBar';
 import { ProjectHeader } from '../../../projects/components/ProjectHeader';
 import { useProject } from '../../../projects/hooks/useProject';
+import { useAreaLook } from '../../../projects/hooks/useAreaLook';
 import { TicketPanel } from '../../../tickets/components/TicketPanel';
 import { TimelineChart } from '../../components/TimelineChart';
 import { UndatedPanel } from '../../components/UndatedPanel';
@@ -39,6 +40,7 @@ export function TimelineView() {
   const groupBy = search.group === 'area' ? 'area' : 'milestone';
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const { data: project, isPending: loadingProject, isError } = useProject(projectKey);
+  const areas = useAreaLook(projectKey);
   const { data: fields } = useQuery({
     queryKey: projectKeys.fields(projectKey),
     queryFn: () => fetchSearchFields(projectKey),
@@ -101,6 +103,7 @@ export function TimelineView() {
         <S.Body>
           <TimelineChart
             data={data}
+            areas={areas}
             zoom={zoom}
             today={isoPlus(0)}
             canEdit={canEdit}

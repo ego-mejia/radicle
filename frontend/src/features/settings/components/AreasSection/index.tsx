@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Archive, ArchiveRestore } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AreaIcon } from '../../../../components/icons/AreaIcon';
 import { Badge } from '../../../../components/ui/Badge';
 import { Button, IconButton } from '../../../../components/ui/Button';
 import { Field } from '../../../../components/ui/Field';
@@ -10,6 +11,7 @@ import { api, unwrap } from '../../../../services/api/client';
 import { createArea, patchArea } from '../../../../services/api/projects';
 import type { ProjectDetail } from '../../../../services/api/types';
 import { useSettingsMutation } from '../../hooks/useSettingsMutation';
+import { AreaIconPicker } from '../AreaIconPicker';
 import { SettingsCard, SettingsParts as S } from '../../../../components/ui/SettingsCard';
 
 const DEFAULT_COLOR = '#4D7C0F';
@@ -34,8 +36,10 @@ export function AreasSection({ project, isAdmin }: { project: ProjectDetail; isA
   );
   const patch = useSettingsMutation(
     project.key,
-    (v: { name: string; body: { name?: string; color?: string; archived?: boolean } }) =>
-      patchArea(project.key, v.name, v.body),
+    (v: {
+      name: string;
+      body: { name?: string; color?: string; icon?: string | null; archived?: boolean };
+    }) => patchArea(project.key, v.name, v.body),
     done,
   );
   const editable = isAdmin && !project.archived;
@@ -45,6 +49,16 @@ export function AreasSection({ project, isAdmin }: { project: ProjectDetail; isA
       <S.Rows>
         {areas.map((area) => (
           <S.Row key={area.name}>
+            {editable ? (
+              <AreaIconPicker
+                area={area.name}
+                icon={area.icon}
+                color={area.color}
+                onPick={(icon) => patch.mutate({ name: area.name, body: { icon } })}
+              />
+            ) : (
+              <AreaIcon icon={area.icon} color={area.color} size={18} />
+            )}
             {editable ? (
               <S.Swatch
                 type="color"
