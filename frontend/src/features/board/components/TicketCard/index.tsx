@@ -1,4 +1,4 @@
-import { CalendarDays, CircleSlash, Clock, ListChecks } from 'lucide-react';
+import { CalendarDays, CircleSlash, Clock, ListChecks, ListTree } from 'lucide-react';
 import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PriorityIcon } from '../../../../components/icons/PriorityIcon';
@@ -7,9 +7,18 @@ import { Avatar } from '../../../../components/ui/Avatar';
 import { formatHours } from '../../../../lib/duration';
 import { formatDate, isOverdue } from '../../../../lib/format';
 import type { TicketSummary } from '../../../../services/api/types';
+import { CardChips } from './components/CardChips';
 import * as S from './style';
 
-const DEFAULT_CARD_FIELDS = ['priority', 'assignee', 'tags', 'checklist'];
+const DEFAULT_CARD_FIELDS = [
+  'area',
+  'milestone',
+  'children',
+  'priority',
+  'assignee',
+  'tags',
+  'checklist',
+];
 
 type Props = React.HTMLAttributes<HTMLDivElement> & {
   ticket: TicketSummary;
@@ -51,6 +60,12 @@ export const TicketCard = forwardRef<HTMLDivElement, Props>(function TicketCard(
       {...rest}
     >
       <S.Title>{ticket.title}</S.Title>
+      <CardChips
+        ticket={ticket}
+        showArea={show('area')}
+        showMilestone={show('milestone')}
+        interactive={!overlay}
+      />
       {(show('tags') && ticket.tags.length > 0) || custom.length > 0 ? (
         <S.Labels>
           {show('tags') && ticket.tags.slice(0, 3).map((tag) => <S.Tag key={tag}>{tag}</S.Tag>)}
@@ -81,6 +96,12 @@ export const TicketCard = forwardRef<HTMLDivElement, Props>(function TicketCard(
             <CalendarDays />
             {formatDate(ticket.due_date)}
           </S.Pill>
+        )}
+        {show('children') && (ticket.child_count ?? 0) > 0 && (
+          <S.Meta title={t('card.subtickets', { count: ticket.child_count ?? 0 })}>
+            <ListTree />
+            {ticket.child_count}
+          </S.Meta>
         )}
         {show('checklist') && ticket.checklist_total > 0 && (
           <S.Meta title={t('ticket.checklist')}>

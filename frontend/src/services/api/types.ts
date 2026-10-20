@@ -104,6 +104,9 @@ export const CARD_FIELDS = [
   'remaining',
   'checklist',
   'votes',
+  'area',
+  'milestone',
+  'children',
 ] as const;
 
 export type Sprint = S['SprintOut'];

@@ -192,6 +192,14 @@
     "filesOnCreate_other": "{{count}} archivos se suben al crear el ticket",
     "removeFile": "Quitar {{name}}"
   },
+  "card": {
+    "changeArea": "Cambiar el área",
+    "changeMilestone": "Cambiar el milestone",
+    "addMilestone": "Milestone",
+    "noMilestone": "Sin milestone",
+    "subtickets_one": "{{count}} subticket",
+    "subtickets_other": "{{count}} subtickets"
+  },
   "comments": {
     "placeholder": "Escribe un comentario. Funcionan markdown y @menciones.",
     "send": "Comentar",
@@ -353,7 +361,10 @@
       "estimate": "Estimación",
       "remaining": "Restante",
       "checklist": "Checklist",
-      "votes": "Votos"
+      "votes": "Votos",
+      "area": "Área",
+      "milestone": "Milestone",
+      "children": "Subtickets"
     },
     "quickFiltersHelp": "Interruptores sobre el tablero. Varios activos se combinan con AND.",
     "deleteConfirm": "¿Borrar el tablero {{name}}? Los tickets no se tocan.",
