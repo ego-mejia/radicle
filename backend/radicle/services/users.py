@@ -7,7 +7,7 @@ from sqlalchemy import func, select, text, tuple_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core import security
+from radicle.core import mcp_catalog, security
 from radicle.core.errors import Conflict, NotFound, ValidationFailed
 from radicle.db.models import User, UserKind
 from radicle.services import auth
@@ -24,6 +24,24 @@ class UserChanges:
     password: str | None = None
     is_active: bool | None = None
     is_instance_admin: bool | None = None
+    # Agents only. `set_mcp_tools` says whether to change them; None then means all tools.
+    set_mcp_tools: bool = False
+    mcp_tools: list[str] | None = None
+
+
+def check_mcp_tools(names: list[str] | None) -> list[str] | None:
+    """The tools an agent may call, in catalog order; None (all tools) stays None."""
+    if names is None:
+        return None
+    unknown = sorted({n for n in names if n not in mcp_catalog.GROUP_OF})
+    if unknown:
+        raise ValidationFailed(
+            f"Unknown MCP tool: {', '.join(unknown)}. GET /api/v1/mcp/tools lists the valid ones.",
+            code="unknown_mcp_tool",
+            errors=[{"field": "mcp_tools", "message": "unknown tool"}],
+        )
+    chosen = set(names)
+    return [n for n in mcp_catalog.TOOLS if n in chosen]
 
 
 async def needs_setup(db: AsyncSession) -> bool:
@@ -72,12 +90,18 @@ async def create_human(
 
 
 async def create_agent(
-    db: AsyncSession, *, handle: str, display_name: str, token_name: str
+    db: AsyncSession,
+    *,
+    handle: str,
+    display_name: str,
+    token_name: str,
+    mcp_tools: list[str] | None = None,
 ) -> tuple[User, auth.IssuedToken]:
     user = User(
         handle=normalize_handle(handle),
         display_name=normalize_display_name(display_name),
         kind=UserKind.agent,
+        mcp_tools=check_mcp_tools(mcp_tools),
     )
     user = await _insert(db, user)
     issued = await auth.issue_token(db, user, token_name)
@@ -168,6 +192,14 @@ async def update_user(db: AsyncSession, user: User, changes: UserChanges) -> Use
         user.is_instance_admin = changes.is_instance_admin
     if changes.is_active is not None:
         user.is_active = changes.is_active
+    if changes.set_mcp_tools:
+        if user.kind is not UserKind.agent:
+            raise ValidationFailed(
+                "Only agents have MCP tool limits; people follow their project permissions.",
+                code="not_an_agent",
+                errors=[{"field": "mcp_tools", "message": "agents only"}],
+            )
+        user.mcp_tools = check_mcp_tools(changes.mcp_tools)
     await db.flush()
     return user
 
