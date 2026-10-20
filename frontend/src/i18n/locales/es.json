@@ -1422,6 +1422,35 @@
       "people": "¿Cómo agrego gente a un proyecto?",
       "board": "¿Cómo muevo tarjetas en el board?",
       "agent": "¿Cómo conecto un agente de IA?"
+    },
+    "admin": {
+      "title": "Asistente (Radi)",
+      "help": "Radi responde con la guía de uso. Conecta un LLM para que redacte las respuestas; sin LLM cita la guía.",
+      "provider": "Proveedor",
+      "providers": {
+        "none": "Ninguno",
+        "anthropic": "Anthropic",
+        "openai": "Compatible con OpenAI"
+      },
+      "providerHints": {
+        "none": "Radi cita la guía de uso.",
+        "anthropic": "Modelos Claude.",
+        "openai": "OpenAI, Ollama, LM Studio y otros."
+      },
+      "model": "Modelo",
+      "modelHint": "Vacío usa el default: claude-haiku-5-5 o gpt-4o-mini.",
+      "baseUrl": "URL base",
+      "baseUrlHint": {
+        "anthropic": "Vacío usa https://api.anthropic.com.",
+        "openai": "Vacío usa https://api.openai.com/v1. Para Ollama: http://<host>:11434/v1."
+      },
+      "apiKey": "API key",
+      "keyHint": "Se guarda cifrada y no se vuelve a mostrar. Los servidores locales pueden no necesitarla.",
+      "keySaved": "Hay una key guardada. Escribe otra para reemplazarla.",
+      "removeKey": "Quitar key",
+      "test": "Probar conexión",
+      "saved": "Asistente guardado",
+      "managedByEnv": "Lo configuran variables RADICLE_ASSISTANT_* en el servidor, así que aquí es de solo lectura."
     }
   }
 }
