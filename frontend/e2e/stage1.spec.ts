@@ -169,4 +169,6 @@ test('create an agent and copy its token', async () => {
   await expect(page.getByTestId('copy-Claude Code')).toContainText(
     'claude mcp add --transport http radicle',
   );
+  await page.getByRole('button', { name: 'Done, I copied it' }).click();
+  await expect(page.getByRole('dialog', { name: 'Your new token' })).toBeHidden();
 });

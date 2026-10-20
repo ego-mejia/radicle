@@ -84,7 +84,9 @@ export function AgentsTab() {
 
   return (
     <>
-      {reveal && <TokenReveal token={reveal.token} mcpUrl={reveal.mcpUrl} />}
+      {reveal && (
+        <TokenReveal token={reveal.token} mcpUrl={reveal.mcpUrl} onClose={() => setReveal(null)} />
+      )}
       {agents.map((agent) => (
         <SettingsCard key={agent.handle} title={agent.display_name}>
           <S.Row>
