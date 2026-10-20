@@ -3,12 +3,16 @@ from typing import Literal
 from fastapi import APIRouter
 from pydantic import Field
 
-from radicle.api.deps import Db, InstanceAdmin
+from radicle.api.deps import CurrentPrincipal, Db, InstanceAdmin
+from radicle.api.ratelimit import SlidingWindowLimiter
 from radicle.api.schemas.common import Input, Output
+from radicle.core.errors import ValidationFailed
 from radicle.services import audit
-from radicle.services.assistant import config, llm
+from radicle.services.assistant import chat, config, llm
 
 router = APIRouter(tags=["assistant"])
+chat_limiter = SlidingWindowLimiter()
+CHATS_PER_MINUTE = 20
 
 
 class AssistantSettingsOut(Output):
@@ -66,3 +70,39 @@ async def test_assistant(_: InstanceAdmin, db: Db) -> AssistantTestOut:
     except llm.AssistantUnavailable as exc:
         return AssistantTestOut(ok=False, message=exc.detail)
     return AssistantTestOut(ok=True, message=f"{cfg.model} answered: {answer[:60]}")
+
+
+class ChatMessage(Input):
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=4000)
+
+
+class ChatIn(Input):
+    messages: list[ChatMessage] = Field(min_length=1, max_length=30)
+    language: Literal["en", "es"] = "en"
+
+
+class ChatOut(Output):
+    answer: str = Field(description="Markdown")
+    mode: Literal["llm", "guide"] = Field(description="Who wrote it: the LLM or the guide")
+    sources: list[str] = Field(description="Guide sections it is based on")
+    notice: str | None = Field(default=None, description="Why the LLM was not used")
+
+
+@router.post("/assistant/chat", response_model=ChatOut)
+async def assistant_chat(body: ChatIn, principal: CurrentPrincipal, db: Db) -> ChatOut:
+    """Ask Radi how to use Radicle. Answers come from the usage guide, written by the
+    configured LLM when there is one."""
+    if body.messages[-1].role != "user":
+        raise ValidationFailed(
+            "The last message must be the user's question.",
+            errors=[{"field": "messages", "message": "last must be user"}],
+        )
+    chat_limiter.hit(f"assistant:{principal.user.id}", CHATS_PER_MINUTE)
+    reply = await chat.answer(
+        db,
+        [llm.Message(m.role, m.content) for m in body.messages],
+        body.language,
+        admin=principal.user.is_instance_admin,
+    )
+    return ChatOut(answer=reply.answer, mode=reply.mode, sources=reply.sources, notice=reply.notice)
