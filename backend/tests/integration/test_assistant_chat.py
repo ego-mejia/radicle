@@ -84,8 +84,15 @@ async def test_with_an_llm_it_writes_from_the_guide(
     # No walkthrough from the model: the guide's tour is offered (not autoplayed).
     assert r.json()["tour"][0]["target"] == "nav.projects" and r.json()["autoplay"] is False
     system = sent[0]["system"]
-    assert "Reply in Spanish" in system and "## Crear un proyecto" in system
+    # The whole guide goes in, so nothing the question misses is left out.
+    assert "(Spanish when unsure)" in system and "## Crear un proyecto" in system
+    assert "## Archivar un proyecto" in system
     assert [m["role"] for m in sent[0]["messages"]] == ["user", "assistant", "user"]
+
+    # A plain question gets no "Show me" from a loosely related section.
+    conversation["messages"] = [{"role": "user", "content": "what are milestones?"}]
+    r = await client.post(f"{API}/assistant/chat", headers=board.member.headers, json=conversation)
+    assert r.json()["tour"] == []
 
 
 async def test_llm_down_falls_back_to_the_guide(
@@ -155,9 +162,10 @@ async def test_the_model_can_walk_the_user_through_the_screen(
         json={"provider": "openai", "api_key": "k"},
     )
     r = await client.post(
-        f"{API}/assistant/chat", headers=board.member.headers, json=ask("crea un proyecto", "es")
+        f"{API}/assistant/chat", headers=board.member.headers, json=ask("¿cómo creo un proyecto?")
     )
     body = r.json()
+    # The app is in English but the question is not: the greeting follows the question.
     assert body["answer"] == "Te muestro." and body["autoplay"] is True
     assert [(s["target"], s["action"]) for s in body["tour"]] == [
         ("projects.create", "click"),

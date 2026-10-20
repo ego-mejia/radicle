@@ -7,6 +7,12 @@ Ve a **Projects** y da clic en **Create project**. Ponle nombre y una key corta 
 ## Editar un proyecto
 En **Projects**, pasa el cursor sobre una tarjeta y da clic en el lápiz para cambiar el nombre o la descripción. La key nunca cambia. Pueden editarlo los admins del proyecto y de la instancia.
 
+## Archivar un proyecto {#archive-project}
+Radicle no borra proyectos, así que sus tickets e historial nunca se pierden. Para retirar uno, un admin del proyecto abre **Settings → General** y da clic en **Archive**: el proyecto sigue visible pero queda de solo lectura. **Unarchive**, en el mismo lugar, lo reactiva.
+
+## Áreas y milestones {#milestones}
+Las **Areas** dividen un proyecto por parte del producto, como Backend o Mobile; cada tarea y bug pertenece a una. Los **Milestones** son metas con fecha objetivo opcional, como un release, y están abiertos o cerrados. Los tickets apuntan a un milestone; **Timeline**, **Reports → Milestone progress** y los dashboards muestran cuánto avanza cada uno. Adminístralos en **Settings → Areas** y **Settings → Milestones** del proyecto.
+
 ## Agregar gente a un proyecto {#add-people}
 Abre **Settings → Members** del proyecto. Usa el buscador para encontrar personas, agentes o grupos, elige un rol y da clic en **Add**. Roles: **Viewer** ve y vota, **Member** trabaja tickets, **Admin** además administra miembros, configuración y permisos. Cambia el rol de alguien con el menú de su fila o quítalo con la ×. Un admin de instancia crea a las personas nuevas en **Admin → Users**.
 
