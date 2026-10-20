@@ -60,9 +60,21 @@ type Props = {
   onSelect?: (keys: string[], selected: boolean) => void;
   sortable: boolean;
   handle: Handle;
+  /** Nesting level under parent tickets, and the button that opens its subtickets. */
+  depth?: number;
+  expander?: React.ReactNode;
 };
 
-export function TicketRow({ ticket, onOpen, selected, onSelect, sortable, handle }: Props) {
+export function TicketRow({
+  ticket,
+  onOpen,
+  selected,
+  onSelect,
+  sortable,
+  handle,
+  depth = 0,
+  expander,
+}: Props) {
   const { t } = useTranslation();
   return (
     <tr
@@ -109,7 +121,8 @@ export function TicketRow({ ticket, onOpen, selected, onSelect, sortable, handle
         <TypeIcon type={ticket.type} />
       </td>
       <S.TitleCell>
-        <S.Cell>
+        <S.Cell style={depth ? { paddingLeft: depth * 22 } : undefined}>
+          {expander}
           {ticket.blocked && (
             <S.Muted $danger title={t('ticket.blocked')}>
               <CircleSlash size={13} />

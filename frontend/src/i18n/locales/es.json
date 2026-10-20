@@ -268,7 +268,10 @@
       "admin": "Admin",
       "member": "Miembro",
       "viewer": "Viewer"
-    }
+    },
+    "editTitle": "Editar {{key}}",
+    "keyFixed": "La key no se puede cambiar: las keys de los tickets dependen de ella.",
+    "saved": "{{key}} guardado"
   },
   "board": {
     "filters": "Filtros",
@@ -350,14 +353,28 @@
       "votes": "Votos"
     },
     "quickFiltersHelp": "Interruptores sobre el tablero. Varios activos se combinan con AND.",
-    "deleteConfirm": "¿Borrar el tablero {{name}}? Los tickets no se tocan."
+    "deleteConfirm": "¿Borrar el tablero {{name}}? Los tickets no se tocan.",
+    "collapseAll": "Plegar todos",
+    "expandAll": "Desplegar todos",
+    "laneCount_one": "{{count}} ticket",
+    "laneCount_other": "{{count}} tickets"
   },
   "list": {
     "rqlLabel": "Query RQL",
     "rqlPlaceholder": "project = PA AND category != done ORDER BY priority DESC",
     "emptyTitle": "Ningún ticket coincide",
     "emptyText": "Prueba con menos condiciones o revisa los nombres en las sugerencias.",
-    "showing": "{{shown}} de {{total}}"
+    "showing": "{{shown}} de {{total}}",
+    "groupNone": {
+      "type": "Sin tipo",
+      "status": "Sin estado",
+      "priority": "Sin prioridad",
+      "assignee": "Sin asignar",
+      "area": "Sin área",
+      "milestone": "Sin milestone"
+    },
+    "subtickets_one": "{{count}} subticket de {{key}}",
+    "subtickets_other": "{{count}} subtickets de {{key}}"
   },
   "milestones": {
     "create": "Nuevo milestone",
@@ -390,7 +407,7 @@
     "users": "Usuarios",
     "agents": "Agentes",
     "projects": "Proyectos",
-    "usersHelp": "Las personas entran con email y contraseña. Los usuarios nuevos reciben una contraseña temporal para cambiar en su perfil.",
+    "usersHelp": "Personas y agentes de esta instancia. Las personas entran con email y password (o SSO); los agentes (un LLM o un worker) usan un token por MCP o la API. Las personas nuevas reciben una contraseña temporal para cambiar en su perfil.",
     "agentsHelp": "Los agentes trabajan por MCP con un token. Agrégalos a los proyectos como a cualquier miembro.",
     "newUser": "Nuevo usuario",
     "newAgent": "Nuevo agente",
@@ -424,7 +441,39 @@
     "removeFromGroup": "Quitar a @{{handle}} de {{group}}",
     "sso": "SSO",
     "settings": "Ajustes",
-    "audit": "Audit log"
+    "audit": "Audit log",
+    "mcp": {
+      "title": "Permisos de MCP",
+      "titleFor": "Permisos de MCP de {{name}}",
+      "help": "Elige qué tools del MCP puede llamar este agente. Los permisos del proyecto y los niveles de seguridad siguen aplicando a todo lo que haga.",
+      "all": "Todas las tools",
+      "allHint": "Incluye las que lleguen en versiones futuras.",
+      "readOnly": "Solo lectura",
+      "none": "Ninguna",
+      "count": "{{count}} de {{total}} tools permitidas",
+      "read": "lee",
+      "summaryAll": "Todas las tools de MCP",
+      "summarySome_one": "{{count}} tool de MCP",
+      "summarySome_other": "{{count}} tools de MCP",
+      "saved": "Permisos de MCP guardados para @{{handle}}",
+      "groups": {
+        "context": "Contexto",
+        "find_work": "Encontrar trabajo",
+        "tickets": "Tickets",
+        "collaboration": "Colaboración",
+        "files_and_time": "Archivos y tiempo",
+        "planning": "Planeación",
+        "inbox": "Buzón"
+      }
+    },
+    "kinds": {
+      "human": "Persona",
+      "humanHint": "Entra con email y password, o SSO.",
+      "agent": "Agente (LLM o worker)",
+      "agentHint": "Trabaja por MCP o la API con un token.",
+      "agentShort": "Agente"
+    },
+    "kind": "Tipo"
   },
   "settings": {
     "general": "General",

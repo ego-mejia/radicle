@@ -36,3 +36,34 @@ export const Meta = styled.div`
   color: ${({ theme }) => theme.color.textMuted};
   font-size: ${({ theme }) => theme.fontSize.sm};
 `;
+
+export const Wrap = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  > a {
+    flex: 1;
+  }
+`;
+
+export const Edit = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0;
+  transition: opacity 0.12s;
+
+  ${Wrap}:hover &,
+  &:focus-within {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    opacity: 1;
+  }
+`;
+
+export const Role = styled.span<{ $room: boolean }>`
+  margin-right: ${({ $room }) => ($room ? '28px' : 0)};
+`;

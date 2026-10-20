@@ -1,10 +1,21 @@
 import { api, unwrap } from './client';
+import type { components } from './schema';
 import type { User } from './types';
+
+type S = components['schemas'];
 
 export const adminKeys = {
   users: ['admin', 'users'] as const,
   tokens: (handle: string) => ['admin', 'tokens', handle] as const,
+  mcpTools: ['admin', 'mcp-tools'] as const,
 };
+
+export type McpTool = S['McpToolOut'];
+
+/** Every MCP tool with its group, to choose what an agent may call. */
+export async function fetchMcpTools(): Promise<McpTool[]> {
+  return unwrap(await api.GET('/api/v1/mcp/tools'));
+}
 
 export async function fetchUsers(): Promise<User[]> {
   const users: User[] = [];
@@ -29,7 +40,11 @@ export async function createUser(body: {
   return unwrap(await api.POST('/api/v1/users', { body }));
 }
 
-export async function createAgent(body: { handle: string; display_name: string }) {
+export async function createAgent(body: {
+  handle: string;
+  display_name: string;
+  mcp_tools?: string[] | null;
+}) {
   return unwrap(await api.POST('/api/v1/agents', { body }));
 }
 
@@ -40,6 +55,7 @@ export async function patchUser(
     is_active?: boolean;
     is_instance_admin?: boolean;
     password?: string;
+    mcp_tools?: string[] | null;
   },
 ) {
   return unwrap(await api.PATCH('/api/v1/users/{handle}', { params: { path: { handle } }, body }));
