@@ -156,7 +156,7 @@ Crea un board de tipo **Scrum** para planear en sprints. Luego, en **Backlog**:
 
 ### 7. Timeline
 
-**Timeline** dibuja los tickets en el tiempo, agrupados por milestone o área, por semana, mes o trimestre. Arrastra una barra para cambiar sus fechas, o un ticket de **Without dates** para dárselas. Las dependencias imposibles (un ticket que empieza antes de que termine lo que lo bloquea) se ponen en rojo, y los milestones muestran su pronóstico.
+**Timeline** dibuja los tickets en el tiempo, agrupados por milestone o área, por semana, mes o trimestre. Arrastra una barra para cambiar sus fechas, o un ticket de **Without dates** para dárselas. Un ticket con solo fecha límite se dibuja con una barra tenue desde el día en que se creó (uno con solo fecha de inicio, con una barra tenue tan larga como su estimado) hasta que tenga ambas fechas. Las dependencias imposibles (un ticket que empieza antes de que termine lo que lo bloquea) se ponen en rojo, y los milestones muestran su pronóstico.
 
 <p align="center"><img src="docs/images/timeline.png" alt="Timeline" width="820"></p>
 
@@ -231,11 +231,14 @@ El log es **de solo inserción**: la base de datos rechaza cambios y borrados. L
 
 Los agentes son usuarios de tipo *agent*, con su propio handle, tokens, historial y permisos.
 
-1. Ve a **Admin → Agents → New agent** y copia el token (`rdc_...`). Se muestra una sola vez, junto con los snippets de MCP listos para pegar.
-2. Agrégalo a un proyecto en **Settings → Members**, normalmente como **Member**.
-3. Conecta tu cliente MCP.
+1. Ve a **Admin → Users → New user**, elige **Agent (LLM or worker)** y copia el token (`rdc_...`). Se muestra una sola vez, junto con los snippets de MCP listos para pegar. (**Admin → Agents → New agent** hace lo mismo.)
+2. Elige qué puede hacer por MCP: deja **All tools**, elige **Read only** o marca las tools exactas; por ejemplo, un bot de triage que solo lee y califica el Buzón.
+3. Agrégalo a un proyecto en **Settings → Members**, normalmente como **Member**.
+4. Conecta tu cliente MCP.
 
-<p align="center"><img src="docs/images/agents.png" alt="Agentes" width="820"></p>
+<p align="center"><img src="docs/images/agent-mcp-permissions.png" alt="Permisos de MCP de un agente" width="820"></p>
+
+Puedes cambiar las tools de un agente cuando quieras con **MCP permissions** en Users o Agents. Las que están apagadas desaparecen de su lista de tools y se rechazan si las llama. Se suman a los permisos del proyecto y a los niveles de seguridad, nunca los reemplazan. Cada cambio queda en el audit log.
 
 **Claude Code**
 
@@ -260,7 +263,7 @@ claude mcp add --transport http radicle http://localhost:8000/mcp \
 
 Los clientes que solo hablan stdio pueden usar [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) como puente: `npx -y mcp-remote http://localhost:8000/mcp --header "Authorization: Bearer rdc_xxxxxxxx"`.
 
-Hay 48 tools, agrupadas en contexto, búsqueda de trabajo, tickets, colaboración, archivos y tiempo, planeación y Buzón. La lista completa está en el [README en inglés](README.md#13-ai-agents-over-mcp). Los agentes siguen la misma matriz de permisos y los mismos niveles de seguridad que las personas.
+Hay 48 tools, agrupadas en contexto, búsqueda de trabajo, tickets, colaboración, archivos y tiempo, planeación y Buzón. La lista completa está en el [README en inglés](README.md#13-ai-agents-over-mcp). Los agentes siguen la misma matriz de permisos y los mismos niveles de seguridad que las personas, y se pueden limitar a algunas tools.
 
 ### 14. Teclado, paleta de comandos y temas
 
