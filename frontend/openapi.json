@@ -249,6 +249,118 @@
         "title": "AreaPatch",
         "type": "object"
       },
+      "AssistantSettingsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "api_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Write only; empty string removes it",
+            "title": "Api Key"
+          },
+          "base_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Empty for the provider's default",
+            "title": "Base Url"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "anthropic",
+                  "openai"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          }
+        },
+        "title": "AssistantSettingsIn",
+        "type": "object"
+      },
+      "AssistantSettingsOut": {
+        "properties": {
+          "base_url": {
+            "title": "Base Url",
+            "type": "string"
+          },
+          "has_key": {
+            "description": "The key is stored encrypted and never shown",
+            "title": "Has Key",
+            "type": "boolean"
+          },
+          "managed_by_env": {
+            "description": "RADICLE_ASSISTANT_* variables set it; read-only",
+            "title": "Managed By Env",
+            "type": "boolean"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "provider": {
+            "description": "anthropic, openai (any compatible server) or none",
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "model",
+          "base_url",
+          "has_key",
+          "managed_by_env"
+        ],
+        "title": "AssistantSettingsOut",
+        "type": "object"
+      },
+      "AssistantTestOut": {
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ok",
+          "message"
+        ],
+        "title": "AssistantTestOut",
+        "type": "object"
+      },
       "AttachmentOut": {
         "properties": {
           "comment_id": {
@@ -10480,6 +10592,89 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/admin/assistant": {
+      "get": {
+        "operationId": "get_assistant_api_v1_admin_assistant_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Assistant",
+        "tags": [
+          "assistant"
+        ]
+      },
+      "put": {
+        "description": "Which LLM Radi uses. Without one, Radi answers from the usage guide.",
+        "operationId": "put_assistant_api_v1_admin_assistant_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssistantSettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Assistant",
+        "tags": [
+          "assistant"
+        ]
+      }
+    },
+    "/api/v1/admin/assistant/test": {
+      "post": {
+        "description": "Send a tiny message to the configured model.",
+        "operationId": "test_assistant_api_v1_admin_assistant_test_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssistantTestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Test Assistant",
+        "tags": [
+          "assistant"
+        ]
+      }
+    },
     "/api/v1/admin/settings": {
       "get": {
         "operationId": "get_instance_settings_api_v1_admin_settings_get",

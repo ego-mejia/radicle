@@ -29,6 +29,11 @@ class Settings(BaseSettings):
     s3_access_key: str | None = None
     s3_secret_key: str | None = None
     max_upload_mb: int = 25
+    # Radi, the in-app assistant. When the provider is set here it overrides Admin → Settings.
+    assistant_provider: str | None = None  # anthropic, openai or none
+    assistant_api_key: str | None = None
+    assistant_model: str | None = None
+    assistant_base_url: str | None = None  # OpenAI-compatible servers: Ollama, LM Studio...
     image_default_resize: str = "large"
 
     @property

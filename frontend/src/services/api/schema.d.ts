@@ -4,6 +4,47 @@
  */
 
 export interface paths {
+    "/api/v1/admin/assistant": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Assistant */
+        get: operations["get_assistant_api_v1_admin_assistant_get"];
+        /**
+         * Put Assistant
+         * @description Which LLM Radi uses. Without one, Radi answers from the usage guide.
+         */
+        put: operations["put_assistant_api_v1_admin_assistant_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/assistant/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test Assistant
+         * @description Send a tiny message to the configured model.
+         */
+        post: operations["test_assistant_api_v1_admin_assistant_test_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/settings": {
         parameters: {
             query?: never;
@@ -2452,6 +2493,52 @@ export interface components {
             name?: string | null;
             /** Position */
             position?: number | null;
+        };
+        /** AssistantSettingsIn */
+        AssistantSettingsIn: {
+            /**
+             * Api Key
+             * @description Write only; empty string removes it
+             */
+            api_key?: string | null;
+            /**
+             * Base Url
+             * @description Empty for the provider's default
+             */
+            base_url?: string | null;
+            /** Model */
+            model?: string | null;
+            /** Provider */
+            provider?: ("none" | "anthropic" | "openai") | null;
+        };
+        /** AssistantSettingsOut */
+        AssistantSettingsOut: {
+            /** Base Url */
+            base_url: string;
+            /**
+             * Has Key
+             * @description The key is stored encrypted and never shown
+             */
+            has_key: boolean;
+            /**
+             * Managed By Env
+             * @description RADICLE_ASSISTANT_* variables set it; read-only
+             */
+            managed_by_env: boolean;
+            /** Model */
+            model: string;
+            /**
+             * Provider
+             * @description anthropic, openai (any compatible server) or none
+             */
+            provider: string;
+        };
+        /** AssistantTestOut */
+        AssistantTestOut: {
+            /** Message */
+            message: string;
+            /** Ok */
+            ok: boolean;
         };
         /** AttachmentOut */
         AttachmentOut: {
@@ -5846,6 +5933,79 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    get_assistant_api_v1_admin_assistant_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssistantSettingsOut"];
+                };
+            };
+        };
+    };
+    put_assistant_api_v1_admin_assistant_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssistantSettingsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssistantSettingsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    test_assistant_api_v1_admin_assistant_test_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssistantTestOut"];
+                };
+            };
+        };
+    };
     get_instance_settings_api_v1_admin_settings_get: {
         parameters: {
             query?: never;

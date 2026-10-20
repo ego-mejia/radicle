@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 
 from radicle import __version__
 from radicle.api import (
+    assistant,
     attachments,
     audit,
     auth,
@@ -99,6 +100,7 @@ def create_app() -> FastAPI:
         security,
         inbox,
         sso,
+        assistant,
         audit,
     ):
         api.include_router(module.router)
