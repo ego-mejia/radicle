@@ -1452,6 +1452,16 @@
       "saved": "Asistente guardado",
       "managedByEnv": "Lo configuran variables RADICLE_ASSISTANT_* en el servidor, así que aquí es de solo lectura."
     },
-    "more": "Pregunta algo más:"
+    "more": "Pregunta algo más:",
+    "tour": {
+      "title": "Recorrido de Radi",
+      "step": "Paso {{n}} de {{total}}",
+      "next": "Siguiente",
+      "back": "Atrás",
+      "done": "Listo",
+      "stop": "Detener el recorrido",
+      "missing": "No encuentro esta parte aquí. Pasa al siguiente paso.",
+      "showMe": "Muéstrame"
+    }
   }
 }
