@@ -187,7 +187,10 @@
     "submit": "Crear",
     "titlePlaceholder": "¿Qué hay que hacer?",
     "descriptionPlaceholder": "Markdown. Checklists: - [ ] item @handle",
-    "required": "Obligatorio"
+    "required": "Obligatorio",
+    "filesOnCreate_one": "Se sube al crear el ticket",
+    "filesOnCreate_other": "{{count}} archivos se suben al crear el ticket",
+    "removeFile": "Quitar {{name}}"
   },
   "comments": {
     "placeholder": "Escribe un comentario. Funcionan markdown y @menciones.",

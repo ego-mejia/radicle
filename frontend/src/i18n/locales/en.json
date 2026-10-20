@@ -187,7 +187,10 @@
     "submit": "Create",
     "titlePlaceholder": "What needs doing?",
     "descriptionPlaceholder": "Markdown. Checklists: - [ ] item @handle",
-    "required": "Required"
+    "required": "Required",
+    "filesOnCreate_one": "Uploads when the ticket is created",
+    "filesOnCreate_other": "{{count}} files upload when the ticket is created",
+    "removeFile": "Remove {{name}}"
   },
   "comments": {
     "placeholder": "Write a comment. Markdown and @mentions work.",
