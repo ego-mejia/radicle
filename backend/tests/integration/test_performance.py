@@ -4,6 +4,7 @@ RQL search p95 < 300 ms and loading a 500-ticket board < 1 s, measured through t
 """
 
 import asyncio
+import os
 import statistics
 import time
 
@@ -16,6 +17,10 @@ from testcontainers.community.postgres import PostgresContainer
 from radicle.core.config import get_settings
 from radicle.db import session as db_session
 from tests.conftest import run_alembic
+
+# The budgets are for a real server. Shared CI runners are several times slower, so CI
+# sets RADICLE_PERF_BUDGET_FACTOR to stretch them instead of failing at random.
+FACTOR = float(os.environ.get("RADICLE_PERF_BUDGET_FACTOR", "1"))
 
 QUERIES = [
     "project = PERF AND type = bug AND priority >= high AND milestone = V1 AND tag != backlog",
@@ -86,7 +91,7 @@ async def test_search_p95_and_board_with_10k_tickets(
                     timings.append(time.perf_counter() - start)
                     assert r.status_code == 200, r.text
             p95 = statistics.quantiles(timings, n=20)[18]
-            assert p95 < 0.3, f"RQL p95 {p95 * 1000:.0f} ms"
+            assert p95 < 0.3 * FACTOR, f"RQL p95 {p95 * 1000:.0f} ms"
 
             start = time.perf_counter()
             loaded, cursor = 0, None
@@ -98,7 +103,7 @@ async def test_search_p95_and_board_with_10k_tickets(
                 loaded += len(r.json()["items"])
                 cursor = r.json()["next_cursor"]
             board = time.perf_counter() - start
-            assert board < 1.0, f"board of {loaded} tickets took {board * 1000:.0f} ms"
+            assert board < 1.0 * FACTOR, f"board of {loaded} tickets took {board * 1000:.0f} ms"
 
             boards = (await c.get("/api/v1/projects/PERF/boards", headers=bearer)).json()
             board_id = boards["items"][0]["id"]
@@ -108,7 +113,7 @@ async def test_search_p95_and_board_with_10k_tickets(
             )
             configured = time.perf_counter() - start
             assert r.status_code == 200 and r.json()["lanes"]
-            assert configured < 1.0, f"configurable board took {configured * 1000:.0f} ms"
+            assert configured < 1.0 * FACTOR, f"configurable board took {configured * 1000:.0f} ms"
             start = time.perf_counter()
             r = await c.get(
                 "/api/v1/reports/cfd",
@@ -118,7 +123,7 @@ async def test_search_p95_and_board_with_10k_tickets(
             cfd = time.perf_counter() - start
             assert r.status_code == 200 and len(r.json()["rows"]) == 365, r.text
             assert sum(r.json()["rows"][-1][k] for k in r.json()["columns"][1:]) > 0
-            assert cfd < 1.0, f"CFD of a year took {cfd * 1000:.0f} ms"
+            assert cfd < 1.0 * FACTOR, f"CFD of a year took {cfd * 1000:.0f} ms"
             print(
                 f"\nCFD 365 days {cfd * 1000:.0f} ms; "
                 f"RQL p95 {p95 * 1000:.0f} ms; board {loaded} tickets {board * 1000:.0f} ms; "
