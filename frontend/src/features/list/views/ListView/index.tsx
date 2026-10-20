@@ -95,6 +95,7 @@ export function ListView() {
               sort={currentOrder(query)}
               onSort={(field) => setQuery(withOrder(query, field))}
               onOpen={(ticketKey) => void navigate({ search: { q, t: ticketKey } })}
+              nest
               hasMore={!!hasNextPage}
               loadingMore={isFetchingNextPage}
               onLoadMore={loadMore}

@@ -1,8 +1,10 @@
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { GroupBy } from '../../lib/ticketGroups';
 import type { TicketSummary } from '../../services/api/types';
 import { Spinner } from '../ui/Spinner';
+import { GroupedRows } from './components/GroupedRows';
 import { Rows, TicketRow } from './components/TicketRow';
 import * as S from './style';
 
@@ -22,6 +24,10 @@ type Props = {
   onSelect?: (keys: string[], selected: boolean) => void;
   /** When ordered by rank: drag rows to reorder. */
   onReorder?: (key: string, place: { before?: string; after?: string }) => Promise<void>;
+  /** Split rows in collapsible groups (ignored while reordering by rank). */
+  groupBy?: GroupBy;
+  /** Nest subtickets under their parent, with an arrow to open them. */
+  nest?: boolean;
 };
 
 const COLUMNS: { id: string; sort?: string }[] = [
@@ -51,6 +57,8 @@ export function TicketTable({
   selected,
   onSelect,
   onReorder,
+  groupBy = 'none',
+  nest = false,
 }: Props) {
   const { t } = useTranslation();
   const sentinel = useRef<HTMLDivElement>(null);
@@ -107,19 +115,31 @@ export function TicketTable({
             })}
           </tr>
         </thead>
-        <Rows tickets={tickets} onReorder={onReorder}>
-          {(ticket, handle) => (
-            <TicketRow
-              key={ticket.key}
-              ticket={ticket}
-              onOpen={onOpen}
-              selected={selected}
-              onSelect={onSelect}
-              sortable={Boolean(onReorder)}
-              handle={handle}
-            />
-          )}
-        </Rows>
+        {!onReorder && (nest || groupBy !== 'none') ? (
+          <GroupedRows
+            tickets={tickets}
+            groupBy={groupBy}
+            nest={nest}
+            columns={COLUMNS.length + (selected && onSelect ? 1 : 0)}
+            onOpen={onOpen}
+            selected={selected}
+            onSelect={onSelect}
+          />
+        ) : (
+          <Rows tickets={tickets} onReorder={onReorder}>
+            {(ticket, handle) => (
+              <TicketRow
+                key={ticket.key}
+                ticket={ticket}
+                onOpen={onOpen}
+                selected={selected}
+                onSelect={onSelect}
+                sortable={Boolean(onReorder)}
+                handle={handle}
+              />
+            )}
+          </Rows>
+        )}
       </S.Table>
       <S.Sentinel ref={sentinel} />
       <S.Footer>

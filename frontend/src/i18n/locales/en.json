@@ -357,7 +357,17 @@
     "rqlPlaceholder": "project = PA AND category != done ORDER BY priority DESC",
     "emptyTitle": "No tickets match",
     "emptyText": "Try fewer conditions, or check names in the suggestions.",
-    "showing": "{{shown}} of {{total}}"
+    "showing": "{{shown}} of {{total}}",
+    "groupNone": {
+      "type": "No type",
+      "status": "No status",
+      "priority": "No priority",
+      "assignee": "Unassigned",
+      "area": "No area",
+      "milestone": "No milestone"
+    },
+    "subtickets_one": "{{count}} subticket of {{key}}",
+    "subtickets_other": "{{count}} subtickets of {{key}}"
   },
   "milestones": {
     "create": "New milestone",
