@@ -3021,6 +3021,12 @@ export interface components {
              */
             answer: string;
             /**
+             * Autoplay
+             * @description Start the tour right away
+             * @default false
+             */
+            autoplay: boolean;
+            /**
              * Mode
              * @description Who wrote it: the LLM or the guide
              * @enum {string}
@@ -3036,6 +3042,11 @@ export interface components {
              * @description Guide sections it is based on
              */
             sources: string[];
+            /**
+             * Tour
+             * @description On-screen walkthrough
+             */
+            tour: components["schemas"]["TourStepOut"][];
         };
         /** ChecklistItemOut */
         ChecklistItemOut: {
@@ -5629,6 +5640,26 @@ export interface components {
             prefix: string;
             /** Revoked At */
             revoked_at: string | null;
+        };
+        /** TourStepOut */
+        TourStepOut: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "point" | "click";
+            /**
+             * Page
+             * @description Route it lives on; {project} is the current one
+             */
+            page: string | null;
+            /**
+             * Target
+             * @description data-tour id of the element in the web app
+             */
+            target: string;
+            /** Text */
+            text: string;
         };
         /** TransitionConf */
         TransitionConf: {

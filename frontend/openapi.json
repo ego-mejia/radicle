@@ -1656,6 +1656,12 @@
             "title": "Answer",
             "type": "string"
           },
+          "autoplay": {
+            "default": false,
+            "description": "Start the tour right away",
+            "title": "Autoplay",
+            "type": "boolean"
+          },
           "mode": {
             "description": "Who wrote it: the LLM or the guide",
             "enum": [
@@ -1684,13 +1690,23 @@
             },
             "title": "Sources",
             "type": "array"
+          },
+          "tour": {
+            "description": "On-screen walkthrough",
+            "items": {
+              "$ref": "#/components/schemas/TourStepOut"
+            },
+            "title": "Tour",
+            "type": "array"
           }
         },
         "required": [
           "answer",
           "mode",
           "sources",
-          "notice"
+          "notice",
+          "tour",
+          "autoplay"
         ],
         "title": "ChatOut",
         "type": "object"
@@ -9543,6 +9559,47 @@
           "created_at"
         ],
         "title": "TokenOut",
+        "type": "object"
+      },
+      "TourStepOut": {
+        "properties": {
+          "action": {
+            "enum": [
+              "point",
+              "click"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Route it lives on; {project} is the current one",
+            "title": "Page"
+          },
+          "target": {
+            "description": "data-tour id of the element in the web app",
+            "title": "Target",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "action",
+          "page",
+          "text"
+        ],
+        "title": "TourStepOut",
         "type": "object"
       },
       "TransitionConf": {

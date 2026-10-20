@@ -82,11 +82,20 @@ class ChatIn(Input):
     language: Literal["en", "es"] = "en"
 
 
+class TourStepOut(Output):
+    target: str = Field(description="data-tour id of the element in the web app")
+    action: Literal["point", "click"]
+    page: str | None = Field(description="Route it lives on; {project} is the current one")
+    text: str
+
+
 class ChatOut(Output):
     answer: str = Field(description="Markdown")
     mode: Literal["llm", "guide"] = Field(description="Who wrote it: the LLM or the guide")
     sources: list[str] = Field(description="Guide sections it is based on")
     notice: str | None = Field(default=None, description="Why the LLM was not used")
+    tour: list[TourStepOut] = Field(default_factory=list, description="On-screen walkthrough")
+    autoplay: bool = Field(default=False, description="Start the tour right away")
 
 
 @router.post("/assistant/chat", response_model=ChatOut)
@@ -105,4 +114,11 @@ async def assistant_chat(body: ChatIn, principal: CurrentPrincipal, db: Db) -> C
         body.language,
         admin=principal.user.is_instance_admin,
     )
-    return ChatOut(answer=reply.answer, mode=reply.mode, sources=reply.sources, notice=reply.notice)
+    return ChatOut(
+        answer=reply.answer,
+        mode=reply.mode,
+        sources=reply.sources,
+        notice=reply.notice,
+        tour=[TourStepOut(**step.view()) for step in reply.tour],
+        autoplay=reply.autoplay,
+    )
