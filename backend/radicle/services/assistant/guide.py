@@ -107,3 +107,8 @@ def search(query: str, lang: str = "en", limit: int = 3) -> list[Section]:
 
 def contents(lang: str = "en") -> list[str]:
     return [s.title for s in sections(lang)]
+
+
+def full_text(lang: str = "en") -> str:
+    """The whole guide, small enough to hand the model in one go."""
+    return "\n\n".join(f"## {s.title}\n{s.body}" for s in sections(lang))

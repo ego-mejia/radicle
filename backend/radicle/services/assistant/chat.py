@@ -1,5 +1,6 @@
 """Radi's answers: the configured LLM grounded on the usage guide, or the guide alone."""
 
+import re
 from dataclasses import dataclass, field
 from typing import Literal
 
@@ -10,22 +11,22 @@ from radicle.services.assistant import config, guide, llm, tours
 Language = Literal["en", "es"]
 LANGUAGE_NAMES = {"en": "English", "es": "Spanish"}
 SYSTEM = """You are Radi, the small green helper inside Radicle, an open source ticket tracker \
-for people and AI agents. Answer only questions about using Radicle, using the guide \
-excerpts below. If they do not cover the question, say you are not sure and point to the \
-closest section. Never invent features, buttons or settings.
-Reply in {language}. Be brief and friendly: a few short sentences or a short numbered list. \
+for people and AI agents. Answer only questions about using Radicle, from the usage guide \
+below: it is complete, so if it does not mention a feature, Radicle does not have it. Say so \
+plainly and offer the closest thing the guide does describe (for example, projects cannot be \
+deleted but can be archived). Never invent features, buttons or settings.
+Reply in the language of the user's last message ({language} when unsure), in your text and \
+in every tour step. Be brief and friendly: a few short sentences or a short numbered list. \
 Write button and menu names in **bold**.
 
-Guide sections: {toc}
-
-Relevant excerpts:
-{excerpts}
+Usage guide:
+{guide}
 
 Whenever the user asks how to do something in Radicle ("how do I...", "where is...", \
-"cómo...", "dónde..."), you must also call show_me: open the right page or dialog with \
-click steps, then point at each part they need and explain it. The app may be in Spanish, \
-so describe buttons by what they do instead of quoting English labels; the tour highlights \
-them. Use only these targets:
+"show me...", "cómo...", "dónde...", "muéstrame..."), you must also call show_me: open the \
+right page or dialog with click steps, then point at each part they need and explain it. \
+Still answer in text too. The app may be in another language, so describe buttons by what \
+they do instead of quoting their labels; the tour highlights them. Use only these targets:
 {targets}"""
 NOT_FOUND = {
     "en": "I could not find that in the guide. Try other words, like *create a project* or "
@@ -73,6 +74,8 @@ def from_guide(question: str, lang: Language) -> Reply:
 
 
 LET_ME_SHOW = {"en": "Let me show you.", "es": "Te muestro."}
+SPANISH = re.compile(r"[¿¡ñáéíóú]|\b(como|que|donde|muestrame|quiero|puedo|hago|creo)\b", re.I)
+HOW_TO = re.compile(r"\b(how|where|show|c[oó]mo|d[oó]nde|mu[eé]str|ens[eé][nñ])", re.IGNORECASE)
 
 
 async def answer(
@@ -87,10 +90,7 @@ async def answer(
     # so short follow-ups ("and for bugs?") keep their context.
     hits = guide.search(" ".join(asked[-2:]), lang, limit=4)
     system = SYSTEM.format(
-        language=LANGUAGE_NAMES[lang],
-        toc=", ".join(guide.contents(lang)),
-        excerpts="\n\n".join(f"## {s.title}\n{s.body}" for s in hits) or "(none matched)",
-        targets=tours.catalog(),
+        language=LANGUAGE_NAMES[lang], guide=guide.full_text(lang), targets=tours.catalog()
     )
     try:
         done = await llm.converse(cfg, system, messages[-12:], tours.SHOW_ME)
@@ -100,9 +100,11 @@ async def answer(
         reply.notice = exc.detail if admin else UNAVAILABLE[lang]
         return reply
     steps = tours.clean((done.tool_input or {}).get("steps"))
-    text = done.text or (LET_ME_SHOW[lang] if steps else "")
+    # Models often call the tool without a word; greet in the language the user wrote in.
+    asked_in: Language = "es" if SPANISH.search(question) else lang
+    text = done.text or (LET_ME_SHOW[asked_in] if steps else "")
     if steps:
         return Reply(text, "llm", [s.title for s in hits], tour=steps, autoplay=True)
-    # The model did not offer a walkthrough: offer the guide's, if the topic has one.
-    fallback = tours.guide_tour(hits[0].key, lang) if hits else []
+    # The model did not offer a walkthrough: offer the guide's when a how-to was asked.
+    fallback = tours.guide_tour(hits[0].key, lang) if hits and HOW_TO.search(question) else []
     return Reply(text, "llm", [s.title for s in hits], tour=fallback)
