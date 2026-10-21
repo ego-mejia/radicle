@@ -7,6 +7,23 @@ export const Block = styled.div<{ $selected: boolean }>`
   outline-offset: 2px;
 `;
 
+export const Edit = styled.button`
+  position: absolute;
+  top: ${({ theme }) => theme.space.xs};
+  right: ${({ theme }) => theme.space.xs};
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.space.xs};
+  padding: 2px ${({ theme }) => theme.space.sm};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.sm};
+  background: ${({ theme }) => theme.color.surface};
+  color: ${({ theme }) => theme.color.text};
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  cursor: pointer;
+`;
+
 export const Missing = styled.p`
   margin: 0;
   padding: ${({ theme }) => theme.space.lg};

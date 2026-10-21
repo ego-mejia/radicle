@@ -1893,6 +1893,23 @@
         "data": "Dale a la gráfica una tabla de números.",
         "items": "Agrega al menos un hito.",
         "label": "Elige el label cuyas páginas lista."
+      },
+      "panel": {
+        "edit": "Editar",
+        "close": "Cerrar",
+        "title": "Título",
+        "format": "Formato",
+        "description": "Descripción",
+        "descriptionHint": "Qué muestra: es el texto alternativo y lo que lee la búsqueda. Obligatoria.",
+        "code": "Código",
+        "preview": "Vista previa",
+        "previewMode": "Modo de la vista previa",
+        "light": "Claro",
+        "dark": "Oscuro",
+        "size": "{{size}} KB de {{limit}} KB",
+        "problems": "Lo que el sandbox bloquearía",
+        "warnings": "Sugerencias",
+        "sandboxOk": "Nada aquí necesita la red ni la página: funciona en el sandbox."
       }
     },
     "publish": {

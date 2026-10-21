@@ -1893,6 +1893,23 @@
         "data": "Give the chart a table of numbers.",
         "items": "Add at least one milestone.",
         "label": "Choose the label whose pages it lists."
+      },
+      "panel": {
+        "edit": "Edit",
+        "close": "Close",
+        "title": "Title",
+        "format": "Format",
+        "description": "Description",
+        "descriptionHint": "What it shows: the alt text and what search reads. Required.",
+        "code": "Code",
+        "preview": "Preview",
+        "previewMode": "Preview mode",
+        "light": "Light",
+        "dark": "Dark",
+        "size": "{{size}} KB of {{limit}} KB",
+        "problems": "What the sandbox would block",
+        "warnings": "Suggestions",
+        "sandboxOk": "Nothing here needs the network or the page: it works in the sandbox."
       }
     },
     "publish": {

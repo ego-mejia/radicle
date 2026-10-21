@@ -14,6 +14,8 @@ export type FolioNodeIn = S['NodeIn'];
 export type FolioMoveIn = S['NodeMoveIn'];
 export type FolioTemplate = S['FolioTemplateOut'];
 export type FolioLinkPreview = S['LinkPreviewOut'];
+export type FolioVisualCheck = S['VisualCheckOut'];
+export type FolioVisualCheckIn = S['VisualCheckIn'];
 export type FolioListedPage = S['ListedPageOut'];
 export type FolioTemplateIn = S['FolioTemplateIn'];
 export type FolioTemplatePatch = S['FolioTemplatePatch'];
@@ -482,4 +484,9 @@ export async function fetchPageList(q: PageListQuery): Promise<FolioListedPage[]
     order: q.order ?? undefined,
   };
   return unwrap(await api.GET('/api/v1/folio/page-list', { params: { query } })).items;
+}
+
+/** What the sandbox would block in a visual and how to make it follow the theme. */
+export async function checkVisual(body: FolioVisualCheckIn): Promise<FolioVisualCheck> {
+  return unwrap(await api.POST('/api/v1/folio/visuals/check', { body }));
 }

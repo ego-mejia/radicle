@@ -24,7 +24,7 @@ describe('SuiteNodeView', () => {
     renderWithProviders(
       <Editor content={{ type: 'doc', content: [visual('Un círculo'), visual('')] }} />,
     );
-    expect(await screen.findByTitle('Raíz')).toHaveAttribute('sandbox', 'allow-scripts');
+    expect((await screen.findAllByTitle('Raíz'))[0]).toHaveAttribute('sandbox', 'allow-scripts');
     expect(screen.getByText(/without a description it isn't saved/)).toBeInTheDocument();
   });
 
