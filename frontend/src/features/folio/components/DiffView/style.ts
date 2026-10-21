@@ -74,3 +74,15 @@ export const Muted = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.color.textMuted};
 `;
+
+/** A block as the reader sees it, without the page's outer spacing. */
+export const Rendered = styled.div`
+  flex: 1;
+  min-width: 0;
+  > * > *:first-child {
+    margin-top: 0;
+  }
+  > * > *:last-child {
+    margin-bottom: 0;
+  }
+`;

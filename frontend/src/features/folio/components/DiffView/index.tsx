@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import type { FolioDiff } from '../../../../services/api/folio';
-import { blockText, valueText } from './text';
+import { DocContent } from '../DocContent';
+import type { DocNode } from '../DocContent/anchors';
+import { valueText } from './text';
 import * as S from './style';
 
 const SIGN = { equal: '', added: '+', removed: '−' } as const;
@@ -49,7 +51,9 @@ export function DiffView({ diff }: Props) {
             aria-label={b.op === 'equal' ? undefined : t(`folio.history.ops.${b.op}`)}
           >
             <S.Sign aria-hidden>{SIGN[b.op]}</S.Sign>
-            <span>{blockText(b.block)}</span>
+            <S.Rendered>
+              <DocContent doc={{ type: 'doc', content: [b.block as DocNode] }} />
+            </S.Rendered>
           </S.Block>
         ))}
       </S.Section>
