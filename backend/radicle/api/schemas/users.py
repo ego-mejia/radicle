@@ -5,7 +5,7 @@ from pydantic import ConfigDict, EmailStr, Field
 
 from radicle.api.schemas.common import Input, Output, UtcDatetime
 from radicle.db.models import ProjectRole, UserKind
-from radicle.services.auth import IssuedToken
+from radicle.platform.services.auth import IssuedToken
 
 # --- system -------------------------------------------------------------------------------
 

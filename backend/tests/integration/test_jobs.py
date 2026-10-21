@@ -5,7 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.db.models import Job, User
-from radicle.services import jobs, queue
+from radicle.platform.services import jobs, queue
 from tests.conftest import Team, run_jobs
 
 CALLS: list[dict] = []

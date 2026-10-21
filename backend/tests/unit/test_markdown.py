@@ -1,6 +1,6 @@
 import pytest
 
-from radicle.services.markdown import extract_mentions, parse_checklist, set_checklist_item
+from radicle.platform.services.markdown import extract_mentions, parse_checklist, set_checklist_item
 
 SAMPLE = """Integrar cobro.
 

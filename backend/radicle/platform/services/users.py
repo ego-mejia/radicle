@@ -7,11 +7,15 @@ from sqlalchemy import func, select, text, tuple_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core import mcp_tools, security
-from radicle.core.errors import Conflict, NotFound, ValidationFailed
-from radicle.db.models import User, UserKind
-from radicle.services import auth
-from radicle.services.validation import check_password, normalize_display_name, normalize_handle
+from radicle.platform import mcp_tools, security
+from radicle.platform.db.models import User, UserKind
+from radicle.platform.errors import Conflict, NotFound, ValidationFailed
+from radicle.platform.services import auth
+from radicle.platform.services.validation import (
+    check_password,
+    normalize_display_name,
+    normalize_handle,
+)
 
 # Serialises concurrent POST /setup calls so only one admin is ever created.
 _SETUP_LOCK_KEY = 0x5AD1C1E

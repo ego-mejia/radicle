@@ -4,8 +4,8 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import User, UserPreferences
+from radicle.platform.errors import ValidationFailed
 
 DEFAULTS: dict[str, Any] = {
     "theme": "system",

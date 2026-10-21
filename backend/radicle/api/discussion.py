@@ -14,8 +14,8 @@ from radicle.api.schemas.tickets import (
     ReactionOut,
 )
 from radicle.api.ticket_views import ctx_ref, user_ref
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import Comment, LinkType, ProjectRole
+from radicle.platform.errors import ValidationFailed
 from radicle.services import comments, relations, tickets
 
 router = APIRouter(tags=["links and comments"])

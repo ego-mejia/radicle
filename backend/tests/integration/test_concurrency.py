@@ -8,8 +8,8 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
 from radicle.api.ratelimit import login_limiter
-from radicle.core.config import get_settings
-from radicle.db import session as db_session
+from radicle.platform.config import get_settings
+from radicle.platform.db import session as db_session
 from tests.conftest import run_alembic
 
 

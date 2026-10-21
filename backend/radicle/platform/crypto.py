@@ -7,7 +7,7 @@ import os
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-from radicle.core.config import get_settings
+from radicle.platform.config import get_settings
 
 PREFIX = "v1:"
 

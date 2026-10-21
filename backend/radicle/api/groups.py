@@ -15,7 +15,8 @@ from radicle.api.schemas.groups import (
 )
 from radicle.api.ticket_views import user_ref
 from radicle.db.models import Group, Project, ProjectRole
-from radicle.services import audit, groups, permission_matrix, project_groups
+from radicle.platform.services import audit, groups
+from radicle.services import permission_matrix, project_groups
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["groups and permissions"])

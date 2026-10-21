@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Protocol
 from urllib.parse import quote
 
-from radicle.core.config import Settings, get_settings
+from radicle.platform.config import Settings, get_settings
 
 PRESIGN_SECONDS = 300
 

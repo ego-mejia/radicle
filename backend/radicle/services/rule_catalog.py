@@ -8,8 +8,8 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import ProjectRole, RuleKind, UserKind
+from radicle.platform.errors import ValidationFailed
 
 # Fixed fields that rules can require, set or clear. Custom fields go as cf.<key>.
 RULE_FIELDS = (

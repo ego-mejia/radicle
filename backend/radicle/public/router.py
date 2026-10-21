@@ -11,7 +11,7 @@ from starlette.datastructures import UploadFile
 
 from radicle.api.deps import Db
 from radicle.api.ratelimit import SlidingWindowLimiter
-from radicle.core.errors import NotFound, RateLimited
+from radicle.platform.errors import NotFound, RateLimited
 from radicle.public.texts import TEXTS, pick_language
 from radicle.services import altcha, public_form
 

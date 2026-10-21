@@ -9,7 +9,6 @@ from typing import Any
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, NotFound, ValidationFailed
 from radicle.core.permissions import can_see, visible_tickets_clause
 from radicle.db.models import (
     Area,
@@ -29,7 +28,9 @@ from radicle.db.models import (
     User,
     utcnow,
 )
-from radicle.services import custom_fields, history, markdown, periods, rank, screens
+from radicle.platform.errors import Conflict, NotFound, ValidationFailed
+from radicle.platform.services import markdown
+from radicle.services import custom_fields, history, periods, rank, screens
 from radicle.services import ticket_fields as fields
 from radicle.services.access import ProjectAccess, check_access, project_access
 from radicle.services.remaining import estimate_changed

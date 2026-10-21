@@ -6,7 +6,6 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, ValidationFailed
 from radicle.db.models import (
     Area,
     BlockedPolicy,
@@ -20,6 +19,7 @@ from radicle.db.models import (
     TransitionRule,
     utcnow,
 )
+from radicle.platform.errors import Conflict, ValidationFailed
 from radicle.services import (
     comments,
     history,

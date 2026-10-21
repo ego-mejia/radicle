@@ -2,7 +2,7 @@
 
 import re
 
-from radicle.core.errors import ValidationFailed
+from radicle.platform.errors import ValidationFailed
 
 HANDLE_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{1,31}$")
 PASSWORD_MIN = 8

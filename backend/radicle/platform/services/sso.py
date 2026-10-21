@@ -21,10 +21,9 @@ from joserfc.jwk import KeySet
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core import crypto
-from radicle.core.config import get_settings
-from radicle.core.errors import Forbidden, NotFound, Unauthorized, ValidationFailed
-from radicle.db.models import (
+from radicle.platform import crypto
+from radicle.platform.config import get_settings
+from radicle.platform.db.models import (
     Group,
     GroupMember,
     InstanceSetting,
@@ -33,7 +32,8 @@ from radicle.db.models import (
     UserKind,
     utcnow,
 )
-from radicle.services.validation import HANDLE_RE
+from radicle.platform.errors import Forbidden, NotFound, Unauthorized, ValidationFailed
+from radicle.platform.services.validation import HANDLE_RE
 
 STATE_SECONDS = 600
 DISCOVERY_SECONDS = 600

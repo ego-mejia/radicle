@@ -6,7 +6,8 @@ from radicle.api.schemas.common import Input, Output
 from radicle.api.schemas.tickets import TicketOut, TicketSummary
 from radicle.api.ticket_views import summaries_out, ticket_out
 from radicle.db.models import Classification, Origin, Priority, ProjectRole, TicketType
-from radicle.services import audit, inbox, public_form, tickets
+from radicle.platform.services import audit
+from radicle.services import inbox, public_form, tickets
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["inbox"])

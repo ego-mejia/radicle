@@ -4,7 +4,7 @@ import argparse
 import asyncio
 import logging
 
-from radicle.core.config import get_settings
+from radicle.platform.config import get_settings
 
 
 def _worker(concurrency: int) -> None:
@@ -22,7 +22,7 @@ def _worker(concurrency: int) -> None:
 def _backfill(command: str, start: str | None) -> None:
     from datetime import date
 
-    from radicle.db.session import dispose_engine, get_sessionmaker
+    from radicle.platform.db.session import dispose_engine, get_sessionmaker
     from radicle.services import periods
 
     async def run() -> None:

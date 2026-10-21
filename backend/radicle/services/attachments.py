@@ -9,8 +9,6 @@ from dataclasses import dataclass
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.config import get_settings
-from radicle.core.errors import Conflict, NotFound, ProblemError, ValidationFailed
 from radicle.core.permissions import can_see
 from radicle.db.models import (
     Attachment,
@@ -22,10 +20,13 @@ from radicle.db.models import (
     User,
     utcnow,
 )
-from radicle.services import history, images, queue
+from radicle.platform.config import get_settings
+from radicle.platform.errors import Conflict, NotFound, ProblemError, ValidationFailed
+from radicle.platform.services import images, queue
+from radicle.platform.storage import get_storage
+from radicle.services import history
 from radicle.services.access import ProjectAccess, access_for
 from radicle.services.tickets import bump
-from radicle.storage import get_storage
 
 VARIANTS_JOB = "attachment_variants"
 URL_SECONDS = 300

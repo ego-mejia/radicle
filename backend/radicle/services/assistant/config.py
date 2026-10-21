@@ -6,10 +6,10 @@ from typing import Any, Literal
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core import crypto
-from radicle.core.config import get_settings
-from radicle.core.errors import Conflict, ValidationFailed
-from radicle.services.sso import get_setting, set_setting
+from radicle.platform import crypto
+from radicle.platform.config import get_settings
+from radicle.platform.errors import Conflict, ValidationFailed
+from radicle.platform.services.sso import get_setting, set_setting
 
 Provider = Literal["none", "anthropic", "openai"]
 PROVIDERS: tuple[Provider, ...] = ("none", "anthropic", "openai")

@@ -10,9 +10,9 @@ from datetime import date, datetime, timedelta
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Forbidden, ValidationFailed
 from radicle.core.permissions import admin_project_ids
 from radicle.db.models import AuditEntry, Project, User
+from radicle.platform.errors import Forbidden, ValidationFailed
 
 PAGE = 50
 

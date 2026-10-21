@@ -7,7 +7,7 @@ from typing import Annotated
 
 from fastapi import Query
 
-from radicle.core.errors import ValidationFailed
+from radicle.platform.errors import ValidationFailed
 
 DEFAULT_LIMIT = 50
 MAX_LIMIT = 200

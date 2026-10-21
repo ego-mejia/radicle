@@ -7,7 +7,6 @@ from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import aliased
 
-from radicle.core.errors import Conflict, NotFound, ValidationFailed
 from radicle.core.permissions import can_see, visible_tickets_clause
 from radicle.db.models import (
     LINK_LABELS,
@@ -22,6 +21,7 @@ from radicle.db.models import (
     TicketType,
     User,
 )
+from radicle.platform.errors import Conflict, NotFound, ValidationFailed
 from radicle.services import history
 from radicle.services.access import ProjectAccess, access_for
 from radicle.services.tickets import bump, load_ticket

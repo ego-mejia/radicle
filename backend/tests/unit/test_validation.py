@@ -1,7 +1,7 @@
 import pytest
 
-from radicle.core.errors import ValidationFailed
-from radicle.services import validation
+from radicle.platform.errors import ValidationFailed
+from radicle.platform.services import validation
 
 
 @pytest.mark.parametrize(

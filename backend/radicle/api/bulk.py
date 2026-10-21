@@ -8,7 +8,8 @@ from radicle.api.jobs import JobOut, job_out
 from radicle.api.schemas.common import Input, Output
 from radicle.api.schemas.tickets import TicketOut
 from radicle.api.ticket_views import ticket_out
-from radicle.services import audit, bulk, moving, tickets
+from radicle.platform.services import audit
+from radicle.services import bulk, moving, tickets
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["clone, move and bulk"])

@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 import httpx
 
-from radicle.core.errors import ProblemError
+from radicle.platform.errors import ProblemError
 from radicle.services.assistant.config import DEFAULT_BASE_URL, AssistantConfig
 
 # Tests swap this for an httpx.MockTransport.

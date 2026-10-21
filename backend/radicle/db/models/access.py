@@ -5,8 +5,8 @@ from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Index, Te
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from radicle.db.models.base import Base, utcnow
 from radicle.db.models.projects import ProjectRole, project_role_enum
+from radicle.platform.db.models.base import Base, utcnow
 
 
 class ProjectGroupRole(Base):

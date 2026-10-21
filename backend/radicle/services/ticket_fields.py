@@ -8,7 +8,6 @@ from decimal import Decimal, InvalidOperation
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import NotFound, ValidationFailed
 from radicle.db.models import (
     Area,
     Milestone,
@@ -20,6 +19,7 @@ from radicle.db.models import (
     TicketType,
     User,
 )
+from radicle.platform.errors import NotFound, ValidationFailed
 from radicle.services.access import ROLE_RANK
 
 TITLE_MAX = 255

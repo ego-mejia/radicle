@@ -10,9 +10,9 @@ from typing import Any
 from sqlalchemy import and_, delete, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.config import get_settings
-from radicle.db.models import AuditEntry, User, utcnow
-from radicle.services import queue
+from radicle.platform.config import get_settings
+from radicle.platform.db.models import AuditEntry, User, utcnow
+from radicle.platform.services import queue
 
 ACTIONS = (
     "user.create",

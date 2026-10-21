@@ -15,7 +15,6 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Forbidden, NotFound, ValidationFailed
 from radicle.core.permissions import can_see
 from radicle.db.models import (
     EventType,
@@ -27,6 +26,7 @@ from radicle.db.models import (
     Worklog,
     utcnow,
 )
+from radicle.platform.errors import Forbidden, NotFound, ValidationFailed
 from radicle.services import history
 from radicle.services.access import ProjectAccess, access_for
 from radicle.services.remaining import recompute_remaining

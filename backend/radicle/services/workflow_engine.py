@@ -10,8 +10,8 @@
 
 from dataclasses import dataclass
 
-from radicle.core.errors import Conflict, ValidationFailed
 from radicle.db.models import Resolution, Status, StatusCategory, Transition
+from radicle.platform.errors import Conflict, ValidationFailed
 from radicle.services.workflows import Workflow
 
 ALL_RESOLUTIONS: tuple[Resolution, ...] = tuple(Resolution)

@@ -9,7 +9,6 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import case, delete, func, insert, literal, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.config import get_settings
 from radicle.db.models import (
     DailyStatusCount,
     Project,
@@ -21,7 +20,9 @@ from radicle.db.models import (
     TicketStatusPeriod,
     utcnow,
 )
-from radicle.services import period_builder, queue
+from radicle.platform.config import get_settings
+from radicle.platform.services import queue
+from radicle.services import period_builder
 
 ZERO = uuid.UUID(int=0)
 SNAPSHOT_JOB = "daily_snapshot"

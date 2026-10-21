@@ -9,8 +9,8 @@ from radicle.api.schemas.screens import (
     ScreenOut,
     ScreensPut,
 )
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import ScreenOperation, TicketType, Transition
+from radicle.platform.errors import ValidationFailed
 from radicle.services import screens, templates
 from radicle.services.access import project_access
 from radicle.services.workflows import load_workflows

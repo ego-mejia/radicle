@@ -8,7 +8,6 @@ from sqlalchemy import case, func, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import (
     Classification,
     EventType,
@@ -25,6 +24,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
+from radicle.platform.errors import ValidationFailed
 from radicle.services import history, relations, search, tickets, transitions
 from radicle.services.access import ProjectAccess
 from radicle.services.workflows import load_workflows

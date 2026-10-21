@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, Forbidden, ValidationFailed
 from radicle.db.models import (
     Group,
     Project,
@@ -19,7 +18,8 @@ from radicle.db.models import (
     UserKind,
     utcnow,
 )
-from radicle.services import users as users_service
+from radicle.platform.errors import Conflict, Forbidden, ValidationFailed
+from radicle.platform.services import users as users_service
 from radicle.services.access import ProjectAccess
 
 KEY_RE = re.compile(r"^[A-Z][A-Z0-9]{1,9}$")

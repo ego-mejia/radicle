@@ -24,7 +24,8 @@ from radicle.api.schemas.templates import (
 )
 from radicle.api.templates import template_detail
 from radicle.db.models import ProjectRole, TicketType, utcnow
-from radicle.services import audit, projects, stats, templates
+from radicle.platform.services import audit
+from radicle.services import projects, stats, templates
 from radicle.services.access import project_access
 from radicle.services.workflows import load_workflows
 

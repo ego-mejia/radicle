@@ -17,9 +17,9 @@ from radicle.api.schemas.users import (
     UserPatch,
 )
 from radicle.core import mcp_catalog
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import User, UserKind
-from radicle.services import audit, auth, users
+from radicle.platform.errors import ValidationFailed
+from radicle.platform.services import audit, auth, users
 
 router = APIRouter(tags=["users"])
 

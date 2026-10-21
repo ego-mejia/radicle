@@ -8,9 +8,9 @@ from sqlalchemy import select
 
 from radicle.api.deps import AppSettings, Db, InstanceAdmin, set_session_cookies
 from radicle.api.schemas.common import Input, Output, Page
-from radicle.core.errors import ProblemError, Unauthorized
 from radicle.db.models import Group, SsoProvider, User
-from radicle.services import audit, auth, sso
+from radicle.platform.errors import ProblemError, Unauthorized
+from radicle.platform.services import audit, auth, sso
 
 router = APIRouter(tags=["sso"])
 STATE_COOKIE = "radicle_sso"
