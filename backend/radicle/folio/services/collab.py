@@ -24,7 +24,7 @@ from typing import Any
 import pycrdt
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioNode
+from radicle.folio.db.models import FolioNode, NodeKind
 from radicle.folio.services import ystore
 from radicle.platform.db.models import User, UserKind
 from radicle.platform.db.session import get_sessionmaker
@@ -35,6 +35,7 @@ log = logging.getLogger("radicle.folio.collab")
 MAX_PEERS = 50
 SAVE_EVERY = 5.0  # seconds between draft JSON refreshes
 COMPACT_EVERY = 30.0
+SNAPSHOT_EVERY = 600.0  # live docs: a snapshot every 10 minutes with changes
 AWARENESS_PER_SECOND = 30
 AGENT_LABEL_SECONDS = 10.0
 # Readable on light and dark backgrounds alike.
@@ -84,9 +85,11 @@ class Peer:
 
 
 class Room:
-    def __init__(self, node_id: uuid.UUID, doc: pycrdt.Doc[Any]) -> None:
+    def __init__(self, node_id: uuid.UUID, doc: pycrdt.Doc[Any], *, live: bool = False) -> None:
         self.node_id = node_id
         self.doc = doc
+        self.live = live
+        self._last_snapshot = time.monotonic()
         self.awareness = pycrdt.Awareness(doc)
         self.peers: list[Peer] = []
         self.authors: set[uuid.UUID] = set()  # who changed it since the last snapshot
@@ -231,6 +234,8 @@ class Room:
                 await asyncio.sleep(SAVE_EVERY)
                 due = time.monotonic() - self._last_compact >= COMPACT_EVERY
                 await self.save(compact=due)
+                if self.live and time.monotonic() - self._last_snapshot >= SNAPSHOT_EVERY:
+                    await self.snapshot()
         except asyncio.CancelledError:
             pass
         except Exception:
@@ -244,7 +249,21 @@ class Room:
             self._task = None
         self._dirty = True
         await self.save(compact=True)
+        if self.live:
+            await self.snapshot()
         self.doc.unobserve(self._subscription)
+
+    async def snapshot(self) -> None:
+        """A live doc's history entry, when someone changed it since the last one."""
+        from radicle.folio.services import livedocs, ydoc  # livedocs uses this module
+
+        self._last_snapshot = time.monotonic()
+        async with self.lock:
+            if not self.authors:
+                return
+            authors, self.authors = set(self.authors), set()
+            async with sessions() as db:
+                await livedocs.snapshot(db, self.node_id, ydoc.to_json(self.doc), authors)
 
 
 class Rooms:
@@ -261,7 +280,8 @@ class Rooms:
         async with self._lock:
             room = self._rooms.get(node.id)
             if room is None:
-                room = Room(node.id, await ystore.load(db, node))
+                live = node.kind == NodeKind.live_doc
+                room = Room(node.id, await ystore.load(db, node), live=live)
                 self._rooms[node.id] = room
             return room
 
@@ -279,6 +299,12 @@ class Rooms:
 
 
 rooms = Rooms()
+
+
+async def current(db: AsyncSession, node: FolioNode) -> pycrdt.Doc[Any]:
+    """The live document: the open room's, or the stored one."""
+    room = rooms.get(node.id)
+    return room.doc if room is not None else await ystore.load(db, node)
 
 
 async def flush(node: FolioNode) -> None:

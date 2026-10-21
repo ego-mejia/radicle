@@ -109,6 +109,12 @@ async def publish(
             "will publish it.",
             code="agents_need_approval",
         )
+    if node.kind == NodeKind.live_doc:
+        raise ValidationFailed(
+            "Live docs are never published: everyone who can see them reads them as they are "
+            "written, and their history is in the snapshots.",
+            errors=[{"field": "node", "message": "live doc"}],
+        )
     if node.kind == NodeKind.folder:
         raise ValidationFailed(
             "Folders aren't published; publish their pages.",

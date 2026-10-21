@@ -7,7 +7,7 @@ from typing import Any, Literal
 from fastapi import APIRouter, Query, Response
 from pydantic import Field
 
-from radicle.folio.db.models import FolioNode, FolioSpace, NodeKind, SpacePermission
+from radicle.folio.db.models import FolioDraft, FolioNode, FolioSpace, NodeKind, SpacePermission
 from radicle.folio.services import access, copying, nodes, publishing, social, spaces
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
@@ -16,7 +16,7 @@ from radicle.platform.db.models import User
 
 router = APIRouter(tags=["folio"])
 
-Kind = Literal["page", "folder", "blog_post"]
+Kind = Literal["page", "folder", "blog_post", "live_doc"]
 
 
 class SpaceOut(Output):
@@ -124,6 +124,14 @@ def _tree(level: list[nodes.TreeNode]) -> list[TreeItem]:
     return [TreeItem(**_ref(t.node).model_dump(), children=_tree(t.children)) for t in level]
 
 
+async def _content(db: Db, node: FolioNode, current: Any) -> dict[str, Any] | None:
+    """The published content; for a live doc, what it says right now (Folio 2.5)."""
+    if node.kind == NodeKind.live_doc:
+        draft = await db.get(FolioDraft, node.id)
+        return draft.content_json if draft is not None else None
+    return current.content_json if current is not None else None
+
+
 async def _node(db: Db, user: User, node: FolioNode) -> NodeOut:
     space = await db.get(FolioSpace, node.space_id)
     current = await publishing.current_version(db, node)
@@ -138,7 +146,7 @@ async def _node(db: Db, user: User, node: FolioNode) -> NodeOut:
         breadcrumbs=[_ref(b) for b in await nodes.breadcrumbs(db, node)],
         version=current.number if current else None,
         metadata=current.metadata_ if current else None,
-        content_json=current.content_json if current else None,
+        content_json=await _content(db, node, current),
         verified_until=node.verified_until,
         archived_at=node.archived_at,
         can_edit=await access.may_edit(db, user, node),

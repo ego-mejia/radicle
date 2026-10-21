@@ -13,6 +13,7 @@ from radicle.folio.db.models import (
     FolioSpace,
     FolioSubmission,
     FolioVersion,
+    NodeKind,
     SubmissionStatus,
 )
 from radicle.folio.services import access, nodes, notices, publishing, schema
@@ -30,6 +31,12 @@ async def submit(
 ) -> FolioSubmission:
     """The agent's draft as a pending submission; an earlier pending one is superseded."""
     await access.require_edit(db, agent, node)
+    if node.kind == NodeKind.live_doc:
+        raise _invalid(
+            "node",
+            "Live docs are never published: everyone who can see them reads them as they are "
+            "written, and their history is in the snapshots.",
+        )
     from radicle.folio.services import collab  # collab needs publishing, which needs us
 
     await collab.flush(node)  # send what is on screen right now
