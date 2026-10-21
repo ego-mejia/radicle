@@ -1,6 +1,7 @@
 import { Fragment, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type DocNode, headingsOf } from './anchors';
+import { ActionItem } from './components/ActionItem';
 import { Inline } from './components/Inline';
 import { type ChildPage, RichBlock } from './components/RichBlock';
 import * as S from './style';
@@ -68,6 +69,8 @@ export function DocContent({ doc, childPages = [], size = 'regular' }: Props) {
             ))}
           </S.Tasks>
         );
+      case 'actionItem':
+        return <ActionItem node={n} />;
       case 'blockquote':
         return <S.Quote>{stack(n.content)}</S.Quote>;
       case 'codeBlock':

@@ -25,6 +25,7 @@ const NODE_ATTRS: Record<string, string[]> = {
   listItem: [],
   taskList: [],
   taskItem: ['checked'],
+  actionItem: ['id', 'done', 'assignee', 'due'],
   blockquote: [],
   codeBlock: ['language'],
   horizontalRule: [],
