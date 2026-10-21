@@ -139,6 +139,14 @@ async def every_action(client: AsyncClient, team: Team) -> None:
     hook_id = (await client.post(f"{API}/webhooks", headers=i, json=hook)).json()["id"]
     await client.put(f"{API}/webhooks/{hook_id}", headers=i, json=hook | {"active": False})
     await client.delete(f"{API}/webhooks/{hook_id}", headers=i)
+    slack = {
+        "kind": "slack",
+        "name": "Acme",
+        "credentials": {"bot_token": "xoxb-1", "signing_secret": "s"},
+    }
+    chat_id = (await client.post(f"{API}/integrations", headers=i, json=slack)).json()["id"]
+    await client.put(f"{API}/integrations/{chat_id}", headers=i, json=slack | {"credentials": None})
+    await client.delete(f"{API}/integrations/{chat_id}", headers=i)
     await client.post(
         f"{API}/tickets/bulk",
         headers=team.member.headers,

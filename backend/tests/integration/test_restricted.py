@@ -262,6 +262,9 @@ EXEMPT = {
     "/api/v1/webhooks/events",
     "/api/v1/webhooks/{webhook_id}",
     "/api/v1/webhooks/{webhook_id}/deliveries",
+    # Instance admins only (test_integrations_api.py); never a secret.
+    "/api/v1/integrations",
+    "/api/v1/integrations/{integration_id}",
     "/api/v1/folio/health",
     # Imports, for the target space's admins only: test_folio_imports_api.py.
     "/api/v1/folio/imports",
