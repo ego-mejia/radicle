@@ -15,6 +15,15 @@ Los documentos de Folio se guardan como JSON de TipTap (`backend/radicle/folio/s
 | Archivo | `::file{asset=<id> name="spec.pdf" type=application/pdf size=1024}` |
 | Video | `::video{src="https://…" caption="Demo"}` o `::video{asset=<id>}` |
 | Checklist | `- [ ]` y `- [x]` |
+| Visual (3.3) | Un bloque de código ` ```visual{format=svg title="…" description="…"} ` con el SVG o HTML; `format` es `svg` o `html` y la descripción es obligatoria |
+| Diagrama | ` ```mermaid ` con el código de Mermaid; opcional `{caption="…"}` |
+| Fórmula | ` ```math ` con LaTeX (KaTeX) |
+| Gráfica | ` ```chart{kind=bar title="…"} ` con una tabla GFM: la primera fila nombra las columnas, la primera columna son etiquetas y el resto números (`bar`, `line`, `area`, `pie`) |
+| Timeline | ` ```timeline ` con una línea por hito: `fecha \| título \| texto` (fecha y texto opcionales) |
+| Comparación | `::::compare`, cada lado en `:::side{title="Antes"}` … `:::`, y cierra `::::` (2 o 3 lados) |
+| Lista por label | `::pages{label=onboarding limit=5 space=docs}`: las páginas con ese label que puede ver quien lee |
+
+Un bloque de código con esos nombres que no forma un bloque válido (una gráfica sin filas, un visual sin descripción) se queda como bloque de código.
 | Action item | `::task[texto]{id=ai-1 assignee=ana due=2026-11-01 done=true}` en su propia línea; sin `id`, se genera uno estable. Va a Mis tareas del asignado (fase 2) |
 
 Un contenedor dentro de otro usa un `:` más en su apertura y su cierre (`:::expand` con un `::::panel` adentro), para que se lean bien. Al leer, cada `:::` cierra el contenedor abierto más reciente.

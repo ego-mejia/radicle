@@ -63,5 +63,13 @@ def test_plain_text_for_search() -> None:
     text = convert.to_text(EVERY_BLOCK)
     assert text.startswith("Conecta un agente\nTexto negrita y código con link\n@fernando Listo")
     assert "print('hola')" in text and "Ojo con el token." in text
-    assert text.endswith("Diagrama El flujo\nspec.pdf\nDemo\nFin")
+    assert "Diagrama El flujo\nspec.pdf\nDemo\n" in text
+    # Visual blocks: search reads their description, source, table and items.
+    assert text.endswith(
+        "Raíz Un círculo lima: la semilla de Radicle.\n"
+        "Flujo graph TD\n  A-->B\n"
+        "Tickets por área\nÁrea Abiertos Cerrados\nLegal 3 5\nBackend 7 2.5\n"
+        "2026-11-01 Beta Equipo interno\nLanzamiento\n"
+        "E = mc^2\nAntes\nrápido\nmás rápido\nFin"
+    )
     assert "**" not in text and ":::" not in text
