@@ -2086,6 +2086,39 @@
         "done": "Nothing checked off yet.",
         "all": "No action items are assigned to you."
       }
+    },
+    "comments": {
+      "title": "Comments",
+      "toggle": "Comments ({{count}})",
+      "filter": "Show",
+      "filters": {
+        "open": "Open",
+        "resolved": "Resolved",
+        "orphaned": "Orphaned"
+      },
+      "empty": {
+        "open": "No open comments.",
+        "resolved": "Nothing resolved yet.",
+        "orphaned": "No orphaned comments: every quote is still in the page."
+      },
+      "new": "New comment",
+      "placeholder": "Write a comment, @ to mention",
+      "post": "Comment",
+      "thread": "Comment thread",
+      "reply": "Reply",
+      "replyPlaceholder": "Reply, @ to mention",
+      "resolve": "Resolve",
+      "reopen": "Reopen",
+      "resolvedBy": "Resolved by @{{handle}}",
+      "orphaned": "The text it quoted was deleted",
+      "edit": "Edit comment",
+      "delete": "Delete comment",
+      "edited": "edited",
+      "save": "Save",
+      "cancel": "Cancel",
+      "removed": "Removed user",
+      "comment": "Comment",
+      "commentOn": "Comment on the selected text"
     }
   },
   "notifications": {

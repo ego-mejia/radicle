@@ -20,3 +20,11 @@ if (typeof globalThis.localStorage?.clear !== 'function') {
 
 // jsdom does not implement scrolling; the router calls it on navigation.
 window.scrollTo = () => undefined;
+
+// jsdom has no layout. CodeMirror measures text ranges when the cursor moves; an empty
+// answer lets editors take typed text in tests.
+if (typeof Range.prototype.getClientRects !== 'function') {
+  const empty = Object.assign([] as DOMRect[], { item: () => null }) as unknown as DOMRectList;
+  Range.prototype.getClientRects = () => empty;
+  Range.prototype.getBoundingClientRect = () => new DOMRect(0, 0, 0, 0);
+}
