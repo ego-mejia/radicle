@@ -17,7 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from radicle.folio.db.collab import FolioYDoc, FolioYUpdate
 from radicle.folio.db.models import FolioDraft, FolioNode, NodeKind
 from radicle.folio.services import publishing, schema, whiteboards, ydoc
-from radicle.platform.db.models import utcnow
+from radicle.platform.db.models import User, utcnow
 
 
 async def _seed_content(db: AsyncSession, node: FolioNode) -> dict[str, Any]:
@@ -81,9 +81,12 @@ async def compact(db: AsyncSession, node_id: uuid.UUID, doc: pycrdt.Doc[Any]) ->
     return int(getattr(result, "rowcount", 0) or 0)
 
 
-async def save_json(db: AsyncSession, node: FolioNode, doc: pycrdt.Doc[Any]) -> bool:
+async def save_json(
+    db: AsyncSession, node: FolioNode, doc: pycrdt.Doc[Any], actor: User | None = None
+) -> bool:
     """Keep the draft's JSON in step with the Y.Doc; False if it read as invalid (the
-    draft then keeps its last valid content). A whiteboard keeps its scene instead."""
+    draft then keeps its last valid content). A whiteboard keeps its scene instead.
+    `actor` is who made the change, so they aren't notified of their own assignments."""
     if node.kind == NodeKind.whiteboard:
         await whiteboards.save(db, node, doc)
         return True
@@ -103,5 +106,5 @@ async def save_json(db: AsyncSession, node: FolioNode, doc: pycrdt.Doc[Any]) -> 
     # Here, not at the top: actions changes documents through the room, which uses this.
     from radicle.folio.services import actions
 
-    await actions.sync(db, node, content, None)
+    await actions.sync(db, node, content, actor)
     return True
