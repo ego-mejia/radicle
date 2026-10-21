@@ -57,7 +57,13 @@ export function mockFetch(handlers: Record<string, Handler | { status: number; b
   const fetchMock = async (input: Request) => {
     const url = new URL(input.url);
     const text = input.method === 'GET' ? '' : await input.text();
-    const body = text ? JSON.parse(text) : undefined;
+    // Uploads (multipart) aren't JSON: keep their raw text.
+    let body: unknown = undefined;
+    try {
+      body = text ? JSON.parse(text) : undefined;
+    } catch {
+      body = text;
+    }
     calls.push({ method: input.method, path: url.pathname + url.search, body });
     const handler = handlers[`${input.method} ${url.pathname}`];
     const result = typeof handler === 'function' ? handler(input, body) : handler;
