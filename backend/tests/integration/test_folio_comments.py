@@ -10,9 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioNode
 from radicle.folio.services import comments
-from radicle.platform.db.models import User
+from radicle.platform.db.models import Notification, User
 from radicle.platform.errors import Conflict, Forbidden, ValidationFailed
-from tests.conftest import Team
+from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, publish
 
 MD = "# Agentes\n\nCrea el agente en Admin y conéctalo por MCP con su token.\n\nFin."
@@ -99,6 +99,47 @@ async def test_threads_replies_resolve_and_reopen(
         await comments.create(db, luis, page, body="Una más", thread_id=root.id)
     await comments.reopen(db, luis, root)
     assert root.resolved_at is None and len(await comments.threads(db, luis, page)) == 1
+
+
+async def test_mentions_and_replies_notify_the_right_people(
+    client: AsyncClient, db: AsyncSession, team: Team, page: FolioNode
+) -> None:
+    luis, ana = await _user(db, "luis"), await _user(db, "ana")
+    vera, author = await _user(db, "vera"), await _user(db, team.instance.handle)
+    root = await comments.create(db, luis, page, body="Revisa esto @ana y @vera, por favor")
+    await comments.create(db, ana, page, body="Listo.", thread_id=root.id)
+    await run_jobs(db)
+
+    async def titles(user: User) -> list[str]:
+        rows = await db.scalars(
+            select(Notification.title)
+            .where(Notification.user_id == user.id)
+            .order_by(Notification.created_at)
+        )
+        return list(rows)
+
+    assert await titles(ana) == ["@luis mentioned you on 'Guía'"]  # once, not also as watcher
+    assert await titles(vera) == ["@luis mentioned you on 'Guía'"]
+    assert await titles(luis) == ["@ana replied in a thread on 'Guía'"]  # a participant
+    assert await titles(author) == [  # the author follows the page
+        "@luis commented on 'Guía'",
+        "@ana replied in a thread on 'Guía'",
+    ]
+
+
+async def test_nobody_hears_about_a_page_they_cannot_see(
+    client: AsyncClient, db: AsyncSession, team: Team, page: FolioNode
+) -> None:
+    body = {"view": [{"grantee_type": "user", "grantee": team.instance.handle}]}
+    r = await client.put(
+        f"{API}/nodes/{page.id}/restrictions", headers=team.instance.headers, json=body
+    )
+    assert r.status_code == 200
+    author = await _user(db, team.instance.handle)
+    await comments.create(db, author, page, body="Solo para mí, @luis")
+    await run_jobs(db)
+    luis = await _user(db, "luis")
+    assert await db.scalar(select(Notification).where(Notification.user_id == luis.id)) is None
 
 
 async def test_errors_and_permissions(
