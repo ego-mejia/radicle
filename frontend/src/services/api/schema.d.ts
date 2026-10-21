@@ -3080,6 +3080,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/hooks/chat/{integration_id}/command": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Chat Command
+         * @description Slack slash commands (`/radicle search …`, `/radicle ask …`) and Teams outgoing
+         *     webhooks. The answer uses the permissions of the Radicle user behind the sender.
+         */
+        post: operations["chat_command_api_v1_hooks_chat__integration_id__command_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/integrations": {
         parameters: {
             query?: never;
@@ -3095,6 +3116,26 @@ export interface paths {
          * @description Credentials are stored encrypted and never returned.
          */
         post: operations["create_integration_api_v1_integrations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/integrations/link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Link Chat Account
+         * @description Confirm that you are the Slack or Teams user who got this link from /radicle.
+         */
+        post: operations["link_chat_account_api_v1_integrations_link_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -6217,6 +6258,16 @@ export interface components {
             language?: "en" | "es";
             /** Messages */
             messages: components["schemas"]["ChatMessage"][];
+        };
+        /** ChatLinkIn */
+        ChatLinkIn: {
+            /** Token */
+            token: string;
+        };
+        /** ChatLinkOut */
+        ChatLinkOut: {
+            /** Integration */
+            integration: string;
         };
         /** ChatMessage */
         ChatMessage: {
@@ -18814,6 +18865,39 @@ export interface operations {
             };
         };
     };
+    chat_command_api_v1_hooks_chat__integration_id__command_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                integration_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_integrations_api_v1_integrations_get: {
         parameters: {
             query?: never;
@@ -18854,6 +18938,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["IntegrationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    link_chat_account_api_v1_integrations_link_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatLinkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatLinkOut"];
                 };
             };
             /** @description Validation Error */

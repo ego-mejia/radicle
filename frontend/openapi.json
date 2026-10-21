@@ -3039,6 +3039,35 @@
         "title": "ChatIn",
         "type": "object"
       },
+      "ChatLinkIn": {
+        "additionalProperties": false,
+        "properties": {
+          "token": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Token",
+            "type": "string"
+          }
+        },
+        "required": [
+          "token"
+        ],
+        "title": "ChatLinkIn",
+        "type": "object"
+      },
+      "ChatLinkOut": {
+        "properties": {
+          "integration": {
+            "title": "Integration",
+            "type": "string"
+          }
+        },
+        "required": [
+          "integration"
+        ],
+        "title": "ChatLinkOut",
+        "type": "object"
+      },
       "ChatMessage": {
         "additionalProperties": false,
         "properties": {
@@ -29888,6 +29917,52 @@
         ]
       }
     },
+    "/api/v1/hooks/chat/{integration_id}/command": {
+      "post": {
+        "description": "Slack slash commands (`/radicle search \u2026`, `/radicle ask \u2026`) and Teams outgoing\nwebhooks. The answer uses the permissions of the Radicle user behind the sender.",
+        "operationId": "chat_command_api_v1_hooks_chat__integration_id__command_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "integration_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Integration Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Chat Command Api V1 Hooks Chat  Integration Id  Command Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Command",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
     "/api/v1/integrations": {
       "get": {
         "operationId": "list_integrations_api_v1_integrations_get",
@@ -29948,6 +30023,48 @@
           }
         },
         "summary": "Create Integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/integrations/link": {
+      "post": {
+        "description": "Confirm that you are the Slack or Teams user who got this link from /radicle.",
+        "operationId": "link_chat_account_api_v1_integrations_link_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatLinkIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatLinkOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Link Chat Account",
         "tags": [
           "integrations"
         ]

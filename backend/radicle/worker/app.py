@@ -33,6 +33,7 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.platform.services.email",
     "radicle.platform.services.webhooks",
     "radicle.platform.services.chat_notices",
+    "radicle.platform.services.chat_commands",
     "radicle.folio.services.public_events",
 )
 # Jobs the worker defers on a schedule (cron in UTC).
