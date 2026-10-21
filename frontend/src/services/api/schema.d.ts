@@ -749,6 +749,174 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/me/personal-space": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My Space
+         * @description Your personal space, created the first time you ask for it.
+         */
+        get: operations["my_space_api_v1_folio_me_personal_space_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Node
+         * @description A page or folder (optionally under `parent`) or a blog post.
+         */
+        post: operations["create_node_api_v1_folio_nodes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Node */
+        get: operations["get_node_api_v1_folio_nodes__node_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Node
+         * @description Soft delete; its children go with it.
+         */
+        delete: operations["delete_node_api_v1_folio_nodes__node_id__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Node */
+        patch: operations["patch_node_api_v1_folio_nodes__node_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/move": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Move Node
+         * @description Move within its space; `before` and `after` place it among its new siblings.
+         */
+        post: operations["move_node_api_v1_folio_nodes__node_id__move_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/spaces": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Spaces
+         * @description Team spaces you can see, then your personal space.
+         */
+        get: operations["list_spaces_api_v1_folio_spaces_get"];
+        put?: never;
+        /**
+         * Create Space
+         * @description A team space (Folio creators and admins).
+         */
+        post: operations["create_space_api_v1_folio_spaces_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/spaces/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Space */
+        get: operations["get_space_api_v1_folio_spaces__key__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Space
+         * @description Soft delete: the space and its pages disappear; their history stays.
+         */
+        delete: operations["delete_space_api_v1_folio_spaces__key__delete"];
+        options?: never;
+        head?: never;
+        /** Patch Space */
+        patch: operations["patch_space_api_v1_folio_spaces__key__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/spaces/{key}/posts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Posts
+         * @description Blog posts, newest first.
+         */
+        get: operations["list_posts_api_v1_folio_spaces__key__posts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/spaces/{key}/tree": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Tree
+         * @description Pages and folders as a tree, siblings in order. Blog posts are under /posts.
+         */
+        get: operations["get_tree_api_v1_folio_spaces__key__tree_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/groups": {
         parameters: {
             query?: never;
@@ -4299,29 +4467,6 @@ export interface components {
          * @enum {string}
          */
         MilestoneStatus: "open" | "closed";
-        /** MoveIn */
-        MoveIn: {
-            /** Area Mapping */
-            area_mapping?: {
-                [key: string]: string;
-            };
-            /**
-             * Include Children
-             * @default true
-             */
-            include_children?: boolean;
-            /** Milestone */
-            milestone?: string | null;
-            /**
-             * Status Mapping
-             * @description {"In Review": "QA"}; by name otherwise, else initial
-             */
-            status_mapping?: {
-                [key: string]: string;
-            };
-            /** Target Project */
-            target_project: string;
-        };
         /** NextIn */
         NextIn: {
             /** Area */
@@ -4340,6 +4485,96 @@ export interface components {
         NextOut: {
             /** @description null when nothing is ready to work on */
             ticket: components["schemas"]["TicketOut"] | null;
+        };
+        /** NodeIn */
+        NodeIn: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "page" | "folder" | "blog_post";
+            /**
+             * Parent
+             * @description Page or folder; never for posts
+             */
+            parent?: string | null;
+            /**
+             * Space
+             * @description Space key
+             */
+            space: string;
+            /** Title */
+            title: string;
+        };
+        /** NodeOut */
+        NodeOut: {
+            /**
+             * Breadcrumbs
+             * @description Ancestors from the root down
+             */
+            breadcrumbs: components["schemas"]["NodeRef"][];
+            /** Cover Asset Id */
+            cover_asset_id: string | null;
+            /** Created At */
+            created_at: string;
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "page" | "folder" | "blog_post";
+            /** Parent Id */
+            parent_id: string | null;
+            /** Published At */
+            published_at: string | null;
+            /** Slug */
+            slug: string;
+            /** Space */
+            space: string;
+            /** Title */
+            title: string;
+            /** Updated At */
+            updated_at: string;
+        };
+        /** NodePatch */
+        NodePatch: {
+            /**
+             * Cover Asset Id
+             * @description null removes it
+             */
+            cover_asset_id?: string | null;
+            /**
+             * Icon
+             * @description null removes it
+             */
+            icon?: string | null;
+            /** Title */
+            title?: string | null;
+        };
+        /** NodeRef */
+        NodeRef: {
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "page" | "folder" | "blog_post";
+            /** Slug */
+            slug: string;
+            /** Title */
+            title: string;
         };
         /**
          * Origin
@@ -4444,6 +4679,13 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** Page[NodeRef] */
+        Page_NodeRef_: {
+            /** Items */
+            items: components["schemas"]["NodeRef"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** Page[ProjectOut] */
         Page_ProjectOut_: {
             /** Items */
@@ -4476,6 +4718,13 @@ export interface components {
         Page_SecurityLevelOut_: {
             /** Items */
             items: components["schemas"]["SecurityLevelOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[SpaceOut] */
+        Page_SpaceOut_: {
+            /** Items */
+            items: components["schemas"]["SpaceOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -5138,6 +5387,55 @@ export interface components {
         SetupStatus: {
             /** Needs Setup */
             needs_setup: boolean;
+        };
+        /** SpaceIn */
+        SpaceIn: {
+            /**
+             * Description
+             * @default
+             */
+            description?: string;
+            /** Icon */
+            icon?: string | null;
+            /**
+             * Key
+             * @description 2 to 40 lowercase letters, digits and dashes, e.g. ai-tools
+             */
+            key: string;
+            /** Name */
+            name: string;
+        };
+        /** SpaceOut */
+        SpaceOut: {
+            /** Cover Asset Id */
+            cover_asset_id: string | null;
+            /** Created At */
+            created_at: string;
+            /** Description */
+            description: string;
+            /** Icon */
+            icon: string | null;
+            /** Key */
+            key: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "team" | "personal";
+            /** Name */
+            name: string;
+        };
+        /** SpacePatch */
+        SpacePatch: {
+            /** Description */
+            description?: string | null;
+            /**
+             * Icon
+             * @description null removes it
+             */
+            icon?: string | null;
+            /** Name */
+            name?: string | null;
         };
         /** SprintComplete */
         SprintComplete: {
@@ -6123,6 +6421,27 @@ export interface components {
             /** To Status */
             to_status: string;
         };
+        /** TreeItem */
+        TreeItem: {
+            /** Children */
+            children: components["schemas"]["TreeItem"][];
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "page" | "folder" | "blog_post";
+            /** Slug */
+            slug: string;
+            /** Title */
+            title: string;
+        };
         /** TypeChangeIn */
         TypeChangeIn: {
             /**
@@ -6452,6 +6771,47 @@ export interface components {
             minutes?: number | null;
             /** Started At */
             started_at?: string | null;
+        };
+        /** MoveIn */
+        radicle__docket__api__bulk__MoveIn: {
+            /** Area Mapping */
+            area_mapping?: {
+                [key: string]: string;
+            };
+            /**
+             * Include Children
+             * @default true
+             */
+            include_children?: boolean;
+            /** Milestone */
+            milestone?: string | null;
+            /**
+             * Status Mapping
+             * @description {"In Review": "QA"}; by name otherwise, else initial
+             */
+            status_mapping?: {
+                [key: string]: string;
+            };
+            /** Target Project */
+            target_project: string;
+        };
+        /** MoveIn */
+        radicle__folio__api__spaces__MoveIn: {
+            /**
+             * After
+             * @description Sibling to place it after
+             */
+            after?: string | null;
+            /**
+             * Before
+             * @description Sibling to place it before
+             */
+            before?: string | null;
+            /**
+             * Parent
+             * @description null moves it to the root
+             */
+            parent?: string | null;
         };
     };
     responses: never;
@@ -8143,6 +8503,403 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FolioMeOut"];
+                };
+            };
+        };
+    };
+    my_space_api_v1_folio_me_personal_space_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpaceOut"];
+                };
+            };
+        };
+    };
+    create_node_api_v1_folio_nodes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NodeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_node_api_v1_folio_nodes__node_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_node_api_v1_folio_nodes__node_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_node_api_v1_folio_nodes__node_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NodePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    move_node_api_v1_folio_nodes__node_id__move_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["radicle__folio__api__spaces__MoveIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_spaces_api_v1_folio_spaces_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_SpaceOut_"];
+                };
+            };
+        };
+    };
+    create_space_api_v1_folio_spaces_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SpaceIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpaceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_space_api_v1_folio_spaces__key__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpaceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_space_api_v1_folio_spaces__key__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_space_api_v1_folio_spaces__key__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SpacePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpaceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_posts_api_v1_folio_spaces__key__posts_get: {
+        parameters: {
+            query?: {
+                /** @description Posts older than this */
+                before?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_NodeRef_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_tree_api_v1_folio_spaces__key__tree_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TreeItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -11740,7 +12497,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["MoveIn"];
+                "application/json": components["schemas"]["radicle__docket__api__bulk__MoveIn"];
             };
         };
         responses: {

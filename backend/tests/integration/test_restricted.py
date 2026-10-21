@@ -248,6 +248,13 @@ EXEMPT = {
     "/api/v1/folio/health",
     "/api/v1/folio/me",
     "/api/v1/folio/admin/grants",
+    # Folio content: its own leak test comes with page restrictions (Folio 1.4).
+    "/api/v1/folio/spaces",
+    "/api/v1/folio/me/personal-space",
+    "/api/v1/folio/spaces/{key}",
+    "/api/v1/folio/spaces/{key}/tree",
+    "/api/v1/folio/spaces/{key}/posts",
+    "/api/v1/folio/nodes/{node_id}",
     "/api/v1/mcp/tools",
     "/api/v1/projects/{key}/member-candidates",
     "/api/v1/openapi.json",
