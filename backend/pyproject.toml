@@ -68,7 +68,12 @@ plugins = ["pydantic.mypy"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = ["radicle.platform.services.*", "radicle.docket.services.*", "radicle.docket.query.*"]
+module = [
+    "radicle.platform.services.*",
+    "radicle.docket.services.*",
+    "radicle.docket.query.*",
+    "radicle.folio.services.*",
+]
 strict = true
 
 [tool.pytest.ini_options]
