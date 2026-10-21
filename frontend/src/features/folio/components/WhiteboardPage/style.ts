@@ -69,6 +69,6 @@ export const Title = styled.h1`
 
 export const Board = styled.div`
   position: relative;
-  height: calc(100vh - 220px);
+  height: calc(100vh - 260px);
   min-height: 420px;
 `;
