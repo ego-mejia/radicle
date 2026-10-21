@@ -1,8 +1,8 @@
 import pytest
 
-from radicle.query import ast
-from radicle.query.errors import RQLError
-from radicle.query.parser import parse
+from radicle.docket.query import ast
+from radicle.docket.query.errors import RQLError
+from radicle.docket.query.parser import parse
 
 C = ast.Compare
 

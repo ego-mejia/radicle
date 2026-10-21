@@ -2,7 +2,7 @@
 
 from httpx import AsyncClient
 
-from radicle.core import mcp_catalog
+from radicle.docket.core import mcp_catalog
 from tests.conftest import Team
 from tests.mcp.conftest import McpFor, error_text, payload
 

@@ -8,7 +8,7 @@ from datetime import date, datetime, timedelta
 from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.db.models import (
+from radicle.docket.db.models import (
     Area,
     Classification,
     LinkType,
@@ -29,9 +29,9 @@ from radicle.db.models import (
     UserKind,
     utcnow,
 )
+from radicle.docket.services import periods, rank
+from radicle.docket.services.templates import instantiate
 from radicle.platform import security
-from radicle.services import periods, rank
-from radicle.services.templates import instantiate
 
 AREAS = ["Legal", "Marketing", "Backend", "Frontend", "Mobile", "Data", "Infra", "Design"]
 THINGS = [
@@ -183,10 +183,10 @@ async def seed(
     db.add(project)
     await db.flush()
     await instantiate(db, project, users[0], template_id=None)
-    from radicle.services.boards import create_default_board
+    from radicle.docket.services.boards import create_default_board
 
     await create_default_board(db, project, users[0])
-    from radicle.services.dashboards import create_project_summary
+    from radicle.docket.services.dashboards import create_project_summary
 
     await create_project_summary(db, project)
     for i, user in enumerate(users):

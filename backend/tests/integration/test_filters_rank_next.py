@@ -102,7 +102,7 @@ async def test_saved_filters_and_rql(client: AsyncClient, board: Team) -> None:
 async def test_rank_before_after_and_rebalance(
     client: AsyncClient, db: AsyncSession, board: Team, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    monkeypatch.setattr("radicle.services.ranking.REBALANCE_AT", 6)
+    monkeypatch.setattr("radicle.docket.services.ranking.REBALANCE_AT", 6)
     for i in range(4):
         await new_ticket(client, board.member, title=f"t{i + 1}")
     order = "project = PA ORDER BY rank ASC"

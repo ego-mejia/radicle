@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-from radicle.services import period_builder
+from radicle.docket.services import period_builder
 
 revision: str = "0013"
 down_revision: str | None = "0012"

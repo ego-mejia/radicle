@@ -22,8 +22,8 @@ def _worker(concurrency: int) -> None:
 def _backfill(command: str, start: str | None) -> None:
     from datetime import date
 
+    from radicle.docket.services import periods
     from radicle.platform.db.session import dispose_engine, get_sessionmaker
-    from radicle.services import periods
 
     async def run() -> None:
         async with get_sessionmaker()() as db:

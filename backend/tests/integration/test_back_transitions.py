@@ -4,8 +4,8 @@ card can be dragged back to To Do on the board."""
 import pytest
 from httpx import AsyncClient
 
-from radicle.db.models import TicketType
-from radicle.services.template_config import default_config
+from radicle.docket.db.models import TicketType
+from radicle.docket.services.template_config import default_config
 from tests.conftest import Team, new_ticket
 
 API = "/api/v1"

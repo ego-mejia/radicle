@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import pytest
 from httpx import AsyncClient, Response
 
-from radicle.core.permissions import CATALOG, PERMISSIONS
+from radicle.docket.core.permissions import CATALOG, PERMISSIONS
 from tests.conftest import Actor, Team, bearer_for_new_human, make_project, new_ticket
 from tests.mcp.conftest import McpFor, error_text, payload
 from tests.mcp.conftest import mcp_for as mcp_for  # the fixture

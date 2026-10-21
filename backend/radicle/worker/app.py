@@ -15,11 +15,11 @@ log = logging.getLogger("radicle.worker")
 # Modules that register job handlers with @queue.handler.
 JOB_MODULES: tuple[str, ...] = (
     "radicle.platform.services.jobs",
-    "radicle.services.templates",
-    "radicle.services.attachments",
-    "radicle.services.bulk",
-    "radicle.services.ranking",
-    "radicle.services.periods",
+    "radicle.docket.services.templates",
+    "radicle.docket.services.attachments",
+    "radicle.docket.services.bulk",
+    "radicle.docket.services.ranking",
+    "radicle.docket.services.periods",
     "radicle.platform.services.audit",
 )
 # Jobs the worker defers on a schedule (cron in UTC).

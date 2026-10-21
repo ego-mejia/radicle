@@ -358,7 +358,7 @@ async def test_history_pagination(client: AsyncClient, board: Team) -> None:
 async def test_mentions_are_stored(client: AsyncClient, board: Team, db) -> None:  # type: ignore[no-untyped-def]
     from sqlalchemy import select
 
-    from radicle.db.models import Mention, User
+    from radicle.docket.db.models import Mention, User
 
     await new_ticket(client, board.member, description_md="cc @ana @ghost `@luis` ana@x.com")
     handles = list(

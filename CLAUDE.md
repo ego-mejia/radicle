@@ -4,7 +4,7 @@ Ticket tracker self-hosted con MCP. Antes de programar lee `docs/Radicle Documen
 
 ## Reglas que más se olvidan
 
-- La lógica vive en `services/` (`backend/radicle/services/` y `backend/radicle/platform/services/`, ver ADR 0034). Routers (`api/`) y tools del MCP (`mcp/`) solo validan y llaman servicios.
+- La lógica vive en `services/` (`backend/radicle/platform/services/` y `backend/radicle/docket/services/`, ver ADR 0034; `platform` nunca importa de una app). Routers (`api/`) y tools del MCP (`mcp/`) solo validan y llaman servicios.
 - Errores siempre como `ProblemError` (`platform/errors.py`) con mensaje accionable; salen como RFC 9457.
 - Todo cambio de esquema: migración Alembic con upgrade y downgrade. `tests/integration/test_migrations.py` corre up/down/up y `alembic check`.
 - Cada endpoint: test feliz, de error y de permisos. Tests contra Postgres real (testcontainers).

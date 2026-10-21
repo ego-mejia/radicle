@@ -5,9 +5,9 @@ from httpx import AsyncClient
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.db.models import DailyStatusCount, Ticket, TicketEvent, TicketStatusPeriod
+from radicle.docket.db.models import DailyStatusCount, Ticket, TicketEvent, TicketStatusPeriod
+from radicle.docket.services import period_builder, periods
 from radicle.platform.config import get_settings
-from radicle.services import period_builder, periods
 from tests.conftest import Team, make_project, new_ticket, run_jobs
 
 API = "/api/v1"

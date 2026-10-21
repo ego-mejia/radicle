@@ -5,7 +5,7 @@ from alembic import context
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from radicle.db.models import Base
+from radicle.docket.db.models import Base
 from radicle.platform.config import get_settings
 
 config = context.config

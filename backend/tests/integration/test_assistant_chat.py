@@ -6,8 +6,8 @@ import httpx
 import pytest
 from httpx import AsyncClient
 
-from radicle.api.assistant import chat_limiter
-from radicle.services.assistant import llm
+from radicle.docket.api.assistant import chat_limiter
+from radicle.docket.services.assistant import llm
 from tests.conftest import Team
 
 API = "/api/v1"
