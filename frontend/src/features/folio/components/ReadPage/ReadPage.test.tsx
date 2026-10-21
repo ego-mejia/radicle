@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { mockFetch, renderWithProviders } from '../../../../test/renderWithProviders';
 import { b, doc, p, t } from '../DocContent/testDoc';
 import { ReadPage } from '.';
@@ -68,6 +69,22 @@ function api(node: object = NODE, space: object = SPACE) {
 }
 
 describe('ReadPage', () => {
+  beforeEach(() => localStorage.clear());
+
+  it('switches to focus mode and remembers it for the reader', async () => {
+    api();
+    const { unmount } = renderWithProviders(<ReadPage nodeId="n1" />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Focus mode' }));
+    expect(screen.getByRole('progressbar', { name: 'Reading progress' })).toBeInTheDocument();
+    expect(screen.getByText('how-to · Ingeniería')).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Path' })).toBeNull();
+    unmount();
+
+    renderWithProviders(<ReadPage nodeId="n1" />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Exit focus' }));
+    expect(screen.getByRole('navigation', { name: 'Path' })).toBeInTheDocument();
+  });
+
   it('reads a published page like a magazine', async () => {
     api();
     renderWithProviders(<ReadPage nodeId="n1" />);
