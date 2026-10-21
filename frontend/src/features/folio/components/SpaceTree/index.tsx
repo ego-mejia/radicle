@@ -77,7 +77,7 @@ function Row({ item, depth, current, canMove, closed, toggle }: RowProps) {
         {item.kind === 'folder' ? (
           <S.Label>
             <Icon aria-hidden />
-            {item.title}
+            <S.Text>{item.title}</S.Text>
           </S.Label>
         ) : (
           <S.PageLink>
@@ -87,7 +87,7 @@ function Row({ item, depth, current, canMove, closed, toggle }: RowProps) {
               aria-current={item.id === current ? 'page' : undefined}
             >
               {item.icon ? <span aria-hidden>{item.icon}</span> : <Icon aria-hidden />}
-              {item.title}
+              <S.Text>{item.title}</S.Text>
             </Link>
           </S.PageLink>
         )}

@@ -148,3 +148,11 @@ export const Empty = styled.p`
   font-size: ${({ theme }) => theme.fontSize.md};
   color: ${({ theme }) => theme.color.textMuted};
 `;
+
+/** The title, cut with an ellipsis: text inside a flex row needs its own box for it. */
+export const Text = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
