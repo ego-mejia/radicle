@@ -68,4 +68,21 @@ describe('HomeEditor', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save draft' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('q: Unknown field x');
   });
+
+  it('previews the unsaved layout and opens the history', async () => {
+    const calls = mockFetch({
+      'GET /api/v1/folio/admin/home/draft': { status: 200, body: DRAFT },
+      'POST /api/v1/folio/admin/home/preview': { status: 200, body: { blocks: [] } },
+      'GET /api/v1/folio/admin/home/history': { status: 200, body: { items: [] } },
+    });
+    renderWithProviders(<HomeEditor />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Text' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Preview' }));
+    expect(await screen.findByText('No block has anything to show yet')).toBeInTheDocument();
+    const sent = calls.find((c) => c.path.endsWith('/preview'))?.body as { blocks: unknown[] };
+    expect(sent.blocks).toHaveLength(3);
+    await userEvent.click(screen.getByRole('button', { name: 'History' }));
+    expect(await screen.findByRole('region', { name: 'History' })).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Add a block' })).not.toBeInTheDocument();
+  });
 });
