@@ -12,6 +12,7 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass
 from typing import Any
 
+import anyio
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -262,8 +263,10 @@ async def _answer(
         answer.citations = citations(answer.content, passages)
         answer.input_tokens, answer.output_tokens = usage.input_tokens, usage.output_tokens
         answer.latency_ms = usage.latency_ms
-    db.add(answer)
-    await db.flush()
+    # A reader who leaves as soon as the text is in cancels the request: still save it.
+    with anyio.CancelScope(shield=True):
+        db.add(answer)
+        await db.flush()
     yield Event("done", {"message": message_view(answer)})
 
 

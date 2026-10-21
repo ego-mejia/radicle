@@ -7,6 +7,7 @@ from collections.abc import AsyncIterator
 from datetime import datetime
 from typing import Literal
 
+import anyio
 from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
 from pydantic import Field
@@ -148,13 +149,18 @@ async def ask_in_chat_session(
     events = await chat_service.ask(db, principal.user, session, body.content, filters=filters)
 
     async def body_stream() -> AsyncIterator[str]:
+        # The request's session already committed before the stream started: the answer
+        # and its ai_calls row are only kept if the stream commits them. `done` commits
+        # before it is sent, so a reader who leaves right after still has the answer.
         try:
             async for event in events:
+                if event.name == "done":
+                    with anyio.CancelScope(shield=True):
+                        await db.commit()
                 yield f"event: {event.name}\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
         finally:
-            # The request's session already committed before the stream started: the
-            # answer and its ai_calls row are only kept if this commits them.
-            await db.commit()
+            with anyio.CancelScope(shield=True):
+                await db.commit()
 
     headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
     return StreamingResponse(body_stream(), media_type="text/event-stream", headers=headers)
