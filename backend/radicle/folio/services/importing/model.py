@@ -40,12 +40,12 @@ class Bundle:
     errors: list[str] = field(default_factory=list)  # about the upload as a whole
     _by_path: dict[str, str] = field(default_factory=dict, repr=False)
 
-    def attach(self, path: str, data: bytes) -> str:
+    def attach(self, path: str, data: bytes, name: str | None = None) -> str:
         """The ref for this file, adding it once however many pages use it."""
         if path in self._by_path:
             return self._by_path[path]
         ref = f"a{len(self.attachments) + 1}"
-        self.attachments[ref] = Attachment(ref, path.rsplit("/", 1)[-1], data)
+        self.attachments[ref] = Attachment(ref, name or path.rsplit("/", 1)[-1], data)
         self._by_path[path] = ref
         return ref
 
