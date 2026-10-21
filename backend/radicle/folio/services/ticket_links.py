@@ -13,7 +13,7 @@ from sqlalchemy import delete, select, true
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket import public as docket
+import radicle.docket.public as docket
 from radicle.folio.db.docket_links import FolioTicketLink, TicketLinkKind
 from radicle.folio.db.models import FolioNode, FolioSpace
 from radicle.folio.services import access
