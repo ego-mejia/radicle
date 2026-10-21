@@ -8,6 +8,10 @@ export type Metadata = {
   owner: string;
   audiences: string[];
   language: string;
+  /** Optional links to Docket (Folio 4.4): the doc shows in these milestones and areas. */
+  docket_project: string;
+  docket_milestones: string[];
+  docket_areas: string[];
 };
 
 export type Field = keyof Metadata | 'title';
@@ -57,5 +61,16 @@ export function fromDraft(raw: Record<string, unknown>, owner: string): Metadata
     owner: text(raw.owner).replace(/^@/, '') || owner,
     audiences: list(raw.audiences),
     language: text(raw.language),
+    docket_project: text(raw.docket_project).toUpperCase(),
+    docket_milestones: list(raw.docket_milestones),
+    docket_areas: list(raw.docket_areas),
   };
+}
+
+/** What the draft saves: the Docket links only when set, so docs without them stay as
+ * they were. */
+export function toDraft(m: Metadata): Record<string, unknown> {
+  const { docket_project, docket_milestones, docket_areas, ...rest } = m;
+  if (!docket_project) return rest;
+  return { ...rest, docket_project, docket_milestones, docket_areas };
 }

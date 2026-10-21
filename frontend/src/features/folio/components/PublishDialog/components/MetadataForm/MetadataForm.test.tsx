@@ -26,6 +26,9 @@ const EMPTY: Metadata = {
   owner: 'luis',
   audiences: [],
   language: '',
+  docket_project: '',
+  docket_milestones: [],
+  docket_areas: [],
 };
 
 function Harness({ onChange }: { onChange: (m: Metadata) => void }) {

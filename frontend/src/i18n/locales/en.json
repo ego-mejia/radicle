@@ -1987,6 +1987,16 @@
         "owner": "Write the owner's handle.",
         "audiences": "Choose at least one audience.",
         "language": "Choose a language."
+      },
+      "docket": {
+        "title": "Docket",
+        "optional": "Optional",
+        "summary_one": "{{project}} · {{count}} link",
+        "summary_other": "{{project}} · {{count}} links",
+        "project": "Project",
+        "hint": "Docket lists this doc in the milestones and areas you pick.",
+        "milestones": "Milestones",
+        "areas": "Areas"
       }
     },
     "history": {
