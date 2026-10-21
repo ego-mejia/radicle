@@ -2481,7 +2481,8 @@
         "task": "Task",
         "bug": "Bug",
         "draft": "Draft"
-      }
+      },
+      "createFromItem": "Create a ticket from this action item"
     },
     "chat": {
       "title": "Ask the docs",

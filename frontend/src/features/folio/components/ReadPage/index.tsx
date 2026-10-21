@@ -14,6 +14,7 @@ import { useComments } from '../../hooks/useComments';
 import { useFocusMode } from '../../hooks/useFocusMode';
 import { CommentsPanel } from '../CommentsPanel';
 import { DatabasePage } from '../DatabasePage';
+import { ActionItemTickets } from '../ActionItemTickets';
 import { DocContent } from '../DocContent';
 import { headingsOf, readingMinutes } from '../DocContent/anchors';
 import { FocusReader } from '../FocusReader';
@@ -82,31 +83,33 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
 
   if (focus)
     return (
-      <FocusReader
-        title={n.title}
-        kicker={[meta.doc_type, page.space?.name].filter(Boolean).join(' · ')}
-        description={description}
-        content={page.content}
-        childPages={page.children}
-        onExit={() => setFocus(false)}
-        contentRef={content}
-        margin={
-          <>
-            <GlossaryTooltips container={content} version={[page.content, focus]} />
-            <MarginComments nodeId={n.id} canComment={canComment} />
-            <SelectionComment
-              container={content}
-              mentions={discussion.mentions}
-              onComment={
-                canComment
-                  ? (anchor, body) => discussion.add.mutateAsync({ body, anchor })
-                  : undefined
-              }
-              ticketNode={{ id: n.id }}
-            />
-          </>
-        }
-      />
+      <ActionItemTickets nodeId={n.id} container={content}>
+        <FocusReader
+          title={n.title}
+          kicker={[meta.doc_type, page.space?.name].filter(Boolean).join(' · ')}
+          description={description}
+          content={page.content}
+          childPages={page.children}
+          onExit={() => setFocus(false)}
+          contentRef={content}
+          margin={
+            <>
+              <GlossaryTooltips container={content} version={[page.content, focus]} />
+              <MarginComments nodeId={n.id} canComment={canComment} />
+              <SelectionComment
+                container={content}
+                mentions={discussion.mentions}
+                onComment={
+                  canComment
+                    ? (anchor, body) => discussion.add.mutateAsync({ body, anchor })
+                    : undefined
+                }
+                ticketNode={{ id: n.id }}
+              />
+            </>
+          }
+        />
+      </ActionItemTickets>
     );
 
   return (
@@ -177,7 +180,9 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
           </S.Byline>
           {n.version != null && <PageSocial nodeId={n.id} title={n.title} />}
           <div ref={content}>
-            <DocContent doc={page.content} childPages={page.children} size="large" />
+            <ActionItemTickets nodeId={n.id} container={content}>
+              <DocContent doc={page.content} childPages={page.children} size="large" />
+            </ActionItemTickets>
           </div>
           <GlossaryTooltips container={content} version={page.content} />
           <SelectionComment
