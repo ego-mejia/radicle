@@ -2585,6 +2585,43 @@
         "title": "CommentOut",
         "type": "object"
       },
+      "CopyIn": {
+        "additionalProperties": false,
+        "properties": {
+          "include_children": {
+            "default": false,
+            "title": "Include Children",
+            "type": "boolean"
+          },
+          "parent": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Where to put the copy",
+            "title": "Parent"
+          },
+          "space": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Target space; default the same",
+            "title": "Space"
+          }
+        },
+        "title": "CopyIn",
+        "type": "object"
+      },
       "CustomFieldCreate": {
         "additionalProperties": false,
         "properties": {
@@ -14061,6 +14098,18 @@
             ],
             "description": "null moves it to the root",
             "title": "Parent"
+          },
+          "space": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Another space's key to move it there",
+            "title": "Space"
           }
         },
         "title": "MoveIn",
@@ -17283,6 +17332,61 @@
         ]
       }
     },
+    "/api/v1/folio/nodes/{node_id}/copy": {
+      "post": {
+        "description": "A new, unpublished node whose draft holds the published content and metadata; with\n`include_children` the visible subtree comes along.",
+        "operationId": "copy_node_api_v1_folio_nodes__node_id__copy_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CopyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Copy Node",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/nodes/{node_id}/diff": {
       "get": {
         "description": "Blocks added and removed, and metadata fields that changed, from one version to another.",
@@ -17447,7 +17551,7 @@
     },
     "/api/v1/folio/nodes/{node_id}/move": {
       "post": {
-        "description": "Move within its space; `before` and `after` place it among its new siblings.",
+        "description": "Move within its space (`before` and `after` place it among its new siblings), or to\nanother `space`, which takes delete here and create there; id, URL, history and\nrestrictions stay.",
         "operationId": "move_node_api_v1_folio_nodes__node_id__move_post",
         "parameters": [
           {

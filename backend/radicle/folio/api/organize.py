@@ -3,15 +3,45 @@
 import uuid
 
 from fastapi import APIRouter
+from pydantic import Field
 
 from radicle.folio.api.spaces import NodeOut, NodeRef, _node, _ref
-from radicle.folio.services import archive, nodes, spaces
+from radicle.folio.db.models import FolioSpace
+from radicle.folio.services import archive, copying, nodes, spaces
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
-from radicle.platform.api.schemas import Page, UtcDatetime
+from radicle.platform.api.schemas import Input, Page, UtcDatetime
 from radicle.platform.db.models import User
 
 router = APIRouter(tags=["folio"])
+
+
+class CopyIn(Input):
+    space: str | None = Field(default=None, description="Target space; default the same")
+    parent: uuid.UUID | None = Field(default=None, description="Where to put the copy")
+    include_children: bool = False
+
+
+@router.post("/nodes/{node_id}/copy", response_model=NodeOut, status_code=201)
+async def copy_node(
+    node_id: uuid.UUID, body: CopyIn, principal: CurrentPrincipal, db: Db
+) -> NodeOut:
+    """A new, unpublished node whose draft holds the published content and metadata; with
+    `include_children` the visible subtree comes along."""
+    await _reader(db, principal)
+    node = await nodes.get_node(db, principal.user, node_id)
+    here = await db.get(FolioSpace, node.space_id)
+    key = body.space or (here.key if here else "")
+    space = await spaces.get_space(db, principal.user, key)
+    copy = await copying.copy_node(
+        db,
+        principal.user,
+        node,
+        space=space,
+        parent_id=body.parent,
+        include_children=body.include_children,
+    )
+    return await _node(db, copy)
 
 
 class ArchivedOut(NodeRef):
