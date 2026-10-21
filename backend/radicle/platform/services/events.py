@@ -97,6 +97,9 @@ class PublicEvent:
     name: str
     data: dict[str, Any]
     scope: dict[str, str] = field(default_factory=dict)
+    # For chat channels: one line a person reads, and where to go.
+    summary: str = ""
+    link: str | None = None
 
 
 Publisher = Callable[[AsyncSession, OutboxEvent], Awaitable[list[PublicEvent]]]
