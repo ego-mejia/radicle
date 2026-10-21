@@ -1,95 +1,46 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import type { FolioCard, FolioHome } from '../../../../services/api/folio';
+import type { FolioHome } from '../../../../services/api/folio';
+import { block, card } from '../../components/HomeGrid/fixtures';
 import { mockFetch, renderWithProviders } from '../../../../test/renderWithProviders';
 import { FolioHomeView } from '.';
 
-function card(id: string, title: string, extra: Partial<FolioCard> = {}): FolioCard {
-  return {
-    id,
-    kind: 'blog_post',
-    title,
-    slug: title.toLowerCase().replace(/ /g, '-'),
-    icon: null,
-    cover_asset_id: null,
-    space: 'eng',
-    space_name: 'Ingeniería',
-    description: `About ${title}`,
-    doc_type: null,
-    labels: [],
-    author: 'fernando',
-    author_name: 'Fernando',
-    published_at: '2026-10-20T10:00:00Z',
-    reading_minutes: 6,
-    status: 'published',
-    ...extra,
-  };
-}
-
 const HOME: FolioHome = {
   can_write: false,
-  featured: card('n1', 'Welcome to Radicle', { kind: 'page', doc_type: 'get-started' }),
-  announcement: card('n2', 'V1 ships in November'),
-  ai_tools: [card('n3', 'Connect Claude over MCP', { space: 'ai-tools', space_name: 'AI Tools' })],
-  latest_posts: [card('n4', 'Weekly changes')],
-  spaces: [{ key: 'eng', name: 'Ingeniería', kind: 'team', icon: null, docs: 3 }],
-  most_read: [card('n1', 'Welcome to Radicle'), card('n4', 'Weekly changes')],
-  blocks: [],
+  featured: null,
+  announcement: null,
+  ai_tools: [],
+  latest_posts: [],
+  spaces: [],
+  most_read: [],
+  blocks: [
+    block('featured', 0, 0, 7, { cards: [card('n1', 'Welcome to Radicle', { kind: 'page' })] }),
+    block('announcement', 7, 0, 5, { cards: [card('n2', 'V1 ships in November')] }),
+    block('posts', 0, 4, 5, { cards: [card('n4', 'Weekly changes')] }),
+  ],
 };
 
 describe('FolioHomeView', () => {
-  it('renders every block of the bento', async () => {
+  it('renders the published layout from the API', async () => {
     mockFetch({ 'GET /api/v1/folio/home': { status: 200, body: HOME } });
     renderWithProviders(<FolioHomeView />);
     const featured = await screen.findByRole('link', { name: 'Welcome to Radicle' });
     expect(featured).toHaveAttribute('href', '/folio/p/n1-welcome-to-radicle');
-    expect(screen.getByText('get-started')).toBeInTheDocument();
-    expect(screen.getByText('Fernando · Ingeniería · 6 min read')).toBeInTheDocument();
     expect(screen.getByRole('article', { name: 'Announcement' })).toHaveTextContent(
       'V1 ships in November',
     );
-    expect(screen.getByRole('link', { name: 'Read Connect Claude over MCP' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Latest posts' })).toHaveTextContent(
+      'Weekly changes',
+    );
     expect(screen.queryByRole('button', { name: 'Write' })).not.toBeInTheDocument();
   });
 
-  it('lists the latest posts, the most read and the spaces', async () => {
-    mockFetch({ 'GET /api/v1/folio/home': { status: 200, body: HOME } });
-    renderWithProviders(<FolioHomeView />);
-    const latest = await screen.findByRole('region', { name: 'Latest posts' });
-    expect(latest).toHaveTextContent('Blog post');
-    expect(latest).toHaveTextContent('Weekly changes');
-    const mostRead = screen.getByRole('region', { name: 'Most read' });
-    expect(mostRead).toHaveTextContent('01Welcome to Radicle');
-    expect(mostRead).toHaveTextContent('02Weekly changes');
-    expect(screen.getByRole('link', { name: /Ingeniería.*3 docs/ })).toHaveAttribute(
-      'href',
-      '/folio/s/eng',
-    );
-  });
-
   it('says so when nothing is published', async () => {
-    const empty = { ...HOME, featured: null, announcement: null, ai_tools: [], most_read: [] };
-    mockFetch({
-      'GET /api/v1/folio/home': {
-        status: 200,
-        body: { ...empty, latest_posts: [], can_write: true },
-      },
-    });
+    const body = { ...HOME, can_write: true, blocks: [block('search', 0, 0, 12)] };
+    mockFetch({ 'GET /api/v1/folio/home': { status: 200, body } });
     renderWithProviders(<FolioHomeView />);
     expect(await screen.findByText('Folio is waiting for its first doc')).toBeInTheDocument();
     expect(screen.getByText('Press Write to publish the first one.')).toBeInTheDocument();
-  });
-
-  it('shows For you when the feed has something', async () => {
-    mockFetch({
-      'GET /api/v1/folio/home': { status: 200, body: HOME },
-      'GET /api/v1/folio/me/feed': {
-        status: 200,
-        body: { items: [{ ...card('n9', 'From a space you follow'), reason: 'following' }] },
-      },
-    });
-    renderWithProviders(<FolioHomeView />);
-    const forYou = await screen.findByRole('region', { name: 'For you' });
-    expect(forYou).toHaveTextContent('From a space you follow');
+    expect(screen.getByRole('search', { name: 'Search the docs' })).toBeInTheDocument();
   });
 });

@@ -333,6 +333,7 @@ export async function queryDocs(
 
 export type FolioHome = S['HomeOut'];
 export type FolioCard = S['CardOut'];
+export type FolioHomeBlock = S['HomeBlockOut'];
 export const folioHomeKey = ['folio', 'home'] as const;
 
 /** The home bento, every block already resolved for you. */

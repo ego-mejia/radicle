@@ -5,10 +5,11 @@ import * as S from './style';
 
 const ItemLink = createLink(S.Item);
 
+type Props = { title: string; spaces: FolioHome['spaces'] };
+
 /** The spaces you can see, with how many docs each has. */
-export function SpaceList({ spaces }: { spaces: FolioHome['spaces'] }) {
+export function SpaceList({ title, spaces }: Props) {
   const { t } = useTranslation();
-  const title = t('folio.home.spaces');
   return (
     <S.Section aria-label={title}>
       <S.Heading>{title}</S.Heading>
