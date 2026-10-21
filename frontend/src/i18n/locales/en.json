@@ -1580,5 +1580,25 @@
     "removeKey": "Remove key",
     "test": "Test connection",
     "saved": "AI provider saved"
+  },
+  "suite": {
+    "switch": "Switch app, now {{app}}",
+    "menu": "Radicle apps",
+    "switchTo": "Switch to",
+    "current": "Current app",
+    "admin": "Instance administration",
+    "note": "Same session and same users in both apps.",
+    "apps": {
+      "docket": {
+        "name": "Radicle Docket",
+        "badge": "DOCKET",
+        "description": "Projects, tickets, sprints and reports"
+      },
+      "folio": {
+        "name": "Radicle Folio",
+        "badge": "FOLIO",
+        "description": "Docs, blog and knowledge"
+      }
+    }
   }
 }
