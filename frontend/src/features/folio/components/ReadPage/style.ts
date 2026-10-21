@@ -154,8 +154,9 @@ export const Tag = styled.span`
   letter-spacing: 0.04em;
   text-transform: uppercase;
   background: ${({ theme }) => theme.color.accentSoft};
-  color: ${({ theme }) => theme.color.onAccent};
-  padding: 4px 8px;
+  /* text, not onAccent: in dark mode accentSoft is dark too and onAccent vanished on it. */
+  color: ${({ theme }) => theme.color.text};
+  padding: ${({ theme }) => `${theme.space.xs} ${theme.space.sm}`};
   border-radius: ${({ theme }) => theme.radius.md};
 `;
 
