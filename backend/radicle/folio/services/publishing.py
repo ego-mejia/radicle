@@ -14,7 +14,7 @@ from radicle.folio.db.models import (
     NodeKind,
     NodeStatus,
 )
-from radicle.folio.services import access, comments, convert, nodes, rag, schema
+from radicle.folio.services import access, comments, convert, nodes, notices, rag, schema
 from radicle.folio.services.metadata import validate_metadata
 from radicle.platform.db.models import User, UserKind, utcnow
 from radicle.platform.errors import Conflict, Forbidden, ValidationFailed
@@ -46,6 +46,7 @@ async def create_version(
 ) -> FolioVersion:
     """Write version n + 1 and make it the published one."""
     content = schema.validate(content_json)
+    previous = await current_version(db, node)
     version = FolioVersion(
         node_id=node.id,
         number=await _next_number(db, node),
@@ -79,6 +80,15 @@ async def create_version(
     nodes.record(db, node, author, event, version=version.number)
     await db.flush()
     await rag.schedule(db, [node.id])
+    await notices.published(
+        db,
+        approved_by or author,
+        node,
+        version=version.number,
+        content=content,
+        previous=previous.content_json if previous else None,
+        change_note=version.change_note,
+    )
     return version
 
 

@@ -15,7 +15,7 @@ from radicle.folio.db.models import (
     FolioVersion,
     SubmissionStatus,
 )
-from radicle.folio.services import access, nodes, publishing, schema
+from radicle.folio.services import access, nodes, notices, publishing, schema
 from radicle.folio.services.metadata import validate_metadata
 from radicle.platform.db.models import User, UserKind, utcnow
 from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
@@ -55,6 +55,7 @@ async def submit(
     db.add(submission)
     await db.flush()
     nodes.record(db, node, agent, "submitted", submission=str(submission.id))
+    await notices.submission_pending(db, agent, node, submission.id)
     return submission
 
 

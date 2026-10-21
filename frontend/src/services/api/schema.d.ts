@@ -7033,6 +7033,12 @@ export interface components {
             description: string;
             /** Icon */
             icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             * @description For follow and favorite (/watch/space/{id})
+             */
+            id: string;
             /** Key */
             key: string;
             /**
