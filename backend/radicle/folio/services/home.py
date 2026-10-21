@@ -1,7 +1,8 @@
 """Folio's home (Folio 1.8): the default bento resolved for the caller.
 
 Blocks: a featured doc, the latest announcement, AI Tools, the latest posts, the spaces
-with how many docs each has, and the most read (for now, the most recently published).
+with how many docs each has, and the most read in the last seven days (topped up with the
+latest published while there are few reads).
 Every block reads only published docs the caller may see, through the visibility rule.
 """
 
@@ -13,7 +14,7 @@ from sqlalchemy import ColumnElement, Select, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioNode, FolioRole, FolioSpace, FolioVersion, NodeKind
-from radicle.folio.services import access, roles, spaces
+from radicle.folio.services import access, roles, spaces, views
 from radicle.platform.db.models import User
 
 FEATURED_LABELS = ("featured", "destacado")
@@ -68,7 +69,7 @@ def _published(visible: ColumnElement[bool]) -> Rows:
         .join(FolioSpace, FolioSpace.id == FolioNode.space_id)
         .join(FolioVersion, FolioVersion.id == FolioNode.published_version_id)
         .outerjoin(User, User.id == FolioVersion.author_id)
-        .where(visible, FolioNode.kind != NodeKind.folder)
+        .where(visible, FolioNode.kind != NodeKind.folder, FolioNode.archived_at.is_(None))
         .order_by(FolioNode.published_at.desc(), FolioNode.id)
     )
 
@@ -122,7 +123,17 @@ async def home(db: AsyncSession, user: User) -> Home:
     out.announcement = announcement[0] if announcement else None
     out.ai_tools = await _cards(db, base.where(FolioSpace.key == AI_TOOLS_SPACE), 3)
     out.latest_posts = await _cards(db, posts, 6)
-    out.most_read = await _cards(db, base, 5)
+    read = views.most_read_since(7)
+    by_reads = (
+        base.join(read, read.c.node_id == FolioNode.id)
+        .order_by(None)
+        .order_by(read.c.views.desc(), FolioNode.published_at.desc(), FolioNode.id)
+    )
+    out.most_read = await _cards(db, by_reads, 5)
+    if len(out.most_read) < 5:
+        seen = [c.id for c in out.most_read]
+        more = base.where(FolioNode.id.not_in(seen)) if seen else base
+        out.most_read += await _cards(db, more, 5 - len(out.most_read))
 
     counted = await db.execute(
         select(FolioNode.space_id, func.count())
@@ -130,6 +141,7 @@ async def home(db: AsyncSession, user: User) -> Home:
             visible,
             FolioNode.kind != NodeKind.folder,
             FolioNode.published_version_id.is_not(None),
+            FolioNode.archived_at.is_(None),
         )
         .group_by(FolioNode.space_id)
     )

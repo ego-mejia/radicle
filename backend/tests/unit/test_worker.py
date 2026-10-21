@@ -30,5 +30,6 @@ def test_periodic_jobs_are_scheduled() -> None:
         "audit_retention",
         "daily_snapshot",
         "folio_outdate",
+        "folio_view_counts",
         "platform_dispatch_events",
     ]

@@ -23,6 +23,7 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.platform.services.audit",
     "radicle.folio.services.rag",
     "radicle.folio.services.quality",
+    "radicle.folio.services.views",
     "radicle.platform.services.events",
     "radicle.platform.services.email",
 )
@@ -34,6 +35,8 @@ PERIODIC: dict[str, str] = {
     "platform_dispatch_events": "* * * * *",
     # Verified pages past their date turn Outdated (Folio 2.7).
     "folio_outdate": "15 4 * * *",
+    # Reads per page and day for "Most read" (Folio 2.7).
+    "folio_view_counts": "25 * * * *",
 }
 
 
