@@ -767,6 +767,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/favorites/{target_type}/{target_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Favorite */
+        put: operations["favorite_api_v1_folio_favorites__target_type___target_id__put"];
+        post?: never;
+        /** Unfavorite */
+        delete: operations["unfavorite_api_v1_folio_favorites__target_type___target_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/health": {
         parameters: {
             query?: never;
@@ -824,6 +842,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/me/favorites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Favorites
+         * @description Your starred pages and spaces.
+         */
+        get: operations["favorites_api_v1_folio_me_favorites_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/me/personal-space": {
         parameters: {
             query?: never;
@@ -836,6 +874,26 @@ export interface paths {
          * @description Your personal space, created the first time you ask for it.
          */
         get: operations["my_space_api_v1_folio_me_personal_space_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/me/recents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Recents
+         * @description What you read last, newest first.
+         */
+        get: operations["recents_api_v1_folio_me_recents_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1421,6 +1479,28 @@ export interface paths {
          */
         post: operations["reject_api_v1_folio_submissions__submission_id__reject_post"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/watch/{target_type}/{target_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Watch */
+        get: operations["get_watch_api_v1_folio_watch__target_type___target_id__get"];
+        /**
+         * Watch
+         * @description Follow a page or a space: you hear about its comments and publications.
+         */
+        put: operations["watch_api_v1_folio_watch__target_type___target_id__put"];
+        post?: never;
+        /** Unwatch */
+        delete: operations["unwatch_api_v1_folio_watch__target_type___target_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -4622,6 +4702,13 @@ export interface components {
             new_value: unknown;
             /** Old Value */
             old_value: unknown;
+        };
+        /** FavoritesOut */
+        FavoritesOut: {
+            /** Nodes */
+            nodes: components["schemas"]["NodeRef"][];
+            /** Spaces */
+            spaces: components["schemas"]["SpaceOut"][];
         };
         /** FieldChangeOut */
         FieldChangeOut: {
@@ -7973,6 +8060,11 @@ export interface components {
             /** Message */
             message: string;
         };
+        /** WatchOut */
+        WatchOut: {
+            /** Watching */
+            watching: boolean;
+        };
         /** WidgetCreate */
         WidgetCreate: {
             /** Config */
@@ -10012,6 +10104,66 @@ export interface operations {
             };
         };
     };
+    favorite_api_v1_folio_favorites__target_type___target_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_type: "node" | "space";
+                target_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unfavorite_api_v1_folio_favorites__target_type___target_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_type: "node" | "space";
+                target_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_api_v1_folio_health_get: {
         parameters: {
             query?: never;
@@ -10072,6 +10224,26 @@ export interface operations {
             };
         };
     };
+    favorites_api_v1_folio_me_favorites_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FavoritesOut"];
+                };
+            };
+        };
+    };
     my_space_api_v1_folio_me_personal_space_get: {
         parameters: {
             query?: never;
@@ -10088,6 +10260,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SpaceOut"];
+                };
+            };
+        };
+    };
+    recents_api_v1_folio_me_recents_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_NodeRef_"];
                 };
             };
         };
@@ -11295,6 +11487,98 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SubmissionOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_watch_api_v1_folio_watch__target_type___target_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_type: "node" | "space";
+                target_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WatchOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    watch_api_v1_folio_watch__target_type___target_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_type: "node" | "space";
+                target_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unwatch_api_v1_folio_watch__target_type___target_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_type: "node" | "space";
+                target_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

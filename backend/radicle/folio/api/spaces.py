@@ -8,7 +8,7 @@ from fastapi import APIRouter, Query, Response
 from pydantic import Field
 
 from radicle.folio.db.models import FolioNode, FolioSpace, NodeKind, SpacePermission
-from radicle.folio.services import access, copying, nodes, publishing, spaces
+from radicle.folio.services import access, copying, nodes, publishing, social, spaces
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Input, Output, Page, UtcDatetime
@@ -242,7 +242,9 @@ async def create_node(body: NodeIn, principal: CurrentPrincipal, db: Db) -> Node
 @router.get("/nodes/{node_id}", response_model=NodeOut)
 async def get_node(node_id: uuid.UUID, principal: CurrentPrincipal, db: Db) -> NodeOut:
     await _reader(db, principal)
-    return await _node(db, await nodes.get_node(db, principal.user, node_id))
+    node = await nodes.get_node(db, principal.user, node_id)
+    await social.record_view(db, principal.user, node)
+    return await _node(db, node)
 
 
 @router.patch("/nodes/{node_id}", response_model=NodeOut)
