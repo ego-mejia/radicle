@@ -1,5 +1,5 @@
 import { Link, Navigate } from '@tanstack/react-router';
-import { Glasses, History, MessageSquare, PenLine } from 'lucide-react';
+import { BarChart3, Glasses, History, MessageSquare, PenLine } from 'lucide-react';
 import { lazy, Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../../../components/ui/Avatar';
@@ -33,6 +33,10 @@ import * as S from './style';
 import { usePage } from '../../hooks/usePage';
 import { usePageView } from '../../hooks/usePageView';
 
+// Charts load only when someone opens a page's analytics.
+const PageAnalytics = lazy(() =>
+  import('../PageAnalytics').then((m) => ({ default: m.PageAnalytics })),
+);
 // With Yjs and Excalidraw, whiteboards load only when one is opened.
 const WhiteboardPage = lazy(() =>
   import('../WhiteboardPage').then((m) => ({ default: m.WhiteboardPage })),
@@ -46,6 +50,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   const me = useMe();
   const [focus, setFocus] = useFocusMode(me.handle);
   const [comments, setComments] = useState(false);
+  const [stats, setStats] = useState(false);
   const content = useRef<HTMLDivElement>(null);
   const discussion = useComments(nodeId);
   useCommentHighlights(content, discussion.threads.data, [page.content, focus]);
@@ -85,6 +90,9 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   const description = meta.description ? String(meta.description) : '';
   const params = { page: `${n.id}-${n.slug}` };
   const canComment = !!page.space?.permissions.includes('comment');
+  // The page owner and space admins see its analytics (Folio 5.9).
+  const seesStats =
+    n.version != null && (owner === me.handle || !!page.space?.permissions.includes('admin'));
 
   if (focus)
     return (
@@ -142,6 +150,12 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
             <Glasses aria-hidden />
             {t('folio.reader.focus.enter')}
           </button>
+          {seesStats && (
+            <button type="button" onClick={() => setStats(true)}>
+              <BarChart3 aria-hidden />
+              {t('folio.analytics.open')}
+            </button>
+          )}
           {page.canEdit && n.version != null && (
             <Link to="/folio/p/$page/history" params={params}>
               <History aria-hidden />
@@ -158,6 +172,12 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
           {n.can_edit && <NodeMenu node={n} />}
         </S.Actions>
       </S.Bar>
+
+      {stats && (
+        <Suspense fallback={null}>
+          <PageAnalytics nodeId={n.id} open={stats} onOpenChange={setStats} />
+        </Suspense>
+      )}
 
       <S.Cover $image={n.cover_asset_id ? assetUrl(n.cover_asset_id) : null} aria-hidden>
         {!n.cover_asset_id && <RootsArt />}
