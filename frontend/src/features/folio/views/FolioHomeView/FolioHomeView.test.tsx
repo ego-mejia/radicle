@@ -34,6 +34,7 @@ const HOME: FolioHome = {
   latest_posts: [card('n4', 'Weekly changes')],
   spaces: [{ key: 'eng', name: 'Ingeniería', kind: 'team', icon: null, docs: 3 }],
   most_read: [card('n1', 'Welcome to Radicle'), card('n4', 'Weekly changes')],
+  blocks: [],
 };
 
 describe('FolioHomeView', () => {

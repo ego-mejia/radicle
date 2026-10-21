@@ -8,6 +8,7 @@ from pydantic import Field
 
 from radicle.folio.services import feed as feed_service
 from radicle.folio.services import home as home_service
+from radicle.folio.services import home_blocks
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Output, UtcDatetime
@@ -50,10 +51,44 @@ class HomeOut(Output):
     latest_posts: list[CardOut]
     spaces: list[SpaceCountOut]
     most_read: list[CardOut] = Field(description="By reads in the last 7 days")
+    blocks: list["HomeBlockOut"] = Field(
+        description="The published layout, each block resolved for you; empty ones left out"
+    )
+
+
+class HomeBlockOut(Output):
+    id: str
+    type: str = Field(description="featured, announcement, posts, query, for_you, ...")
+    x: int
+    y: int
+    w: int
+    h: int
+    title: str
+    cards: list[CardOut]
+    spaces: list[SpaceCountOut]
+    markdown: str
+
+
+HomeOut.model_rebuild()
 
 
 def _card(c: home_service.Card) -> CardOut:
     return CardOut.model_validate(c, from_attributes=True)
+
+
+def _block(b: home_blocks.Block) -> HomeBlockOut:
+    return HomeBlockOut(
+        id=b.id,
+        type=b.type,
+        x=b.x,
+        y=b.y,
+        w=b.w,
+        h=b.h,
+        title=b.title,
+        cards=[_card(c) for c in b.cards],
+        spaces=[SpaceCountOut.model_validate(s, from_attributes=True) for s in b.spaces],
+        markdown=b.markdown,
+    )
 
 
 @router.get("/home", response_model=HomeOut)
@@ -69,6 +104,7 @@ async def get_home(principal: CurrentPrincipal, db: Db) -> HomeOut:
         latest_posts=[_card(c) for c in h.latest_posts],
         spaces=[SpaceCountOut.model_validate(s, from_attributes=True) for s in h.spaces],
         most_read=[_card(c) for c in h.most_read],
+        blocks=[_block(b) for b in await home_blocks.resolve(db, principal.user)],
     )
 
 
