@@ -1909,7 +1909,32 @@
         "size": "{{size}} KB de {{limit}} KB",
         "problems": "Lo que el sandbox bloquearía",
         "warnings": "Sugerencias",
-        "sandboxOk": "Nada aquí necesita la red ni la página: funciona en el sandbox."
+        "sandboxOk": "Nada aquí necesita la red ni la página: funciona en el sandbox.",
+        "source": "Fuente Mermaid",
+        "sourceHint": "Flujo, secuencia, estados, entidad relación o gantt, p. ej. flowchart LR; A --> B",
+        "caption": "Pie de figura",
+        "latex": "LaTeX",
+        "kind": "Tipo",
+        "kinds": {
+          "bar": "Barras",
+          "line": "Líneas",
+          "area": "Área",
+          "pie": "Pastel"
+        },
+        "dataFrom": "Datos",
+        "dataOwn": "Sus propios números",
+        "dataTable": "La tabla justo antes",
+        "data": "Números",
+        "dataHint": "Una fila por línea, celdas separadas por |. La primera fila nombra las columnas; la primera columna son las etiquetas.",
+        "milestones": "Hitos",
+        "milestonesHint": "Uno por línea: fecha | título | texto. Empieza con [x] hecho, [~] en curso o [ ] planeado.",
+        "label": "Label",
+        "space": "Space",
+        "spaceHint": "Déjalo vacío para listar todos los spaces que puedes ver.",
+        "order": "Orden",
+        "newest": "Más reciente primero",
+        "byTitle": "Por título",
+        "limit": "Cuántas"
       }
     },
     "publish": {
