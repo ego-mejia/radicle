@@ -78,4 +78,17 @@ describe('FolioHomeView', () => {
     expect(await screen.findByText('Folio is waiting for its first doc')).toBeInTheDocument();
     expect(screen.getByText('Press Write to publish the first one.')).toBeInTheDocument();
   });
+
+  it('shows For you when the feed has something', async () => {
+    mockFetch({
+      'GET /api/v1/folio/home': { status: 200, body: HOME },
+      'GET /api/v1/folio/me/feed': {
+        status: 200,
+        body: { items: [{ ...card('n9', 'From a space you follow'), reason: 'following' }] },
+      },
+    });
+    renderWithProviders(<FolioHomeView />);
+    const forYou = await screen.findByRole('region', { name: 'For you' });
+    expect(forYou).toHaveTextContent('From a space you follow');
+  });
 });

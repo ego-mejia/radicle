@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../../../../components/ui/EmptyState';
 import { PageSpinner } from '../../../../components/ui/Spinner';
 import { fetchHome, folioHomeKey } from '../../../../services/api/folio';
+import { fetchFeed, socialKeys } from '../../../../services/api/folioSocial';
 import { DocList } from './components/DocList';
 import { Featured } from './components/Featured';
 import { SpaceList } from './components/SpaceList';
@@ -14,6 +15,7 @@ import * as S from './style';
 export function FolioHomeView() {
   const { t } = useTranslation();
   const { data: home } = useQuery({ queryKey: folioHomeKey, queryFn: fetchHome });
+  const feed = useQuery({ queryKey: socialKeys.feed, queryFn: () => fetchFeed(6) });
   if (!home) return <PageSpinner />;
   const empty = !home.featured && home.latest_posts.length === 0 && home.most_read.length === 0;
 
@@ -52,11 +54,18 @@ export function FolioHomeView() {
             <S.Column $grow={5} $basis={380}>
               <DocList title={t('folio.home.latestPosts')} docs={home.latest_posts} />
             </S.Column>
-            <S.Column $grow={4} $basis={320}>
-              <DocList title={t('folio.home.mostRead')} docs={home.most_read} numbered />
-            </S.Column>
+            {feed.data && feed.data.length > 0 && (
+              <S.Column $grow={4} $basis={320}>
+                <DocList title={t('folio.home.forYou')} docs={feed.data} />
+              </S.Column>
+            )}
             <S.Column $grow={3} $basis={240}>
               <SpaceList spaces={home.spaces} />
+            </S.Column>
+          </S.Row>
+          <S.Row>
+            <S.Column $grow={1} $basis={420}>
+              <DocList title={t('folio.home.mostRead')} docs={home.most_read} numbered />
             </S.Column>
           </S.Row>
         </>
