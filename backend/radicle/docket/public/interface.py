@@ -198,6 +198,40 @@ async def get_milestone(
     )
 
 
+async def get_project(db: AsyncSession, key: str, user: User) -> str | None:
+    """The project's key as Docket spells it when the user can see it, or None."""
+    try:
+        access = await project_access(db, user, key.strip().upper())
+    except NotFound:
+        return None
+    return access.project.key
+
+
+async def list_milestones(
+    db: AsyncSession, project: str, user: User, *, start: date, end: date
+) -> list[MilestoneSummary]:
+    """A project's milestones due between start and end (inclusive), by date; none when the
+    user can't see the project."""
+    try:
+        access = await project_access(db, user, project.strip().upper())
+    except NotFound:
+        return []
+    rows = await db.scalars(
+        select(Milestone)
+        .where(
+            Milestone.project_id == access.project.id,
+            Milestone.target_date.is_not(None),
+            Milestone.target_date >= start,
+            Milestone.target_date <= end,
+        )
+        .order_by(Milestone.target_date, Milestone.name)
+    )
+    return [
+        MilestoneSummary(m.id, access.project.key, m.name, m.status.value, m.target_date)
+        for m in rows
+    ]
+
+
 async def get_area(db: AsyncSession, project: str, name: str, user: User) -> str | None:
     """An area's name as Docket spells it, in a project the user can see, or None."""
     try:

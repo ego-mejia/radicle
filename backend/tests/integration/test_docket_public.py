@@ -1,5 +1,7 @@
 """Docket's interface for other apps (Folio 4.1): always with the user's own access."""
 
+from datetime import date
+
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import select
@@ -92,3 +94,18 @@ async def test_get_milestone(db: AsyncSession, tickets: Team) -> None:
     assert await docket.get_milestone(db, "PA", "V9", luis) is None
     assert await docket.get_milestone(db, "PA", "V1", await _user(db, "olga")) is None
     assert await docket.get_milestone(db, "NOPE", "V1", luis) is None
+
+
+async def test_projects_and_milestones_in_a_range(db: AsyncSession, board: Team) -> None:
+    luis, olga = await _user(db, "luis"), await _user(db, "olga")
+    assert await docket.get_project(db, " pa ", luis) == "PA"
+    assert await docket.get_project(db, "PA", olga) is None
+    assert await docket.get_project(db, "NOPE", luis) is None
+    december = {"start": date(2026, 12, 1), "end": date(2026, 12, 15)}
+    found = await docket.list_milestones(db, "pa", luis, **december)
+    assert [(m.project, m.name, m.target_date) for m in found] == [
+        ("PA", "V1", date(2026, 12, 15))
+    ]
+    november = {"start": date(2026, 11, 1), "end": date(2026, 11, 30)}
+    assert await docket.list_milestones(db, "PA", luis, **november) == []
+    assert await docket.list_milestones(db, "PA", olga, **december) == []
