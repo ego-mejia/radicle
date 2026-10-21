@@ -2751,7 +2751,26 @@
       },
       "checkAgain": "Revisar de nuevo",
       "run_one": "Importar {{count}} página",
-      "run_other": "Importar {{count}} páginas"
+      "run_other": "Importar {{count}} páginas",
+      "running": "Importando…",
+      "runningHelp": "Corre en segundo plano; puedes salir y volver.",
+      "failed": "La importación se detuvo",
+      "done": "Importado",
+      "doneHelp": "Importar el mismo export otra vez actualiza estas páginas en vez de duplicarlas.",
+      "outcome": {
+        "created": "creadas",
+        "updated": "actualizadas",
+        "published": "publicadas",
+        "drafts": "borradores",
+        "failed": "con error"
+      },
+      "results": {
+        "created": "Creada",
+        "updated": "Actualizada",
+        "failed": "Falló"
+      },
+      "published": "publicada",
+      "missing": "borrador: falta {{fields}}"
     }
   },
   "notifications": {
