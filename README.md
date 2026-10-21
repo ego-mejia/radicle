@@ -46,6 +46,7 @@
   - [12. Audit log](#12-audit-log)
   - [13. AI agents over MCP](#13-ai-agents-over-mcp)
   - [14. Keyboard, command palette and themes](#14-keyboard-command-palette-and-themes)
+  - [15. Folio and the AI provider](#15-folio-and-the-ai-provider)
 - [Configuration](#%EF%B8%8F-configuration)
 - [Architecture](#%EF%B8%8F-architecture)
 - [Development](#-development)
@@ -374,6 +375,8 @@ Resources: `radicle://guide/rql` and `radicle://projects/{key}/schema`. Agents f
 
 </details>
 
+**Folio** has its own MCP server at `/mcp/folio`, with the same tokens. For now it has `whoami`, which tells the agent its global Folio role; tools to read, search and propose docs come with Folio's phase 1.
+
 ### 14. Keyboard, command palette and themes
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Hands on the keyboard? Press <kbd>?</kbd> to see every shortcut.
@@ -394,6 +397,13 @@ Press <kbd>?</kbd> to see every shortcut. The main ones:
 Switch between light and dark with the moon button, and between English and Spanish in your profile or from the palette. You can turn shortcuts off in your profile.
 
 **Use it as a desktop app.** Radicle can be installed as its own app, with Radi in the Dock and its own window: in Chrome click **Install** in the address bar, or in Safari choose **File → Add to Dock**.
+
+### 15. Folio and the AI provider
+
+Radicle is growing a second app, **Radicle Folio**, for documentation (specs in `docs/folio/`). Docket, the ticket tracker, and Folio share users, groups, agents and the sign-in: open the menu on the logo (or press `g f` / `g d`) to switch, and each app opens where you left it.
+
+- **Admin → Settings → AI provider** sets one provider for chat and embeddings (OpenAI, an OpenAI-compatible server such as Voyage, Ollama, or Anthropic for chat). The key is stored encrypted; **Test connection** embeds a short text and shows the dimensions and latency. Without a provider, everything else works.
+- **Folio → Admin → Global roles** decides who reads, creates or administers Folio: a person, a group or everyone (everyone reads by default). People without any role don't see Folio.
 
 ## ⚙️ Configuration
 
@@ -429,7 +439,7 @@ The `worker` container runs background jobs: template propagation, image variant
 | Backend | Python 3.12, FastAPI, SQLAlchemy 2 (async), Alembic, Pydantic 2, Procrastinate (jobs on Postgres), Authlib (OIDC) |
 | Database | PostgreSQL 16, with full-text search in English and Spanish |
 | Frontend | React 18, TypeScript, TanStack Router and Query, styled-components, dnd-kit, Recharts, i18next |
-| MCP | Official Python MCP SDK, Streamable HTTP at `/mcp` |
+| MCP | Official Python MCP SDK, Streamable HTTP at `/mcp` (Docket) and `/mcp/folio` (Folio) |
 | Quality | pytest with testcontainers (real Postgres and Keycloak), mypy strict, ruff, Vitest, Playwright E2E |
 
 Business logic lives only in the services: `backend/radicle/platform/services/` for what the apps share and `backend/radicle/docket/services/` for tickets. The REST routers and the MCP tools validate input and call those services, so the UI, the API and agents always follow the same rules.
@@ -461,6 +471,15 @@ scripts/smoke.sh   # builds the image and runs it from scratch on port 8001
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** What's next. Ideas welcome!
 
 Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning and visibility, and the Inbox with access control. This is what comes next. Ideas and help are very welcome.
+
+**Radicle Folio (docs)**
+
+- [x] Phase 0: shared platform (one backend split into `platform`, `docket` and `folio`, generic authorization, AI provider, suite switch, Folio's skeleton).
+- [ ] Phase 1: spaces and pages, the editor, publishing with versions, permissions, agent submissions with approval, RAG search and Folio's MCP.
+- [ ] Phase 2: real-time collaboration, comments, mentions, live docs.
+- [ ] Phase 3: templates, the home editor, visual blocks, whiteboards and databases.
+- [ ] Phase 4: tickets inside docs and chat with citations.
+- [ ] Phase 5: public pages, import and export, Slack and Teams, webhooks.
 
 **Stage 5: integrations**
 

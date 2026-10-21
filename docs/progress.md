@@ -611,8 +611,82 @@ Folio es la suite de documentación de Radicle; sus specs están en `docs/folio/
 
 | # | Entregable | Estado |
 | --- | --- | --- |
-| 0.1 | Reorganizar el backend | En curso ([0034](decisions/0034-folio-fase-0-1-reorganizar-backend.md)) |
-| 0.2 | Autorización genérica | Pendiente |
-| 0.3 | Servicios compartidos | Pendiente |
-| 0.4 | Frontend compartido y switch | Pendiente |
-| 0.5 | Esqueleto de Folio | Pendiente |
+| 0.1 | Reorganizar el backend | Listo |
+| 0.2 | Autorización genérica | Listo |
+| 0.3 | Servicios compartidos | Listo |
+| 0.4 | Frontend compartido y switch | Listo |
+| 0.5 | Esqueleto de Folio | Listo |
+
+Decisiones: [0034](decisions/0034-folio-fase-0-1-reorganizar-backend.md), [0035](decisions/0035-autorizacion-generica.md), [0036](decisions/0036-frontend-compartido-sin-carpeta-platform.md).
+
+### 0.1 Reorganizar el backend
+
+**Qué se hizo**
+
+- `radicle/platform` (config, cifrado, errores, seguridad, sesión de base de datos, modelos y servicios de usuarios, tokens, SSO, grupos, audit y jobs, storage, cola, imágenes, Markdown, validación, piezas comunes de la API y el cliente MCP en proceso) y `radicle/docket` (todo lo de tickets). En `radicle/` solo queda la composición: `main.py`, `cli.py`, `seed.py` y `worker/`.
+- Primero se cortaron los imports de `platform` hacia Docket: la consulta del audit log y los roles de grupos en proyectos pasaron a módulos de Docket, y el catálogo de tools del MCP se registra al arrancar. Luego se movió todo con `scripts/move_modules.py` (`git mv` más reescritura de imports, sin cambios de lógica).
+- `tests/unit/test_dependencies.py`: falla si `platform` importa de una app o si `folio` toca tablas de `docket`.
+
+**Cómo verificarlo**
+
+- La suite de Docket pasa sin tocar aserciones; `scripts/export_openapi.py` no cambia `frontend/openapi.json`; `test_tool_catalog` lista las mismas tools.
+
+### 0.2 Autorización genérica
+
+**Qué se hizo**
+
+- `platform/authz.py`: `authorize(db, user, app, permission, resource)` devuelve un `Decision` (403 o 404 y un motivo accionable) y `visible(user, app, model)` el filtro SQL. Una app o un recurso desconocido se niega.
+- El proveedor de Docket envuelve su `authorize`, `can_see` y `visible_tickets_clause` sin cambiarlos. `platform.services.groups.group_ids` cachea los grupos de cada usuario 60 s para las apps que los resuelven en Python (Folio); Docket los sigue resolviendo en su SQL, y salir de un grupo ahí sigue siendo inmediato.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_authz.py`: matriz de Docket, ticket restringido (404), app desconocida, proveedor de prueba y caché a 59 y 61 s.
+
+### 0.3 Servicios compartidos
+
+**Qué se hizo**
+
+- Migración `0028`: `audit_log.app` (platform, docket o folio; lo anterior queda docket). `GET /audit` lo regresa.
+- Migración `0029`: `ai_settings`, un solo proveedor de IA para chat y embeddings (none, anthropic, openai, openai_compatible, ollama) con la llave cifrada. `GET` y `PUT /admin/ai` y `POST /admin/ai/test`, que genera un embedding de prueba y da dimensiones y latencia. Anthropic no tiene embeddings y el error lo dice.
+- UI: tarjeta **AI provider** en Admin → Settings.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_ai_settings.py` con un proveedor simulado; `test_audit.py` para la columna `app`.
+
+### 0.4 Frontend compartido y switch
+
+**Qué se hizo**
+
+- El logo es el switch de suite (`components/layout/SuiteSwitch`), con el diseño aprobado del canvas: apps visibles para el usuario, la actual marcada, atajos, administración para admins de instancia. Cada app reabre en su última página.
+- `g d` y `g f` cambian de app. `/folio` tiene su propio shell.
+
+**Cómo verificarlo**
+
+- `e2e/suite.spec.ts`: login, cambiar a Folio con el logo y con `g f`, regresar con `g d` sin volver a entrar, y Folio ausente para alguien sin rol.
+
+### 0.5 Esqueleto de Folio
+
+**Qué se hizo**
+
+- `radicle/folio`. Migración `0030`: `folio_global_grants` (reader, creator o admin para una persona, un grupo o todos; semilla everyone = reader). El rol efectivo es el más alto entre el directo, el de sus grupos y el de todos; el admin de instancia siempre es admin.
+- `GET /api/v1/folio/health`, `GET /folio/me`, y `GET`, `POST` y `DELETE /folio/admin/grants` para admins de Folio, con audit `app = folio`.
+- `/mcp/folio` con `whoami`, con el mismo token que `/mcp`.
+- UI: shell de Folio con home vacía y **Admin → Global roles**.
+
+**Cómo verificarlo**
+
+- `tests/integration/test_folio_roles.py`, `test_folio.py` y `tests/mcp/test_folio_mcp.py`; en el E2E, dar rol creator a un grupo desde Admin de Folio.
+
+### Aceptación de la fase
+
+| Criterio | Dónde |
+| --- | --- |
+| Todo Docket funciona igual: tests, API y MCP | Suite completa (798), OpenAPI sin diff en los movimientos, `test_tool_catalog` |
+| Entro una vez y cambio entre Docket y Folio desde el logo y con atajos | `e2e/suite.spec.ts` |
+| Doy rol creator a un grupo y se refleja en `/api/v1/folio/me` de sus miembros | `test_folio.py::test_group_role_reaches_its_members`, `e2e/suite.spec.ts` |
+| Configuro el proveedor de embeddings y la prueba de conexión pasa | `test_ai_settings.py::test_configure_encrypt_test_and_audit` |
+| Un agente llama `whoami` en los dos MCP con el mismo token | `test_folio_mcp.py::test_whoami_on_both_servers_with_one_token` |
+| Reglas generales | ruff, mypy estricto (también `folio.services`), cobertura 95%, migraciones up/down/up, E2E completo (28) en una instancia limpia |
+
+Nota: los E2E `stage1` y `stage3` estaban rotos desde #60 (botones de área y milestone en las tarjetas); se arreglaron en #78.
