@@ -75,6 +75,49 @@
         "title": "AgentCreated",
         "type": "object"
       },
+      "AiAvailabilityOut": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why it is off and who can turn it on",
+            "title": "Message"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "no_provider",
+                  "off_for_folio",
+                  "off_in_space"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "available",
+          "reason",
+          "message"
+        ],
+        "title": "AiAvailabilityOut",
+        "type": "object"
+      },
       "AiSettingsIn": {
         "additionalProperties": false,
         "properties": {
@@ -7434,6 +7477,47 @@
         "title": "MetadataSchemaOut",
         "type": "object"
       },
+      "MetadataSuggestionOut": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "doc_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A key of the document types",
+            "title": "Doc Type"
+          },
+          "labels": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "array"
+          }
+        },
+        "required": [
+          "description",
+          "labels",
+          "doc_type"
+        ],
+        "title": "MetadataSuggestionOut",
+        "type": "object"
+      },
       "MilestoneCreate": {
         "additionalProperties": false,
         "properties": {
@@ -7898,6 +7982,21 @@
           "ticket"
         ],
         "title": "NextOut",
+        "type": "object"
+      },
+      "NodeAiIn": {
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "format": "uuid",
+            "title": "Node Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_id"
+        ],
+        "title": "NodeAiIn",
         "type": "object"
       },
       "NodeFromTemplateIn": {
@@ -10750,6 +10849,64 @@
         "title": "RestrictionsIO",
         "type": "object"
       },
+      "RewriteIn": {
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only for translate, e.g. English",
+            "title": "Language"
+          },
+          "mode": {
+            "enum": [
+              "clearer",
+              "shorter",
+              "formal",
+              "translate"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "node_id": {
+            "format": "uuid",
+            "title": "Node Id",
+            "type": "string"
+          },
+          "text": {
+            "description": "The selected passage, in Markdown",
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_id",
+          "text",
+          "mode"
+        ],
+        "title": "RewriteIn",
+        "type": "object"
+      },
+      "RewriteOut": {
+        "properties": {
+          "text": {
+            "description": "The proposed passage; nothing changes until you accept it",
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "RewriteOut",
+        "type": "object"
+      },
       "RuleConf": {
         "additionalProperties": false,
         "properties": {
@@ -11655,6 +11812,11 @@
       },
       "SpaceOut": {
         "properties": {
+          "ai_enabled": {
+            "description": "False when the space admin turned the editor AI off",
+            "title": "Ai Enabled",
+            "type": "boolean"
+          },
           "cover_asset_id": {
             "anyOf": [
               {
@@ -11732,7 +11894,8 @@
           "cover_asset_id",
           "created_at",
           "permissions",
-          "verify_days"
+          "verify_days",
+          "ai_enabled"
         ],
         "title": "SpaceOut",
         "type": "object"
@@ -11740,6 +11903,18 @@
       "SpacePatch": {
         "additionalProperties": false,
         "properties": {
+          "ai_enabled": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Turn the editor AI on or off",
+            "title": "Ai Enabled"
+          },
           "description": {
             "anyOf": [
               {
@@ -12898,6 +13073,20 @@
           "metadata"
         ],
         "title": "SubmissionOut",
+        "type": "object"
+      },
+      "SummaryOut": {
+        "properties": {
+          "summary": {
+            "description": "Markdown bullets; insert it as a block if you want",
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "summary"
+        ],
+        "title": "SummaryOut",
         "type": "object"
       },
       "Swimlane": {
@@ -19574,6 +19763,181 @@
           }
         },
         "summary": "Update Entry",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/ai/availability": {
+      "get": {
+        "description": "Whether the editor shows its AI in this space.",
+        "operationId": "ai_availability_api_v1_folio_ai_availability_get",
+        "parameters": [
+          {
+            "description": "The space key",
+            "in": "query",
+            "name": "space",
+            "required": true,
+            "schema": {
+              "description": "The space key",
+              "title": "Space",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiAvailabilityOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ai Availability",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/ai/rewrite": {
+      "post": {
+        "description": "A clearer, shorter, more formal or translated version of a selection.",
+        "operationId": "ai_rewrite_api_v1_folio_ai_rewrite_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RewriteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RewriteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ai Rewrite",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/ai/suggest-metadata": {
+      "post": {
+        "description": "Description, labels and document type for the publish dialog. It never publishes.",
+        "operationId": "ai_suggest_metadata_api_v1_folio_ai_suggest_metadata_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodeAiIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetadataSuggestionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ai Suggest Metadata",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/ai/summarize": {
+      "post": {
+        "description": "A summary of the page you can read: the draft if you may edit it.",
+        "operationId": "ai_summarize_api_v1_folio_ai_summarize_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodeAiIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SummaryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ai Summarize",
         "tags": [
           "folio",
           "folio"

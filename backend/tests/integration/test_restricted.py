@@ -276,6 +276,7 @@ EXEMPT = {
     "/api/v1/folio/templates",
     "/api/v1/folio/link-preview",
     "/api/v1/folio/page-list",
+    "/api/v1/folio/ai/availability",
     "/api/v1/folio/admin/home/draft",
     "/api/v1/folio/admin/home/history",
     "/api/v1/folio/templates/{template_id}",

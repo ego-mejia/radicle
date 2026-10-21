@@ -869,6 +869,86 @@ export interface paths {
         patch: operations["update_entry_api_v1_folio_admin__catalog___key__patch"];
         trace?: never;
     };
+    "/api/v1/folio/ai/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ai Availability
+         * @description Whether the editor shows its AI in this space.
+         */
+        get: operations["ai_availability_api_v1_folio_ai_availability_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/ai/rewrite": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ai Rewrite
+         * @description A clearer, shorter, more formal or translated version of a selection.
+         */
+        post: operations["ai_rewrite_api_v1_folio_ai_rewrite_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/ai/suggest-metadata": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ai Suggest Metadata
+         * @description Description, labels and document type for the publish dialog. It never publishes.
+         */
+        post: operations["ai_suggest_metadata_api_v1_folio_ai_suggest_metadata_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/ai/summarize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ai Summarize
+         * @description A summary of the page you can read: the draft if you may edit it.
+         */
+        post: operations["ai_summarize_api_v1_folio_ai_summarize_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/assets/{asset_id}": {
         parameters: {
             query?: never;
@@ -4144,6 +4224,18 @@ export interface components {
             mcp_url: string;
             token: components["schemas"]["TokenCreated"];
         };
+        /** AiAvailabilityOut */
+        AiAvailabilityOut: {
+            /** Available */
+            available: boolean;
+            /**
+             * Message
+             * @description Why it is off and who can turn it on
+             */
+            message: string | null;
+            /** Reason */
+            reason: ("no_provider" | "off_for_folio" | "off_in_space") | null;
+        };
         /** AiSettingsIn */
         AiSettingsIn: {
             /**
@@ -6868,6 +6960,18 @@ export interface components {
             /** Languages */
             languages: components["schemas"]["EntryOut"][];
         };
+        /** MetadataSuggestionOut */
+        MetadataSuggestionOut: {
+            /** Description */
+            description: string | null;
+            /**
+             * Doc Type
+             * @description A key of the document types
+             */
+            doc_type: string | null;
+            /** Labels */
+            labels: string[];
+        };
         /** MilestoneCreate */
         MilestoneCreate: {
             /**
@@ -7029,6 +7133,14 @@ export interface components {
         NextOut: {
             /** @description null when nothing is ready to work on */
             ticket: components["schemas"]["TicketOut"] | null;
+        };
+        /** NodeAiIn */
+        NodeAiIn: {
+            /**
+             * Node Id
+             * Format: uuid
+             */
+            node_id: string;
         };
         /** NodeFromTemplateIn */
         NodeFromTemplateIn: {
@@ -7984,6 +8096,37 @@ export interface components {
              */
             view?: components["schemas"]["GranteeIO"][];
         };
+        /** RewriteIn */
+        RewriteIn: {
+            /**
+             * Language
+             * @description Only for translate, e.g. English
+             */
+            language?: string | null;
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "clearer" | "shorter" | "formal" | "translate";
+            /**
+             * Node Id
+             * Format: uuid
+             */
+            node_id: string;
+            /**
+             * Text
+             * @description The selected passage, in Markdown
+             */
+            text: string;
+        };
+        /** RewriteOut */
+        RewriteOut: {
+            /**
+             * Text
+             * @description The proposed passage; nothing changes until you accept it
+             */
+            text: string;
+        };
         /** RuleConf */
         RuleConf: {
             /** Config */
@@ -8364,6 +8507,11 @@ export interface components {
         };
         /** SpaceOut */
         SpaceOut: {
+            /**
+             * Ai Enabled
+             * @description False when the space admin turned the editor AI off
+             */
+            ai_enabled: boolean;
             /** Cover Asset Id */
             cover_asset_id: string | null;
             /** Created At */
@@ -8400,6 +8548,11 @@ export interface components {
         };
         /** SpacePatch */
         SpacePatch: {
+            /**
+             * Ai Enabled
+             * @description Turn the editor AI on or off
+             */
+            ai_enabled?: boolean | null;
             /** Description */
             description?: string | null;
             /**
@@ -8773,6 +8926,14 @@ export interface components {
              * @description The version it became, once approved
              */
             version: number | null;
+        };
+        /** SummaryOut */
+        SummaryOut: {
+            /**
+             * Summary
+             * @description Markdown bullets; insert it as a block if you want
+             */
+            summary: string;
         };
         /**
          * Swimlane
@@ -11932,6 +12093,137 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EntryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ai_availability_api_v1_folio_ai_availability_get: {
+        parameters: {
+            query: {
+                /** @description The space key */
+                space: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AiAvailabilityOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ai_rewrite_api_v1_folio_ai_rewrite_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RewriteIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RewriteOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ai_suggest_metadata_api_v1_folio_ai_suggest_metadata_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NodeAiIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MetadataSuggestionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ai_summarize_api_v1_folio_ai_summarize_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NodeAiIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SummaryOut"];
                 };
             };
             /** @description Validation Error */
