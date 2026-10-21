@@ -1668,7 +1668,13 @@
       "noWritableSpace": "You can't write in any space yet. A space admin can give you the create permission."
     },
     "space": {
-      "title": "Space"
+      "title": "Space",
+      "tree": "Pages of the space",
+      "collapse": "Collapse {{title}}",
+      "expand": "Expand {{title}}",
+      "move": "Move {{title}}",
+      "dropRoot": "Drop here to move to the top level",
+      "emptyTree": "No pages yet."
     },
     "reader": {
       "title": "Page",
