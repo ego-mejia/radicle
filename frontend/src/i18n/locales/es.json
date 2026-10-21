@@ -1679,7 +1679,23 @@
       "file": "Archivo"
     },
     "editor": {
-      "title": "Editor"
+      "title": "Editor",
+      "back": "Volver",
+      "publish": "Publicar",
+      "titleLabel": "Título",
+      "titlePlaceholder": "Sin título",
+      "bodyPlaceholder": "Escribe, o teclea / para bloques",
+      "icon": "Ícono",
+      "iconHint": "Un emoji o dos letras",
+      "addIcon": "Agregar ícono",
+      "changeIcon": "Cambiar ícono",
+      "removeIcon": "Quitar ícono",
+      "save": "Guardar",
+      "state": {
+        "saved": "Guardado",
+        "saving": "Guardando…",
+        "error": "Sin guardar: reintentando"
+      }
     },
     "publish": {
       "title": "Publicar"

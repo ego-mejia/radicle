@@ -1,0 +1,144 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Placeholder } from '@tiptap/extensions';
+import { EditorContent, useEditor, type Editor } from '@tiptap/react';
+import { ArrowLeft } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '../../../../components/ui/Button';
+import { PageSpinner } from '../../../../components/ui/Spinner';
+import {
+  fetchDraft,
+  fetchNode,
+  folioKeys,
+  nodePath,
+  patchNode,
+  saveDraft,
+  type FolioDraft,
+  type FolioNode,
+} from '../../../../services/api/folio';
+import { folioExtensions } from '../../editor/extensions';
+import { toFolioDoc } from '../../editor/schema';
+import { EditorProse } from '../EditorProse';
+import { PageHeader } from './components/PageHeader';
+import * as S from './style';
+import { useAutosave } from '../../hooks/useAutosave';
+
+type Props = {
+  nodeId: string;
+  /** Opens the publish dialog; the button stays hidden without it. */
+  onPublish?: (editor: Editor) => void;
+  /** More editor extensions, like the slash menu or uploads. */
+  extensions?: ReturnType<typeof folioExtensions>;
+};
+
+/** Writes a page's draft full screen: icon and title on top, the body below, saved as you go. */
+export function PageEditor({ nodeId, onPublish, extensions }: Props) {
+  const node = useQuery({ queryKey: folioKeys.node(nodeId), queryFn: () => fetchNode(nodeId) });
+  const draft = useQuery({
+    queryKey: folioKeys.draft(nodeId),
+    queryFn: () => fetchDraft(nodeId),
+    staleTime: Infinity, // the editor owns the draft while it is open
+  });
+  if (!node.data || !draft.data) return <PageSpinner />;
+  return (
+    <Loaded
+      node={node.data}
+      draft={draft.data}
+      onPublish={onPublish}
+      extensions={extensions ?? []}
+    />
+  );
+}
+
+type LoadedProps = {
+  node: FolioNode;
+  draft: FolioDraft;
+  onPublish?: Props['onPublish'];
+  extensions: ReturnType<typeof folioExtensions>;
+};
+
+function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const [title, setTitle] = useState(node.title);
+  const [icon, setIcon] = useState(node.icon);
+
+  const body = useAutosave(async (doc: Record<string, unknown>) => {
+    const saved = await saveDraft(node.id, { content_json: doc });
+    queryClient.setQueryData(folioKeys.draft(node.id), saved);
+  });
+  const header = useAutosave(async (patch: { title?: string; icon?: string | null }) => {
+    const saved = await patchNode(node.id, patch);
+    queryClient.setQueryData(folioKeys.node(node.id), saved);
+  });
+
+  const allExtensions = useMemo(
+    () => [
+      ...folioExtensions(),
+      Placeholder.configure({ placeholder: t('folio.editor.bodyPlaceholder') }),
+      ...extensions,
+    ],
+    // The editor is built once; the language does not change while writing.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+  const editor = useEditor({
+    extensions: allExtensions,
+    content: draft.content_json,
+    onUpdate: ({ editor: e }) => body.change(toFolioDoc(e.getJSON())),
+  });
+
+  const states = [body.state, header.state];
+  const state = states.includes('error')
+    ? 'error'
+    : states.includes('saving') || states.includes('unsaved')
+      ? 'saving'
+      : 'saved';
+
+  return (
+    <S.Screen>
+      <S.Bar>
+        <S.Back to={node.version ? nodePath(node) : `/folio/s/${node.space}`}>
+          <ArrowLeft aria-hidden size={16} />
+          {t('folio.editor.back')}
+        </S.Back>
+        <S.Crumb>{[node.space, ...node.breadcrumbs.map((b) => b.title)].join(' / ')}</S.Crumb>
+        <S.SaveState role="status" $error={state === 'error'}>
+          {t(`folio.editor.state.${state}`)}
+        </S.SaveState>
+        {onPublish && editor && (
+          <Button
+            variant="primary"
+            onClick={async () => {
+              await Promise.all([body.flush(), header.flush()]);
+              onPublish(editor);
+            }}
+          >
+            {t('folio.editor.publish')}
+          </Button>
+        )}
+      </S.Bar>
+      <S.Scroll>
+        <S.Page>
+          <PageHeader
+            title={title}
+            icon={icon}
+            // Each save sends title and icon together, so the latest save keeps both.
+            onTitle={(value) => {
+              setTitle(value);
+              if (value.trim()) header.change({ title: value.trim(), icon });
+            }}
+            onIcon={(value) => {
+              setIcon(value);
+              header.change({ title: title.trim() || node.title, icon: value });
+            }}
+            onDone={() => editor?.commands.focus('start')}
+          />
+          <EditorProse>
+            <EditorContent editor={editor} />
+          </EditorProse>
+        </S.Page>
+      </S.Scroll>
+    </S.Screen>
+  );
+}
