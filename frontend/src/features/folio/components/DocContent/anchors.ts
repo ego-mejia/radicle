@@ -50,3 +50,18 @@ export function headingsOf(doc: DocNode | null | undefined): Heading[] {
       return { level: Number(n.attrs?.level ?? 1), text, anchor: anchorFor(text, taken) };
     });
 }
+
+/** Words in the document, for the reading time. */
+export function wordCount(doc: DocNode | null | undefined): number {
+  const walk = (nodes: DocNode[] = []): number =>
+    nodes.reduce((sum, n) => {
+      if (n.type !== 'text') return sum + walk(n.content);
+      return sum + (n.text ?? '').split(/\s+/).filter(Boolean).length;
+    }, 0);
+  return walk(doc?.content);
+}
+
+/** Minutes to read at 220 words a minute, at least one. */
+export function readingMinutes(doc: DocNode | null | undefined): number {
+  return Math.max(1, Math.round(wordCount(doc) / 220));
+}
