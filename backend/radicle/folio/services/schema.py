@@ -100,6 +100,11 @@ def _check_timeline(path: str, attrs: dict[str, Any]) -> None:
                 raise SchemaError(f"{here}[{i}].{key}", f"is text up to {limits[key]}")
 
 
+def _check_embed(path: str, attrs: dict[str, Any]) -> None:
+    if not str(attrs.get("url", "")).startswith(("https://", "http://")):
+        raise SchemaError(f"{path}.attrs.url", "embeds take http or https links")
+
+
 def _check_visual(path: str, attrs: dict[str, Any]) -> None:
     if not str(attrs.get("description", "")).strip():
         raise SchemaError(
@@ -224,6 +229,19 @@ NODES: dict[str, NodeSpec] = {
             "limit": Attr(int, minimum=1, maximum=50),
             "space": Attr((str, type(None)), max_length=40),
         },
+    ),
+    # A pasted link (Folio 3.7): a card, or an iframe for the providers that embed. The
+    # title is kept so the text and the RAG index read something better than a URL.
+    "embed": NodeSpec(
+        BLOCK,
+        attrs={
+            "url": Attr(str, required=True),
+            "title": Attr((str, type(None)), max_length=300),
+            "provider": Attr(
+                (str, type(None)), ("youtube", "figma", "loom", "google_docs", "github", None)
+            ),
+        },
+        check=_check_embed,
     ),
     "text": NodeSpec(INLINE),
     "hardBreak": NodeSpec(INLINE),

@@ -42,6 +42,7 @@ const NODE_ATTRS: Record<string, string[]> = {
   image: ['assetId', 'src', 'alt', 'caption', 'size', 'align'],
   file: ['assetId', 'name', 'mimeType', 'size'],
   video: ['assetId', 'src', 'caption'],
+  embed: ['url', 'title', 'provider'],
   text: [],
   hardBreak: [],
   mention: ['handle'],

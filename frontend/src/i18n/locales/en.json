@@ -2135,6 +2135,9 @@
       "nobody": "Nobody was notified.",
       "granted": "They can see it now: {{names}}.",
       "cannotSee": "{{names}} can't see this page, so they weren't notified. Share again with the box checked to let them in."
+    },
+    "embed": {
+      "opensNewTab": "(opens in a new tab)"
     }
   },
   "notifications": {

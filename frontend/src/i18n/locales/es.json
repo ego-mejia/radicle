@@ -2135,6 +2135,9 @@
       "nobody": "No se avisó a nadie.",
       "granted": "Ya pueden verla: {{names}}.",
       "cannotSee": "{{names}} no puede ver esta página, así que no recibió aviso. Comparte de nuevo con la casilla marcada para darle acceso."
+    },
+    "embed": {
+      "opensNewTab": "(se abre en otra pestaña)"
     }
   },
   "notifications": {

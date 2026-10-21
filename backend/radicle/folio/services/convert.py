@@ -214,6 +214,8 @@ def block(node: Node, depth: int = 0) -> str:
         return "::pages" + _attrs(
             label=attrs["label"], limit=attrs.get("limit"), space=attrs.get("space")
         )
+    if kind == "embed":
+        return "::embed" + _attrs(url=attrs["url"], title=attrs.get("title"))
     return ""
 
 
@@ -242,6 +244,7 @@ _LINES = (
     "image",
     "file",
     "video",
+    "embed",
 )
 
 
@@ -260,6 +263,8 @@ def _text_of(node: Node, out: list[str]) -> None:
         out.append(" ".join(v for v in (attrs.get("alt"), attrs.get("caption")) if v))
     elif kind in ("file", "video"):
         out.append(attrs.get("name") or attrs.get("caption") or "")
+    elif kind == "embed":
+        out.append(attrs.get("title") or attrs["url"])
     elif kind == "expand" and attrs.get("title"):
         out.append(attrs["title"] + "\n")
     elif kind == "comparisonSide" and attrs.get("title"):

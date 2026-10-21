@@ -86,6 +86,8 @@ más rápido
 
 ::pages{label=onboarding limit=5 space=docs}
 
+::embed{url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" title="La demo"}
+
 ---
 
 Fin
