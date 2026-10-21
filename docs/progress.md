@@ -762,9 +762,40 @@ Probada en el navegador sobre un stack aislado (main `f06a60e`), en claro y oscu
 
 Pendiente: los títulos de los avisos los arma el servidor en inglés; las preferencias ya se traducen (#293).
 
-## Folio fase 3: Contenido rico (en curso)
+## Folio fase 3: Contenido rico
 
-Spec: `docs/folio/fase-3.md`.
+Cerrada el 21 de octubre de 2026 (RAD-31 a RAD-37, milestone "Folio Fase 3"). Spec: `docs/folio/fase-3.md`. Decisiones: [0041](decisions/0041-vista-previa-de-la-home-con-los-permisos-del-admin.md).
+
+| # | Entregable | Estado |
+| --- | --- | --- |
+| 3.1 | Templates de página y de space | Listo (#177, #180, #183, #194, #202, #206, #209, #267, #269) |
+| 3.2 | Editor de la home | Listo (#222, #224, #230, #233, #238, #243, #244, #247, #255) |
+| 3.3 | Bloque Visual | Listo (#221, #249, #252, #259, #270, #274, #322, #328) |
+| 3.4 | Suite visual | Listo (#223, #256, #261, #264, #265, #271, #276, #277) |
+| 3.5 | Whiteboards | Listo (#266, #268, #272, #273, #275, #278, #279, #283, #295, #318) |
+| 3.6 | Databases | Listo (#226 a #263, #309) |
+| 3.7 | Embeds y vista previa de links | Listo (#214, #215, #225) |
+
+- **Templates:** seis templates de página incluidos (entre ellos Build spec) con variables y metadata default, y el template de space "Equipo de ingeniería" (#269). Crear página o space desde un template con vista previa de su estructura; admin en **Folio → Admin → Templates**.
+- **Home:** grid de 12 columnas que arma un admin con nueve tipos de bloque, borrador, vista previa, publicar e historial con restaurar. Cada lector ve los bloques con sus permisos y los vacíos no aparecen. La vista previa usa los permisos del admin ([0041](decisions/0041-vista-previa-de-la-home-con-los-permisos-del-admin.md)).
+- **Visuales:** el bloque Visual corre SVG o HTML en un iframe con `sandbox="allow-scripts"` y CSP sin red; el tema llega por `postMessage` con los tokens `--rdc-*` (más `--rdc-on-accent`, #322). Mermaid, KaTeX, gráficas Recharts (también desde la tabla de arriba), timeline, comparación y lista por label. Las librerías pesadas cargan solo cuando se usan. MCP: `validate_visual`, `insert_visual`, `insert_diagram`, `insert_chart`, `insert_timeline` y el recurso `folio://guide/visuals`.
+- **Embeds:** fetch seguro (SSRF, IP fija, 5 s, 1 MB), vista previa OpenGraph/oEmbed con caché, iframe en sandbox para proveedores permitidos (YouTube, Figma y otros) y tarjeta para el resto.
+
+### Arreglos al cerrar la fase
+
+Encontrados al probar en Chrome sobre un stack aislado:
+
+- #326: un whiteboard o una database recién insertados (sin elegir todavía) hacían que el editor en tiempo real dejara de guardar el borrador por completo; ahora el bloque espera fuera del borrador y el resto se guarda.
+- #322: en modo oscuro el iframe de un visual se pintaba blanco detrás del contenido.
+- #328: el marco de un visual no se encogía a su contenido.
+- #309: la vista y la columna default de una database salían en inglés en la UI en español.
+- #318: el test de búsqueda de whiteboards fallaba la mitad de las veces (el segundo cliente borraba antes de sincronizar).
+
+### Aceptación de la fase
+
+Probada en el navegador sobre un stack aislado (main `f3fc8f6`), en claro y oscuro, con capturas en cada ticket. La home se arma desde el panel y se publica; un build spec sale de su template con sus secciones; el space Plataforma sale del template de space con su estructura; el visual animado responde a clics y cambia con el tema; diagrama, gráfica, timeline, comparación y fórmula se insertan desde `/`; el inventario de AI Tools se ve como tablero y arrastrar una tarjeta cambia su estado; YouTube se incrusta como reproductor, Figma con su visor y otros links como tarjeta. La suite completa del backend pasó (1352 tests, con el flaky de whiteboards arreglado en #318).
+
+Pendiente: las filas de las databases no entran a la búsqueda ni al RAG (declarado en `docs/folio/databases.md`); quien solo lee un whiteboard ve los cambios con hasta 10 s de retraso.
 
 ### 3.5 Whiteboards
 
