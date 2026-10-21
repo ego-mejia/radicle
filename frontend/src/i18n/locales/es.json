@@ -2500,6 +2500,9 @@
       "note": "¿Qué faltó?",
       "notePlaceholder": "¿Qué faltó o estuvo mal?",
       "sendNote": "Enviar"
+    },
+    "glossary": {
+      "source": "Fuente: {{title}}"
     }
   },
   "notifications": {

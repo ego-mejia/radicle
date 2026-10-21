@@ -2500,6 +2500,9 @@
       "note": "What was missing?",
       "notePlaceholder": "What was missing or wrong?",
       "sendNote": "Send"
+    },
+    "glossary": {
+      "source": "Source: {{title}}"
     }
   },
   "notifications": {
