@@ -2454,7 +2454,22 @@
       "title": "Title",
       "status": "Status",
       "assignee": "Assignee",
-      "showing": "Showing {{shown}} of {{total}}."
+      "showing": "Showing {{shown}} of {{total}}.",
+      "create": "Create ticket",
+      "createButton": "Create",
+      "created": "{{key}} created and linked to this section.",
+      "createFailed": "The ticket couldn't be created.",
+      "project": "Project",
+      "type": "Type",
+      "area": "Area",
+      "areaHint": "Tasks and bugs need one in most projects.",
+      "milestone": "Milestone",
+      "none": "None",
+      "types": {
+        "task": "Task",
+        "bug": "Bug",
+        "draft": "Draft"
+      }
     }
   },
   "notifications": {

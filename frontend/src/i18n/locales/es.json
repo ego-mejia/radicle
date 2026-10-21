@@ -2454,7 +2454,22 @@
       "title": "Título",
       "status": "Estado",
       "assignee": "Responsable",
-      "showing": "Se muestran {{shown}} de {{total}}."
+      "showing": "Se muestran {{shown}} de {{total}}.",
+      "create": "Crear ticket",
+      "createButton": "Crear",
+      "created": "{{key}} creado y ligado a esta sección.",
+      "createFailed": "No se pudo crear el ticket.",
+      "project": "Proyecto",
+      "type": "Tipo",
+      "area": "Área",
+      "areaHint": "Las tareas y los bugs necesitan una en la mayoría de los proyectos.",
+      "milestone": "Milestone",
+      "none": "Ninguno",
+      "types": {
+        "task": "Tarea",
+        "bug": "Bug",
+        "draft": "Borrador"
+      }
     }
   },
   "notifications": {

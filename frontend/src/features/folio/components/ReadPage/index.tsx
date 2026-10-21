@@ -92,13 +92,16 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
         margin={
           <>
             <MarginComments nodeId={n.id} canComment={canComment} />
-            {canComment && (
-              <SelectionComment
-                container={content}
-                mentions={discussion.mentions}
-                onComment={(anchor, body) => discussion.add.mutateAsync({ body, anchor })}
-              />
-            )}
+            <SelectionComment
+              container={content}
+              mentions={discussion.mentions}
+              onComment={
+                canComment
+                  ? (anchor, body) => discussion.add.mutateAsync({ body, anchor })
+                  : undefined
+              }
+              ticketNode={{ id: n.id }}
+            />
           </>
         }
       />
@@ -174,16 +177,19 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
           <div ref={content}>
             <DocContent doc={page.content} childPages={page.children} size="large" />
           </div>
-          {page.space?.permissions.includes('comment') && (
-            <SelectionComment
-              container={content}
-              mentions={discussion.mentions}
-              onComment={async (anchor, body) => {
-                await discussion.add.mutateAsync({ body, anchor });
-                setComments(true);
-              }}
-            />
-          )}
+          <SelectionComment
+            container={content}
+            mentions={discussion.mentions}
+            onComment={
+              canComment
+                ? async (anchor, body) => {
+                    await discussion.add.mutateAsync({ body, anchor });
+                    setComments(true);
+                  }
+                : undefined
+            }
+            ticketNode={{ id: n.id }}
+          />
         </S.Article>
         <S.Aside>
           {comments && (
