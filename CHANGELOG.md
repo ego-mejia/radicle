@@ -6,6 +6,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Changed
 
+- El parser, la gramática y las fechas de RQL viven en `platform/query`, compartidos por Docket y Folio.
+- Screenshots del README actualizados (logo con el switch de suite, tarjetas con área y milestone) y nuevos de Folio.
 - El logo es Radi: su cuadro verde con sus ojos.
 - El CI de GitHub Actions queda en pausa (solo manual); los checks se corren local antes de cada push.
 - Board con look de Jira, columna **In Review** en el board Main y carriles plegables con **Collapse all**.
@@ -16,6 +18,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Fixed
 
+- Folio: la barra superior tapaba la barra del editor; portada vacía en las páginas; preguntas sin todas sus palabras no encontraban nada; fragmentos de búsqueda con marcas de Markdown; Editar visible pese a una restricción de edición; el tag de tipo no se veía en modo oscuro.
 - E2E de etapas 1 y 3: el arrastre de tarjetas y el carril de área vuelven a pasar con los botones de área y milestone en las tarjetas.
 - Board: soltar una tarjeta en Done la cierra como Done sin pedir resolución.
 - My tickets y List: el encabezado de la tabla ya no se desfasa de las filas.
@@ -28,6 +31,10 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Added
 
+- Folio fase 1, la suite de documentación: spaces con árbol y blog, editor TipTap a pantalla completa con menú `/`, publicación con metadata obligatoria y versiones inmutables con diff y restaurar, roles globales, permisos por space y restricciones por página, envíos de agentes con cola de aprobación, búsqueda híbrida (texto en español e inglés y semántica con pgvector), RQL de docs, home bento, lectura revista y modo enfoque, y 12 tools en `/mcp/folio`.
+- Folio fase 2 (en curso): bus de eventos con avisos en la app (SSE) y por email (SMTP), preferencias por tipo y canal; archivar, copiar y mover páginas entre spaces; estados In review, Verified y Outdated con vencimiento por space y aviso al dueño; transferir dueño; seguir, favoritos, reacciones y recientes.
+- Los límites de tools MCP por agente aplican a todas las apps, con los grupos "Folio: leer docs" y "Folio: escribir docs".
+- E2E de Folio fase 1 (`e2e/suite-folio1.spec.ts`).
 - Folio fase 0: el backend se parte en `platform`, `docket` y `folio` sin cambiar Docket; autorización genérica con un proveedor por app; `audit_log.app`; proveedor de IA para chat y embeddings (Admin → Settings → AI provider, con prueba de conexión); switch de suite en el logo con `g d` / `g f`; Folio en `/folio` con roles globales (Admin → Global roles), `/api/v1/folio` y `/mcp/folio` con `whoami`.
 - Áreas con icono: se elige de un set de iconos SVG y se pinta con el color del área; se ve en tarjetas, carriles y timeline.
 - Tarjetas del board con área, milestone y número de subtickets (campos de tarjeta `area`, `milestone` y `children`, prendidos en todos los boards); el área y el milestone se cambian desde la tarjeta.
