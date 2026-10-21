@@ -13,10 +13,11 @@ import {
   publishHome,
   saveHomeDraft,
 } from '../../../../services/api/folio';
+import { BlockConfig } from './components/BlockConfig';
 import { BlockPalette } from './components/BlockPalette';
 import { EditorGrid } from './components/EditorGrid';
 import { blockErrors } from './errors';
-import { addBlock, applyPlacements, isDirty, removeBlock } from './state';
+import { addBlock, applyPlacements, isDirty, removeBlock, setConfig } from './state';
 import * as S from './style';
 
 /** Folio, Admin, Home (Folio 3.2): build the home on a 12-column grid, save, publish. */
@@ -34,7 +35,7 @@ export function HomeEditor() {
   const dirty = edited !== null && isDirty(saved, edited);
 
   const save = useMutation({
-    mutationFn: () => saveHomeDraft({ columns: 12, blocks }),
+    mutationFn: (sent: HomeLayoutBlock[]) => saveHomeDraft({ columns: 12, blocks: sent }),
     onSuccess: (next) => {
       queryClient.setQueryData(homeEditorKeys.draft, next);
       setEdited(null);
@@ -53,8 +54,10 @@ export function HomeEditor() {
   });
 
   if (!draft) return <PageSpinner />;
-  const errors = blockErrors(save.error, blocks);
+  // The 422 numbers blocks as they were sent, not as they are now.
+  const errors = blockErrors(save.error, save.variables ?? blocks);
   const change = (next: HomeLayoutBlock[]) => setEdited(next);
+  const current = blocks.find((b) => b.id === selected);
 
   return (
     <S.Wrap>
@@ -66,7 +69,7 @@ export function HomeEditor() {
               ? t('folio.homeEditor.draftReady')
               : t('folio.homeEditor.showingPublished')}
         </S.Status>
-        <Button disabled={!dirty || save.isPending} onClick={() => save.mutate()}>
+        <Button disabled={!dirty || save.isPending} onClick={() => save.mutate(blocks)}>
           {t('folio.homeEditor.save')}
         </Button>
         <Button
@@ -95,14 +98,26 @@ export function HomeEditor() {
           )}
         </S.Errors>
       )}
-      <EditorGrid
-        blocks={blocks}
-        selected={selected}
-        invalid={new Set(errors.keys())}
-        onSelect={setSelected}
-        onPlace={(placements) => change(applyPlacements(blocks, placements))}
-        onRemove={(id) => change(removeBlock(blocks, id))}
-      />
+      <S.Body>
+        <EditorGrid
+          blocks={blocks}
+          selected={selected}
+          invalid={new Set(errors.keys())}
+          onSelect={setSelected}
+          onPlace={(placements) => change(applyPlacements(blocks, placements))}
+          onRemove={(id) => change(removeBlock(blocks, id))}
+        />
+        {current ? (
+          <BlockConfig
+            key={current.id}
+            block={current}
+            errors={errors.get(current.id) ?? []}
+            onChange={(config) => change(setConfig(blocks, current.id, config))}
+          />
+        ) : (
+          <S.Hint>{t('folio.homeEditor.config.select')}</S.Hint>
+        )}
+      </S.Body>
     </S.Wrap>
   );
 }

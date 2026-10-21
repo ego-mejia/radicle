@@ -33,12 +33,14 @@ describe('HomeEditor', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Text' }));
     expect(screen.getByText('Unsaved changes')).toBeInTheDocument();
+    await userEvent.type(screen.getByLabelText('Text (Markdown)'), 'Hola');
     await userEvent.click(screen.getByRole('button', { name: 'Remove Featured' }));
     await userEvent.click(screen.getByRole('button', { name: 'Save draft' }));
     await vi.waitFor(() => expect(calls.some((c) => c.method === 'PUT')).toBe(true));
     const put = calls.find((c) => c.method === 'PUT')?.body as { blocks: { id: string }[] };
     expect(put.blocks.map((b) => b.id)).toEqual(['q', 'text']);
     expect(put.blocks[1]).toMatchObject({ type: 'text', x: 0, y: 4, w: 6, h: 2 });
+    expect(put.blocks[1]).toHaveProperty('config', { markdown: 'Hola' });
 
     const publish = await screen.findByRole('button', { name: 'Publish' });
     await vi.waitFor(() => expect(publish).toBeEnabled());

@@ -28,3 +28,21 @@ export const Errors = styled.ul`
   color: ${({ theme }) => theme.color.danger};
   font-size: ${({ theme }) => theme.fontSize.md};
 `;
+
+/** The canvas and, beside it, the selected block's settings; stacked on narrow screens. */
+export const Body = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
+  gap: ${({ theme }) => theme.space.lg};
+
+  @media (max-width: 1100px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+`;
+
+export const Hint = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.color.textMuted};
+  font-size: ${({ theme }) => theme.fontSize.md};
+`;

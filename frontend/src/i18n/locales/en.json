@@ -1649,6 +1649,30 @@
       "unsaved": "Unsaved changes",
       "draftReady": "Draft saved. Readers still see the published home.",
       "showingPublished": "This is the published home. Change it and save a draft.",
+      "config": {
+        "title": "{{name}} settings",
+        "select": "Select a block to set what it shows.",
+        "blockTitle": "Title",
+        "space": "Space",
+        "anySpace": "Any space",
+        "label": "Label",
+        "labelHint": "Only docs with this label, e.g. mcp",
+        "kind": "Shows",
+        "kinds": {
+          "posts": "Posts only",
+          "all": "Posts and pages"
+        },
+        "rql": "RQL query",
+        "rqlHint": "e.g. space = ai-tools and doc_type = guide",
+        "at": "{{message}} (at character {{at}})",
+        "limit": "How many (1 to {{most}})",
+        "markdown": "Text (Markdown)",
+        "nothing": "The search box has nothing to set.",
+        "pinned": "Pinned: {{title}}",
+        "newest": "Shows the newest labelled one.",
+        "unpin": "Use the newest",
+        "pick": "Pin a page or post"
+      },
       "types": {
         "featured": "Featured",
         "announcement": "Announcement",
