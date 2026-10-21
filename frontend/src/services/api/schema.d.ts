@@ -988,6 +988,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/restrictions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Restrictions */
+        get: operations["get_restrictions_api_v1_folio_nodes__node_id__restrictions_get"];
+        /**
+         * Put Restrictions
+         * @description Replace who may view (with its children) and edit (this page) it; empty lifts them.
+         */
+        put: operations["put_restrictions_api_v1_folio_nodes__node_id__restrictions_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}/versions": {
         parameters: {
             query?: never;
@@ -1089,6 +1110,30 @@ export interface paths {
         head?: never;
         /** Patch Space */
         patch: operations["patch_space_api_v1_folio_spaces__key__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/spaces/{key}/grants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Grants
+         * @description Who may do what in the space. Space admins only.
+         */
+        get: operations["get_grants_api_v1_folio_spaces__key__grants_get"];
+        /**
+         * Put Grants
+         * @description Replace the space's grants; at least one user or group keeps admin.
+         */
+        put: operations["put_grants_api_v1_folio_spaces__key__grants_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/folio/spaces/{key}/posts": {
@@ -4288,6 +4333,24 @@ export interface components {
             transition: string | null;
             type: components["schemas"]["TicketType"];
         };
+        /** GrantIO */
+        GrantIO: {
+            /**
+             * Grantee
+             * @description Handle or group name; none for everyone
+             */
+            grantee?: string | null;
+            /**
+             * Grantee Type
+             * @enum {string}
+             */
+            grantee_type: "user" | "group" | "everyone";
+            /**
+             * Permissions
+             * @description admin includes all the others
+             */
+            permissions: ("view" | "create" | "comment" | "delete_own" | "delete_any" | "admin" | "export")[];
+        };
         /** GrantIn */
         GrantIn: {
             /**
@@ -4328,6 +4391,29 @@ export interface components {
              * @enum {string}
              */
             role: "reader" | "creator" | "admin";
+        };
+        /** GranteeIO */
+        GranteeIO: {
+            /**
+             * Grantee
+             * @description Handle or group name; none for everyone
+             */
+            grantee?: string | null;
+            /**
+             * Grantee Type
+             * @enum {string}
+             */
+            grantee_type: "user" | "group" | "everyone";
+        };
+        /** GrantsIn */
+        GrantsIn: {
+            /** Grants */
+            grants: components["schemas"]["GrantIO"][];
+        };
+        /** GrantsOut */
+        GrantsOut: {
+            /** Grants */
+            grants: components["schemas"]["GrantIO"][];
         };
         /** GrantsPut */
         GrantsPut: {
@@ -5595,6 +5681,19 @@ export interface components {
         RestoreIn: {
             /** Change Note */
             change_note?: string | null;
+        };
+        /** RestrictionsIO */
+        RestrictionsIO: {
+            /**
+             * Edit
+             * @description Only this page
+             */
+            edit?: components["schemas"]["GranteeIO"][];
+            /**
+             * View
+             * @description Hides the page and its children
+             */
+            view?: components["schemas"]["GranteeIO"][];
         };
         /** RuleConf */
         RuleConf: {
@@ -9520,6 +9619,72 @@ export interface operations {
             };
         };
     };
+    get_restrictions_api_v1_folio_nodes__node_id__restrictions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RestrictionsIO"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_restrictions_api_v1_folio_nodes__node_id__restrictions_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RestrictionsIO"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RestrictionsIO"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_versions_api_v1_folio_nodes__node_id__versions_get: {
         parameters: {
             query?: never;
@@ -9754,6 +9919,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SpaceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_grants_api_v1_folio_spaces__key__grants_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrantsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_grants_api_v1_folio_spaces__key__grants_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GrantsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrantsOut"];
                 };
             };
             /** @description Validation Error */
