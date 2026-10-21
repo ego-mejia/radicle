@@ -1638,6 +1638,30 @@
       "none": "Nobody has a role: Folio is hidden for everyone but instance admins.",
       "forbidden": "Only Folio admins can manage global roles."
     },
+    "homeEditor": {
+      "title": "Home",
+      "palette": "Add a block",
+      "remove": "Remove {{title}}",
+      "save": "Save draft",
+      "publish": "Publish",
+      "saved": "Draft saved",
+      "published": "The home is published",
+      "unsaved": "Unsaved changes",
+      "draftReady": "Draft saved. Readers still see the published home.",
+      "showingPublished": "This is the published home. Change it and save a draft.",
+      "types": {
+        "featured": "Featured",
+        "announcement": "Announcement",
+        "posts": "Posts",
+        "query": "RQL query",
+        "for_you": "For you",
+        "most_read": "Most read",
+        "spaces": "Spaces",
+        "text": "Text",
+        "search": "Search",
+        "chat": "Chat"
+      }
+    },
     "home": {
       "title": "Home",
       "announcement": "Announcement",

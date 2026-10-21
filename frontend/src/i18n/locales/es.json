@@ -1638,6 +1638,30 @@
       "none": "Nadie tiene rol: Folio solo aparece para los admins de instancia.",
       "forbidden": "Solo los admins de Folio pueden gestionar los roles globales."
     },
+    "homeEditor": {
+      "title": "Home",
+      "palette": "Agregar un bloque",
+      "remove": "Quitar {{title}}",
+      "save": "Guardar borrador",
+      "publish": "Publicar",
+      "saved": "Borrador guardado",
+      "published": "La home está publicada",
+      "unsaved": "Cambios sin guardar",
+      "draftReady": "Borrador guardado. Los readers siguen viendo la home publicada.",
+      "showingPublished": "Esta es la home publicada. Cámbiala y guarda un borrador.",
+      "types": {
+        "featured": "Destacado",
+        "announcement": "Anuncio",
+        "posts": "Posts",
+        "query": "Consulta RQL",
+        "for_you": "Para ti",
+        "most_read": "Lo más leído",
+        "spaces": "Espacios",
+        "text": "Texto",
+        "search": "Búsqueda",
+        "chat": "Chat"
+      }
+    },
     "home": {
       "title": "Inicio",
       "announcement": "Anuncio",
