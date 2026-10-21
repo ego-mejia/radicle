@@ -86,6 +86,8 @@ más rápido
 
 ::pages{label=onboarding limit=5 space=docs}
 
+::database{id=6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14 view=board}
+
 ::embed{url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" title="La demo"}
 
 ---

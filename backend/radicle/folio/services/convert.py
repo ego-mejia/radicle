@@ -214,6 +214,8 @@ def block(node: Node, depth: int = 0) -> str:
         return "::pages" + _attrs(
             label=attrs["label"], limit=attrs.get("limit"), space=attrs.get("space")
         )
+    if kind == "databaseView":
+        return "::database" + _attrs(id=attrs["database"], view=attrs.get("view"))
     if kind == "embed":
         return "::embed" + _attrs(url=attrs["url"], title=attrs.get("title"))
     return ""

@@ -22,6 +22,7 @@ Los documentos de Folio se guardan como JSON de TipTap (`backend/radicle/folio/s
 | Timeline | ` ```timeline ` con una línea por hito: `fecha \| título \| texto` (fecha y texto opcionales) |
 | Comparación | `::::compare`, cada lado en `:::side{title="Antes"}` … `:::`, y cierra `::::` (2 o 3 lados) |
 | Lista por label | `::pages{label=onboarding limit=5 space=docs}`: las páginas con ese label que puede ver quien lee |
+| Vista de una database | `::database{id=<uuid> view=board}`: las filas de esa vista; sin `view`, la primera. Quien no puede ver la database ve que no tiene acceso |
 
 Un bloque de código con esos nombres que no forma un bloque válido (una gráfica sin filas, un visual sin descripción) se queda como bloque de código.
 | Action item | `::task[texto]{id=ai-1 assignee=ana due=2026-11-01 done=true}` en su propia línea; sin `id`, se genera uno estable. Va a Mis tareas del asignado (fase 2) |
