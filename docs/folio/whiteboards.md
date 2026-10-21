@@ -11,3 +11,10 @@ Mientras se dibuja, la escena vive en el Y.Doc del nodo (`folio_ydocs` y `folio_
 ## Búsqueda
 
 El texto de los elementos (textos y nombres de frames, uno por línea) entra al índice como el de una página publicada, pero sin versión (`folio_chunks.version_id` queda vacío): se reindexa cuando cambia el texto, no cuando se mueve un elemento. Borrar el texto lo saca del índice.
+
+## En la app
+
+- **Página del whiteboard:** quien puede editar entra a la sala y dibuja con los demás; ve sus avatares y sus punteros con nombre. Quien solo lee ve la escena guardada, refrescada cada 10 s. Arriba: exportar PNG o SVG.
+- **Bloque en páginas:** `/` → Whiteboard pide cuál; se guarda cuando ya tiene uno. En Markdown `::whiteboard{id=<uuid>}`. Se ve solo para leer, con link al whiteboard; quien no lo puede ver ve un aviso.
+- **Fuera de alcance:** imágenes (la herramienta está apagada y los archivos no se sincronizan) y tools del MCP.
+- **Fuentes:** Excalidraw 0.18.1; sus fuentes se copian al build (`/assets/excalidraw/fonts`), así que una instalación sin internet las sirve sola.

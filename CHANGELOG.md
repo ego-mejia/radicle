@@ -31,6 +31,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Added
 
+- Folio 3.5, whiteboards: Excalidraw dibujado entre varios en tiempo real (Yjs) con presencia y punteros con nombre, exportar PNG y SVG, el texto en la búsqueda y el bloque `whiteboard` en páginas; E2E con dos personas dibujando a la vez (`e2e/suite-folio3-whiteboard.spec.ts`).
 - Folio 3.6, databases: columnas tipadas, vistas de tabla, tarjetas y tablero con filtros y orden en el servidor, edición en línea, el bloque `databaseView` en páginas y las tools `query_database` y `add_database_rows`.
 - Folio fase 1, la suite de documentación: spaces con árbol y blog, editor TipTap a pantalla completa con menú `/`, publicación con metadata obligatoria y versiones inmutables con diff y restaurar, roles globales, permisos por space y restricciones por página, envíos de agentes con cola de aprobación, búsqueda híbrida (texto en español e inglés y semántica con pgvector), RQL de docs, home bento, lectura revista y modo enfoque, y 12 tools en `/mcp/folio`.
 - Folio fase 2 (en curso): bus de eventos con avisos en la app (SSE) y por email (SMTP), preferencias por tipo y canal; archivar, copiar y mover páginas entre spaces; estados In review, Verified y Outdated con vencimiento por space y aviso al dueño; transferir dueño; seguir, favoritos, reacciones y recientes.

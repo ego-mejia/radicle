@@ -757,6 +757,23 @@ Spec: `docs/folio/fase-2.md`. Decisión: [0038](decisions/0038-eventos-y-notific
 
 Spec: `docs/folio/fase-3.md`.
 
+### 3.5 Whiteboards
+
+Listo: #266, #268, #272, #273, #275, #278, #279, #283, #295. Referencia en `docs/folio/whiteboards.md`.
+
+- **Modelo:** nodo `kind=whiteboard` (migración 0047, downgrade reconstruye el enum) y `folio_whiteboards` con la escena en JSON y su texto. Nunca se publica ni tiene draft: quien lo ve lo lee como está.
+- **Tiempo real:** la misma sala de 2.2 ([0039](decisions/0039-tiempo-real-con-pycrdt-sin-pycrdt-websocket.md)). La escena es `Y.Map("elements")`, un elemento de Excalidraw por id; gana la versión más alta y, si empatan, el `versionNonce` menor, igual en el servidor y en cada cliente. La sala guarda la escena cada 5 s y al cerrarse.
+- **Búsqueda:** el texto de los elementos entra al índice cuando cambia; sus chunks no tienen versión (migración 0048 hace opcional `folio_chunks.version_id`).
+- **API:** `GET /whiteboards/{id}` (la escena actual y `can_edit`), en `test_folio_leaks.py` y `test_restricted.py`. Para dibujar, el WebSocket de `/collab/{id}`.
+- **UI:** Excalidraw 0.18.1 con sus fuentes servidas por Radicle (no un CDN) y en su propio chunk. Página del whiteboard con presencia y punteros con nombre, exportar PNG y SVG; quien solo lee ve la escena guardada, refrescada cada 10 s. "Nuevo whiteboard" en el space e icono en el árbol. Bloque `whiteboard` desde `/` y en la lectura, solo para ver, con aviso de sin acceso; en Markdown `::whiteboard{id=…}`.
+- **Fuera de alcance:** imágenes dentro del whiteboard (la herramienta está apagada; los archivos no se sincronizan) y tools del MCP para whiteboards.
+
+| Aceptación | Prueba |
+| --- | --- |
+| Dos personas dibujan en el mismo whiteboard | `test_folio_whiteboards.py::test_two_people_draw_together_and_the_scene_is_kept`, `whiteboard/sync.test.ts`, `e2e/suite-folio3-whiteboard.spec.ts` |
+| Se incrusta en una página | `WhiteboardBlock.test.tsx`, `e2e/suite-folio3-whiteboard.spec.ts` |
+| Export PNG y SVG; textos indexados | `e2e/suite-folio3-whiteboard.spec.ts`, `test_folio_whiteboards.py::test_its_text_is_found_by_search` |
+
 ### 3.6 Databases
 
 Listo: #226, #227, #229, #231, #234, #237, #240, #245, #246, #248, #250, #254, #257, #258, #260, #262. Referencia en `docs/folio/databases.md`.
