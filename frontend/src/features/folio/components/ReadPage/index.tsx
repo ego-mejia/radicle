@@ -1,6 +1,6 @@
 import { Link, Navigate } from '@tanstack/react-router';
 import { Glasses, History, MessageSquare, PenLine } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { lazy, Suspense, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../../../components/ui/Avatar';
 import { EmptyState } from '../../../../components/ui/EmptyState';
@@ -27,6 +27,11 @@ import { RootsArt } from '../RootsArt';
 import { SelectionComment } from '../SelectionComment';
 import * as S from './style';
 import { usePage } from '../../hooks/usePage';
+
+// With Yjs and Excalidraw, whiteboards load only when one is opened.
+const WhiteboardPage = lazy(() =>
+  import('../WhiteboardPage').then((m) => ({ default: m.WhiteboardPage })),
+);
 
 /** Reading a page in the magazine view: cover, title, lead, byline, content and index. */
 export function ReadPage({ nodeId }: { nodeId: string }) {
@@ -55,6 +60,12 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
     );
   if (node.data.kind === 'database')
     return <DatabasePage node={node.data} spaceName={page.space?.name} />;
+  if (node.data.kind === 'whiteboard')
+    return (
+      <Suspense fallback={<PageSpinner />}>
+        <WhiteboardPage node={node.data} spaceName={page.space?.name} />
+      </Suspense>
+    );
   if (page.isDraft && page.draft.isPending) return <PageSpinner />;
   if (page.isDraft && page.draft.isError)
     return (

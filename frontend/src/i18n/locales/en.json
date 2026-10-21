@@ -1751,7 +1751,8 @@
         "blog_post": "New blog post",
         "title": "Title",
         "live_doc": "New live doc",
-        "database": "New database"
+        "database": "New database",
+        "whiteboard": "New whiteboard"
       }
     },
     "reader": {
@@ -2398,6 +2399,12 @@
       "name": "Name",
       "key": "Key",
       "keyHint": "In links: lowercase letters, digits and dashes."
+    },
+    "whiteboard": {
+      "canvas": "Whiteboard",
+      "exportPng": "PNG",
+      "exportSvg": "SVG",
+      "unavailable": "This whiteboard can't be shown"
     }
   },
   "notifications": {

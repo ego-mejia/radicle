@@ -1751,7 +1751,8 @@
         "blog_post": "Nuevo blog post",
         "title": "Título",
         "live_doc": "Nuevo doc en vivo",
-        "database": "Nueva database"
+        "database": "Nueva database",
+        "whiteboard": "Nuevo whiteboard"
       }
     },
     "reader": {
@@ -2398,6 +2399,12 @@
       "name": "Nombre",
       "key": "Clave",
       "keyHint": "En los enlaces: minúsculas, dígitos y guiones."
+    },
+    "whiteboard": {
+      "canvas": "Whiteboard",
+      "exportPng": "PNG",
+      "exportSvg": "SVG",
+      "unavailable": "No se puede mostrar este whiteboard"
     }
   },
   "notifications": {
