@@ -2086,6 +2086,39 @@
         "done": "Todavía no marcas ninguna.",
         "all": "No tienes action items asignados."
       }
+    },
+    "comments": {
+      "title": "Comentarios",
+      "toggle": "Comentarios ({{count}})",
+      "filter": "Mostrar",
+      "filters": {
+        "open": "Abiertos",
+        "resolved": "Resueltos",
+        "orphaned": "Huérfanos"
+      },
+      "empty": {
+        "open": "No hay comentarios abiertos.",
+        "resolved": "Nada resuelto todavía.",
+        "orphaned": "No hay comentarios huérfanos: todas las citas siguen en la página."
+      },
+      "new": "Nuevo comentario",
+      "placeholder": "Escribe un comentario, @ para mencionar",
+      "post": "Comentar",
+      "thread": "Hilo de comentarios",
+      "reply": "Responder",
+      "replyPlaceholder": "Responde, @ para mencionar",
+      "resolve": "Resolver",
+      "reopen": "Reabrir",
+      "resolvedBy": "Resuelto por @{{handle}}",
+      "orphaned": "Se borró el texto que citaba",
+      "edit": "Editar comentario",
+      "delete": "Borrar comentario",
+      "edited": "editado",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "removed": "Usuario eliminado",
+      "comment": "Comentar",
+      "commentOn": "Comentar el texto seleccionado"
     }
   },
   "notifications": {
