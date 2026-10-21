@@ -445,6 +445,18 @@ def _check_node(node: Any, path: str, depth: int, counter: _Counter) -> None:
         _check_node(child, here, depth + 1, counter)
 
 
+def attrs_valid(kind: str, attrs: dict[str, Any]) -> bool:
+    """Whether a node's own attributes pass, leaving its children aside."""
+    spec = NODES[kind]
+    try:
+        _check_attrs("$", attrs, spec.attrs)
+        if spec.check is not None:
+            spec.check("$", attrs)
+    except SchemaError:
+        return False
+    return True
+
+
 def validate(doc: Any) -> dict[str, Any]:
     """The document if it follows the schema; SchemaError (422) with the path otherwise."""
     if not isinstance(doc, dict) or doc.get("type") != "doc":

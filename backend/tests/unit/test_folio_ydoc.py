@@ -64,3 +64,15 @@ def test_write_replaces_and_numbers_come_back_as_ints() -> None:
     out = ydoc.to_json(doc)
     assert out["content"][0]["attrs"] == {"start": 3}
     assert isinstance(out["content"][0]["attrs"]["start"], int)
+
+
+def test_clean_leaves_out_blocks_that_are_not_set_up() -> None:
+    doc = {
+        "type": "doc",
+        "content": [
+            {"type": "databaseView", "attrs": {"database": None}},
+            {"type": "visual", "attrs": {"format": "svg", "code": "<svg/>"}},
+            {"type": "paragraph"},
+        ],
+    }
+    assert ydoc.clean(doc) == {"type": "doc", "content": [{"type": "paragraph"}]}
