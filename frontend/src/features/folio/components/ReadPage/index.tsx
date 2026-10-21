@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
-import { Glasses, History, PenLine } from 'lucide-react';
+import { Glasses, History, MessageSquare, PenLine } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../../../components/ui/Avatar';
 import { EmptyState } from '../../../../components/ui/EmptyState';
@@ -9,6 +10,7 @@ import { useMe } from '../../../../hooks/useMe';
 import { formatDate } from '../../../../lib/format';
 import { assetUrl } from '../../../../services/api/folio';
 import { useFocusMode } from '../../hooks/useFocusMode';
+import { CommentsPanel } from '../CommentsPanel';
 import { DocContent } from '../DocContent';
 import { headingsOf, readingMinutes } from '../DocContent/anchors';
 import { FocusReader } from '../FocusReader';
@@ -28,6 +30,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   const page = usePage(nodeId);
   const me = useMe();
   const [focus, setFocus] = useFocusMode(me.handle);
+  const [comments, setComments] = useState(false);
   const { node } = page;
 
   if (node.isPending) return <PageSpinner />;
@@ -74,6 +77,10 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
           ))}
         </S.Crumbs>
         <S.Actions>
+          <button type="button" aria-pressed={comments} onClick={() => setComments(!comments)}>
+            <MessageSquare aria-hidden />
+            {t('folio.comments.title')}
+          </button>
           <button type="button" onClick={() => setFocus(true)}>
             <Glasses aria-hidden />
             {t('folio.reader.focus.enter')}
@@ -123,6 +130,12 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
           <DocContent doc={page.content} childPages={page.children} size="large" />
         </S.Article>
         <S.Aside>
+          {comments && (
+            <CommentsPanel
+              nodeId={n.id}
+              canComment={!!page.space?.permissions.includes('comment')}
+            />
+          )}
           <PageToc headings={headingsOf(page.content)} />
           <PageMeta metadata={page.metadata} status={n.status} version={n.version} />
           <PageQuality
