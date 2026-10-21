@@ -2,6 +2,7 @@
 
 import io
 import uuid
+import zipfile
 
 import pytest
 from httpx import AsyncClient
@@ -76,6 +77,42 @@ async def guides(client: AsyncClient, db: AsyncSession, team: Team) -> dict:
 
 async def _node(db: AsyncSession, node_id: str) -> FolioNode:
     return await db.get_one(FolioNode, uuid.UUID(node_id))
+
+
+async def test_a_space_to_markdown_holds_what_its_author_sees(
+    db: AsyncSession, team: Team, guides: dict
+) -> None:
+    luis = await _user(db, team.member.handle)
+    row = await exports.create_export(db, luis, guides["space"], ExportFormat.markdown)
+    assert row.status == ExportStatus.queued
+    await run_jobs(db)
+    await db.refresh(row)
+    assert row.status == ExportStatus.done, row.stats
+    assert row.stats["pages"] == 1 and row.filename == "guias-markdown.zip"
+
+    _, data = await exports.download(db, luis, row.id)
+    zf = zipfile.ZipFile(io.BytesIO(data))
+    names = zf.namelist()
+    page = "empezar/conectar-un-agente.md"
+    assert page in names and not any("salarios" in n or "borrador" in n for n in names)
+    text = zf.read(page).decode()
+    assert text.startswith('---\ntitle: "Conectar un agente"\nversion: 1\n')
+    assert 'doc_type: "how-to"' in text
+    image = next(n for n in names if n.startswith("assets/") and n.endswith("diagrama.png"))
+    assert f"](../{image}" in text and zf.read(image).startswith(b"\x89PNG")
+
+
+async def test_one_page_alone(db: AsyncSession, team: Team, guides: dict) -> None:
+    admin = await _user(db, team.instance.handle)
+    row = await exports.create_export(
+        db, admin, await _node(db, guides["guide"]), ExportFormat.markdown
+    )
+    await run_jobs(db)
+    await db.refresh(row)
+    zf = zipfile.ZipFile(io.BytesIO((await exports.download(db, admin, row.id))[1]))
+    page = "conectar-un-agente.md"
+    assert row.filename == "conectar-un-agente-markdown.zip" and page in zf.namelist()
+    assert "](assets/" in zf.read(page).decode()
 
 
 async def test_who_may_export_and_what(db: AsyncSession, team: Team, guides: dict) -> None:
