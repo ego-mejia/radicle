@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioDraft, FolioNode, FolioNodeEvent, NodeKind
-from radicle.folio.services import access, comments, convert, nodes, schema
+from radicle.folio.services import access, collab, comments, convert, nodes, schema, ydoc
 from radicle.folio.services.parse_markdown import from_markdown
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.errors import ValidationFailed
@@ -87,10 +87,18 @@ async def save_draft(
     if row is None:
         row = FolioDraft(node_id=node.id, content_json=schema.empty(), metadata_={})
         db.add(row)
+    content = None
     if content_json is not None:
-        row.content_json = schema.validate(content_json)
+        content = schema.validate(content_json)
     elif content_md is not None:
-        row.content_json = from_markdown(content_md)
+        content = from_markdown(content_md)
+    if content is not None:
+        # Through the Y.Doc, so whoever is editing sees it arrive (Folio 2.2).
+        await db.flush()
+        await collab.apply_change(
+            db, node, user, lambda doc: ydoc.write(ydoc.fragment(doc), content)
+        )
+        row.content_json = content
     if metadata is not None:
         row.metadata_ = _metadata(metadata)
     row.updated_by = user.id
