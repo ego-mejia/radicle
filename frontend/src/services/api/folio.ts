@@ -22,6 +22,8 @@ export type FolioDraftIn = S['DraftIn'];
 export type FolioPublishIn = S['PublishIn'];
 export type FolioVersion = S['VersionOut'];
 export type FolioVersionContent = S['VersionContentOut'];
+export type FolioSnapshot = S['SnapshotOut'];
+export type FolioSnapshotContent = S['SnapshotContentOut'];
 export type FolioDiff = S['DiffOut'];
 export type FolioSubmission = S['SubmissionOut'];
 export type FolioSubmissionDetail = S['SubmissionDetailOut'];
@@ -49,6 +51,8 @@ export const folioKeys = {
   versions: (id: string) => ['folio', 'nodes', id, 'versions'] as const,
   version: (id: string, n: number) => ['folio', 'nodes', id, 'versions', n] as const,
   diff: (id: string, from: number, to: number) => ['folio', 'nodes', id, 'diff', from, to] as const,
+  snapshots: (id: string) => ['folio', 'nodes', id, 'snapshots'] as const,
+  snapshot: (id: string, sid: string) => ['folio', 'nodes', id, 'snapshots', sid] as const,
   schema: ['folio', 'metadata-schema'] as const,
   template: (id: string) => ['folio', 'template', id] as const,
   linkPreview: (url: string) => ['folio', 'link-preview', url] as const,
@@ -228,6 +232,30 @@ export async function restoreVersion(id: string, number: number): Promise<FolioV
     await api.POST('/api/v1/folio/nodes/{node_id}/versions/{number}/restore', {
       params: { path: { node_id: id, number } },
       body: {},
+    }),
+  );
+}
+
+/** A live doc's snapshots (Folio 2.5), newest first, with who wrote since the one before. */
+export async function fetchSnapshots(id: string): Promise<FolioSnapshot[]> {
+  return unwrap(
+    await api.GET('/api/v1/folio/nodes/{node_id}/snapshots', { params: { path: { node_id: id } } }),
+  ).items;
+}
+
+export async function fetchSnapshot(id: string, sid: string): Promise<FolioSnapshotContent> {
+  return unwrap(
+    await api.GET('/api/v1/folio/nodes/{node_id}/snapshots/{snapshot_id}', {
+      params: { path: { node_id: id, snapshot_id: sid } },
+    }),
+  );
+}
+
+/** Brings a live doc back to a snapshot for everyone writing in it; that is a new snapshot. */
+export async function restoreSnapshot(id: string, sid: string): Promise<FolioSnapshot> {
+  return unwrap(
+    await api.POST('/api/v1/folio/nodes/{node_id}/snapshots/{snapshot_id}/restore', {
+      params: { path: { node_id: id, snapshot_id: sid } },
     }),
   );
 }

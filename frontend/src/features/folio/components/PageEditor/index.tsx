@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Placeholder } from '@tiptap/extensions';
 import { EditorContent, useEditor, type Editor } from '@tiptap/react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, History } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
@@ -176,6 +176,12 @@ function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
         </S.Back>
         <S.Crumb>{[node.space, ...node.breadcrumbs.map((b) => b.title)].join(' / ')}</S.Crumb>
         {room && <Presence peers={room.collab.peers} />}
+        {node.kind === 'live_doc' && (
+          <S.Back to={`${nodePath(node)}/history`}>
+            <History aria-hidden size={16} />
+            {t('folio.editor.history')}
+          </S.Back>
+        )}
         <S.SaveState role="status" $error={state === 'error' || state === 'offline'}>
           {t(`folio.editor.state.${state}`)}
         </S.SaveState>

@@ -1795,7 +1795,8 @@
         "label_one": "{{count}} persona en este documento",
         "label_other": "{{count}} personas en este documento",
         "agentWriting": "{{name}} está escribiendo"
-      }
+      },
+      "history": "Snapshots"
     },
     "publish": {
       "title": "Publicar",
@@ -2147,6 +2148,18 @@
     },
     "embed": {
       "opensNewTab": "(se abre en otra pestaña)"
+    },
+    "liveHistory": {
+      "title": "Snapshots",
+      "back": "Volver al doc",
+      "none": "Aún no hay snapshots: el primero se toma 10 minutos después de que alguien escribe.",
+      "snapshots": "Snapshots",
+      "nobody": "Sin cambios",
+      "restore": "Restaurar este snapshot",
+      "restoreTitle": "¿Restaurar este snapshot?",
+      "restoreText": "El doc vuelve a este snapshot para todos los que escriben en él. No se pierde nada: el texto actual queda como snapshot.",
+      "restoreConfirm": "Restaurarlo",
+      "restored": "El doc volvió a ese snapshot"
     }
   },
   "notifications": {
