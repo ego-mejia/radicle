@@ -3,6 +3,7 @@ document type, labels, an owner, audiences and a language. Validation lives here
 app, the API and the MCP get the same rules and the same list of missing fields."""
 
 import re
+from collections.abc import Callable
 from typing import Any
 
 from sqlalchemy import select
@@ -17,6 +18,9 @@ from radicle.platform.errors import ValidationFailed
 LABEL_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,49}$")
 SENTENCE_END = re.compile(r"[.!?…](?:\s|$)")
 FIELDS = ("title", "description", "doc_type", "labels", "owner", "audiences", "language")
+# Optional links to Docket (Folio 4.4): the doc shows in those milestones and areas.
+PROJECT_RE = re.compile(r"^[A-Z][A-Z0-9]{1,9}$")
+MAX_DOCKET_NAMES = 20
 
 
 class MetadataIncomplete(ValidationFailed):
@@ -97,6 +101,33 @@ async def validate_metadata(
         fail("language", "a key of languages")
     out["language"] = language
 
+    _docket_fields(metadata, out, fail)
+
     if errors:
         raise MetadataIncomplete(errors)
     return out
+
+
+def _docket_fields(
+    metadata: dict[str, Any], out: dict[str, Any], fail: Callable[[str, str], None]
+) -> None:
+    """docket_project, docket_milestones and docket_areas, kept only when set. Names are
+    matched against Docket when they are read (`GET /links?milestone=PA:V1`), with the
+    reader's access, so a milestone renamed later simply stops matching."""
+    project = str(metadata.get("docket_project") or "").strip().upper()
+    if project and not PROJECT_RE.fullmatch(project):
+        fail("docket_project", "a Docket project key, e.g. PA")
+    for field in ("docket_milestones", "docket_areas"):
+        names = metadata.get(field) or []
+        if not isinstance(names, list) or len(names) > MAX_DOCKET_NAMES:
+            fail(field, f"a list of up to {MAX_DOCKET_NAMES} names")
+            continue
+        clean = list(dict.fromkeys(str(n).strip() for n in names if str(n).strip()))
+        if any(len(n) > 100 for n in clean):
+            fail(field, "names of up to 100 characters")
+        elif clean and not project:
+            fail(field, "set docket_project too")
+        elif clean:
+            out[field] = clean
+    if project:
+        out["docket_project"] = project

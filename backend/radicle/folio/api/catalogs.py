@@ -66,6 +66,11 @@ FIELDS = [
     FieldRule(name="owner", required=True, rule="Handle of an active person who can see the space"),
     FieldRule(name="audiences", required=True, rule="One or more keys of audiences"),
     FieldRule(name="language", required=True, rule="A key of languages"),
+    FieldRule(name="docket_project", required=False, rule="A Docket project key, e.g. PA"),
+    FieldRule(
+        name="docket_milestones", required=False, rule="Up to 20 milestone names of that project"
+    ),
+    FieldRule(name="docket_areas", required=False, rule="Up to 20 area names of that project"),
 ]
 
 
