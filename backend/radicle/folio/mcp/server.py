@@ -13,6 +13,7 @@ from radicle.folio.mcp import (
     chat,
     comments,
     databases,
+    exports,
     livedocs,
     prompts,
     read,
@@ -65,6 +66,7 @@ tickets.register(server)
 tickets.register_build_spec(server)
 chat.register(server)
 analytics.register(server)
+exports.register(server)
 calendars.register(server)
 prompts.register(server)
 
