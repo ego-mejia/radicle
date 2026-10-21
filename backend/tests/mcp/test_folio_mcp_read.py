@@ -57,6 +57,13 @@ async def test_an_agent_reads_docs(client: AsyncClient, db: AsyncSession, team: 
         assert {f["name"] for f in schema["fields"]} >= {"description", "doc_type", "owner"}
 
 
+VISUAL_CALLS = {
+    "insert_visual": {"format": "svg", "code": "<svg/>", "title": "x", "description": "Un dibujo"},
+    "insert_diagram": {"source": "flowchart LR; A-->B"},
+    "insert_chart": {"kind": "bar", "data": [["Mes", "Abiertos"], ["Ene", 4]]},
+    "insert_timeline": {"items": [{"title": "Lanzamiento"}]},
+}
+
 # Tools that take or return docs, each checked below; the rest never touch a page.
 COVERED = {
     "get_space_tree",
@@ -76,6 +83,10 @@ COVERED = {
     "append_to_live_doc",
     "query_database",
     "add_database_rows",
+    "insert_visual",
+    "insert_diagram",
+    "insert_chart",
+    "insert_timeline",
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
@@ -90,6 +101,7 @@ EXEMPT = {
     "create_from_template",
     "list_notifications",  # only your own, already filtered by each app's resolver
     "create_live_doc",
+    "validate_visual",  # checks code it is sent; touches no page
 }
 
 
@@ -122,6 +134,7 @@ async def test_restricted_pages_never_show_up(
             "add_comment": {"body": "x"},
             "append_to_live_doc": {"content_md": "x"},
             "add_database_rows": {"rows": [{"name": "x"}]},
+            **VISUAL_CALLS,
         }
         for tool in ("get_page", "get_versions", "list_comments", "query_database", *writes):
             args = {"id": ids["secret"]} | writes.get(tool, {})
@@ -174,6 +187,8 @@ async def test_every_tool_explains_missing_access(
         "resolve_comment": {"thread_id": some_id},
         "query_database": {"id": some_id},
         "add_database_rows": {"id": some_id, "rows": [{"name": "x"}]},
+        "validate_visual": {"format": "svg", "code": "<svg/>"},
+        **{tool: {"id": some_id} | args for tool, args in VISUAL_CALLS.items()},
     }
     async with folio_mcp(client, team.agent) as folio:
         for tool, args in calls.items():
