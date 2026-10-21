@@ -91,7 +91,7 @@ class NodePatch(Input):
     cover_asset_id: uuid.UUID | None = Field(default=None, description="null removes it")
 
 
-class MoveIn(Input):
+class NodeMoveIn(Input):
     space: str | None = Field(default=None, description="Another space's key to move it there")
     parent: uuid.UUID | None = Field(default=None, description="null moves it to the root")
     before: uuid.UUID | None = Field(default=None, description="Sibling to place it before")
@@ -281,7 +281,7 @@ async def patch_node(
 
 @router.post("/nodes/{node_id}/move", response_model=NodeOut)
 async def move_node(
-    node_id: uuid.UUID, body: MoveIn, principal: CurrentPrincipal, db: Db
+    node_id: uuid.UUID, body: NodeMoveIn, principal: CurrentPrincipal, db: Db
 ) -> NodeOut:
     """Move within its space (`before` and `after` place it among its new siblings), or to
     another `space`, which takes delete here and create there; id, URL, history and
