@@ -540,6 +540,11 @@
             "title": "Actor Kind",
             "type": "string"
           },
+          "app": {
+            "description": "platform, docket or folio",
+            "title": "App",
+            "type": "string"
+          },
           "created_at": {
             "title": "Created At",
             "type": "string"
@@ -607,6 +612,7 @@
           "created_at",
           "actor",
           "actor_kind",
+          "app",
           "action",
           "target_type",
           "target_id",

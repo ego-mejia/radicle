@@ -2,6 +2,7 @@ from datetime import date
 from typing import Any
 
 from fastapi import APIRouter, Query, Response
+from pydantic import Field
 
 from radicle.docket.services import audit_view
 from radicle.platform.api.deps import CurrentPrincipal, Db
@@ -15,6 +16,7 @@ class AuditOut(Output):
     created_at: UtcDatetime
     actor: str | None
     actor_kind: str
+    app: str = Field(description="platform, docket or folio")
     action: str
     target_type: str
     target_id: str | None
@@ -52,6 +54,7 @@ async def list_audit(
                 created_at=e.created_at,
                 actor=handle,
                 actor_kind=e.actor_kind,
+                app=e.app.value,
                 action=e.action,
                 target_type=e.target_type,
                 target_id=e.target_id,

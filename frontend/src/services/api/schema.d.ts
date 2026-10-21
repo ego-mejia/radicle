@@ -2668,6 +2668,11 @@ export interface components {
             actor: string | null;
             /** Actor Kind */
             actor_kind: string;
+            /**
+             * App
+             * @description platform, docket or folio
+             */
+            app: string;
             /** Created At */
             created_at: string;
             /** Details */
