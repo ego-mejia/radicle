@@ -1,7 +1,8 @@
+import enum
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import DateTime, func
+from sqlalchemy import DateTime, Enum, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -28,3 +29,7 @@ def uuid_pk() -> Mapped[uuid.UUID]:
 
 def created_at_col() -> Mapped[datetime]:
     return mapped_column(DateTime(timezone=True), default=utcnow, server_default=func.now())
+
+
+def _enum[E: enum.Enum](cls: type[E], name: str) -> Enum:
+    return Enum(cls, name=name, values_callable=lambda e: [m.value for m in e])

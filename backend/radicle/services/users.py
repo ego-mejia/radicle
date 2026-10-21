@@ -7,7 +7,7 @@ from sqlalchemy import func, select, text, tuple_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core import mcp_catalog, security
+from radicle.core import mcp_tools, security
 from radicle.core.errors import Conflict, NotFound, ValidationFailed
 from radicle.db.models import User, UserKind
 from radicle.services import auth
@@ -33,7 +33,8 @@ def check_mcp_tools(names: list[str] | None) -> list[str] | None:
     """The tools an agent may call, in catalog order; None (all tools) stays None."""
     if names is None:
         return None
-    unknown = sorted({n for n in names if n not in mcp_catalog.GROUP_OF})
+    known = mcp_tools.known()
+    unknown = sorted(set(names) - set(known))
     if unknown:
         raise ValidationFailed(
             f"Unknown MCP tool: {', '.join(unknown)}. GET /api/v1/mcp/tools lists the valid ones.",
@@ -41,7 +42,7 @@ def check_mcp_tools(names: list[str] | None) -> list[str] | None:
             errors=[{"field": "mcp_tools", "message": "unknown tool"}],
         )
     chosen = set(names)
-    return [n for n in mcp_catalog.TOOLS if n in chosen]
+    return [n for n in known if n in chosen]
 
 
 async def needs_setup(db: AsyncSession) -> bool:

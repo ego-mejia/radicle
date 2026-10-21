@@ -6,8 +6,7 @@ from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Text, UniqueConstr
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from radicle.db.models.base import Base, utcnow
-from radicle.db.models.projects import _enum
+from radicle.db.models.base import Base, _enum, utcnow
 from radicle.db.models.users import User
 
 

@@ -1,6 +1,4 @@
 from radicle.db.models.access import (
-    Group,
-    GroupMember,
     ProjectGroupRole,
     ProjectRolePermission,
     SecurityLevel,
@@ -20,6 +18,7 @@ from radicle.db.models.discussion import (
 )
 from radicle.db.models.fields import CustomFieldDefinition, CustomFieldType
 from radicle.db.models.filters import FilterVisibility, SavedFilter, UserPreferences
+from radicle.db.models.groups import Group, GroupMember
 from radicle.db.models.inbox import Captcha, InboxSettings, InboxSubmission, UsedChallenge
 from radicle.db.models.jobs import Job, JobStatus
 from radicle.db.models.metrics import DailyStatusCount, TicketStatusPeriod

@@ -7,7 +7,6 @@ from sqlalchemy import (
     Boolean,
     Date,
     DateTime,
-    Enum,
     ForeignKey,
     Index,
     Integer,
@@ -17,7 +16,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from radicle.db.models.base import Base, utcnow
+from radicle.db.models.base import Base, _enum, utcnow
 from radicle.db.models.users import User
 
 
@@ -71,10 +70,6 @@ class ScreenOperation(enum.StrEnum):
 class MilestoneStatus(enum.StrEnum):
     open = "open"
     closed = "closed"
-
-
-def _enum[E: enum.Enum](cls: type[E], name: str) -> Enum:
-    return Enum(cls, name=name, values_callable=lambda e: [m.value for m in e])
 
 
 project_role_enum = _enum(ProjectRole, "project_role")

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Query, Response
 
 from radicle.api.deps import CurrentPrincipal, Db
 from radicle.api.schemas.common import Output, Page, UtcDatetime
-from radicle.services import audit
+from radicle.services import audit_view
 
 router = APIRouter(tags=["audit"])
 
@@ -26,8 +26,8 @@ class AuditOut(Output):
 
 def _filters(
     actor: str | None, action: str | None, project: str | None, from_: date | None, to: date | None
-) -> audit.Filters:
-    return audit.Filters(actor=actor, action=action, project=project, start=from_, end=to)
+) -> audit_view.Filters:
+    return audit_view.Filters(actor=actor, action=action, project=project, start=from_, end=to)
 
 
 @router.get("/audit", response_model=Page[AuditOut])
@@ -42,7 +42,7 @@ async def list_audit(
     cursor: str | None = None,
 ) -> Page[AuditOut]:
     """Newest first. Instance admins see everything; project admins, their projects."""
-    rows, next_cursor = await audit.entries(
+    rows, next_cursor = await audit_view.entries(
         db, principal.user, _filters(actor, action, project, from_, to), cursor=cursor
     )
     return Page(
@@ -77,11 +77,11 @@ async def audit_csv(
     to: date | None = None,
 ) -> Response:
     """The same filters, every matching entry (up to 50,000)."""
-    rows, _ = await audit.entries(
+    rows, _ = await audit_view.entries(
         db, principal.user, _filters(actor, action, project, from_, to), limit=50_000
     )
     return Response(
-        audit.to_csv(rows),
+        audit_view.to_csv(rows),
         media_type="text/csv; charset=utf-8",
         headers={"Content-Disposition": 'attachment; filename="audit.csv"'},
     )
