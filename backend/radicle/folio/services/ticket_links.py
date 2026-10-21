@@ -79,7 +79,7 @@ async def links_for_node(db: AsyncSession, user: User, node: FolioNode) -> list[
     return [Link(r, seen.get(r.ticket_id)) for r in rows]
 
 
-async def _upsert(
+async def upsert(
     db: AsyncSession,
     node: FolioNode,
     ticket_id: uuid.UUID,
@@ -116,7 +116,7 @@ async def link(
     """Link the doc (or one of its sections) to a ticket by hand; linking twice is a no-op."""
     await access.require_edit(db, user, node)
     ticket = await _ticket(db, user, key)
-    row = await _upsert(db, node, ticket.id, TicketLinkKind.manual, user, _check_anchor(anchor))
+    row = await upsert(db, node, ticket.id, TicketLinkKind.manual, user, _check_anchor(anchor))
     return Link(row, ticket)
 
 
@@ -172,7 +172,7 @@ async def record_mentions(db: AsyncSession, node: FolioNode, text: str, author: 
         )
     )
     for ticket_id in ids:
-        await _upsert(db, node, ticket_id, TicketLinkKind.mention, author, None)
+        await upsert(db, node, ticket_id, TicketLinkKind.mention, author, None)
 
 
 @dataclass
@@ -214,5 +214,5 @@ async def create_from_text(db: AsyncSession, user: User, node: FolioNode, data: 
         ),
         user,
     )
-    row = await _upsert(db, node, ticket.id, TicketLinkKind.created_from_text, user, anchor)
+    row = await upsert(db, node, ticket.id, TicketLinkKind.created_from_text, user, anchor)
     return Link(row, ticket)

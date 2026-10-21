@@ -38,7 +38,7 @@ def anchor_for(text: str, taken: set[str]) -> str:
     return anchor
 
 
-def _heading_text(node: Node) -> str:
+def heading_text(node: Node) -> str:
     return convert.inline(node.get("content", [])).replace("\\", "")
 
 
@@ -88,7 +88,7 @@ def _sections(doc: Node) -> list[_Section]:
     for node in doc.get("content", []):
         if node["type"] == "heading":
             level = int((node.get("attrs") or {}).get("level", 1))
-            title = _heading_text(node)
+            title = heading_text(node)
             stack = [s for s in stack if s[0] < level] + [(level, title)]
             sections.append(_Section([t for _, t in stack], anchor_for(title, taken)))
         else:
