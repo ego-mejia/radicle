@@ -1909,7 +1909,32 @@
         "size": "{{size}} KB of {{limit}} KB",
         "problems": "What the sandbox would block",
         "warnings": "Suggestions",
-        "sandboxOk": "Nothing here needs the network or the page: it works in the sandbox."
+        "sandboxOk": "Nothing here needs the network or the page: it works in the sandbox.",
+        "source": "Mermaid source",
+        "sourceHint": "Flowchart, sequence, state, ER or gantt, e.g. flowchart LR; A --> B",
+        "caption": "Caption",
+        "latex": "LaTeX",
+        "kind": "Kind",
+        "kinds": {
+          "bar": "Bars",
+          "line": "Lines",
+          "area": "Area",
+          "pie": "Pie"
+        },
+        "dataFrom": "Data",
+        "dataOwn": "Its own numbers",
+        "dataTable": "The table right before it",
+        "data": "Numbers",
+        "dataHint": "One row per line, cells split by |. The first row names the columns; the first column holds the labels.",
+        "milestones": "Milestones",
+        "milestonesHint": "One per line: date | title | text. Start with [x] done, [~] in progress or [ ] planned.",
+        "label": "Label",
+        "space": "Space",
+        "spaceHint": "Leave it empty to list every space you can see.",
+        "order": "Order",
+        "newest": "Newest first",
+        "byTitle": "By title",
+        "limit": "How many"
       }
     },
     "publish": {
