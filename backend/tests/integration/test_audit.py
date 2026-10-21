@@ -7,6 +7,7 @@ from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.docket.db.models import AuditEntry, utcnow
+from radicle.platform.db.models import AuditApp
 from radicle.platform.services import audit
 from tests.conftest import ADMIN_PASSWORD, Team, make_project, new_ticket, patch_ticket
 
@@ -213,3 +214,18 @@ async def test_retention_removes_only_expired(
     with pytest.raises(DBAPIError, match="append-only"):
         async with db.begin_nested():
             await db.execute(text("DELETE FROM audit_log"))
+
+
+async def test_each_entry_names_its_app(client: AsyncClient, board: Team) -> None:
+    await client.post(f"{API}/groups", headers=board.instance.headers, json={"name": "docs"})
+    await client.patch(f"{API}/projects/PA", headers=board.admin.headers, json={"name": "PA 2"})
+    apps = {e["action"]: e["app"] for e in await logged(client, board)}
+    assert apps["group.create"] == "platform"
+    assert apps["user.login"] == "platform"
+    assert apps["project.update"] == "docket"
+
+
+async def test_record_takes_an_explicit_app(db: AsyncSession, board: Team) -> None:
+    entry = audit.record(db, None, "settings.change", target_type="ai", app=AuditApp.folio)
+    await db.flush()
+    assert entry.app == AuditApp.folio

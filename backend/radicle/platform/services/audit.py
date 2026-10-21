@@ -11,7 +11,7 @@ from sqlalchemy import and_, delete, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.platform.config import get_settings
-from radicle.platform.db.models import AuditEntry, User, utcnow
+from radicle.platform.db.models import AuditApp, AuditEntry, User, utcnow
 from radicle.platform.services import queue
 
 ACTIONS = (
@@ -55,6 +55,8 @@ ACTIONS = (
     "ticket.move",
     "ticket.bulk_edit",
 )
+# Actions on what every app shares; the rest belong to the app that records them.
+PLATFORM_PREFIXES = ("user.", "token.", "agent.", "group.", "sso.", "settings.")
 RETENTION_JOB = "audit_retention"
 RETENTION_ROLE = "radicle_audit_retention"
 
@@ -101,6 +103,7 @@ def record(
     project_id: uuid.UUID | None = None,
     before: Any = None,
     after: Any = None,
+    app: AuditApp | None = None,
     **extra: Any,
 ) -> AuditEntry:
     if action not in ACTIONS:  # pragma: no cover - programming error
@@ -111,7 +114,10 @@ def record(
         details["before"] = before
     if after is not None:
         details["after"] = after
+    if app is None:
+        app = AuditApp.platform if action.startswith(PLATFORM_PREFIXES) else AuditApp.docket
     entry = AuditEntry(
+        app=app,
         actor_id=actor.id if actor else None,
         actor_kind=actor.kind.value if actor else "system",
         action=action,
