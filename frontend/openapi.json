@@ -11676,6 +11676,354 @@
         "title": "PublicEventOut",
         "type": "object"
       },
+      "PublicLinkIn": {
+        "additionalProperties": false,
+        "properties": {
+          "node": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A published page or post",
+            "title": "Node"
+          },
+          "noindex": {
+            "default": true,
+            "title": "Noindex",
+            "type": "boolean"
+          },
+          "space": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Space key, for the whole space",
+            "title": "Space"
+          }
+        },
+        "title": "PublicLinkIn",
+        "type": "object"
+      },
+      "PublicLinkOut": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "noindex": {
+            "description": "Asks search engines not to index it",
+            "title": "Noindex",
+            "type": "boolean"
+          },
+          "target_id": {
+            "format": "uuid",
+            "title": "Target Id",
+            "type": "string"
+          },
+          "target_type": {
+            "enum": [
+              "node",
+              "space"
+            ],
+            "title": "Target Type",
+            "type": "string"
+          },
+          "url": {
+            "description": "Opens without an account",
+            "title": "Url",
+            "type": "string"
+          },
+          "view_count": {
+            "title": "View Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "target_type",
+          "target_id",
+          "noindex",
+          "view_count",
+          "created_at"
+        ],
+        "title": "PublicLinkOut",
+        "type": "object"
+      },
+      "PublicLinksOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PublicLinkOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "PublicLinksOut",
+        "type": "object"
+      },
+      "PublicNodeOut": {
+        "properties": {
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "slug",
+          "icon",
+          "parent_id"
+        ],
+        "title": "PublicNodeOut",
+        "type": "object"
+      },
+      "PublicPageOut": {
+        "properties": {
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/PublicNodeOut"
+            },
+            "title": "Children",
+            "type": "array"
+          },
+          "content_json": {
+            "additionalProperties": true,
+            "description": "Without mentions or assignees",
+            "title": "Content Json",
+            "type": "object"
+          },
+          "cover_asset_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Asset Id"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "description": "Only what a stranger may see",
+            "title": "Metadata",
+            "type": "object"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "slug",
+          "icon",
+          "parent_id",
+          "cover_asset_id",
+          "published_at",
+          "version",
+          "metadata",
+          "content_json",
+          "children"
+        ],
+        "title": "PublicPageOut",
+        "type": "object"
+      },
+      "PublicSpaceOut": {
+        "properties": {
+          "cover_asset_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Asset Id"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "icon",
+          "cover_asset_id"
+        ],
+        "title": "PublicSpaceOut",
+        "type": "object"
+      },
+      "PublicViewOut": {
+        "properties": {
+          "nodes": {
+            "description": "The space's open tree, flat, in order",
+            "items": {
+              "$ref": "#/components/schemas/PublicNodeOut"
+            },
+            "title": "Nodes",
+            "type": "array"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PublicPageOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "space": {
+            "$ref": "#/components/schemas/PublicSpaceOut"
+          },
+          "target_type": {
+            "enum": [
+              "node",
+              "space"
+            ],
+            "title": "Target Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_type",
+          "space",
+          "nodes",
+          "page"
+        ],
+        "title": "PublicViewOut",
+        "type": "object"
+      },
       "PublishIn": {
         "additionalProperties": false,
         "properties": {
@@ -25504,6 +25852,302 @@
           }
         },
         "summary": "People",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/pub/{token}": {
+      "get": {
+        "description": "Without an account: the shared page, or the shared space's index.",
+        "operationId": "read_public_api_v1_folio_pub__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicViewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Public",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/pub/{token}/assets/{asset_id}": {
+      "get": {
+        "description": "An image or file of a shared page.",
+        "operationId": "read_public_asset_api_v1_folio_pub__token__assets__asset_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Asset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Public Asset",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/pub/{token}/pages/{node_id}": {
+      "get": {
+        "description": "Without an account: one page of a shared space.",
+        "operationId": "read_public_page_api_v1_folio_pub__token__pages__node_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicViewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Public Page",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/public-links": {
+      "get": {
+        "description": "Live public links. Space admins only.",
+        "operationId": "list_public_links_api_v1_folio_public_links_get",
+        "parameters": [
+          {
+            "description": "A page's links",
+            "in": "query",
+            "name": "node",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A page's links",
+              "title": "Node"
+            }
+          },
+          {
+            "description": "A space's links, its pages' too",
+            "in": "query",
+            "name": "space",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A space's links, its pages' too",
+              "title": "Space"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicLinksOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Public Links",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "description": "A read-only link to a published page or a whole space. Space admins only.",
+        "operationId": "create_public_link_api_v1_folio_public_links_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicLinkIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicLinkOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Public Link",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/public-links/{link_id}": {
+      "delete": {
+        "description": "From now on the link answers 404.",
+        "operationId": "revoke_public_link_api_v1_folio_public_links__link_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "link_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Link Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke Public Link",
         "tags": [
           "folio",
           "folio"

@@ -24,6 +24,7 @@ from radicle.folio.api import livedocs as livedocs_api
 from radicle.folio.api import organize as organize_api
 from radicle.folio.api import page_list as page_list_api
 from radicle.folio.api import people as people_api
+from radicle.folio.api import public_links as public_links_api
 from radicle.folio.api import publishing as publishing_api
 from radicle.folio.api import query as query_api
 from radicle.folio.api import search as search_api
@@ -173,3 +174,4 @@ router.include_router(build_spec_api.router)
 router.include_router(ai_api.router)
 router.include_router(glossary_api.router)
 router.include_router(chat_api.router)
+router.include_router(public_links_api.router)
