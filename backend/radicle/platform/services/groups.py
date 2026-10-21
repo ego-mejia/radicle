@@ -1,5 +1,6 @@
 """Groups of users (humans and agents). Each app gives them roles its own way."""
 
+import time
 import uuid
 
 from sqlalchemy import func, select
@@ -10,6 +11,11 @@ from radicle.platform.errors import Conflict, NotFound, ValidationFailed
 from radicle.platform.services import users as users_service
 
 NAME_MAX = 80
+# Apps that resolve groups in Python (not inside their own SQL) read them through
+# `group_ids`, cached per process for at most this long (ADR 0035).
+GROUPS_TTL = 60.0
+_now = time.monotonic
+_cache: dict[uuid.UUID, tuple[float, frozenset[uuid.UUID]]] = {}
 
 
 def _name(value: str) -> str:
@@ -99,3 +105,14 @@ async def remove_member(db: AsyncSession, group: Group, handle: str) -> User:
 async def delete_group(db: AsyncSession, group: Group) -> None:
     await db.delete(group)
     await db.flush()
+
+
+async def group_ids(db: AsyncSession, user: User) -> frozenset[uuid.UUID]:
+    """The groups the user is in. Leaving a group takes effect within GROUPS_TTL."""
+    hit = _cache.get(user.id)
+    if hit is not None and _now() - hit[0] < GROUPS_TTL:
+        return hit[1]
+    rows = await db.scalars(select(GroupMember.group_id).where(GroupMember.user_id == user.id))
+    ids = frozenset(rows)
+    _cache[user.id] = (_now(), ids)
+    return ids

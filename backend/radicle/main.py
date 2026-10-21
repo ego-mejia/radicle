@@ -38,9 +38,10 @@ from radicle.docket.api import (
     work,
 )
 from radicle.docket.core import mcp_catalog
+from radicle.docket.core.authz import DocketAuthz
 from radicle.docket.mcp import server as mcp_server
 from radicle.docket.public.router import router as public_router
-from radicle.platform import mcp_tools
+from radicle.platform import authz, mcp_tools
 from radicle.platform.config import get_settings
 from radicle.platform.crypto import require_key
 from radicle.platform.db.session import dispose_engine
@@ -61,6 +62,7 @@ def create_app() -> FastAPI:
     settings = get_settings()
     require_key()  # no secret key, no app: secrets in the database depend on it
     mcp_tools.register(mcp_catalog.TOOLS)
+    authz.register(DocketAuthz())
     app = FastAPI(
         title="Radicle",
         version=__version__,
