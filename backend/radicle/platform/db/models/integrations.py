@@ -1,5 +1,6 @@
-"""What leaves Radicle (ADR 0042, shared by every app): webhooks and their deliveries."""
+"""What leaves Radicle (ADR 0042, shared by every app): webhooks, Slack and Teams."""
 
+import enum
 import uuid
 from datetime import datetime
 from typing import Any
@@ -74,3 +75,71 @@ class WebhookDelivery(Base):
     last_error: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     delivered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class IntegrationKind(enum.StrEnum):
+    slack = "slack"
+    teams = "teams"
+
+
+class Integration(Base):
+    """A Slack workspace or a Teams team: its credentials (encrypted) and, in `config`, the
+    channels that hear which events (`{"notices": [{"events", "filter", "channel"}]}`)."""
+
+    __tablename__ = "integrations"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    kind: Mapped[IntegrationKind] = mapped_column(_enum(IntegrationKind, "integration_kind"))
+    name: Mapped[str] = mapped_column(Text)
+    credentials_encrypted: Mapped[str] = mapped_column(Text)
+    config: Mapped[dict[str, Any]] = mapped_column(
+        JSONB, default=dict, server_default=text("'{}'::jsonb")
+    )
+    active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    created_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class IntegrationIdentity(Base):
+    """Who a Slack or Teams user is in Radicle: matched by email, or linked by hand."""
+
+    __tablename__ = "integration_identities"
+    __table_args__ = (UniqueConstraint("integration_id", "external_id"),)
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    integration_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("integrations.id", ondelete="CASCADE")
+    )
+    external_id: Mapped[str] = mapped_column(Text)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE")
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class IntegrationNotice(Base):
+    """One event told on one channel (route) of an integration; unique, so a repeated
+    dispatch doesn't post twice."""
+
+    __tablename__ = "integration_notices"
+    __table_args__ = (UniqueConstraint("integration_id", "event_id", "route"),)
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    integration_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("integrations.id", ondelete="CASCADE")
+    )
+    event_id: Mapped[int | None] = mapped_column(
+        BigInteger, ForeignKey("events_outbox.id", ondelete="SET NULL")
+    )
+    route: Mapped[int] = mapped_column(Integer)
+    event: Mapped[str] = mapped_column(Text)
+    text: Mapped[str] = mapped_column(Text)
+    status: Mapped[DeliveryStatus] = mapped_column(
+        _enum(DeliveryStatus, "delivery_status"), default=DeliveryStatus.pending
+    )
+    attempts: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    last_error: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

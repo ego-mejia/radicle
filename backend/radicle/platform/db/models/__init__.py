@@ -2,7 +2,14 @@ from radicle.platform.db.models.ai import AiCall, AiProvider, AiSettings
 from radicle.platform.db.models.audit import AuditApp, AuditEntry
 from radicle.platform.db.models.base import Base, utcnow
 from radicle.platform.db.models.groups import Group, GroupMember
-from radicle.platform.db.models.integrations import Webhook, WebhookDelivery
+from radicle.platform.db.models.integrations import (
+    Integration,
+    IntegrationIdentity,
+    IntegrationKind,
+    IntegrationNotice,
+    Webhook,
+    WebhookDelivery,
+)
 from radicle.platform.db.models.jobs import Job, JobStatus
 from radicle.platform.db.models.notifications import (
     Channel,
@@ -30,6 +37,10 @@ __all__ = [
     "Group",
     "GroupMember",
     "InstanceSetting",
+    "Integration",
+    "IntegrationIdentity",
+    "IntegrationKind",
+    "IntegrationNotice",
     "Job",
     "JobStatus",
     "Notification",
