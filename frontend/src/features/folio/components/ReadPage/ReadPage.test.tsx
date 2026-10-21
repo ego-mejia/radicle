@@ -63,6 +63,8 @@ function api(node: object = NODE, space: object = SPACE) {
       status: 200,
       body: { items: [{ number: 2, author: 'agente-docs' }] },
     },
+    'GET /api/v1/folio/nodes/n1/comments': { status: 200, body: { items: [] } },
+    'GET /api/v1/folio/people': { status: 200, body: { items: [] } },
     'GET /api/v1/folio/nodes/n1/draft': {
       status: 200,
       body: { content_json: CONTENT, content_md: '', metadata: {}, saved: true, updated_at: null },
@@ -72,6 +74,15 @@ function api(node: object = NODE, space: object = SPACE) {
 
 describe('ReadPage', () => {
   beforeEach(() => localStorage.clear());
+
+  it('opens the comments beside the page', async () => {
+    api();
+    renderWithProviders(<ReadPage nodeId="n1" />);
+    const toggle = await screen.findByRole('button', { name: 'Comments' });
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    expect(await screen.findByText('No open comments.')).toBeInTheDocument();
+  });
 
   it('switches to focus mode and remembers it for the reader', async () => {
     api();
