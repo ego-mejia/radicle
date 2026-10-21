@@ -128,6 +128,15 @@ export async function createNode(body: FolioNodeIn): Promise<FolioNode> {
   return unwrap(await api.POST('/api/v1/folio/nodes', { body }));
 }
 
+export type FolioNodePatch = S['NodePatch'];
+
+/** Title, icon and cover; `null` clears the icon or the cover. */
+export async function patchNode(id: string, body: FolioNodePatch): Promise<FolioNode> {
+  return unwrap(
+    await api.PATCH('/api/v1/folio/nodes/{node_id}', { params: { path: { node_id: id } }, body }),
+  );
+}
+
 export async function moveNode(id: string, body: FolioMoveIn): Promise<FolioNode> {
   return unwrap(
     await api.POST('/api/v1/folio/nodes/{node_id}/move', {

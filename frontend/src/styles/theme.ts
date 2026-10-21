@@ -25,6 +25,8 @@ type Palette = Record<
   | 'accentSoft'
   | 'danger'
   | 'warning'
+  | 'info'
+  | 'violet'
   | 'catTodo'
   | 'catProgress'
   | 'catDone'
@@ -57,6 +59,9 @@ export const lightTheme: Theme = {
     accentSoft: '#ECF8C8',
     danger: '#DC2626',
     warning: '#B45309',
+    // Folio's blue and purple status labels.
+    info: '#1D4ED8',
+    violet: '#6D28D9',
     // Status categories in charts: grey to do, lime in progress, dark green done.
     catTodo: '#9CA3AF',
     catProgress: '#C6F432',
@@ -87,6 +92,8 @@ export const darkTheme: Theme = {
     accentSoft: '#2A3311',
     danger: '#F87171',
     warning: '#F5A524',
+    info: '#60A5FA',
+    violet: '#A78BFA',
     catTodo: '#4B5563',
     catProgress: '#C6F432',
     catDone: '#65A30D',
