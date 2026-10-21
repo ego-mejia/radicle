@@ -96,6 +96,7 @@ class Room:
         self.lock = asyncio.Lock()
         self._outgoing: list[bytes] = []
         self._dirty = False
+        self._editor: uuid.UUID | None = None  # who changed it since the last save
         self._last_compact = time.monotonic()
         self._task: asyncio.Task[None] | None = None
         self._subscription = doc.observe(self._on_change)
@@ -146,6 +147,7 @@ class Room:
                     await peer.send(reply)
                 if self._outgoing:
                     self.authors.add(peer.user.id)
+                    self._editor = peer.user.id
                 await self._flush_updates(skip=peer)
         elif kind == pycrdt.YMessageType.AWARENESS:
             if not peer.allow_awareness():
@@ -182,6 +184,7 @@ class Room:
         async with self.lock:
             edit(self.doc)
             self.authors.add(actor.id)
+            self._editor = actor.id
             await self._flush_updates(skip=None)
         if actor.kind != UserKind.human:
             await self._label(actor)
@@ -222,8 +225,9 @@ class Room:
             if node is None:
                 return
             if self._dirty:
-                await ystore.save_json(db, node, self.doc)
-                self._dirty = False
+                editor = await db.get(User, self._editor) if self._editor else None
+                await ystore.save_json(db, node, self.doc, editor)
+                self._dirty, self._editor = False, None
             if compact:
                 await ystore.compact(db, self.node_id, self.doc)
                 self._last_compact = time.monotonic()
@@ -333,4 +337,4 @@ async def apply_change(
     before = doc.get_state()
     edit(doc)
     await ystore.append_update(db, node.id, doc.get_update(before))
-    await ystore.save_json(db, node, doc)
+    await ystore.save_json(db, node, doc, actor)

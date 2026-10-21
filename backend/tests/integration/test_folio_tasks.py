@@ -73,7 +73,9 @@ async def test_acceptance_assign_and_check_off_from_my_tasks(
     )
     assert r.status_code == 200, r.text
     await run_jobs(db)
-    assert len([t for t in await _notices(db, team.member.handle) if "assigned you" in t]) == 2
+    notices = [t for t in await _notices(db, team.member.handle) if "assigned you" in t]
+    assert len(notices) == 2
+    assert all(t.startswith("Fernando assigned you") for t in notices)
 
     tasks = (await client.get(f"{API}/me/tasks", headers=m)).json()["items"]
     assert [(t["text"], t["bucket"]) for t in tasks] == [
@@ -116,6 +118,17 @@ async def test_reassigning_tells_the_new_person(
     # Deleting an item from the document removes it.
     await client.put(f"{API}/nodes/{page}/draft", headers=i, json={"content_md": "Nada"})
     assert (await client.get(f"{API}/me/tasks", headers=team.viewer.headers)).json()["items"] == []
+
+
+async def test_no_notice_for_a_task_you_assign_yourself(
+    client: AsyncClient, db: AsyncSession, team: Team, page: str
+) -> None:
+    i, me = team.instance.headers, team.instance.handle
+    md = f"::task[Escribir las notas]{{id=ai-1 assignee={me}}}\n"
+    r = await client.put(f"{API}/nodes/{page}/draft", headers=i, json={"content_md": md})
+    assert r.status_code == 200, r.text
+    await run_jobs(db)
+    assert [t for t in await _notices(db, me) if "assigned you" in t] == []
 
 
 async def test_permissions(client: AsyncClient, db: AsyncSession, team: Team, page: str) -> None:
