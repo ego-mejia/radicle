@@ -15,7 +15,7 @@ from sqlalchemy import (
     func,
     text,
 )
-from sqlalchemy.dialects.postgresql import CITEXT, JSONB, UUID
+from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from radicle.platform.db.models.base import Base, _enum, utcnow
@@ -268,3 +268,67 @@ class FolioNodeLabel(Base):
         ForeignKey("folio_nodes.id", ondelete="CASCADE"), primary_key=True
     )
     label: Mapped[str] = mapped_column(Text, primary_key=True, index=True)
+
+
+class SpacePermission(enum.StrEnum):
+    view = "view"
+    create = "create"
+    comment = "comment"
+    delete_own = "delete_own"
+    delete_any = "delete_any"
+    admin = "admin"
+    export = "export"
+
+
+class FolioSpaceGrant(Base):
+    """What a user, a group or everyone may do in a space. `admin` includes everything."""
+
+    __tablename__ = "folio_space_grants"
+    __table_args__ = (
+        Index(
+            "ux_folio_space_grants_grantee",
+            "space_id",
+            "grantee_type",
+            text("coalesce(grantee_id, '00000000-0000-0000-0000-000000000000'::uuid)"),
+            unique=True,
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    space_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("folio_spaces.id", ondelete="CASCADE"), index=True
+    )
+    grantee_type: Mapped[GranteeType] = mapped_column(_enum(GranteeType, "folio_grantee_type"))
+    grantee_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    permissions: Mapped[list[str]] = mapped_column(ARRAY(Text))
+
+
+class RestrictionMode(enum.StrEnum):
+    view = "view"
+    edit = "edit"
+
+
+class FolioPageRestriction(Base):
+    """Who may see (inherited by every descendant) or edit (this node only) a page. Without
+    restrictions of a mode, the space's permissions decide."""
+
+    __tablename__ = "folio_page_restrictions"
+    __table_args__ = (
+        Index(
+            "ux_folio_page_restrictions",
+            "node_id",
+            "mode",
+            "grantee_type",
+            "grantee_id",
+            unique=True,
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    node_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("folio_nodes.id", ondelete="CASCADE"), index=True
+    )
+    mode: Mapped[RestrictionMode] = mapped_column(_enum(RestrictionMode, "folio_restriction_mode"))
+    # user or group; never everyone (that would be no restriction at all)
+    grantee_type: Mapped[GranteeType] = mapped_column(_enum(GranteeType, "folio_grantee_type"))
+    grantee_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True))
