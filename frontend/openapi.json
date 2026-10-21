@@ -14380,6 +14380,11 @@
       },
       "TreeItem": {
         "properties": {
+          "can_delete": {
+            "description": "You may archive it, delete it or move it to another space",
+            "title": "Can Delete",
+            "type": "boolean"
+          },
           "children": {
             "items": {
               "$ref": "#/components/schemas/TreeItem"
@@ -14440,6 +14445,7 @@
           "slug",
           "icon",
           "status",
+          "can_delete",
           "children"
         ],
         "title": "TreeItem",

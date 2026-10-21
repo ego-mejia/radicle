@@ -51,4 +51,13 @@ describe('NodeMenu', () => {
     expect(await screen.findByText('Archived')).toBeInTheDocument();
     expect(calls.some((c) => c.path.endsWith('/archive'))).toBe(true);
   });
+
+  it('offers only Copy when you may not delete', async () => {
+    mockFetch({});
+    renderWithProviders(<NodeMenu node={{ ...NODE, can_delete: false }} />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Actions for Guía' }));
+    expect(await screen.findByRole('menuitem', { name: /Copy/ })).toBeInTheDocument();
+    expect(screen.queryByRole('menuitem', { name: /Move/ })).toBeNull();
+    expect(screen.queryByRole('menuitem', { name: /Archive/ })).toBeNull();
+  });
 });

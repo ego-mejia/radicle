@@ -58,6 +58,9 @@ class NodeRef(Output):
 
 
 class TreeItem(NodeRef):
+    can_delete: bool = Field(
+        description="You may archive it, delete it or move it to another space"
+    )
     children: list["TreeItem"]
 
 
@@ -120,8 +123,21 @@ def _ref(n: FolioNode) -> NodeRef:
     )
 
 
-def _tree(level: list[nodes.TreeNode]) -> list[TreeItem]:
-    return [TreeItem(**_ref(t.node).model_dump(), children=_tree(t.children)) for t in level]
+def _tree(level: list[nodes.TreeNode], perms: frozenset[str], user: User) -> list[TreeItem]:
+    """The tree, each item saying whether you may delete it (the space's permissions, which
+    are the same for every node, plus delete_own for your own)."""
+
+    def deletable(node: FolioNode) -> bool:
+        return "delete_any" in perms or ("delete_own" in perms and node.created_by == user.id)
+
+    return [
+        TreeItem(
+            **_ref(t.node).model_dump(),
+            can_delete=deletable(t.node),
+            children=_tree(t.children, perms, user),
+        )
+        for t in level
+    ]
 
 
 async def _content(db: Db, node: FolioNode, current: Any) -> dict[str, Any] | None:
@@ -227,7 +243,8 @@ async def get_tree(key: str, principal: CurrentPrincipal, db: Db) -> list[TreeIt
     """Pages and folders as a tree, siblings in order. Blog posts are under /posts."""
     await _reader(db, principal)
     space = await spaces.get_space(db, principal.user, key)
-    return _tree(await nodes.tree(db, principal.user, space))
+    perms = await access.space_permissions(db, principal.user, space)
+    return _tree(await nodes.tree(db, principal.user, space), perms, principal.user)
 
 
 @router.get("/spaces/{key}/posts", response_model=Page[NodeRef])
