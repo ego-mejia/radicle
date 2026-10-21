@@ -1,8 +1,13 @@
 """The event bus and its deliveries (Folio 2.1, ADR 0038)."""
 
+import smtplib
+from email.message import EmailMessage
+
+import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from radicle.platform.config import Settings
 from radicle.platform.db.models import (
     Channel,
     DeliveryStatus,
@@ -12,7 +17,7 @@ from radicle.platform.db.models import (
     OutboxEvent,
     User,
 )
-from radicle.platform.services import events
+from radicle.platform.services import email, events
 from tests.conftest import Team, run_jobs
 
 
@@ -86,6 +91,43 @@ async def test_a_failing_event_does_not_block_the_others(db: AsyncSession, team:
     for _ in range(events.MAX_ATTEMPTS):
         await events.dispatch_pending(db)
     assert bad.dispatched_at is not None and bad.attempts == events.MAX_ATTEMPTS
+
+
+@pytest.fixture
+def smtp(monkeypatch: pytest.MonkeyPatch) -> list[EmailMessage]:
+    settings = Settings(smtp_host="smtp.test", base_url="https://radicle.test")
+    monkeypatch.setattr(events, "get_settings", lambda: settings)
+    monkeypatch.setattr(email, "get_settings", lambda: settings)
+    sent: list[EmailMessage] = []
+    monkeypatch.setattr(email, "send", lambda _s, message: sent.append(message))
+    return sent
+
+
+async def test_email_goes_out_with_a_full_link(
+    db: AsyncSession, team: Team, smtp: list[EmailMessage]
+) -> None:
+    ana = await _user(db, "ana")
+    await events.emit(db, "test", "ping", actor=None, payload={"to": ["ana"]})
+    assert "platform_send_email" in await run_jobs(db)
+    assert len(smtp) == 1 and smtp[0]["To"] == ana.email and smtp[0]["Subject"] == "Ping for ana"
+    assert "https://radicle.test/x" in smtp[0].get_content()
+    statuses = set(await db.scalars(select(EventDelivery.status)))
+    assert statuses == {DeliveryStatus.sent}
+
+
+async def test_email_retries_then_keeps_the_error(
+    db: AsyncSession, team: Team, smtp: list[EmailMessage], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def down(_s: Settings, _m: EmailMessage) -> None:
+        raise smtplib.SMTPConnectError(421, "busy")
+
+    monkeypatch.setattr(email, "send", down)
+    await events.emit(db, "test", "ping", actor=None, payload={"to": ["ana"]})
+    ran = await run_jobs(db)
+    assert ran.count("platform_send_email") == email.MAX_ATTEMPTS
+    delivery = await db.scalar(select(EventDelivery).where(EventDelivery.channel == Channel.email))
+    assert delivery is not None and delivery.status == DeliveryStatus.failed
+    assert "busy" in (delivery.last_error or "")
 
 
 async def test_without_smtp_there_is_no_email(db: AsyncSession, team: Team) -> None:

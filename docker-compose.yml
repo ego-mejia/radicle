@@ -20,6 +20,12 @@ services:
       RADICLE_S3_REGION: ${RADICLE_S3_REGION:-us-east-1}
       RADICLE_S3_ACCESS_KEY: ${RADICLE_S3_ACCESS_KEY:-}
       RADICLE_S3_SECRET_KEY: ${RADICLE_S3_SECRET_KEY:-}
+      RADICLE_SMTP_HOST: ${RADICLE_SMTP_HOST:-}
+      RADICLE_SMTP_PORT: ${RADICLE_SMTP_PORT:-587}
+      RADICLE_SMTP_USER: ${RADICLE_SMTP_USER:-}
+      RADICLE_SMTP_PASSWORD: ${RADICLE_SMTP_PASSWORD:-}
+      RADICLE_SMTP_FROM: ${RADICLE_SMTP_FROM:-Radicle <radicle@localhost>}
+      RADICLE_SMTP_TLS: ${RADICLE_SMTP_TLS:-true}
     volumes:
       - attachments:/data/attachments
     depends_on:
