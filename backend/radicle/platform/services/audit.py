@@ -64,9 +64,12 @@ ACTIONS = (
     "folio.public_link_revoke",
     "folio.export_create",
     "folio.import_run",
+    "webhook.create",
+    "webhook.update",
+    "webhook.delete",
 )
 # Actions on what every app shares; the rest belong to the app that records them.
-PLATFORM_PREFIXES = ("user.", "token.", "agent.", "group.", "sso.", "settings.")
+PLATFORM_PREFIXES = ("user.", "token.", "agent.", "group.", "sso.", "settings.", "webhook.")
 RETENTION_JOB = "audit_retention"
 RETENTION_ROLE = "radicle_audit_retention"
 

@@ -135,6 +135,10 @@ async def every_action(client: AsyncClient, team: Team) -> None:
     ).json()
     await client.patch(f"{API}/admin/sso-providers/{sso['id']}", headers=i, json={"enabled": False})
     await client.patch(f"{API}/admin/settings", headers=i, json={"password_login_enabled": True})
+    hook = {"name": "CI", "url": "https://93.184.216.34/hook"}
+    hook_id = (await client.post(f"{API}/webhooks", headers=i, json=hook)).json()["id"]
+    await client.put(f"{API}/webhooks/{hook_id}", headers=i, json=hook | {"active": False})
+    await client.delete(f"{API}/webhooks/{hook_id}", headers=i)
     await client.post(
         f"{API}/tickets/bulk",
         headers=team.member.headers,

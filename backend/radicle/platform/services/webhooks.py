@@ -38,6 +38,7 @@ DELIVER_JOB = "platform_deliver_webhook"
 # Seconds before each retry; after the last one the delivery stays failed.
 BACKOFF = (60, 300, 1800, 7200, 21600)
 MAX_ATTEMPTS = len(BACKOFF) + 1
+PING = "ping"
 USER_AGENT = "Radicle webhooks (+https://github.com/ego-mejia/radicle)"
 
 
@@ -111,6 +112,21 @@ async def get(db: AsyncSession, webhook_id: uuid.UUID) -> Webhook:
     return hook
 
 
+async def update(db: AsyncSession, hook: Webhook, data: WebhookData) -> Webhook:
+    await _check(data)
+    hook.name, hook.url, hook.active = data.name.strip(), data.url, data.active
+    hook.events, hook.filter = sorted(set(data.events)), data.filter
+    await db.flush()
+    return hook
+
+
+async def rotate_secret(db: AsyncSession, hook: Webhook) -> str:
+    secret = "whsec_" + secrets.token_urlsafe(32)
+    hook.secret_encrypted = crypto.encrypt(secret)
+    await db.flush()
+    return secret
+
+
 async def list_all(db: AsyncSession) -> list[Webhook]:
     return list(await db.scalars(select(Webhook).order_by(Webhook.created_at)))
 
@@ -162,6 +178,18 @@ async def _fan_out(
             )
             if seen is None:  # a repeated dispatch must not send it twice
                 await _queue(db, hook, public.name, public.data, event.id)
+
+
+async def ping(db: AsyncSession, hook: Webhook) -> WebhookDelivery:
+    """Queue a `ping` so the admin can check the receiver and its signature check."""
+    return await _queue(db, hook, PING, {"webhook": hook.name}, None)
+
+
+async def redeliver(db: AsyncSession, hook: Webhook, delivery_id: int) -> WebhookDelivery:
+    old = await db.get(WebhookDelivery, delivery_id)
+    if old is None or old.webhook_id != hook.id:
+        raise NotFound("Delivery not found for this webhook. List them with GET .../deliveries.")
+    return await _queue(db, hook, old.event, old.payload, None)
 
 
 def body(delivery: WebhookDelivery) -> bytes:

@@ -49,6 +49,7 @@ from radicle.folio.services import collab
 from radicle.platform import authz, mcp_tools
 from radicle.platform.api import ai as ai_api
 from radicle.platform.api import notifications as notifications_api
+from radicle.platform.api import webhooks as webhooks_api
 from radicle.platform.config import get_settings
 from radicle.platform.crypto import require_key
 from radicle.platform.db.session import dispose_engine
@@ -124,6 +125,7 @@ def create_app() -> FastAPI:
         audit,
         ai_api,
         notifications_api,
+        webhooks_api,
     ):
         api.include_router(module.router)
     api.include_router(folio_router)

@@ -8,7 +8,7 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import DeliveryStatus, OutboxEvent, User
+from radicle.platform.db.models import DeliveryStatus, OutboxEvent, User, WebhookDelivery
 from radicle.platform.errors import ValidationFailed
 from radicle.platform.services import events, safe_fetch, webhooks
 from tests.conftest import Team, run_jobs
@@ -101,6 +101,22 @@ async def test_failures_retry_then_stay_failed(
     failed = (await webhooks.deliveries(db, hook))[0]
     assert failed.status == DeliveryStatus.failed and failed.attempts == webhooks.MAX_ATTEMPTS
     assert "HTTP 500" in (failed.last_error or "")
+
+
+async def test_filters_choose_which_events(
+    db: AsyncSession, team: Team, receiver: Receiver
+) -> None:
+    admin = await _admin(db, team)
+    await webhooks.create(db, admin, _data(filter={"space": "eng"}))
+    off, _ = await webhooks.create(db, admin, _data(name="Off"))
+    off.active = False
+    await events.emit(db, "test", "happened", actor=None, payload={"what": "a", "space": "ops"})
+    await events.emit(db, "test", "happened", actor=None, payload={"what": "b", "space": "eng"})
+    await run_jobs(db)
+    assert [json.loads(r.content)["data"]["what"] for r in receiver.requests] == ["b"]
+    assert (
+        await db.scalar(select(WebhookDelivery).where(WebhookDelivery.webhook_id == off.id)) is None
+    )
 
 
 async def test_receivers_inside_the_network_and_bad_settings_are_refused(
