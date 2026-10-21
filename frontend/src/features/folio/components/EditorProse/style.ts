@@ -255,4 +255,26 @@ export const Prose = styled.div`
     pointer-events: none;
     color: ${({ theme }) => theme.color.textMuted};
   }
+  /* Others' carets and selections in a shared document (Folio 2.2). */
+  .collaboration-carets__caret {
+    position: relative;
+    margin: 0 -1px;
+    border-left: 2px solid;
+    word-break: normal;
+    pointer-events: none;
+  }
+  .collaboration-carets__label {
+    position: absolute;
+    top: -1.4em;
+    left: -2px;
+    padding: 1px ${({ theme }) => theme.space.xs};
+    border-radius: ${({ theme }) => theme.radius.sm};
+    font-family: ${({ theme }) => theme.fonts.ui};
+    font-size: ${({ theme }) => theme.fontSize.xs};
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    color: ${({ theme }) => theme.color.surface};
+    user-select: none;
+  }
 `;

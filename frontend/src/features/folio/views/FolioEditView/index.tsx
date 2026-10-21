@@ -32,7 +32,7 @@ export function FolioEditView() {
 
   return (
     <Suspense fallback={<PageSpinner />}>
-      <PageEditor nodeId={nodeId} onPublish={() => setPublishing(true)} />
+      <PageEditor nodeId={nodeId} collab onPublish={() => setPublishing(true)} />
       <PublishDialog
         nodeId={nodeId}
         title={node()?.title ?? ''}

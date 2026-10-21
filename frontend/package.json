@@ -38,6 +38,8 @@
     "@tanstack/react-query": "^5.62.0",
     "@tanstack/react-router": "^1.95.0",
     "@tiptap/core": "3.31.4",
+    "@tiptap/extension-collaboration": "3.31.4",
+    "@tiptap/extension-collaboration-caret": "3.31.4",
     "@tiptap/extension-list": "3.31.4",
     "@tiptap/extension-table": "3.31.4",
     "@tiptap/extensions": "3.31.4",
@@ -45,6 +47,7 @@
     "@tiptap/react": "3.31.4",
     "@tiptap/starter-kit": "3.31.4",
     "@tiptap/suggestion": "3.31.4",
+    "@tiptap/y-tiptap": "3.0.9",
     "i18next": "^24.2.0",
     "i18next-browser-languagedetector": "^8.0.2",
     "lucide-react": "^0.469.0",
@@ -58,7 +61,10 @@
     "recharts": "3.10.1",
     "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.0",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "y-protocols": "1.0.6",
+    "y-websocket": "3.1.0",
+    "yjs": "13.6.33"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

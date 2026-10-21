@@ -45,9 +45,11 @@ const Header = TableHeader.extend({
   },
 });
 
-export function folioExtensions(): AnyExtension[] {
+/** With `shared`, Yjs keeps the history (undo is per person), so StarterKit's goes. */
+export function folioExtensions({ shared = false } = {}): AnyExtension[] {
   return [
     StarterKit.configure({
+      ...(shared ? { undoRedo: false } : {}),
       heading: { levels: [1, 2, 3, 4] },
       link: { openOnClick: false, autolink: true, defaultProtocol: 'https' },
     }),
