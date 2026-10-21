@@ -47,8 +47,8 @@ from radicle.folio.api.router import router as folio_router
 from radicle.folio.authz import FolioAuthz
 from radicle.folio.mcp import catalog as folio_catalog
 from radicle.folio.mcp import server as folio_mcp
+from radicle.folio.services import automation_actions, collab, public_events
 from radicle.folio.services import chat_commands as folio_commands
-from radicle.folio.services import collab, public_events
 from radicle.platform import authz, mcp_tools
 from radicle.platform.api import ai as ai_api
 from radicle.platform.api import hooks as hooks_api
@@ -86,6 +86,7 @@ def create_app() -> FastAPI:
     authz.register(FolioAuthz())
     public_events.register()
     folio_commands.register()
+    automation_actions.register()
     app = FastAPI(
         title="Radicle",
         version=__version__,

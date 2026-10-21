@@ -1,8 +1,10 @@
 """Automation rules (Folio 5.6, ADR 0042): triggers, platform actions, schedules and loop
 protection, with a test event and test actions."""
 
+import json
 from typing import Any
 
+import httpx
 import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,11 +12,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from radicle.platform.db.models import (
     AutomationRun,
     DeliveryStatus,
+    IntegrationKind,
+    Notification,
     OutboxEvent,
     User,
 )
 from radicle.platform.errors import ValidationFailed
-from radicle.platform.services import automation, events
+from radicle.platform.services import automation, events, integrations, safe_fetch
+from radicle.platform.services.integrations import IntegrationData, Route
 from tests.conftest import Clock, Team, run_jobs
 
 events.public_event("test.rang", "A test bell rang")
@@ -94,6 +99,44 @@ async def test_a_rule_never_loops(db: AsyncSession, team: Team) -> None:
     assert await db.scalar(select(func.count()).select_from(AutomationRun)) == 4
 
 
+async def test_platform_actions_notify_people_and_channels(
+    db: AsyncSession, team: Team, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    posted: list[dict[str, Any]] = []
+
+    def slack(request: httpx.Request) -> httpx.Response:
+        posted.append(json.loads(request.content))
+        return httpx.Response(200, json={"ok": True})
+
+    async def resolve(host: str) -> list[str]:
+        return ["54.230.1.1"]
+
+    monkeypatch.setattr(safe_fetch, "resolve", resolve)
+    monkeypatch.setattr(safe_fetch, "transport", httpx.MockTransport(slack))
+    admin = await _admin(db, team)
+    creds = {"bot_token": "xoxb-1", "signing_secret": "s"}
+    quiet = Route("C1", ["test.rang"], {"space": "nowhere"})  # no notices of its own
+    chat = await integrations.create(
+        db, admin, IntegrationData(IntegrationKind.slack, "Acme", creds, [quiet])
+    )
+    steps = [
+        {"type": "notify_channel", "integration": str(chat.id), "route": 0},
+        {"type": "notify_person", "handle": "@ana", "message": "Revisa esto"},
+        {"type": "notify_person", "handle": "nadie"},
+    ]
+    await automation.create(db, admin, "Avisar", ON_RANG, steps)
+    await events.emit(db, "test", "rang", actor=None, payload={"n": "1"})
+    await run_jobs(db)
+    assert posted == [{"channel": "C1", "text": "Bell 1\n<https://r.example/p>"}]
+    ana = await db.scalar(select(User).where(User.handle == "ana"))
+    assert ana is not None
+    titles = await db.scalars(select(Notification.title).where(Notification.user_id == ana.id))
+    assert list(titles) == ["Revisa esto"]
+    run = await db.scalar(select(AutomationRun))
+    assert run is not None and run.status == DeliveryStatus.failed
+    assert run.log[-1] == "notify_person: Nobody is called @nadie."
+
+
 async def test_schedules_run_once_per_target_and_period(
     db: AsyncSession, team: Team, clock: Clock
 ) -> None:
@@ -123,6 +166,8 @@ async def test_schedules_run_once_per_target_and_period(
         ({"type": "schedule", "every": "day", "select": "x"}, [], "Pick what it runs on"),
         (ON_RANG, [], "at least one action"),
         (ON_RANG, [{"type": "fly"}], "Pick one of:"),
+        (ON_RANG, [{"type": "notify_person"}], "needs the person's handle"),
+        (ON_RANG, [{"type": "notify_channel"}], "integration id and its route"),
     ],
 )
 async def test_bad_rules_say_how_to_fix(
