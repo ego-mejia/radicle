@@ -9,8 +9,10 @@ from datetime import datetime
 from typing import Any
 
 from sqlalchemy import func, select
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from radicle.folio.db.collab import FolioWatch, TargetType, WatchSource
 from radicle.folio.db.models import FolioNode, FolioNodeEvent, FolioSpace, NodeKind
 from radicle.folio.services import access, rag
 from radicle.platform.db.models import User, utcnow
@@ -121,6 +123,17 @@ async def create_node(
     db.add(node)
     await db.flush()
     record(db, node, user, "created", kind=kind.value, title=title)
+    # The author follows what they write (Folio 2.4).
+    await db.execute(
+        insert(FolioWatch)
+        .values(
+            user_id=user.id,
+            target_type=TargetType.node,
+            target_id=node.id,
+            source=WatchSource.auto,
+        )
+        .on_conflict_do_nothing()
+    )
     return node
 
 

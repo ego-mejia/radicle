@@ -63,6 +63,9 @@ def _urls(s: dict) -> dict[str, list[str]]:
         "/api/v1/folio/nodes/{node_id}/restrictions": [f"{API}/nodes/{p}/restrictions"],
         "/api/v1/folio/submissions": [f"{API}/submissions"],
         "/api/v1/folio/spaces/{key}/archived": [f"{API}/spaces/docs/archived"],
+        "/api/v1/folio/watch/{target_type}/{target_id}": [f"{API}/watch/node/{p}"],
+        "/api/v1/folio/me/recents": [f"{API}/me/recents"],
+        "/api/v1/folio/me/favorites": [f"{API}/me/favorites"],
         "/api/v1/folio/nodes": [
             f"{API}/nodes",
             f"{API}/nodes?q=title ~ secreto",

@@ -3548,6 +3548,30 @@
         "title": "EventOut",
         "type": "object"
       },
+      "FavoritesOut": {
+        "properties": {
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/NodeRef"
+            },
+            "title": "Nodes",
+            "type": "array"
+          },
+          "spaces": {
+            "items": {
+              "$ref": "#/components/schemas/SpaceOut"
+            },
+            "title": "Spaces",
+            "type": "array"
+          }
+        },
+        "required": [
+          "nodes",
+          "spaces"
+        ],
+        "title": "FavoritesOut",
+        "type": "object"
+      },
       "FieldChangeOut": {
         "properties": {
           "after": {
@@ -13381,6 +13405,19 @@
         "title": "WarningOut",
         "type": "object"
       },
+      "WatchOut": {
+        "properties": {
+          "watching": {
+            "title": "Watching",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "watching"
+        ],
+        "title": "WatchOut",
+        "type": "object"
+      },
       "WidgetCreate": {
         "additionalProperties": false,
         "properties": {
@@ -16906,6 +16943,104 @@
         ]
       }
     },
+    "/api/v1/folio/favorites/{target_type}/{target_id}": {
+      "delete": {
+        "operationId": "unfavorite_api_v1_folio_favorites__target_type___target_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "target_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "node",
+                "space"
+              ],
+              "title": "Target Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unfavorite",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "put": {
+        "operationId": "favorite_api_v1_folio_favorites__target_type___target_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "target_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "node",
+                "space"
+              ],
+              "title": "Target Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Favorite",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/health": {
       "get": {
         "operationId": "health_api_v1_folio_health_get",
@@ -16972,6 +17107,29 @@
         ]
       }
     },
+    "/api/v1/folio/me/favorites": {
+      "get": {
+        "description": "Your starred pages and spaces.",
+        "operationId": "favorites_api_v1_folio_me_favorites_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FavoritesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Favorites",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/me/personal-space": {
       "get": {
         "description": "Your personal space, created the first time you ask for it.",
@@ -16989,6 +17147,29 @@
           }
         },
         "summary": "My Space",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/me/recents": {
+      "get": {
+        "description": "What you read last, newest first.",
+        "operationId": "recents_api_v1_folio_me_recents_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_NodeRef_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Recents",
         "tags": [
           "folio",
           "folio"
@@ -19029,6 +19210,160 @@
           }
         },
         "summary": "Reject",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/watch/{target_type}/{target_id}": {
+      "delete": {
+        "operationId": "unwatch_api_v1_folio_watch__target_type___target_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "target_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "node",
+                "space"
+              ],
+              "title": "Target Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unwatch",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "get": {
+        "operationId": "get_watch_api_v1_folio_watch__target_type___target_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "target_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "node",
+                "space"
+              ],
+              "title": "Target Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WatchOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Watch",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "put": {
+        "description": "Follow a page or a space: you hear about its comments and publications.",
+        "operationId": "watch_api_v1_folio_watch__target_type___target_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "target_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "node",
+                "space"
+              ],
+              "title": "Target Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Watch",
         "tags": [
           "folio",
           "folio"
