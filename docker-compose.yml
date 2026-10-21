@@ -45,7 +45,9 @@ services:
     restart: unless-stopped
 
   db:
-    image: postgres:16-alpine
+    # PostgreSQL 16 on Alpine with pgvector for Folio's search (ADR 0037).
+    build: docker/postgres
+    image: ${RADICLE_DB_IMAGE:-radicle-postgres}:16-pgvector
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-radicle}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-radicle}

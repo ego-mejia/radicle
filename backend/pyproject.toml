@@ -27,6 +27,7 @@ dependencies = [
     "cryptography>=43",
     "authlib>=1.4",
     "markdown-it-py>=3.0",
+    "pgvector>=0.3",
 ]
 
 [project.scripts]

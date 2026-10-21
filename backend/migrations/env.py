@@ -17,8 +17,9 @@ target_metadata = Base.metadata
 
 
 def _include_object(obj: object, name: str | None, type_: str, *_: object) -> bool:
-    """Procrastinate owns its tables; autogenerate must not try to drop them."""
-    return not (name or "").startswith("procrastinate")
+    """Procrastinate owns its tables, and Folio creates one HNSW index per embedding
+    dimension at run time (ADR 0037); autogenerate must not try to drop them."""
+    return not (name or "").startswith(("procrastinate", "ix_folio_chunks_embedding_"))
 
 
 def _url() -> str:

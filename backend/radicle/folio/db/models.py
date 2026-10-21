@@ -5,8 +5,10 @@ import uuid
 from datetime import datetime
 from typing import Any
 
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     BigInteger,
+    Computed,
     DateTime,
     ForeignKey,
     Index,
@@ -15,7 +17,7 @@ from sqlalchemy import (
     func,
     text,
 )
-from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, JSONB, UUID
+from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, JSONB, TSVECTOR, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from radicle.platform.db.models.base import Base, _enum, utcnow
@@ -366,3 +368,41 @@ class FolioSubmission(Base):
         DateTime(timezone=True), default=utcnow, server_default=func.now()
     )
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+CHUNK_SEARCH_SQL = (
+    "setweight(to_tsvector('english'::regconfig, coalesce(metadata->>'title', '')), 'A') || "
+    "setweight(to_tsvector('spanish'::regconfig, coalesce(metadata->>'title', '')), 'A') || "
+    "setweight(to_tsvector('english'::regconfig, coalesce(metadata->>'description', '')), 'B') || "
+    "setweight(to_tsvector('spanish'::regconfig, coalesce(metadata->>'description', '')), 'B') || "
+    "setweight(to_tsvector('english'::regconfig, coalesce(text, '')), 'C') || "
+    "setweight(to_tsvector('spanish'::regconfig, coalesce(text, '')), 'C')"
+)
+
+
+class FolioChunk(Base):
+    """A section of a published version, for search and the RAG index (Folio 1.6).
+    `embedding` keeps its model's dimension; per-dimension HNSW indexes are created when a
+    dimension first appears (ADR 0037)."""
+
+    __tablename__ = "folio_chunks"
+    __table_args__ = (
+        Index("ix_folio_chunks_search", "search_vector", postgresql_using="gin"),
+        Index("ix_folio_chunks_node_position", "node_id", "position"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    node_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("folio_nodes.id", ondelete="CASCADE"))
+    version_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("folio_versions.id"))
+    position: Mapped[int] = mapped_column(BigInteger)
+    heading_path: Mapped[list[str]] = mapped_column(ARRAY(Text))
+    anchor: Mapped[str | None] = mapped_column(Text)
+    text: Mapped[str] = mapped_column(Text)
+    token_count: Mapped[int] = mapped_column(BigInteger)
+    metadata_: Mapped[dict[str, Any]] = mapped_column("metadata", JSONB)
+    embedding: Mapped[Any] = mapped_column(Vector(), nullable=True)
+    embedding_dims: Mapped[int | None] = mapped_column(BigInteger)
+    embedded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    search_vector: Mapped[Any] = mapped_column(
+        TSVECTOR, Computed(CHUNK_SEARCH_SQL, persisted=True), deferred=True
+    )
