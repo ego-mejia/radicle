@@ -12,7 +12,10 @@ READ = (
     "get_versions",
 )
 
+WRITE = ("create_page", "update_draft", "submit_for_publication", "list_my_submissions")
+
 CATALOG: tuple[Tool, ...] = (
     Tool("whoami", "context", read_only=True),
     *(Tool(name, "folio_read", read_only=True) for name in READ),
+    *(Tool(name, "folio_write", read_only=name == "list_my_submissions") for name in WRITE),
 )

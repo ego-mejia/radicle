@@ -58,8 +58,18 @@ async def test_an_agent_reads_docs(client: AsyncClient, db: AsyncSession, team: 
 
 
 # Tools that take or return docs, each checked below; the rest never touch a page.
-COVERED = {"get_space_tree", "search_docs", "query_docs", "get_page", "get_versions"}
-EXEMPT = {"whoami", "list_spaces", "get_metadata_schema"}
+COVERED = {
+    "get_space_tree",
+    "search_docs",
+    "query_docs",
+    "get_page",
+    "get_versions",
+    "update_draft",
+    "submit_for_publication",
+}
+# whoami, spaces and the schema hold no page; create_page makes a new one, and
+# list_my_submissions lists only the caller's own.
+EXEMPT = {"whoami", "list_spaces", "get_metadata_schema", "create_page", "list_my_submissions"}
 
 
 async def test_every_folio_tool_is_covered(client: AsyncClient, team: Team) -> None:
@@ -79,9 +89,14 @@ async def test_restricted_pages_never_show_up(
             args = {"query": "secreto", "mode": mode}
             assert payload(await folio.call_tool("search_docs", args)) == []
         assert payload(await folio.call_tool("query_docs", {"rql": 'title ~ "secreto"'})) == []
-        for tool in ("get_page", "get_versions"):
-            text = error_text(await folio.call_tool(tool, {"id": ids["secret"]}))
-            assert "404" in text or "not found" in text.lower()
+        writes = {
+            "update_draft": {"content_md": "x"},
+            "submit_for_publication": {"change_note": "x"},
+        }
+        for tool in ("get_page", "get_versions", *writes):
+            args = {"id": ids["secret"]} | writes.get(tool, {})
+            text = error_text(await folio.call_tool(tool, args))
+            assert "not found" in text.lower(), (tool, text)
 
 
 async def test_errors_explain_what_works(client: AsyncClient, db: AsyncSession, team: Team) -> None:
