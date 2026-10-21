@@ -11,7 +11,7 @@ import { createFromTemplate, createNode, folioKeys } from '../../../../services/
 import { TemplatePicker } from '../TemplatePicker';
 import * as S from './style';
 
-export type NewKind = 'page' | 'folder' | 'blog_post';
+export type NewKind = 'page' | 'folder' | 'blog_post' | 'live_doc';
 
 type Props = {
   space: string;
@@ -21,7 +21,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
-/** Name a new page, folder or post. Pages and posts open in the editor; folders stay. */
+/** Name a new page, folder, post or live doc. All but folders open in the editor. */
 export function NewNodeDialog({ space, kind, parent = null, open, onOpenChange }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -29,11 +29,11 @@ export function NewNodeDialog({ space, kind, parent = null, open, onOpenChange }
   const errorMessage = useErrorMessage();
   const [title, setTitle] = useState('');
   const [template, setTemplate] = useState<string | null>(null);
-  const withTemplates = kind !== 'folder';
+  const withTemplates = kind === 'page' || kind === 'blog_post';
   const create = useMutation({
     mutationFn: () => {
       const where = { space, title: title.trim(), parent: kind === 'blog_post' ? null : parent };
-      return template && kind !== 'folder'
+      return template && withTemplates
         ? createFromTemplate({ ...where, template, kind })
         : createNode({ ...where, kind });
     },

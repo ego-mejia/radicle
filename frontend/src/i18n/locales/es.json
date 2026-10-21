@@ -1687,7 +1687,8 @@
         "page": "Nueva página",
         "folder": "Nueva carpeta",
         "blog_post": "Nuevo blog post",
-        "title": "Título"
+        "title": "Título",
+        "live_doc": "Nuevo doc en vivo"
       }
     },
     "reader": {

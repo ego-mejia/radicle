@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, Navigate } from '@tanstack/react-router';
 import { Glasses, History, MessageSquare, PenLine } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -43,6 +43,15 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   if (node.isPending) return <PageSpinner />;
   if (node.isError)
     return <EmptyState title={t('folio.reader.unavailable')} text={errorMessage(node.error)} />;
+  // A live doc is always open for writing: those who can edit go straight in.
+  if (node.data.kind === 'live_doc' && page.canEdit)
+    return (
+      <Navigate
+        to="/folio/p/$page/edit"
+        params={{ page: `${node.data.id}-${node.data.slug}` }}
+        replace
+      />
+    );
   if (page.isDraft && page.draft.isPending) return <PageSpinner />;
   if (page.isDraft && page.draft.isError)
     return (
