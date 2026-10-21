@@ -10,3 +10,10 @@ export const Text = styled.section`
   padding: ${({ theme }) => theme.space.xl};
   overflow: auto;
 `;
+
+export const Chat = styled(Text)`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.space.md};
+  overflow: hidden;
+`;

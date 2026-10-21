@@ -1,9 +1,11 @@
 import { screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '../../../../test/renderWithProviders';
 import { block, card } from './fixtures';
 import { HomeGrid } from '.';
 import { inGridOrder } from './order';
+
+vi.mock('../DocsChat', () => ({ DocsChat: () => <p>chat</p> }));
 
 const SPACE = { key: 'eng', name: 'Ingeniería', kind: 'team' as const, icon: null, docs: 3 };
 
@@ -39,7 +41,7 @@ describe('HomeGrid', () => {
       'Bienvenidos',
     );
     expect(screen.getByRole('search', { name: 'Search the docs' })).toBeInTheDocument();
-    expect(container.querySelector('[data-block="chat"]')).toBeEmptyDOMElement();
+    expect(container.querySelector('[data-block="chat"]')).toHaveTextContent('chat');
   });
 
   it('lays blocks out top to bottom, then left to right', async () => {

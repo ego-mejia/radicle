@@ -11,7 +11,7 @@ from sqlalchemy import ColumnElement, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioNode, FolioSpace, NodeKind
-from radicle.folio.services import access, doc_query, feed, home_layouts, spaces, views
+from radicle.folio.services import access, chat, doc_query, feed, home_layouts, spaces, views
 from radicle.folio.services.home import (
     ANNOUNCEMENT_LABELS,
     FEATURED_LABELS,
@@ -38,11 +38,15 @@ class Block:
     cards: list[Card] = field(default_factory=list)
     spaces: list[SpaceCount] = field(default_factory=list)
     markdown: str = ""
+    # chat: whether the docs chat is on (Folio 4.5)
+    live: bool = False
 
     @property
     def empty(self) -> bool:
         if self.type == "search":
             return False
+        if self.type == "chat":
+            return not self.live
         return not (self.cards or self.spaces or self.markdown.strip())
 
 
@@ -111,6 +115,7 @@ async def resolve(
     layout = layout or await home_layouts.active(db)
     visible = await access.node_filter(db, user)
     base = _published(visible)
+    chat_on: bool | None = None
     out: list[Block] = []
     for raw in layout.get("blocks", []):
         config: dict[str, Any] = raw.get("config", {})
@@ -149,7 +154,11 @@ async def resolve(
             block.spaces = await _spaces(db, user, visible)
         elif kind == "text":
             block.markdown = str(config.get("markdown", ""))
-        # search shows the box; chat is reserved for phase 4 and stays out for now.
+        elif kind == "chat":
+            if chat_on is None:
+                chat_on = await chat.unavailable(db) is None
+            block.live = chat_on
+        # search shows the box; chat shows only when the docs chat is on.
         if not block.empty:
             out.append(block)
     return out

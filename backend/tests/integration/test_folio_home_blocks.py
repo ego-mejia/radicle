@@ -4,7 +4,10 @@ import pytest
 from httpx import AsyncClient
 
 from tests.conftest import Team
+from tests.integration.folio_chat_helpers import model
 from tests.integration.folio_helpers import API, publish
+
+__all__ = ["model"]  # fixture
 
 
 def _block(id: str, type: str, y: int, **config: object) -> dict:
@@ -56,7 +59,7 @@ async def test_the_default_layout_until_one_is_published(
 ) -> None:
     blocks = await _blocks(client, team)
     assert set(blocks) >= {"featured", "latest", "spaces", "most-read"}
-    assert "chat" not in blocks  # reserved for phase 4
+    assert "chat" not in blocks  # no AI provider: the docs chat is off
     assert "ai-tools" not in blocks  # no ai-tools space: nothing to show
     for block in blocks.values():
         assert "Post secreto" not in _titles(block)
@@ -103,3 +106,10 @@ async def test_for_you_follows_what_you_watch(client: AsyncClient, team: Team, d
     await client.put(f"{API}/watch/node/{docs['Guía']}", headers=team.member.headers)
     member = await _blocks(client, team)
     assert "Guía" in _titles(member["you"])
+
+
+async def test_the_chat_block_shows_when_the_chat_is_on(
+    client: AsyncClient, team: Team, docs: dict, model: list[dict]
+) -> None:
+    blocks = await _blocks(client, team)
+    assert blocks["chat"]["type"] == "chat"
