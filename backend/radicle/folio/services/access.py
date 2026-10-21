@@ -7,7 +7,8 @@
 - Personal spaces are their owner's alone, even for Folio admins.
 - A page's view restriction hides it, and everything under it, from whoever is not named
   in it. An edit restriction applies to that page only.
-- Pages never published are seen only by people who can write in their space.
+- Pages never published are seen by their author, the space's admins and, when a person
+  wrote them, people who can write in the space; an agent's new page waits for approval.
 
 `visible_nodes(user)` is the one SQL rule for which nodes someone may see: the tree, search,
 RQL, the RAG index and the MCP all go through it, and `can_view` asks it for one node.
@@ -32,7 +33,7 @@ from radicle.folio.db.models import (
     SpacePermission,
 )
 from radicle.folio.services import roles
-from radicle.platform.db.models import GroupMember, User
+from radicle.platform.db.models import GroupMember, User, UserKind
 from radicle.platform.errors import Forbidden
 
 ALL = frozenset(p.value for p in SpacePermission)
@@ -106,12 +107,23 @@ def visible_nodes(user: User, role: FolioRole | None) -> ColumnElement[bool]:
     readable = FolioNode.space_id.in_(
         _spaces_with(user, "view").where(FolioSpaceGrant.space_id.in_(live))
     )
-    writable = _spaces_with(user, "create") if role != FolioRole.reader else None
+    # Unpublished pages: their author, the space's admins, and (when a person wrote them)
+    # anyone who can write in the space. An agent's new page waits for approval unseen.
+    people = select(User.id).where(User.kind == UserKind.human)
+    writers = []
+    if role != FolioRole.reader:
+        writers = [
+            and_(
+                FolioNode.space_id.in_(_spaces_with(user, "create")),
+                FolioNode.created_by.in_(people),
+            )
+        ]
     ready = or_(
         FolioNode.published_version_id.is_not(None),
         FolioNode.kind == NodeKind.folder,
         FolioNode.created_by == user.id,
-        *([FolioNode.space_id.in_(writable)] if writable is not None else []),
+        FolioNode.space_id.in_(_spaces_with(user, "admin")),
+        *writers,
     )
     return and_(readable, ready, ~FolioNode.id.in_(_hidden_nodes(user)))
 
