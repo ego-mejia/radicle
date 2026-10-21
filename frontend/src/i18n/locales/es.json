@@ -1640,6 +1640,33 @@
       "saved": "Rol guardado",
       "none": "Nadie tiene rol: Folio solo aparece para los admins de instancia.",
       "forbidden": "Solo los admins de Folio pueden gestionar los roles globales."
+    },
+    "home": {
+      "title": "Inicio"
+    },
+    "space": {
+      "title": "Space"
+    },
+    "reader": {
+      "title": "Página"
+    },
+    "editor": {
+      "title": "Editor"
+    },
+    "publish": {
+      "title": "Publicar"
+    },
+    "history": {
+      "title": "Historial"
+    },
+    "searchPage": {
+      "title": "Búsqueda"
+    },
+    "approvals": {
+      "title": "Aprobaciones"
+    },
+    "catalogs": {
+      "title": "Catálogos"
     }
   }
 }

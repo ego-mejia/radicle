@@ -27,6 +27,12 @@ import { SettingsView } from './features/settings/views/SettingsView';
 import { TemplateEditorView } from './features/templates/views/TemplateEditorView';
 import { TicketPageView } from './features/tickets/views/TicketPageView';
 import { FolioAdminView } from './features/folio/views/FolioAdminView';
+import { FolioApprovalsView } from './features/folio/views/FolioApprovalsView';
+import { FolioEditView } from './features/folio/views/FolioEditView';
+import { FolioHistoryView } from './features/folio/views/FolioHistoryView';
+import { FolioReadView } from './features/folio/views/FolioReadView';
+import { FolioSearchView } from './features/folio/views/FolioSearchView';
+import { FolioSpaceView } from './features/folio/views/FolioSpaceView';
 import { FolioHomeView } from './features/folio/views/FolioHomeView';
 import { AppPage } from './pages/AppPage';
 import { FolioPage } from './pages/FolioPage';
@@ -136,6 +142,57 @@ const folioAdminRoute = createRoute({
   getParentRoute: () => folioLayout,
   path: '/folio/admin',
   component: FolioAdminView,
+});
+
+const folioSpaceRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/s/$key',
+  component: FolioSpaceView,
+});
+
+/** `$page` is `<id>-<slug>`; only the id matters, so renamed pages keep their links. */
+const folioReadRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/p/$page',
+  component: FolioReadView,
+});
+
+const folioEditRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/p/$page/edit',
+  component: FolioEditView,
+});
+
+const folioHistoryRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/p/$page/history',
+  component: FolioHistoryView,
+  validateSearch: (search: Record<string, unknown>): { from?: number; to?: number } => ({
+    from: typeof search.from === 'number' ? search.from : undefined,
+    to: typeof search.to === 'number' ? search.to : undefined,
+  }),
+});
+
+export type FolioSearchParams = { q?: string; mode?: 'hybrid' | 'text' | 'semantic'; rql?: string };
+
+const folioSearchRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/search',
+  component: FolioSearchView,
+  validateSearch: (search: Record<string, unknown>): FolioSearchParams => ({
+    q: str(search.q),
+    mode:
+      search.mode === 'text' || search.mode === 'semantic' || search.mode === 'hybrid'
+        ? search.mode
+        : undefined,
+    rql: str(search.rql),
+  }),
+});
+
+const folioApprovalsRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/approvals',
+  component: FolioApprovalsView,
 });
 
 const boardSearch = (search: Record<string, unknown>): BoardSearch => ({
@@ -350,7 +407,16 @@ const routeTree = rootRoute.addChildren([
     adminRoute,
     templateRoute,
   ]),
-  folioLayout.addChildren([folioHomeRoute, folioAdminRoute]),
+  folioLayout.addChildren([
+    folioHomeRoute,
+    folioAdminRoute,
+    folioSpaceRoute,
+    folioReadRoute,
+    folioEditRoute,
+    folioHistoryRoute,
+    folioSearchRoute,
+    folioApprovalsRoute,
+  ]),
 ]);
 
 export function createAppRouter(queryClient: QueryClient) {

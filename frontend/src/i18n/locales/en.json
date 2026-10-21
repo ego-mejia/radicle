@@ -1640,6 +1640,33 @@
       "saved": "Role saved",
       "none": "Nobody has a role: Folio is hidden for everyone but instance admins.",
       "forbidden": "Only Folio admins can manage global roles."
+    },
+    "home": {
+      "title": "Home"
+    },
+    "space": {
+      "title": "Space"
+    },
+    "reader": {
+      "title": "Page"
+    },
+    "editor": {
+      "title": "Editor"
+    },
+    "publish": {
+      "title": "Publish"
+    },
+    "history": {
+      "title": "History"
+    },
+    "searchPage": {
+      "title": "Search"
+    },
+    "approvals": {
+      "title": "Approvals"
+    },
+    "catalogs": {
+      "title": "Catalogs"
     }
   }
 }
