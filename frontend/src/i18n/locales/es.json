@@ -1649,6 +1649,30 @@
       "unsaved": "Cambios sin guardar",
       "draftReady": "Borrador guardado. Los readers siguen viendo la home publicada.",
       "showingPublished": "Esta es la home publicada. Cámbiala y guarda un borrador.",
+      "config": {
+        "title": "Ajustes de {{name}}",
+        "select": "Elige un bloque para decidir qué muestra.",
+        "blockTitle": "Título",
+        "space": "Espacio",
+        "anySpace": "Cualquier espacio",
+        "label": "Etiqueta",
+        "labelHint": "Solo documentos con esta etiqueta, p. ej. mcp",
+        "kind": "Muestra",
+        "kinds": {
+          "posts": "Solo posts",
+          "all": "Posts y páginas"
+        },
+        "rql": "Consulta RQL",
+        "rqlHint": "p. ej. space = ai-tools and doc_type = guide",
+        "at": "{{message}} (en el carácter {{at}})",
+        "limit": "Cuántos (1 a {{most}})",
+        "markdown": "Texto (Markdown)",
+        "nothing": "La caja de búsqueda no tiene nada que ajustar.",
+        "pinned": "Fijado: {{title}}",
+        "newest": "Muestra el más reciente con la etiqueta.",
+        "unpin": "Usar el más reciente",
+        "pick": "Fijar una página o post"
+      },
       "types": {
         "featured": "Destacado",
         "announcement": "Anuncio",
