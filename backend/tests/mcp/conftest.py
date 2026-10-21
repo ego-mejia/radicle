@@ -10,6 +10,7 @@ from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
 
 from radicle.docket.mcp.server import server
+from radicle.folio.mcp.server import server as folio_server
 from tests.conftest import Actor
 
 McpFor = Callable[[Actor], AbstractAsyncContextManager[Client]]
@@ -57,3 +58,29 @@ def payload(result: Any) -> Any:
 def error_text(result: Any) -> str:
     assert result.is_error, "expected a tool error"
     return str(result.content[0].text)
+
+
+@asynccontextmanager
+async def folio_mcp(client: AsyncClient, actor: Actor) -> AsyncIterator[Client]:
+    app = client._transport.app  # type: ignore[attr-defined]
+    started, stop = asyncio.Event(), asyncio.Event()
+
+    async def run_manager() -> None:
+        async with folio_server.session_manager.run():
+            started.set()
+            await stop.wait()
+
+    task = asyncio.create_task(run_manager())
+    await started.wait()
+    http = httpx2.AsyncClient(
+        transport=httpx2.ASGITransport(app=app), headers=actor.headers, timeout=30
+    )
+    try:
+        async with (
+            http,
+            Client(streamable_http_client("http://test/mcp/folio", http_client=http)) as c,
+        ):
+            yield c
+    finally:
+        stop.set()
+        await task

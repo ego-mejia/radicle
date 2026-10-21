@@ -7,12 +7,16 @@ from fastapi import FastAPI
 from mcp.server.mcpserver import Context
 
 from radicle import __version__
+from radicle.folio.mcp import read
 from radicle.platform.mcp import http
 from radicle.platform.mcp.api import api
 from radicle.platform.mcp.server import LimitedMCPServer
 
 INSTRUCTIONS = """Radicle Folio is the documentation suite of Radicle. Call whoami first to
-learn your handle and your global Folio role (reader, creator or admin)."""
+learn your handle, your global Folio role (reader, creator or admin) and your spaces.
+To find docs use search_docs (words or a question) or query_docs (RQL), then get_page for
+the Markdown. Before writing, search whether the doc already exists and read
+get_metadata_schema. Errors explain what is valid instead."""
 
 server = LimitedMCPServer(
     name="radicle-folio", title="Radicle Folio", version=__version__, instructions=INSTRUCTIONS
@@ -21,10 +25,16 @@ server = LimitedMCPServer(
 
 @server.tool()
 async def whoami(ctx: Context) -> dict[str, Any]:
-    """Who you are connected as (user or agent) and your global Folio role."""
+    """Who you are connected as (user or agent), your global Folio role and the spaces
+    you can see with what you may do in each."""
     async with api(ctx) as client:
         me = await client.call("GET", "/folio/me")
-    return {k: me[k] for k in ("handle", "display_name", "kind", "role")}
+        spaces = await client.call("GET", "/folio/spaces")
+    listed = [{"key": s["key"], "permissions": s["permissions"]} for s in spaces["items"]]
+    return {k: me[k] for k in ("handle", "display_name", "kind", "role")} | {"spaces": listed}
+
+
+read.register(server)
 
 
 def mount(app: FastAPI) -> None:

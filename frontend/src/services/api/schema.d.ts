@@ -6190,6 +6190,11 @@ export interface components {
             kind: "team" | "personal";
             /** Name */
             name: string;
+            /**
+             * Permissions
+             * @description What you may do here: view, create, ...
+             */
+            permissions: string[];
         };
         /** SpacePatch */
         SpacePatch: {
