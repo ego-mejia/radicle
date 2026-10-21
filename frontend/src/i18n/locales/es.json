@@ -959,7 +959,9 @@
       "assignMe": "Asignarme",
       "move": "Mover (transiciones)",
       "tags": "Tags",
-      "priority": "Prioridad"
+      "priority": "Prioridad",
+      "docket": "Ir a Docket",
+      "folio": "Ir a Folio"
     }
   },
   "palette": {
@@ -1599,6 +1601,19 @@
         "badge": "FOLIO",
         "description": "Documentación, blog y conocimiento"
       }
+    }
+  },
+  "folio": {
+    "search": "Buscar en los docs",
+    "searchSoon": "La búsqueda llega con los spaces y las páginas",
+    "homeTitle": "Folio",
+    "homeSubtitle": "La documentación de Radicle, para leerse como revista.",
+    "emptyTitle": "Folio está brotando",
+    "emptyText": "Los spaces y las páginas llegan pronto. Tu rol en Folio: {{role}}.",
+    "roles": {
+      "reader": "lector",
+      "creator": "creador",
+      "admin": "admin"
     }
   }
 }

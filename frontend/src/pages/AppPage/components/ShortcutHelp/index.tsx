@@ -12,6 +12,8 @@ const GROUPS: { title: string; keys: [string[], string][] }[] = [
       [['?'], 'help'],
       [['g', 'p'], 'projects'],
       [['g', 'm'], 'myTickets'],
+      [['g', 'd'], 'docket'],
+      [['g', 'f'], 'folio'],
       [['Esc'], 'close'],
     ],
   },

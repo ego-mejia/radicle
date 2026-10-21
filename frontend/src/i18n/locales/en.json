@@ -959,7 +959,9 @@
       "assignMe": "Assign to me",
       "move": "Move (transitions)",
       "tags": "Tags",
-      "priority": "Priority"
+      "priority": "Priority",
+      "docket": "Go to Docket",
+      "folio": "Go to Folio"
     }
   },
   "palette": {
@@ -1599,6 +1601,19 @@
         "badge": "FOLIO",
         "description": "Docs, blog and knowledge"
       }
+    }
+  },
+  "folio": {
+    "search": "Search the docs",
+    "searchSoon": "Search arrives with spaces and pages",
+    "homeTitle": "Folio",
+    "homeSubtitle": "Radicle's documentation, read like a magazine.",
+    "emptyTitle": "Folio is sprouting",
+    "emptyText": "Spaces and pages arrive soon. Your Folio role: {{role}}.",
+    "roles": {
+      "reader": "reader",
+      "creator": "creator",
+      "admin": "admin"
     }
   }
 }

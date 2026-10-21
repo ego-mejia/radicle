@@ -26,9 +26,12 @@ import { ProjectsView } from './features/projects/views/ProjectsView';
 import { SettingsView } from './features/settings/views/SettingsView';
 import { TemplateEditorView } from './features/templates/views/TemplateEditorView';
 import { TicketPageView } from './features/tickets/views/TicketPageView';
+import { FolioHomeView } from './features/folio/views/FolioHomeView';
 import { AppPage } from './pages/AppPage';
+import { FolioPage } from './pages/FolioPage';
 import { AuthPage } from './pages/AuthPage';
 import { authKeys, fetchMe, fetchSetupStatus } from './services/api/auth';
+import { fetchFolioMe, folioKeys } from './services/api/folio';
 import { isApiError } from './services/api/client';
 
 type RouterContext = { queryClient: QueryClient };
@@ -99,6 +102,33 @@ const appLayout = createRoute({
       throw redirect({ to: '/login', search: { next: location.href } });
     }
   },
+});
+
+/** Folio's shell: signed in like Docket, and hidden (back to Docket) without a Folio role. */
+const folioLayout = createRoute({
+  getParentRoute: () => rootRoute,
+  id: 'folio',
+  component: FolioPage,
+  beforeLoad: async ({ context, location }) => {
+    try {
+      await context.queryClient.ensureQueryData({ queryKey: authKeys.me, queryFn: fetchMe });
+    } catch (error) {
+      if (!isApiError(error, 401)) throw error;
+      throw redirect({ to: '/login', search: { next: location.href } });
+    }
+    const folio = await context.queryClient.fetchQuery({
+      queryKey: folioKeys.me,
+      queryFn: fetchFolioMe,
+      staleTime: 60_000,
+    });
+    if (!folio) throw redirect({ to: '/' });
+  },
+});
+
+const folioHomeRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio',
+  component: FolioHomeView,
 });
 
 const boardSearch = (search: Record<string, unknown>): BoardSearch => ({
@@ -313,6 +343,7 @@ const routeTree = rootRoute.addChildren([
     adminRoute,
     templateRoute,
   ]),
+  folioLayout.addChildren([folioHomeRoute]),
 ]);
 
 export function createAppRouter(queryClient: QueryClient) {

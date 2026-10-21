@@ -8,6 +8,7 @@ import { CreateTicketModal } from '../../features/tickets/components/CreateTicke
 import { ShortcutsContext } from '../../contexts/shortcuts';
 import { useHotkey } from '../../hooks/useHotkey';
 import { usePreferences } from '../../hooks/usePreferences';
+import { useSuiteShortcuts } from '../../hooks/useSuiteShortcuts';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { GlobalShortcuts } from './components/GlobalShortcuts';
 import { Sidebar } from './components/Sidebar';
@@ -40,6 +41,7 @@ export function AppPage() {
   );
   const openCreateShortcut = useCallback(() => openCreate(), [openCreate]);
   useHotkey('c', openCreateShortcut);
+  useSuiteShortcuts();
 
   return (
     <ShortcutsContext.Provider value={prefs?.shortcuts ?? true}>
