@@ -947,6 +947,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish
+         * @description Publish the draft as the next version. 422 lists every missing metadata field; 409
+         *     when someone published after this draft started (send `confirm` to go ahead).
+         */
+        post: operations["publish_api_v1_folio_nodes__node_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/spaces": {
         parameters: {
             query?: never;
@@ -4777,6 +4798,13 @@ export interface components {
              * @description Ancestors from the root down
              */
             breadcrumbs: components["schemas"]["NodeRef"][];
+            /**
+             * Content Json
+             * @description Published content (TipTap)
+             */
+            content_json: {
+                [key: string]: unknown;
+            } | null;
             /** Cover Asset Id */
             cover_asset_id: string | null;
             /** Created At */
@@ -4793,6 +4821,13 @@ export interface components {
              * @enum {string}
              */
             kind: "page" | "folder" | "blog_post";
+            /**
+             * Metadata
+             * @description Of the published version
+             */
+            metadata: {
+                [key: string]: unknown;
+            } | null;
             /** Parent Id */
             parent_id: string | null;
             /** Published At */
@@ -4805,6 +4840,11 @@ export interface components {
             title: string;
             /** Updated At */
             updated_at: string;
+            /**
+             * Version
+             * @description Published version; null until first published
+             */
+            version: number | null;
         };
         /** NodePatch */
         NodePatch: {
@@ -5326,6 +5366,20 @@ export interface components {
             redirect_uri: string;
             /** Scopes */
             scopes: string[];
+        };
+        /** PublishIn */
+        PublishIn: {
+            /**
+             * Change Note
+             * @description What changed, for the history
+             */
+            change_note?: string | null;
+            /**
+             * Confirm
+             * @description Publish even if someone published after this draft started
+             * @default false
+             */
+            confirm?: boolean;
         };
         /** QuickFilterIn */
         QuickFilterIn: {
@@ -6820,6 +6874,33 @@ export interface components {
             api_version: string;
             /** Version */
             version: string;
+        };
+        /** VersionOut */
+        VersionOut: {
+            /**
+             * Approved By
+             * @description The admin who approved an agent's version
+             */
+            approved_by: string | null;
+            /** Author */
+            author: string;
+            /** Change Note */
+            change_note: string | null;
+            /** Created At */
+            created_at: string;
+            /** Metadata */
+            metadata: {
+                [key: string]: unknown;
+            };
+            /** Number */
+            number: number;
+            /**
+             * Restored From
+             * @description The version it restored, if any
+             */
+            restored_from: number | null;
+            /** Title */
+            title: string;
         };
         /** VoteOut */
         VoteOut: {
@@ -9202,6 +9283,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["NodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_api_v1_folio_nodes__node_id__publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublishIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionOut"];
                 };
             };
             /** @description Validation Error */
