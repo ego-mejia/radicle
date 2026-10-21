@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, ForeignKey, Text, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Text, func, text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -69,5 +69,33 @@ class FolioLinkPreview(Base):
     provider: Mapped[str | None] = mapped_column(Text)
     embed_html_allowed: Mapped[bool] = mapped_column(default=False, server_default="false")
     fetched_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, server_default=func.now()
+    )
+
+
+class FolioHomeLayout(Base):
+    """The home's bento layout (Folio 3.2): {columns: 12, blocks: [{id, type, x, y, w, h,
+    config}]}. One row is the admin's draft; each publish adds a row, and is_active marks
+    the one readers see."""
+
+    __tablename__ = "folio_home_layouts"
+    __table_args__ = (
+        Index(
+            "ux_folio_home_layouts_draft",
+            "is_draft",
+            unique=True,
+            postgresql_where=text("is_draft"),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    layout: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    is_draft: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    is_active: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, server_default=func.now()
     )
