@@ -95,6 +95,8 @@ function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [title, setTitle] = useState(node.title);
+  // The AI's rewrite proposal opens where the Comment and Create ticket buttons sit.
+  const [aiBusy, setAiBusy] = useState(false);
   const [icon, setIcon] = useState(node.icon);
   const [cover, setCover] = useState(node.cover_asset_id);
   const toast = useToast();
@@ -258,20 +260,24 @@ function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
               <EditorContent editor={editor} />
             </div>
           </EditorProse>
-          {editor && <SelectionAi editor={editor} nodeId={node.id} space={node.space} />}
-          <SelectionComment
-            container={bodyEl}
-            mentions={discussion.mentions}
-            onComment={
-              node.version != null
-                ? async (anchor, text) => {
-                    await Promise.all([body.flush(), header.flush()]);
-                    await discussion.add.mutateAsync({ body: text, anchor });
-                  }
-                : undefined
-            }
-            ticketNode={ticketNode}
-          />
+          {editor && (
+            <SelectionAi editor={editor} nodeId={node.id} space={node.space} onBusy={setAiBusy} />
+          )}
+          {!aiBusy && (
+            <SelectionComment
+              container={bodyEl}
+              mentions={discussion.mentions}
+              onComment={
+                node.version != null
+                  ? async (anchor, text) => {
+                      await Promise.all([body.flush(), header.flush()]);
+                      await discussion.add.mutateAsync({ body: text, anchor });
+                    }
+                  : undefined
+              }
+              ticketNode={ticketNode}
+            />
+          )}
         </S.Page>
       </S.Scroll>
     </S.Screen>
