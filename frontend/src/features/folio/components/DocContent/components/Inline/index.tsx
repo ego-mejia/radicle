@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { DocMark, DocNode } from '../../anchors';
+import { Formula } from '../../../Formula';
 import * as S from './style';
 import { toneOf } from './tone';
 
@@ -47,6 +48,8 @@ export function Inline({ nodes }: { nodes?: DocNode[] }) {
               {String(n.attrs?.text ?? '')}
             </S.Status>
           );
+        if (n.type === 'inlineFormula')
+          return <Formula key={i} latex={String(n.attrs?.latex ?? '')} inline />;
         if (n.type !== 'text') return null;
         return (n.marks ?? []).reduceRight<ReactNode>(
           (child, mark, m) => wrap(mark, child, m),

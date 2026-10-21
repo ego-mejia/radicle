@@ -1795,7 +1795,10 @@
         "left_other": "{{count}} min restantes"
       },
       "actionItem": "Action item",
-      "due": "Vence"
+      "due": "Vence",
+      "diagram": "Diagrama",
+      "diagramError": "Este diagrama no compila:",
+      "formulaError": "Esta fórmula no compila"
     },
     "editor": {
       "title": "Editor",

@@ -98,6 +98,9 @@ importers:
       i18next-browser-languagedetector:
         specifier: ^8.0.2
         version: 8.2.1
+      katex:
+        specifier: 0.16.22
+        version: 0.16.22
       lucide-react:
         specifier: ^0.469.0
         version: 0.469.0(react@18.3.1)
@@ -2625,6 +2628,10 @@ packages:
   json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
+    hasBin: true
+
+  katex@0.16.22:
+    resolution: {integrity: sha512-XCHRdUw4lf3SKBaJe4EvgqIuWwkPSo9XoeO8GjQW94Bp7TWv9hNhzZjZ+OH9yf1UmLygb7DIT5GSFQiyt16zYg==}
     hasBin: true
 
   katex@0.16.47:
@@ -6129,6 +6136,10 @@ snapshots:
   json-stable-stringify-without-jsonify@1.0.1: {}
 
   json5@2.2.3: {}
+
+  katex@0.16.22:
+    dependencies:
+      commander: 8.3.0
 
   katex@0.16.47:
     dependencies:
