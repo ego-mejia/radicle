@@ -996,6 +996,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/databases/{node_id}/rows/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Rows
+         * @description Add up to 100 rows at the end, all or none.
+         */
+        post: operations["add_rows_api_v1_folio_databases__node_id__rows_batch_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/favorites/{target_type}/{target_id}": {
         parameters: {
             query?: never;
@@ -5285,6 +5305,21 @@ export interface components {
             values?: {
                 [key: string]: unknown;
             } | null;
+        };
+        /** DbRowsAdded */
+        DbRowsAdded: {
+            /** Items */
+            items: components["schemas"]["DbRowOut"][];
+        };
+        /** DbRowsIn */
+        DbRowsIn: {
+            /**
+             * Rows
+             * @description Each row's values by column key
+             */
+            rows: {
+                [key: string]: unknown;
+            }[];
         };
         /** DbRowsOut */
         DbRowsOut: {
@@ -12052,6 +12087,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DbRowOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_rows_api_v1_folio_databases__node_id__rows_batch_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DbRowsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DbRowsAdded"];
                 };
             };
             /** @description Validation Error */

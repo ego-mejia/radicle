@@ -74,6 +74,8 @@ COVERED = {
     "watch",
     "get_feed",
     "append_to_live_doc",
+    "query_database",
+    "add_database_rows",
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
@@ -119,8 +121,9 @@ async def test_restricted_pages_never_show_up(
             "submit_for_publication": {"change_note": "x"},
             "add_comment": {"body": "x"},
             "append_to_live_doc": {"content_md": "x"},
+            "add_database_rows": {"rows": [{"name": "x"}]},
         }
-        for tool in ("get_page", "get_versions", "list_comments", *writes):
+        for tool in ("get_page", "get_versions", "list_comments", "query_database", *writes):
             args = {"id": ids["secret"]} | writes.get(tool, {})
             text = error_text(await folio.call_tool(tool, args))
             assert "not found" in text.lower(), (tool, text)
@@ -169,6 +172,8 @@ async def test_every_tool_explains_missing_access(
         "list_comments": {"id": some_id},
         "add_comment": {"id": some_id, "body": "x"},
         "resolve_comment": {"thread_id": some_id},
+        "query_database": {"id": some_id},
+        "add_database_rows": {"id": some_id, "rows": [{"name": "x"}]},
     }
     async with folio_mcp(client, team.agent) as folio:
         for tool, args in calls.items():

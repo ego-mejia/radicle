@@ -23,7 +23,7 @@ from radicle.folio.services.databases import (
     get_database,
 )
 from radicle.platform.db.models import User, utcnow
-from radicle.platform.errors import NotFound
+from radicle.platform.errors import NotFound, ValidationFailed
 from radicle.platform.services import rank
 
 MAX_TEXT = 10_000
@@ -123,6 +123,24 @@ async def add_row(
     db.add(row)
     await db.flush()
     return row
+
+
+MAX_BATCH = 100
+
+
+async def add_rows(
+    db: AsyncSession, user: User, node: FolioNode, rows: list[dict[str, Any]]
+) -> list[FolioDbRow]:
+    """Add rows at the end, all or none: the first wrong row says which it is."""
+    if not rows or len(rows) > MAX_BATCH:
+        raise _invalid("rows", f"Add between 1 and {MAX_BATCH} rows at a time.")
+    added = []
+    for n, values in enumerate(rows, start=1):
+        try:
+            added.append(await add_row(db, user, node, values))
+        except ValidationFailed as e:
+            raise _invalid(f"rows.{n - 1}", f"Row {n}: {e.detail} No rows were added.") from e
+    return added
 
 
 async def _rank_after(db: AsyncSession, node: FolioNode, after: uuid.UUID | None) -> str:
