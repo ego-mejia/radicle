@@ -56,7 +56,7 @@ class PreferenceOut(Output):
     email: bool
 
 
-class PreferencesOut(Output):
+class NotificationPreferencesOut(Output):
     email_available: bool = Field(description="False until an admin configures SMTP")
     items: list[PreferenceOut]
 
@@ -134,22 +134,24 @@ async def stream(principal: CurrentPrincipal, request: Request) -> StreamingResp
     return StreamingResponse(body(), media_type="text/event-stream", headers=headers)
 
 
-async def _preferences(db: Db, principal: CurrentPrincipal) -> PreferencesOut:
+async def _preferences(db: Db, principal: CurrentPrincipal) -> NotificationPreferencesOut:
     prefs = await service.preferences(db, principal.user)
-    return PreferencesOut(
+    return NotificationPreferencesOut(
         email_available=events.email_enabled(),
         items=[PreferenceOut(**p.__dict__) for p in prefs],
     )
 
 
-@router.get("/notification-preferences", response_model=PreferencesOut)
-async def get_preferences(principal: CurrentPrincipal, db: Db) -> PreferencesOut:
+@router.get("/notification-preferences", response_model=NotificationPreferencesOut)
+async def get_preferences(principal: CurrentPrincipal, db: Db) -> NotificationPreferencesOut:
     """Every notification type with whether it reaches you in the app and by email."""
     return await _preferences(db, principal)
 
 
-@router.put("/notification-preferences", response_model=PreferencesOut)
-async def put_preference(body: PreferenceIn, principal: CurrentPrincipal, db: Db) -> PreferencesOut:
+@router.put("/notification-preferences", response_model=NotificationPreferencesOut)
+async def put_preference(
+    body: PreferenceIn, principal: CurrentPrincipal, db: Db
+) -> NotificationPreferencesOut:
     await service.set_preference(
         db, principal.user, body.app, body.type, Channel(body.channel), body.enabled
     )

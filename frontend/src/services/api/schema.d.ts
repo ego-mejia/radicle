@@ -5461,6 +5461,16 @@ export interface components {
             /** Type */
             type: string;
         };
+        /** NotificationPreferencesOut */
+        NotificationPreferencesOut: {
+            /**
+             * Email Available
+             * @description False until an admin configures SMTP
+             */
+            email_available: boolean;
+            /** Items */
+            items: components["schemas"]["PreferenceOut"][];
+        };
         /** NotificationsPage */
         NotificationsPage: {
             /** Items */
@@ -5765,6 +5775,17 @@ export interface components {
             label: string;
             /** Type */
             type: string;
+        };
+        /** PreferencesOut */
+        PreferencesOut: {
+            /** Density */
+            density: string;
+            /** Language */
+            language: string | null;
+            /** Shortcuts */
+            shortcuts: boolean;
+            /** Theme */
+            theme: string;
         };
         /**
          * Priority
@@ -7983,17 +8004,6 @@ export interface components {
             /** Target Project */
             target_project: string;
         };
-        /** PreferencesOut */
-        radicle__docket__api__work__PreferencesOut: {
-            /** Density */
-            density: string;
-            /** Language */
-            language: string | null;
-            /** Shortcuts */
-            shortcuts: boolean;
-            /** Theme */
-            theme: string;
-        };
         /** MoveIn */
         radicle__folio__api__spaces__MoveIn: {
             /**
@@ -8011,16 +8021,6 @@ export interface components {
              * @description null moves it to the root
              */
             parent?: string | null;
-        };
-        /** PreferencesOut */
-        radicle__platform__api__notifications__PreferencesOut: {
-            /**
-             * Email Available
-             * @description False until an admin configures SMTP
-             */
-            email_available: boolean;
-            /** Items */
-            items: components["schemas"]["PreferenceOut"][];
         };
     };
     responses: never;
@@ -11306,7 +11306,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["radicle__platform__api__notifications__PreferencesOut"];
+                    "application/json": components["schemas"]["NotificationPreferencesOut"];
                 };
             };
         };
@@ -11330,7 +11330,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["radicle__platform__api__notifications__PreferencesOut"];
+                    "application/json": components["schemas"]["NotificationPreferencesOut"];
                 };
             };
             /** @description Validation Error */
@@ -11445,7 +11445,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["radicle__docket__api__work__PreferencesOut"];
+                    "application/json": components["schemas"]["PreferencesOut"];
                 };
             };
         };
@@ -11471,7 +11471,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["radicle__docket__api__work__PreferencesOut"];
+                    "application/json": components["schemas"]["PreferencesOut"];
                 };
             };
             /** @description Validation Error */
