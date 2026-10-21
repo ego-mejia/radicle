@@ -2653,6 +2653,29 @@
         "other": "Otro"
       },
       "milestone": "Milestone de Docket"
+    },
+    "imports": {
+      "title": "Importar",
+      "help": "Trae un space desde Confluence, Notion, Word o Markdown. Verás un dry run de cada página antes de crear nada; las páginas llegan como borrador.",
+      "source": "Desde",
+      "sources": {
+        "confluence": "Confluence (export HTML)",
+        "notion": "Notion (Markdown y CSV)",
+        "word": "Word (.docx)",
+        "markdown": "Carpeta de Markdown"
+      },
+      "sourceHint": {
+        "confluence": "Configuración del space → Exportar space → HTML, y sube el zip.",
+        "notion": "Configuración → Exportar todo el contenido → Markdown y CSV.",
+        "word": "Un .docx, o un zip con varios; las carpetas forman el árbol.",
+        "markdown": "Un .md, o un zip de carpetas con archivos .md y sus imágenes."
+      },
+      "space": "Al space",
+      "file": "Archivo exportado",
+      "fileHint": "Hasta 100 MB.",
+      "noSpaces": "Todavía no administras ningún space de equipo; solo los admins de un space importan en él.",
+      "upload": "Subir y revisar",
+      "uploading": "Subiendo…"
     }
   },
   "notifications": {

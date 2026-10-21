@@ -2653,6 +2653,29 @@
         "other": "Other"
       },
       "milestone": "Docket milestone"
+    },
+    "imports": {
+      "title": "Import",
+      "help": "Bring a space in from Confluence, Notion, Word or Markdown. You'll see a dry run of every page before anything is created; pages arrive as drafts.",
+      "source": "From",
+      "sources": {
+        "confluence": "Confluence (HTML export)",
+        "notion": "Notion (Markdown & CSV)",
+        "word": "Word (.docx)",
+        "markdown": "Markdown folder"
+      },
+      "sourceHint": {
+        "confluence": "Space settings → Export space → HTML, then upload the zip.",
+        "notion": "Settings → Export all workspace content → Markdown & CSV.",
+        "word": "One .docx, or a zip of them; folders become the tree.",
+        "markdown": "One .md, or a zip of folders with .md files and their images."
+      },
+      "space": "Into the space",
+      "file": "Export file",
+      "fileHint": "Up to 100 MB.",
+      "noSpaces": "You don't administer any team space yet; only a space's admins import into it.",
+      "upload": "Upload and check",
+      "uploading": "Uploading…"
     }
   },
   "notifications": {
