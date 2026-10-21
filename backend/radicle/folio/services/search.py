@@ -5,13 +5,14 @@ The visibility rule goes into the SQL of every query, before ranking: a page you
 see never takes a slot, a rank or a snippet.
 """
 
+import re
 import uuid
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
 from typing import Any, Literal
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import ColumnElement, Float, cast, func, literal_column, select
+from sqlalchemy import ColumnElement, Float, Text, cast, func, literal_column, select
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -96,6 +97,19 @@ def _query(q: str) -> Any:
     return english.op("||")(spanish)
 
 
+def _any_word(query: Any) -> Any:
+    """The same lexemes joined by OR: a question rarely has all its words in the answer
+    ("cómo conecto un agente" against a page without "cómo"). The lexemes are already
+    stemmed, so the 'simple' configuration keeps them as they are."""
+    joined = func.replace(cast(query, Text), " & ", " | ")
+    return func.to_tsquery(_config("simple"), joined)
+
+
+def _plain(q: str) -> bool:
+    """No quotes or -exclusions, whose meaning OR would turn around."""
+    return not re.search(r'"|(^|\s)-\S', q)
+
+
 def _hit(chunk: FolioChunk, snippet: str) -> Hit:
     m = chunk.metadata_
     return Hit(
@@ -127,7 +141,17 @@ def _best_per_document(rows: list[tuple[FolioChunk, str, float]]) -> list[Hit]:
 
 
 async def _text(db: AsyncSession, visible: ColumnElement[bool], q: str, f: Filters) -> list[Hit]:
-    query = _query(q)
+    """Pages with every word; when none has them all, pages with any, those with more words
+    first (cover density ranks them higher)."""
+    hits = await _matching(db, visible, _query(q), f)
+    if not hits and _plain(q):
+        hits = await _matching(db, visible, _any_word(_query(q)), f)
+    return hits
+
+
+async def _matching(
+    db: AsyncSession, visible: ColumnElement[bool], query: Any, f: Filters
+) -> list[Hit]:
     rank = func.ts_rank_cd(FolioChunk.search_vector, query)
     # Cover density scores only the best cover, so the page's sections tie on its title;
     # counting every match breaks the tie in favor of the section that is about it.

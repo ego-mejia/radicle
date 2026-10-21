@@ -68,6 +68,29 @@ async def test_a_title_that_is_also_a_heading_lands_on_the_section(
     assert first["node_id"] == nid and first["section"] == ["Conecta un agente"]
 
 
+async def test_a_question_finds_pages_with_some_of_its_words(
+    client: AsyncClient, db: AsyncSession, team: Team
+) -> None:
+    await client.post(
+        f"{API}/spaces", headers=team.instance.headers, json={"key": "docs", "name": "Docs"}
+    )
+    nid = await _page(
+        client,
+        team,
+        "Conecta un agente",
+        "# Crea el agente\n\nConéctalo con su token.\n",
+        description="Pasos para enlazar un agente por MCP con su token y sus permisos.",
+    )
+    await run_jobs(db)
+    h = team.member.headers
+    for q in ("cómo conecto un agente", "¿cómo conecto mi agente a Radicle?"):
+        r = await client.get(f"{API}/search", params={"q": q, "mode": "text"}, headers=h)
+        assert [x["node_id"] for x in r.json()["items"]][:1] == [nid], q
+    # Exclusions keep their meaning: no fallback that would match everything.
+    r = await client.get(f"{API}/search", params={"q": "agente -token", "mode": "text"}, headers=h)
+    assert r.json()["items"] == []
+
+
 async def test_filters(client: AsyncClient, team: Team, docs: dict) -> None:
     async def ids(**params: str) -> list[str]:
         r = await client.get(
