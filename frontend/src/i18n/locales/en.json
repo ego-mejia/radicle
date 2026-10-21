@@ -1748,7 +1748,8 @@
       "state": {
         "saved": "Saved",
         "saving": "Saving…",
-        "error": "Not saved: retrying"
+        "error": "Not saved: retrying",
+        "offline": "Offline: reconnecting"
       },
       "noBlocks": "No block matches",
       "blocksLabel": "Blocks",
@@ -1787,6 +1788,11 @@
         "done": "Done",
         "assignee": "Assigned to",
         "due": "Due date"
+      },
+      "presence": {
+        "label_one": "{{count}} person in this document",
+        "label_other": "{{count}} people in this document",
+        "agentWriting": "{{name}} is writing"
       }
     },
     "publish": {

@@ -1748,7 +1748,8 @@
       "state": {
         "saved": "Guardado",
         "saving": "Guardando…",
-        "error": "Sin guardar: reintentando"
+        "error": "Sin guardar: reintentando",
+        "offline": "Sin conexión: reconectando"
       },
       "noBlocks": "Ningún bloque coincide",
       "blocksLabel": "Bloques",
@@ -1787,6 +1788,11 @@
         "done": "Hecho",
         "assignee": "Asignado a",
         "due": "Fecha límite"
+      },
+      "presence": {
+        "label_one": "{{count}} persona en este documento",
+        "label_other": "{{count}} personas en este documento",
+        "agentWriting": "{{name}} está escribiendo"
       }
     },
     "publish": {
