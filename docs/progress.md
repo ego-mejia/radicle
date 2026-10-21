@@ -828,3 +828,38 @@ Listo: #226, #227, #229, #231, #234, #237, #240, #245, #246, #248, #250, #254, #
 | --- | --- |
 | Inventario de AI Tools visto como tablero por estado | `test_folio_databases.py`, `test_folio_databases_api.py::test_build_and_read_a_board`, `tests/mcp/test_folio_mcp_databases.py` |
 
+
+## Folio fase 4: Docket + IA
+
+Cerrada el 21 de octubre de 2026 (RAD-38 a RAD-44, milestone "Folio Fase 4"). Spec: `docs/Docket/fase-4.md`. Referencias: `docs/folio/chat.md`, `docs/folio/agents.md`, `docs/folio/markdown.md`.
+
+| # | Entregable | Estado |
+| --- | --- | --- |
+| 4.1 | Tickets dentro de los docs | Listo (#282, #285, #289, #290, #292, #298, #301, #305, #311) |
+| 4.2 | Crear ticket desde texto | Listo (#308, #315, #359) |
+| 4.3 | Build spec a tickets | Listo (#320, #323, #325, #327, #329, #359) |
+| 4.4 | Liga a milestones y áreas | Listo (#324, #330, #332) |
+| 4.5 | Chat RAG | Listo (#281, #287, #296, #299, #302, #304, #310, #314, #317, #319, #321, #357, #383) |
+| 4.6 | IA en el editor y glosario | Listo (#280, #284, #291, #294, #300, #306, #307, #312, #316, #363) |
+| 4.7 | Agente desde el codebase | Listo (#333) |
+
+- **Docket desde Folio:** Folio solo usa `radicle.docket.public` (`get_tickets`, `get_tickets_by_id`, `search`, `create_ticket`, `get_milestone`, `get_area`), con los permisos de Docket de quien lee; un ticket que no puede ver sale como "Ticket restringido" (el test de dependencias lo vigila). `folio_ticket_links` guarda las ligas por sección (mención al publicar, creado desde texto, entregable de build spec o manual).
+- **En los docs:** smart link `:ticket[PA-4]` con estado y responsable en vivo, bloque `::tickets{rql=…}` y `::progress{}`, "Crear ticket" junto a "Comentar" al seleccionar y en cada action item. En Docket, panel Docs en el ticket y docs en cada milestone. La metadata opcional `docket_project`, `docket_milestones` y `docket_areas` se elige al publicar.
+- **Chat:** búsqueda híbrida por sección dentro de lo que el lector puede ver, top 8 re-rankeados, respuesta en SSE con citas `[n]` que abren el párrafo, aviso si una fuente está Outdated, pulgares con nota y preguntas sin respuesta en Admin. Sin pasajes no llama al modelo. Evaluación de 50 preguntas: recall@8 1.00 (umbral 0.95) y citas correctas 0.84 (umbral 0.80). MCP `ask_docs`.
+- **IA en el editor:** `ai.chat` y `ai.stream` en platform (Anthropic, compatible con OpenAI y Ollama) con `ai_calls` sin contenido; resumir, reescribir, sugerir metadata y glosario aprobado por un admin. Todo es propuesta; sin proveedor, con `folio_editor` apagado o con la IA apagada en el space no aparece.
+- **Agentes:** prompts del MCP `weekly_changes_post`, `document_module` y `build_spec_from_discussion`, que terminan en `submit_for_publication`; tools `link_ticket`, `unlink_ticket`, `get_docs_for_ticket`, `get_build_spec_items` y `create_tickets_from_build_spec` (`dry_run=true` por default).
+
+### Arreglos al cerrar la fase
+
+Encontrados al probar en Chrome sobre un stack aislado:
+
+- #357 y #383: el chat no guardaba sus respuestas. La sesión de la petición se confirmaba antes de que empezara el streaming, así que la respuesta y su fila en `ai_calls` nunca se confirmaban, y cada pregunta dejaba una conexión "idle in transaction". Ahora se confirma al mandar `done`, protegido de la cancelación si el lector se va.
+- #359: los tickets que crea Folio (build spec y selección) decían "From" y "Acceptance criteria" en un doc en español; ahora siguen el idioma del doc.
+- #363: en el editor, la propuesta de reescritura de la IA tapaba los botones Comentar y Crear ticket; las tareas del editor dejaban su texto una línea abajo de la casilla.
+- #393: el menú ⋯ de la página se veía como un punto en la barra de la lectura.
+
+### Aceptación de la fase
+
+Probada en el navegador sobre un stack aislado, en claro y oscuro, con capturas en cada ticket. La IA corrió contra un modelo simulado determinista (`frontend/e2e/fixtures/fake-ai.mjs`, compatible con OpenAI): pegar PA-6 muestra su estado y PA-4 lista los docs que lo mencionan; una frase seleccionada crea PA-13 ligado a "Cómo conectarlo"; el build spec crea sus cuatro tareas con su criterio como checklist y el bloque muestra "1 de 4 terminados"; el milestone V1 lista sus tres docs; el chat cita la sección correcta y la abre resaltada, y dice cuando no está en los docs; Publicar propone descripción, labels y tipo; el glosario muestra su definición al pasar el cursor. Un agente siguió `weekly_changes_post` por MCP con el log real de esta fase: el post quedó pendiente de aprobación con su diagrama y sus tickets ligados por sección. E2E nuevo `e2e/suite-folio4-docket-ai.spec.ts` (#386): build spec a tickets y de regreso, panel Docs y chat con cita (en CI se salta el chat si Docker no alcanza al modelo simulado).
+
+Pendiente: el diálogo de crear ticket arranca con el primer proyecto de la lista, no con el `docket_project` del doc; el panel Docs muestra una fila por tipo de liga (un doc que menciona y además liga un ticket sale dos veces); los diagramas Mermaid anchos se ven con letra chica; no hay filtros de docs en las listas de tickets de Docket.

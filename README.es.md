@@ -427,13 +427,21 @@ Docket (el tracker de tickets) y Folio comparten personas, grupos, agentes y el 
 - **Bloques visuales.** Desde `/`: diagramas Mermaid, gráficas (también desde la tabla de arriba), timelines, comparaciones lado a lado, fórmulas KaTeX, una lista viva de páginas por label y el bloque **Visual** para tu propio SVG o HTML animado, en sandbox y con el tema claro u oscuro. Los agentes los agregan por MCP (`insert_visual`, `insert_diagram`, `insert_chart`, `insert_timeline`).
 - **Whiteboards y databases.** Dibuja con otros en un whiteboard de Excalidraw e incrústalo en cualquier página. Una database guarda filas con columnas por tipo, vistas como tabla, tarjetas o un tablero donde arrastras las tarjetas; incrusta cualquier vista en una página.
 - **Embeds.** Pega un link de YouTube o Figma en su propia línea y se ve dentro de la página; los demás links quedan como tarjeta con su vista previa.
+- **Tickets dentro de los docs.** Pega una clave o un link de Docket y se vuelve un chip con el estado y el responsable del ticket en vivo; el bloque **Tabla de tickets** lista los tickets de una consulta RQL de Docket. Selecciona texto y presiona **Crear ticket** (o usa el botón de un action item) para abrir un ticket ligado a esa sección. Cada ticket en Docket tiene un panel **Docs** con los docs que lo mencionan o lo ligan, y cada milestone lista los docs que lo nombran en su metadata.
+- **Del build spec a sus tickets.** En un build spec, **Crear tickets** encuentra los entregables (la tabla de entregables o los encabezados numerados) y crea una tarea de Docket por cada uno, con sus criterios de aceptación como checklist y un link a su sección. Volver a correrlo solo agrega los nuevos. El bloque **Avance de tickets** (`::progress{}`) muestra el estado, el responsable y el checklist de cada ticket en vivo.
+- **Pregunta a los docs.** **Preguntar** en la barra de Folio (o <kbd>A</kbd>) responde con los docs que puedes leer, cita cada afirmación con `[n]` y cada fuente abre el doc en esa sección con el párrafo resaltado. Si los docs no lo dicen, lo dice y sugiere a quién preguntar; **Folio → Admin → Chat** junta esas preguntas para saber qué escribir.
+- **IA en el editor.** **IA** resume la página; selecciona texto para reescribirlo más claro, más corto, más formal o en otro idioma; **Publicar** sugiere descripción, labels y tipo de documento para los campos vacíos. Un **Glosario** de términos que aprueba un admin muestra su definición al pasar el cursor. La IA solo propone: nada cambia hasta que lo aceptas, y nada aparece sin proveedor de IA o con la IA apagada en el space.
 
 <p align="center">
   <img src="docs/images/folio-visual.png" alt="Un bloque visual animado y un diagrama Mermaid en un post" width="49%">
   <img src="docs/images/folio-database.png" alt="Una database vista como tablero agrupado por estado" width="49%">
 </p>
+<p align="center">
+  <img src="docs/images/folio-chat.png" alt="El chat de los docs respondiendo con una cita que abre la sección resaltada" width="49%">
+  <img src="docs/images/folio-build-spec.png" alt="Los entregables de un build spec y el avance en vivo de sus tickets de Docket" width="49%">
+</p>
 
-- **MCP de Folio.** `/mcp/folio` acepta los mismos tokens que `/mcp`. Los agentes buscan (`search_docs`, `query_docs`), leen páginas en Markdown (`get_page`), ven qué pide publicar (`get_metadata_schema`), escriben (`create_page`, `update_draft`) y mandan a aprobación (`submit_for_publication`, `list_my_submissions`). Los admins eligen qué tools de Folio puede usar cada agente, igual que con las de Docket.
+- **MCP de Folio.** `/mcp/folio` acepta los mismos tokens que `/mcp`. Los agentes buscan (`search_docs`, `query_docs`), leen páginas en Markdown (`get_page`), ven qué pide publicar (`get_metadata_schema`), escriben (`create_page`, `update_draft`) y mandan a aprobación (`submit_for_publication`, `list_my_submissions`). También preguntan a los docs (`ask_docs`), ligan docs con tickets (`link_ticket`, `get_docs_for_ticket`) y convierten un build spec en tickets (`create_tickets_from_build_spec`, que solo simula salvo con `dry_run=false`). Tres prompts guían a un agente que trabaja en un codebase: `weekly_changes_post`, `document_module` y `build_spec_from_discussion`; todos terminan esperando aprobación. Los admins eligen qué tools de Folio puede usar cada agente, igual que con las de Docket.
 
 ```bash
 claude mcp add --transport http radicle-folio https://radicle.example.com/mcp/folio \
@@ -515,7 +523,7 @@ Las etapas 1 a 4 están completas: core y MCP, configuración y trabajo diario, 
 - [x] Fase 1: spaces y páginas, editor, publicación con versiones, permisos, envíos de agentes con aprobación, búsqueda RAG y MCP de Folio.
 - [x] Fase 2: edición en tiempo real con carets y punteros con nombre, comentarios anclados al texto, menciones, avisos en la app y por email, reacciones, seguir, compartir, action items y Mis tareas, live docs con snapshots, mover, copiar y archivar páginas, dueños y estados que vencen, y el feed Para ti.
 - [x] Fase 3: templates de páginas y spaces, editor de la home, bloques visuales (diagramas, gráficas, timelines, fórmulas y visuales en sandbox), whiteboards, databases y embeds.
-- [ ] Fase 4: tickets dentro de los docs y chat con citas.
+- [x] Fase 4: tickets dentro de los docs, build specs que crean sus tickets, ligas a milestones y áreas, el chat de los docs con citas, IA en el editor con glosario y prompts del MCP para agentes que escriben desde un codebase.
 - [ ] Fase 5: páginas públicas, importar y exportar, Slack y Teams, webhooks.
 
 **Etapa 5: integraciones**
