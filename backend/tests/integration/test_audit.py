@@ -65,6 +65,14 @@ async def every_action(client: AsyncClient, team: Team) -> None:
         json={"grantee_type": "user", "grantee": "luis", "role": "creator"},
     )
     await client.delete(f"{API}/folio/admin/grants/{grant.json()['id']}", headers=i)
+    await client.post(f"{API}/folio/spaces", headers=i, json={"key": "audit", "name": "Audit"})
+    await client.put(
+        f"{API}/folio/spaces/audit/grants",
+        headers=i,
+        json={
+            "grants": [{"grantee_type": "user", "grantee": "fernando", "permissions": ["admin"]}]
+        },
+    )
     await client.put(
         f"{API}/projects/PA/permissions", headers=a, json={"member": {"ticket.delete": True}}
     )

@@ -261,6 +261,8 @@ EXEMPT = {
     "/api/v1/folio/nodes/{node_id}/versions",
     "/api/v1/folio/nodes/{node_id}/versions/{number}",
     "/api/v1/folio/nodes/{node_id}/diff",
+    "/api/v1/folio/spaces/{key}/grants",
+    "/api/v1/folio/nodes/{node_id}/restrictions",
     "/api/v1/folio/admin/{catalog}",
     "/api/v1/mcp/tools",
     "/api/v1/projects/{key}/member-candidates",

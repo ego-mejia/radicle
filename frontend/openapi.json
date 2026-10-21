@@ -3688,6 +3688,55 @@
         "title": "FormSchemaOut",
         "type": "object"
       },
+      "GrantIO": {
+        "additionalProperties": false,
+        "properties": {
+          "grantee": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Handle or group name; none for everyone",
+            "title": "Grantee"
+          },
+          "grantee_type": {
+            "enum": [
+              "user",
+              "group",
+              "everyone"
+            ],
+            "title": "Grantee Type",
+            "type": "string"
+          },
+          "permissions": {
+            "description": "admin includes all the others",
+            "items": {
+              "enum": [
+                "view",
+                "create",
+                "comment",
+                "delete_own",
+                "delete_any",
+                "admin",
+                "export"
+              ],
+              "type": "string"
+            },
+            "title": "Permissions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "grantee_type",
+          "permissions"
+        ],
+        "title": "GrantIO",
+        "type": "object"
+      },
       "GrantIn": {
         "additionalProperties": false,
         "properties": {
@@ -3774,6 +3823,70 @@
           "role"
         ],
         "title": "GrantOut",
+        "type": "object"
+      },
+      "GranteeIO": {
+        "additionalProperties": false,
+        "properties": {
+          "grantee": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Handle or group name; none for everyone",
+            "title": "Grantee"
+          },
+          "grantee_type": {
+            "enum": [
+              "user",
+              "group",
+              "everyone"
+            ],
+            "title": "Grantee Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "grantee_type"
+        ],
+        "title": "GranteeIO",
+        "type": "object"
+      },
+      "GrantsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "grants": {
+            "items": {
+              "$ref": "#/components/schemas/GrantIO"
+            },
+            "title": "Grants",
+            "type": "array"
+          }
+        },
+        "required": [
+          "grants"
+        ],
+        "title": "GrantsIn",
+        "type": "object"
+      },
+      "GrantsOut": {
+        "properties": {
+          "grants": {
+            "items": {
+              "$ref": "#/components/schemas/GrantIO"
+            },
+            "title": "Grants",
+            "type": "array"
+          }
+        },
+        "required": [
+          "grants"
+        ],
+        "title": "GrantsOut",
         "type": "object"
       },
       "GrantsPut": {
@@ -7493,6 +7606,29 @@
           }
         },
         "title": "RestoreIn",
+        "type": "object"
+      },
+      "RestrictionsIO": {
+        "additionalProperties": false,
+        "properties": {
+          "edit": {
+            "description": "Only this page",
+            "items": {
+              "$ref": "#/components/schemas/GranteeIO"
+            },
+            "title": "Edit",
+            "type": "array"
+          },
+          "view": {
+            "description": "Hides the page and its children",
+            "items": {
+              "$ref": "#/components/schemas/GranteeIO"
+            },
+            "title": "View",
+            "type": "array"
+          }
+        },
+        "title": "RestrictionsIO",
         "type": "object"
       },
       "RuleConf": {
@@ -16082,6 +16218,103 @@
         ]
       }
     },
+    "/api/v1/folio/nodes/{node_id}/restrictions": {
+      "get": {
+        "operationId": "get_restrictions_api_v1_folio_nodes__node_id__restrictions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestrictionsIO"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Restrictions",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "put": {
+        "description": "Replace who may view (with its children) and edit (this page) it; empty lifts them.",
+        "operationId": "put_restrictions_api_v1_folio_nodes__node_id__restrictions_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestrictionsIO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestrictionsIO"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Restrictions",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/nodes/{node_id}/versions": {
       "get": {
         "description": "The page's history, newest first, with author, approver and note.",
@@ -16431,6 +16664,102 @@
           }
         },
         "summary": "Patch Space",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/spaces/{key}/grants": {
+      "get": {
+        "description": "Who may do what in the space. Space admins only.",
+        "operationId": "get_grants_api_v1_folio_spaces__key__grants_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrantsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Grants",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "put": {
+        "description": "Replace the space's grants; at least one user or group keeps admin.",
+        "operationId": "put_grants_api_v1_folio_spaces__key__grants_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrantsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Grants",
         "tags": [
           "folio",
           "folio"
