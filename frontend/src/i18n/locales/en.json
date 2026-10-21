@@ -2060,6 +2060,32 @@
       "verifyDays": "Days a verification lasts",
       "verifyDaysHint": "After this many days a Verified page turns Outdated and its owner is told (1 to 730).",
       "saved": "Settings saved"
+    },
+    "tasks": {
+      "title": "My tasks",
+      "link": "My tasks",
+      "dueCount_one": "{{count}} overdue or due today",
+      "dueCount_other": "{{count}} overdue or due today",
+      "subtitle": "Action items assigned to you in the docs you can see. Check one off here and it's checked in its document.",
+      "filter": "Show",
+      "status": {
+        "open": "Open",
+        "done": "Done",
+        "all": "All"
+      },
+      "buckets": {
+        "overdue": "Overdue",
+        "today": "Today",
+        "upcoming": "Upcoming",
+        "no_date": "No date"
+      },
+      "noDate": "No date",
+      "check": "Done: {{text}}",
+      "empty": {
+        "open": "Nothing to do. Enjoy it.",
+        "done": "Nothing checked off yet.",
+        "all": "No action items are assigned to you."
+      }
     }
   },
   "notifications": {

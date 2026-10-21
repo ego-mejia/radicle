@@ -2060,6 +2060,32 @@
       "verifyDays": "Días que dura una verificación",
       "verifyDaysHint": "Después de estos días una página Verified pasa a Outdated y su dueño recibe aviso (1 a 730).",
       "saved": "Configuración guardada"
+    },
+    "tasks": {
+      "title": "Mis tareas",
+      "link": "Mis tareas",
+      "dueCount_one": "{{count}} vencida o para hoy",
+      "dueCount_other": "{{count}} vencidas o para hoy",
+      "subtitle": "Action items asignados a ti en los docs que puedes ver. Márcalo aquí y se marca en su documento.",
+      "filter": "Mostrar",
+      "status": {
+        "open": "Abiertas",
+        "done": "Hechas",
+        "all": "Todas"
+      },
+      "buckets": {
+        "overdue": "Vencidas",
+        "today": "Hoy",
+        "upcoming": "Próximas",
+        "no_date": "Sin fecha"
+      },
+      "noDate": "Sin fecha",
+      "check": "Hecha: {{text}}",
+      "empty": {
+        "open": "Nada pendiente. Disfrútalo.",
+        "done": "Todavía no marcas ninguna.",
+        "all": "No tienes action items asignados."
+      }
     }
   },
   "notifications": {
