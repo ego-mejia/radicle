@@ -13,6 +13,10 @@ Markdown has no syntax for some blocks, so they use directives (documented in
     :::                             :::                         :u[underlined]
                                     ::::                        @handle (a mention)
 
+The visual blocks of phase 3 are fences (```visual{format=svg description="..."},
+```mermaid, ```math, ```chart{kind=bar}, ```timeline), ::::compare with :::side, and
+::pages{label=...}.
+
 Images keep size and alignment as `![alt](src "caption"){size=large align=center}`.
 Tables become GFM tables; merged cells, widths and cell colors don't survive Markdown.
 """
@@ -176,7 +180,47 @@ def block(node: Node, depth: int = 0) -> str:
         return "::video" + _attrs(
             src=attrs.get("src"), asset=attrs.get("assetId"), caption=attrs.get("caption")
         )
+    if kind == "visual":
+        head = "visual" + _attrs(
+            format=attrs["format"], title=attrs.get("title"), description=attrs["description"]
+        )
+        return _fenced(head, attrs["code"])
+    if kind == "diagram":
+        return _fenced(attrs["language"] + _attrs(caption=attrs.get("caption")), attrs["source"])
+    if kind == "formula":
+        return _fenced("math", attrs["latex"])
+    if kind == "chart":
+        rows = [[str(c) for c in row] for row in attrs["data"]]
+        table = ["| " + " | ".join(rows[0]) + " |", "|" + "|".join(["---"] * len(rows[0])) + "|"]
+        table += ["| " + " | ".join(r) + " |" for r in rows[1:]]
+        head = "chart" + _attrs(kind=attrs["kind"], title=attrs.get("title"))
+        return _fenced(head, "\n".join(table))
+    if kind == "timeline":
+        lines = [
+            " | ".join([i.get("date", ""), i["title"], i.get("text", "")]).rstrip(" |")
+            for i in attrs["items"]
+        ]
+        return _fenced("timeline", "\n".join(lines))
+    if kind == "comparison":
+        outer = ":" * (4 + depth)
+        inner = ":" * (3 + depth)
+        sides = [
+            f"{inner}side{_attrs(title=(c.get('attrs') or {}).get('title'))}\n"
+            f"{blocks(c.get('content', []), depth + 1)}\n{inner}"
+            for c in content
+        ]
+        return f"{outer}compare\n" + "\n".join(sides) + f"\n{outer}"
+    if kind == "pageList":
+        return "::pages" + _attrs(
+            label=attrs["label"], limit=attrs.get("limit"), space=attrs.get("space")
+        )
     return ""
+
+
+def _fenced(info: str, body: str) -> str:
+    """A fenced block long enough not to end inside its body."""
+    ticks = "`" * max(3, max((len(m) for m in re.findall(r"`{3,}", body)), default=0) + 1)
+    return f"{ticks}{info}\n{body}\n{ticks}"
 
 
 def blocks(nodes: list[Node], depth: int = 0) -> str:
@@ -218,6 +262,20 @@ def _text_of(node: Node, out: list[str]) -> None:
         out.append(attrs.get("name") or attrs.get("caption") or "")
     elif kind == "expand" and attrs.get("title"):
         out.append(attrs["title"] + "\n")
+    elif kind == "comparisonSide" and attrs.get("title"):
+        out.append(attrs["title"] + "\n")
+    elif kind == "visual":
+        out.append(" ".join(v for v in (attrs.get("title"), attrs["description"]) if v) + "\n")
+    elif kind == "diagram":
+        out.append(" ".join(v for v in (attrs.get("caption"), attrs["source"]) if v) + "\n")
+    elif kind == "formula":
+        out.append(attrs["latex"] + "\n")
+    elif kind == "chart":
+        rows = [" ".join(str(c) for c in row) for row in attrs["data"]]
+        out.append("\n".join([attrs.get("title") or "", *rows]).strip() + "\n")
+    elif kind == "timeline":
+        items = (" ".join(v for v in i.values() if v) for i in attrs["items"])
+        out.append("\n".join(items) + "\n")
     for child in node.get("content", []):
         _text_of(child, out)
     if kind in _LINES:

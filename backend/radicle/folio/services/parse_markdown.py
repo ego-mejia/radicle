@@ -18,9 +18,10 @@ Node = dict[str, Any]
 
 _md = MarkdownIt("commonmark", {"html": False}).enable(["table", "strikethrough"])
 
-_OPEN = re.compile(r"^(:{3,})(panel|expand|columns|column)(\{.*\})?\s*$")
+_OPEN = re.compile(r"^(:{3,})(panel|expand|columns|column|compare|side)(\{.*\})?\s*$")
 _CLOSE = re.compile(r"^:{3,}\s*$")
-_LEAF = re.compile(r"^::(file|video)(\{.*\})\s*$")
+_LEAF = re.compile(r"^::(file|video|pages)(\{.*\})\s*$")
+_INFO = re.compile(r"^(?P<name>[\w-]+)\s*(?P<attrs>\{.*\})?\s*$")
 _ACTION = re.compile(r"^::task\[(?P<label>.*)\](?P<attrs>\{[^}]*\})?\s*$")
 _FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
 _ATTR = re.compile(r'(\w+)=("(?:[^"\\]|\\.)*"|[^\s}]+)')
@@ -274,6 +275,9 @@ class _Blocks:
             return {"type": "blockquote", "content": self.until("blockquote_close") or [_empty()]}
         if kind in ("fence", "code_block"):
             code = tok.content[:-1] if tok.content.endswith("\n") else tok.content
+            special = _fenced_block(tok.info.strip(), code) if kind == "fence" else None
+            if special is not None:
+                return special
             block: Node = {"type": "codeBlock", "attrs": {"language": tok.info.strip() or None}}
             if code:
                 block["content"] = [{"type": "text", "text": code}]
@@ -347,6 +351,85 @@ def _empty() -> Node:
     return {"type": "paragraph"}
 
 
+def _cells(line: str) -> list[str]:
+    return [c.strip() for c in line.strip().strip("|").split("|")]
+
+
+def _number(text: str) -> float | int | None:
+    try:
+        value = float(text.replace(",", ""))
+    except ValueError:
+        return None
+    return int(value) if value.is_integer() and "." not in text else value
+
+
+def _chart(attrs: dict[str, str], body: str) -> Node | None:
+    lines = [ln for ln in body.split("\n") if ln.strip() and not re.fullmatch(r"[\s|:-]+", ln)]
+    if len(lines) < 2:
+        return None
+    header = _cells(lines[0])
+    rows: list[list[Any]] = [header]
+    for line in lines[1:]:
+        cells = _cells(line)[: len(header)]
+        cells += [""] * (len(header) - len(cells))
+        values = [_number(c) for c in cells[1:]]
+        rows.append([cells[0], *[v if v is not None else 0 for v in values]])
+    kind = attrs.get("kind") if attrs.get("kind") in schema.CHART_KINDS else "bar"
+    chart: Node = {"type": "chart", "attrs": {"kind": kind, "data": rows}}
+    if attrs.get("title"):
+        chart["attrs"]["title"] = attrs["title"]
+    return chart
+
+
+def _timeline(body: str) -> Node | None:
+    items = []
+    for line in body.split("\n"):
+        if not line.strip():
+            continue
+        parts = [p.strip() for p in line.split("|", 2)]
+        if len(parts) == 1:
+            parts = ["", parts[0]]
+        item = {"date": parts[0], "title": parts[1], "text": parts[2] if len(parts) > 2 else ""}
+        items.append({k: v for k, v in item.items() if v})
+    items = [i for i in items if i.get("title")]
+    return {"type": "timeline", "attrs": {"items": items}} if items else None
+
+
+def _fenced_block(info: str, body: str) -> Node | None:
+    """Fences named mermaid, math, chart, timeline or visual are Folio blocks (3.3, 3.4);
+    one that doesn't make a valid block stays a code block."""
+    match = _INFO.match(info)
+    if match is None:
+        return None
+    name, attrs = match.group("name").lower(), _attrs(match.group("attrs"))
+    node: Node | None = None
+    if name == "mermaid" and body.strip():
+        node = {"type": "diagram", "attrs": {"language": "mermaid", "source": body}}
+        if attrs.get("caption"):
+            node["attrs"]["caption"] = attrs["caption"]
+    elif name == "math" and body.strip():
+        node = {"type": "formula", "attrs": {"latex": body}}
+    elif name == "chart":
+        node = _chart(attrs, body)
+    elif name == "timeline":
+        node = _timeline(body)
+    elif name == "visual" and body.strip() and attrs.get("description"):
+        fmt = attrs.get("format") if attrs.get("format") in schema.VISUAL_FORMATS else "svg"
+        node = {
+            "type": "visual",
+            "attrs": {"format": fmt, "code": body, "description": attrs["description"]},
+        }
+        if attrs.get("title"):
+            node["attrs"]["title"] = attrs["title"]
+    if node is None:
+        return None
+    try:
+        schema.validate({"type": "doc", "content": [node]})
+    except schema.SchemaError:
+        return None
+    return node
+
+
 def _action_item(attrs: dict[str, str]) -> Node:
     """`::task[text]{id=… assignee=ana due=2026-11-01 done=true}`; without an id, one is
     made up, so items written in Markdown by agents still get a stable one."""
@@ -399,6 +482,13 @@ def _convert(items: list[Any], parent: str = "doc") -> list[Node]:
                 out.append({"type": "video", "attrs": video})
             elif name == "task":
                 out.append(_action_item(attrs))
+            elif name == "pages" and attrs.get("label"):
+                page_list: dict[str, Any] = {"label": attrs["label"].lstrip("#").lower()[:50]}
+                if (attrs.get("limit") or "").isdigit():
+                    page_list["limit"] = min(max(int(attrs["limit"]), 1), 50)
+                if attrs.get("space"):
+                    page_list["space"] = attrs["space"]
+                out.append({"type": "pageList", "attrs": page_list})
         else:
             out += _container(item, parent)
     return out
@@ -424,6 +514,18 @@ def _container(c: _Container, parent: str) -> list[Node]:
         if layout not in schema.COLUMN_LAYOUTS:
             layout = "three" if len(columns) == 3 else "two"
         return [{"type": "columns", "attrs": {"layout": layout}, "content": columns}]
+    if c.name == "compare":
+        sides = [n for n in inner if n["type"] == "comparisonSide"][:3]
+        if len(sides) < 2:
+            return [n for side in sides for n in side["content"]] or inner
+        return [{"type": "comparison", "content": sides}]
+    if c.name == "side":
+        if parent != "compare":
+            return inner
+        side: Node = {"type": "comparisonSide", "content": inner}
+        if c.attrs.get("title"):
+            side["attrs"] = {"title": c.attrs["title"]}
+        return [side]
     # A column only means something inside columns; elsewhere it keeps its content.
     return [{"type": "column", "content": inner}] if parent == "columns" else inner
 

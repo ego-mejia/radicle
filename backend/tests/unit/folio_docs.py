@@ -80,6 +80,36 @@ EVERY_BLOCK: dict[str, Any] = {
         ),
         block("file", assetId="a1", name="spec.pdf", mimeType="application/pdf", size=1024),
         block("video", src="https://example.com/v.mp4", caption="Demo"),
+        block(
+            "visual",
+            format="svg",
+            code=(
+                '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--accent)"/></svg>'
+            ),
+            title="Raíz",
+            description="Un círculo lima: la semilla de Radicle.",
+        ),
+        block("diagram", language="mermaid", source="graph TD\n  A-->B", caption="Flujo"),
+        block(
+            "chart",
+            kind="bar",
+            title="Tickets por área",
+            data=[["Área", "Abiertos", "Cerrados"], ["Legal", 3, 5], ["Backend", 7, 2.5]],
+        ),
+        block(
+            "timeline",
+            items=[
+                {"date": "2026-11-01", "title": "Beta", "text": "Equipo interno"},
+                {"title": "Lanzamiento"},
+            ],
+        ),
+        block("formula", latex="E = mc^2"),
+        block(
+            "comparison",
+            block("comparisonSide", p(t("rápido")), title="Antes"),
+            block("comparisonSide", p(t("más rápido"))),
+        ),
+        block("pageList", label="onboarding", limit=5, space="docs"),
         block("horizontalRule"),
         p(t("Fin")),
     ],

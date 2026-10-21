@@ -6,6 +6,7 @@ A document is `{"type": "doc", "content": [block, ...]}`. Every node has a `type
 or children are rejected with the JSON path of the first problem.
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -36,6 +37,8 @@ class NodeSpec:
     min_children: int = 0
     max_children: int | None = None
     leaf_text: bool = False  # content is text only (code blocks)
+    # Extra checks for attributes a simple rule can't describe (lists of rows or items).
+    check: Callable[[str, dict[str, Any]], None] | None = None
 
 
 _STR = Attr(str)
@@ -46,6 +49,64 @@ STATUS_COLORS = ("grey", "blue", "green", "yellow", "red", "purple")
 COLUMN_LAYOUTS = ("two", "three", "sidebar_left", "sidebar_right")
 IMAGE_SIZES = ("small", "medium", "large", "full")
 ALIGNS = ("left", "center", "right")
+
+VISUAL_FORMATS = ("svg", "html")
+CHART_KINDS = ("bar", "line", "area", "pie")
+DIAGRAM_LANGUAGES = ("mermaid",)
+MAX_VISUAL = 100_000  # characters of SVG or HTML
+MAX_CHART_ROWS = 200
+MAX_CHART_COLUMNS = 10
+MAX_TIMELINE_ITEMS = 100
+
+
+def _number(value: Any) -> bool:
+    return isinstance(value, int | float) and not isinstance(value, bool)
+
+
+def _check_chart(path: str, attrs: dict[str, Any]) -> None:
+    """data is rows: the first names the columns, the others hold a label and numbers."""
+    rows = attrs.get("data")
+    here = f"{path}.attrs.data"
+    if not isinstance(rows, list) or len(rows) < 2:
+        raise SchemaError(here, "needs a header row and at least one row of values")
+    if len(rows) > MAX_CHART_ROWS:
+        raise SchemaError(here, f"has at most {MAX_CHART_ROWS} rows")
+    width = len(rows[0]) if isinstance(rows[0], list) else 0
+    if not 2 <= width <= MAX_CHART_COLUMNS:
+        raise SchemaError(here, f"rows have 2 to {MAX_CHART_COLUMNS} columns")
+    for i, row in enumerate(rows):
+        if not isinstance(row, list) or len(row) != width:
+            raise SchemaError(f"{here}[{i}]", f"every row has {width} cells")
+        for j, cell in enumerate(row):
+            label = i == 0 or j == 0
+            ok = isinstance(cell, str) and len(cell) <= 200 if label else _number(cell)
+            if not ok:
+                raise SchemaError(
+                    f"{here}[{i}][{j}]", "must be a label" if label else "must be a number"
+                )
+
+
+def _check_timeline(path: str, attrs: dict[str, Any]) -> None:
+    items = attrs.get("items")
+    here = f"{path}.attrs.items"
+    if not isinstance(items, list) or not 1 <= len(items) <= MAX_TIMELINE_ITEMS:
+        raise SchemaError(here, f"has 1 to {MAX_TIMELINE_ITEMS} items")
+    limits = {"date": 40, "title": 200, "text": 1000}
+    for i, item in enumerate(items):
+        if not isinstance(item, dict) or set(item) - set(limits) or not item.get("title"):
+            raise SchemaError(f"{here}[{i}]", "items are {date, title, text} with a title")
+        for key, value in item.items():
+            if not isinstance(value, str) or len(value) > limits[key]:
+                raise SchemaError(f"{here}[{i}].{key}", f"is text up to {limits[key]}")
+
+
+def _check_visual(path: str, attrs: dict[str, Any]) -> None:
+    if not str(attrs.get("description", "")).strip():
+        raise SchemaError(
+            f"{path}.attrs.description",
+            "a visual needs a description: it is the alt text and what search reads",
+        )
+
 
 NODES: dict[str, NodeSpec] = {
     "paragraph": NodeSpec(BLOCK, (INLINE,)),
@@ -121,6 +182,49 @@ NODES: dict[str, NodeSpec] = {
         },
     ),
     "video": NodeSpec(BLOCK, attrs={"assetId": _OPT_STR, "src": _OPT_STR, "caption": _OPT_STR}),
+    # Folio 3.3: SVG or HTML shown in a sandboxed iframe, with a required description.
+    "visual": NodeSpec(
+        BLOCK,
+        attrs={
+            "format": Attr(str, VISUAL_FORMATS, required=True),
+            "code": Attr(str, required=True, max_length=MAX_VISUAL),
+            "title": Attr((str, type(None)), max_length=200),
+            "description": Attr(str, required=True, max_length=1000),
+        },
+        check=_check_visual,
+    ),
+    # Folio 3.4, the visual suite.
+    "diagram": NodeSpec(
+        BLOCK,
+        attrs={
+            "language": Attr(str, DIAGRAM_LANGUAGES, required=True),
+            "source": Attr(str, required=True, max_length=20_000),
+            "caption": Attr((str, type(None)), max_length=300),
+        },
+    ),
+    "chart": NodeSpec(
+        BLOCK,
+        attrs={
+            "kind": Attr(str, CHART_KINDS, required=True),
+            "title": Attr((str, type(None)), max_length=200),
+            "data": Attr(list, required=True),
+        },
+        check=_check_chart,
+    ),
+    "timeline": NodeSpec(BLOCK, attrs={"items": Attr(list, required=True)}, check=_check_timeline),
+    "formula": NodeSpec(BLOCK, attrs={"latex": Attr(str, required=True, max_length=5000)}),
+    "comparison": NodeSpec(BLOCK, ("comparisonSide",), min_children=2, max_children=3),
+    "comparisonSide": NodeSpec(
+        "side", (BLOCK,), {"title": Attr((str, type(None)), max_length=200)}, min_children=1
+    ),
+    "pageList": NodeSpec(
+        BLOCK,
+        attrs={
+            "label": Attr(str, required=True, max_length=50),
+            "limit": Attr(int, minimum=1, maximum=50),
+            "space": Attr((str, type(None)), max_length=40),
+        },
+    ),
     "text": NodeSpec(INLINE),
     "hardBreak": NodeSpec(INLINE),
     "mention": NodeSpec(INLINE, attrs={"handle": Attr(str, required=True, max_length=64)}),
@@ -227,6 +331,8 @@ def _check_node(node: Any, path: str, depth: int, counter: _Counter) -> None:
     if extra:
         raise SchemaError(path, f"unexpected keys: {', '.join(sorted(extra))}")
     _check_attrs(path, node.get("attrs"), spec.attrs)
+    if spec.check is not None:
+        spec.check(path, node.get("attrs") or {})
     if kind == "text":
         if not isinstance(node.get("text"), str) or node["text"] == "":
             raise SchemaError(path, "text nodes need non-empty text")

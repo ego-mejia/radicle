@@ -50,6 +50,42 @@ derecha
 
 ::video{src=https://example.com/v.mp4 caption=Demo}
 
+```visual{format=svg title="Raíz" description="Un círculo lima: la semilla de Radicle."}
+<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--accent)"/></svg>
+```
+
+```mermaid{caption=Flujo}
+graph TD
+  A-->B
+```
+
+```chart{kind=bar title="Tickets por área"}
+| Área | Abiertos | Cerrados |
+|---|---|---|
+| Legal | 3 | 5 |
+| Backend | 7 | 2.5 |
+```
+
+```timeline
+2026-11-01 | Beta | Equipo interno
+ | Lanzamiento
+```
+
+```math
+E = mc^2
+```
+
+::::compare
+:::side{title=Antes}
+rápido
+:::
+:::side
+más rápido
+:::
+::::
+
+::pages{label=onboarding limit=5 space=docs}
+
 ---
 
 Fin
