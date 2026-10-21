@@ -1,7 +1,9 @@
 """The instance's AI provider (Folio 0.3): one setting for chat and embeddings that every
 app reads. The key is encrypted; without a provider everything else keeps working."""
 
+import json
 import time
+from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -306,3 +308,98 @@ async def chat(
     call.input_tokens, call.output_tokens = reply.input_tokens, reply.output_tokens
     await db.flush()
     return reply
+
+
+def _stream_body(cfg: AiConfig, body: dict[str, Any]) -> dict[str, Any]:
+    body = {**body, "stream": True}
+    if cfg.provider not in (AiProvider.anthropic, AiProvider.ollama):
+        body["stream_options"] = {"include_usage": True}
+    return body
+
+
+def _piece(cfg: AiConfig, event: dict[str, Any], call: AiCall) -> str:
+    """The text in one streamed event; usage events fill in the call's tokens."""
+    if cfg.provider == AiProvider.anthropic:
+        kind = event.get("type")
+        if kind == "message_start":
+            call.input_tokens = int(event["message"].get("usage", {}).get("input_tokens", 0))
+        elif kind == "message_delta":
+            call.output_tokens = int(event.get("usage", {}).get("output_tokens", 0))
+        elif kind == "content_block_delta" and event["delta"].get("type") == "text_delta":
+            return str(event["delta"]["text"])
+        elif kind == "error":
+            message = (event.get("error") or {}).get("message", "unknown error")
+            raise AiUnavailable(f"The provider stopped answering: {message}")
+        return ""
+    if cfg.provider == AiProvider.ollama:
+        if event.get("done"):
+            call.input_tokens = int(event.get("prompt_eval_count", 0))
+            call.output_tokens = int(event.get("eval_count", 0))
+        return str((event.get("message") or {}).get("content") or "")
+    if event.get("usage"):
+        call.input_tokens = int(event["usage"].get("prompt_tokens", 0))
+        call.output_tokens = int(event["usage"].get("completion_tokens", 0))
+    choices = event.get("choices") or []
+    return str((choices[0].get("delta") or {}).get("content") or "") if choices else ""
+
+
+def _event(line: str) -> dict[str, Any] | None:
+    """Server-sent events (`data: {...}`) or Ollama's one JSON object per line."""
+    raw = line[5:].strip() if line.startswith("data:") else line.strip()
+    if not raw or raw == "[DONE]" or not raw.startswith("{"):
+        return None
+    parsed: dict[str, Any] = json.loads(raw)
+    return parsed
+
+
+async def stream(
+    db: AsyncSession,
+    cfg: AiConfig,
+    system: str,
+    turns: list[Turn],
+    *,
+    app: str,
+    feature: str,
+    user: User | None,
+    max_tokens: int = CHAT_MAX_TOKENS,
+) -> AsyncIterator[str]:
+    """Like `chat`, but the answer arrives piece by piece as the model writes it. The call
+    is recorded in ai_calls when the stream ends, failed or not."""
+    url, headers, body = _chat_request(cfg, system, turns, max_tokens)
+    call = AiCall(
+        app=app,
+        feature=feature,
+        user_id=user.id if user else None,
+        provider=cfg.provider.value,
+        model=cfg.chat_model,
+        ok=False,
+    )
+    db.add(call)
+    started = time.perf_counter()
+    try:
+        async with (
+            _client() as client,
+            client.stream("POST", url, headers=headers, json=_stream_body(cfg, body)) as r,
+        ):
+            if r.status_code in (401, 403):
+                raise AiUnavailable(
+                    "The provider rejected the API key. Check it in Admin, AI provider."
+                )
+            if r.status_code >= 400:
+                detail = (await r.aread()).decode(errors="replace")[:200]
+                raise AiUnavailable(f"The provider answered {r.status_code}: {detail}")
+            async for line in r.aiter_lines():
+                event = _event(line)
+                piece = _piece(cfg, event, call) if event else ""
+                if piece:
+                    yield piece
+        call.ok = True
+    except httpx.HTTPError as exc:
+        raise AiUnavailable(f"Could not reach {cfg.base_url}: {exc.__class__.__name__}.") from exc
+    except (KeyError, TypeError, ValueError):
+        raise AiUnavailable(
+            f"The provider answered, but not with a chat reply. Is '{cfg.chat_model}' a chat model?"
+        ) from None
+    finally:
+        call.latency_ms = int((time.perf_counter() - started) * 1000)
+        await db.flush()
