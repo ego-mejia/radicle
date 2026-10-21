@@ -22,6 +22,7 @@ import {
   moveNode,
 } from '../../../../services/api/folio';
 import { type DropTarget, moveFor } from './moves';
+import { NodeMenu } from '../NodeMenu';
 import * as S from './style';
 
 type Props = {
@@ -34,6 +35,7 @@ type Props = {
 };
 
 type RowProps = {
+  space: string;
   item: FolioTreeItem;
   depth: number;
   current?: string;
@@ -42,7 +44,7 @@ type RowProps = {
   toggle: (id: string) => void;
 };
 
-function Row({ item, depth, current, canMove, closed, toggle }: RowProps) {
+function Row({ space, item, depth, current, canMove, closed, toggle }: RowProps) {
   const { t } = useTranslation();
   const drag = useDraggable({ id: item.id, disabled: !canMove });
   const before = useDroppable({ id: `before:${item.id}`, disabled: !canMove });
@@ -102,11 +104,13 @@ function Row({ item, depth, current, canMove, closed, toggle }: RowProps) {
             <GripVertical aria-hidden />
           </S.Handle>
         )}
+        {canMove && <NodeMenu node={{ ...item, space }} />}
       </S.Row>
       {hasChildren && open && (
         <S.List>
           {item.children.map((child) => (
             <Row
+              space={space}
               key={child.id}
               item={child}
               depth={depth + 1}
@@ -169,6 +173,7 @@ export function SpaceTree({ space, items, current, canMove = false }: Props) {
         <S.List>
           {items.map((item) => (
             <Row
+              space={space}
               key={item.id}
               item={item}
               depth={0}
