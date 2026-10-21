@@ -1727,7 +1727,9 @@
         "progress": "Reading progress",
         "left_one": "{{count}} min left",
         "left_other": "{{count}} min left"
-      }
+      },
+      "actionItem": "Action item",
+      "due": "Due"
     },
     "editor": {
       "title": "Editor",
@@ -1774,11 +1776,17 @@
         "divider": "Divider",
         "image": "Image",
         "file": "File",
-        "video": "Video"
+        "video": "Video",
+        "actionItem": "Action item"
       },
       "addCover": "Add cover",
       "changeCover": "Change cover",
-      "removeCover": "Remove cover"
+      "removeCover": "Remove cover",
+      "actionItem": {
+        "done": "Done",
+        "assignee": "Assigned to",
+        "due": "Due date"
+      }
     },
     "publish": {
       "title": "Publish",

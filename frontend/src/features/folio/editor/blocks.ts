@@ -1,6 +1,7 @@
 // The blocks the `/` menu inserts. Labels live in i18n under folio.editor.blocks.<key>.
 
 import type { ChainedCommands, JSONContent } from '@tiptap/core';
+import { newItemId } from './actionItem';
 import type { PanelKind } from './schema';
 
 export type BlockItem = {
@@ -27,6 +28,11 @@ export const BLOCKS: BlockItem[] = [
   { key: 'bullets', keywords: 'ul list bullet lista', run: (c) => c.toggleBulletList() },
   { key: 'numbered', keywords: 'ol list numbered numerada', run: (c) => c.toggleOrderedList() },
   { key: 'tasks', keywords: 'todo task checklist tareas', run: (c) => c.toggleTaskList() },
+  {
+    key: 'actionItem',
+    keywords: 'action item task assign asignar tarea pendiente responsable',
+    run: (c) => c.insertContent({ type: 'actionItem', attrs: { id: newItemId(), done: false } }),
+  },
   { key: 'quote', keywords: 'quote blockquote cita', run: (c) => c.toggleBlockquote() },
   { key: 'code', keywords: 'code codigo snippet', run: (c) => c.toggleCodeBlock() },
   {

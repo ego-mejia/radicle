@@ -58,3 +58,38 @@ describe('the Folio editor schema', () => {
     ]);
   });
 });
+
+describe('the action item block', () => {
+  const ITEM = {
+    type: 'doc',
+    content: [
+      {
+        type: 'actionItem',
+        attrs: { id: 'ai-1', done: true, assignee: 'ana', due: '2026-11-01' },
+        content: [{ type: 'text', text: 'Mandar el contrato' }],
+      },
+      // TipTap keeps a paragraph after a last block like this one.
+      { type: 'paragraph', content: [{ type: 'text', text: 'Fin' }] },
+    ],
+  };
+
+  it('keeps its id, person, date and check through JSON and HTML', () => {
+    const first = load(ITEM);
+    expect(toFolioDoc(first.getJSON())).toEqual(ITEM);
+    const html = first.getHTML();
+    first.destroy();
+    const reloaded = load({ type: 'doc' });
+    reloaded.commands.setContent(html);
+    expect(toFolioDoc(reloaded.getJSON())).toEqual(ITEM);
+  });
+
+  it('starts the next item with its own id on Enter', () => {
+    const e = load(ITEM);
+    e.commands.setTextSelection(1 + 'Mandar el contrato'.length); // end of the item
+    e.commands.keyboardShortcut('Enter');
+    const items = e.getJSON().content ?? [];
+    expect(items.map((i) => i.type)).toEqual(['actionItem', 'actionItem', 'paragraph']);
+    expect(items[1]?.attrs?.id).toMatch(/^ai-[0-9a-f]{12}$/);
+    expect(items[1]?.attrs?.id).not.toBe('ai-1');
+  });
+});

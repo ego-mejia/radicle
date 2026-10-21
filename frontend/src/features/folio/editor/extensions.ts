@@ -5,6 +5,7 @@ import type { AnyExtension } from '@tiptap/core';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import { TableCell, TableHeader, TableKit } from '@tiptap/extension-table';
 import StarterKit from '@tiptap/starter-kit';
+import { ActionItem } from './actionItem';
 import {
   ChildPages,
   Column,
@@ -65,5 +66,6 @@ export function folioExtensions(): AnyExtension[] {
     Video,
     Mention,
     Status,
+    ActionItem,
   ];
 }

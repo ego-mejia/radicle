@@ -1727,7 +1727,9 @@
         "progress": "Progreso de lectura",
         "left_one": "{{count}} min restante",
         "left_other": "{{count}} min restantes"
-      }
+      },
+      "actionItem": "Action item",
+      "due": "Vence"
     },
     "editor": {
       "title": "Editor",
@@ -1774,11 +1776,17 @@
         "divider": "Separador",
         "image": "Imagen",
         "file": "Archivo",
-        "video": "Video"
+        "video": "Video",
+        "actionItem": "Action item"
       },
       "addCover": "Agregar portada",
       "changeCover": "Cambiar portada",
-      "removeCover": "Quitar portada"
+      "removeCover": "Quitar portada",
+      "actionItem": {
+        "done": "Hecho",
+        "assignee": "Asignado a",
+        "due": "Fecha límite"
+      }
     },
     "publish": {
       "title": "Publicar",

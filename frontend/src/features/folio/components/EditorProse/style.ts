@@ -89,6 +89,42 @@ export const Prose = styled.div`
     display: flex;
     gap: ${({ theme }) => theme.space.sm};
   }
+  div[data-folio='actionItem'] {
+    display: flex;
+    align-items: flex-start;
+    gap: ${({ theme }) => theme.space.sm};
+    padding: ${({ theme }) => `${theme.space.xs} ${theme.space.sm}`};
+    border: 1px solid ${({ theme }) => theme.color.border};
+    border-radius: ${({ theme }) => theme.radius.md};
+    background: ${({ theme }) => theme.color.surface2};
+
+    > input[type='checkbox'] {
+      margin-top: 5px;
+      accent-color: ${({ theme }) => theme.color.accent};
+    }
+    .action-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .action-meta {
+      display: flex;
+      gap: ${({ theme }) => theme.space.xs};
+    }
+    .action-meta input {
+      width: 120px;
+      padding: 2px ${({ theme }) => theme.space.xs};
+      border: 1px solid ${({ theme }) => theme.color.border};
+      border-radius: ${({ theme }) => theme.radius.sm};
+      background: ${({ theme }) => theme.color.surface};
+      color: ${({ theme }) => theme.color.text};
+      font: inherit;
+      font-size: ${({ theme }) => theme.fontSize.sm};
+    }
+    &[data-done='true'] .action-text {
+      color: ${({ theme }) => theme.color.textMuted};
+      text-decoration: line-through;
+    }
+  }
   table {
     border-collapse: collapse;
     width: 100%;
