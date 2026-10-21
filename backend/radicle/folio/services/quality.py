@@ -72,6 +72,8 @@ async def set_status(
     else:
         node.verified_by, node.verified_until = None, None
     record(db, node, user, "status_changed", before=before.value, after=status.value)
+    payload = {"node_id": str(node.id), "before": before.value, "after": status.value}
+    await events.emit(db, "folio", "page_status_changed", actor=user, payload=payload)
     await db.flush()
     await rag.schedule(db, [node.id])  # the status rides in the chunks for search
     return node

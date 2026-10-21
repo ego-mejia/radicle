@@ -13,6 +13,7 @@ from radicle.folio.services import access, rag
 from radicle.folio.services.nodes import record
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.errors import Conflict
+from radicle.platform.services import events
 
 
 async def archive(db: AsyncSession, user: User, node: FolioNode) -> FolioNode:
@@ -27,6 +28,7 @@ async def archive(db: AsyncSession, user: User, node: FolioNode) -> FolioNode:
         .values(archived_at=when, archived_by=user.id)
     )
     record(db, node, user, "archived", nodes=len(ids))
+    await events.emit(db, "folio", "page_archived", actor=user, payload={"node_id": str(node.id)})
     await db.flush()
     await db.refresh(node)
     await rag.schedule(db, ids)

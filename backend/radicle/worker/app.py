@@ -31,6 +31,7 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.platform.services.events",
     "radicle.platform.services.email",
     "radicle.platform.services.webhooks",
+    "radicle.folio.services.public_events",
 )
 # Jobs the worker defers on a schedule (cron in UTC).
 PERIODIC: dict[str, str] = {

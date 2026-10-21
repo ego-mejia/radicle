@@ -20,6 +20,7 @@ from radicle.folio.services import access, nodes, notices, publishing, schema, v
 from radicle.folio.services.metadata import validate_metadata
 from radicle.platform.db.models import User, UserKind, utcnow
 from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from radicle.platform.services import events
 
 
 def _invalid(field: str, message: str) -> ValidationFailed:
@@ -132,6 +133,16 @@ async def _decide(db: AsyncSession, user: User, submission: FolioSubmission) -> 
     return node
 
 
+async def _decided(db: AsyncSession, user: User, submission: FolioSubmission) -> None:
+    payload = {
+        "node_id": str(submission.node_id),
+        "submission_id": str(submission.id),
+        "decision": submission.status.value,
+    }
+    await events.emit(db, "folio", "submission_decided", actor=user, payload=payload)
+    await db.flush()
+
+
 async def approve(
     db: AsyncSession, user: User, submission: FolioSubmission, *, comment: str | None = None
 ) -> FolioVersion:
@@ -156,7 +167,7 @@ async def approve(
     submission.version_id = version.id
     submission.decided_at = utcnow()
     nodes.record(db, node, user, "approved", version=version.number)
-    await db.flush()
+    await _decided(db, user, submission)
     return version
 
 
@@ -173,5 +184,5 @@ async def reject(
     submission.review_comment = text
     submission.decided_at = utcnow()
     nodes.record(db, node, user, "rejected", submission=str(submission.id))
-    await db.flush()
+    await _decided(db, user, submission)
     return submission
