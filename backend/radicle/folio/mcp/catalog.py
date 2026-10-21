@@ -18,6 +18,7 @@ READ = (
     "query_database",
     "validate_visual",
     "get_docs_for_ticket",
+    "ask_docs",
 )
 
 WRITE = (

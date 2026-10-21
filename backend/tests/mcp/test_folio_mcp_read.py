@@ -89,6 +89,7 @@ COVERED = {
     "insert_timeline",
     "link_ticket",
     "unlink_ticket",
+    "ask_docs",
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
@@ -196,6 +197,7 @@ async def test_every_tool_explains_missing_access(
         "link_ticket": {"id": some_id, "key": "PA-1"},
         "unlink_ticket": {"id": some_id, "key": "PA-1"},
         "get_docs_for_ticket": {"key": "PA-1"},
+        "ask_docs": {"question": "¿Cómo conecto un agente?"},
         **{tool: {"id": some_id} | args for tool, args in VISUAL_CALLS.items()},
     }
     async with folio_mcp(client, team.agent) as folio:

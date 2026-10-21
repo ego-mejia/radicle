@@ -4,6 +4,7 @@ Going through REST keeps one source of truth: the MCP gets exactly the same
 validation, permissions and history as the API.
 """
 
+import json as json_lib
 from typing import Any
 
 import httpx
@@ -60,6 +61,18 @@ class RadicleAPI:
         if response.status_code == 204 or not response.content:
             return None
         return response.json()
+
+    async def events(self, path: str, json: Any) -> list[tuple[str, Any]]:
+        """POST to a server-sent events route and read every event once it ends."""
+        response = await self._client.post(path, json=json)
+        if response.status_code >= 400:
+            raise APIError(response)
+        out: list[tuple[str, Any]] = []
+        for block in response.text.strip().split("\n\n"):
+            fields = dict(line.split(": ", 1) for line in block.splitlines() if ": " in line)
+            if "event" in fields:
+                out.append((fields["event"], json_lib.loads(fields.get("data", "null"))))
+        return out
 
     async def raw(self, path: str, params: dict[str, Any] | None = None) -> httpx.Response:
         response = await self._client.get(path, params=params)

@@ -8,6 +8,7 @@ from mcp.server.mcpserver import Context
 
 from radicle import __version__
 from radicle.folio.mcp import (
+    chat,
     comments,
     databases,
     livedocs,
@@ -56,6 +57,7 @@ livedocs.register(server)
 databases.register(server)
 visuals.register(server)
 tickets.register(server)
+chat.register(server)
 
 
 def mount(app: FastAPI) -> None:
