@@ -1,15 +1,15 @@
 from fastapi import APIRouter, Request, Response
 
-from radicle.docket.api.deps import (
+from radicle.docket.api.me import me_out
+from radicle.docket.api.schemas.users import LoginIn, MeOut
+from radicle.platform.api.deps import (
     AppSettings,
     CurrentPrincipal,
     Db,
     clear_session_cookies,
     set_session_cookies,
 )
-from radicle.docket.api.me import me_out
-from radicle.docket.api.ratelimit import login_limiter
-from radicle.docket.api.schemas.users import LoginIn, MeOut
+from radicle.platform.api.ratelimit import login_limiter
 from radicle.platform.errors import ProblemError, ValidationFailed
 from radicle.platform.services import audit, auth, sso
 

@@ -1,7 +1,7 @@
 from pydantic import Field
 
-from radicle.docket.api.schemas.common import Input
 from radicle.docket.api.schemas.tickets import AttachmentOut
+from radicle.platform.api.schemas import Input
 
 __all__ = ["AttachmentOut", "ResizeIn"]
 

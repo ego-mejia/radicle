@@ -5,12 +5,12 @@ from urllib.parse import quote
 from fastapi import APIRouter, File, Form, Query, Request, Response, UploadFile
 from fastapi.responses import RedirectResponse
 
-from radicle.docket.api.deps import AppSettings, CurrentPrincipal, Db, get_principal
 from radicle.docket.api.schemas.attachments import AttachmentOut, ResizeIn
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.ticket_views import attachment_out
 from radicle.docket.db.models import Attachment, ProjectRole
 from radicle.docket.services import attachments, tickets
+from radicle.platform.api.deps import AppSettings, CurrentPrincipal, Db, get_principal
+from radicle.platform.api.schemas import Page
 from radicle.platform.errors import NotFound, Unauthorized
 from radicle.platform.services import images
 from radicle.platform.storage import get_storage

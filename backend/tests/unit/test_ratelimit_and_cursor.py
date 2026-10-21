@@ -2,8 +2,8 @@ from datetime import UTC, datetime
 
 import pytest
 
-from radicle.docket.api.pagination import decode_cursor, encode_cursor
-from radicle.docket.api.ratelimit import SlidingWindowLimiter
+from radicle.platform.api.pagination import decode_cursor, encode_cursor
+from radicle.platform.api.ratelimit import SlidingWindowLimiter
 from radicle.platform.errors import RateLimited, ValidationFailed
 
 

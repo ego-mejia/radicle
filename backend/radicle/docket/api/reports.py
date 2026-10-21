@@ -5,9 +5,9 @@ from uuid import UUID
 from fastapi import APIRouter, Query, Response
 from pydantic import Field
 
-from radicle.docket.api.deps import AppSettings, CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Output
 from radicle.docket.services import periods, reports
+from radicle.platform.api.deps import AppSettings, CurrentPrincipal, Db
+from radicle.platform.api.schemas import Output
 
 router = APIRouter(tags=["reports"])
 

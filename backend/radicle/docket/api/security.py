@@ -2,8 +2,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Response
 
-from radicle.docket.api.deps import CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.security import (
     GrantsPut,
     SecurityLevelCreate,
@@ -13,6 +11,8 @@ from radicle.docket.api.schemas.security import (
 from radicle.docket.db.models import ProjectRole, SecurityLevel
 from radicle.docket.services import security
 from radicle.docket.services.access import project_access
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.schemas import Page
 from radicle.platform.services import audit
 
 router = APIRouter(tags=["security levels"])

@@ -4,8 +4,6 @@ from uuid import UUID
 from fastapi import APIRouter, Query, Response
 from sqlalchemy import select
 
-from radicle.docket.api.deps import AppSettings, CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.sprints import (
     BacklogOut,
     SprintComplete,
@@ -30,6 +28,8 @@ from radicle.docket.db.models import (
     Ticket,
 )
 from radicle.docket.services import boards, search, sprints
+from radicle.platform.api.deps import AppSettings, CurrentPrincipal, Db
+from radicle.platform.api.schemas import Page
 
 router = APIRouter(tags=["sprints"])
 ADMIN = ProjectRole.admin

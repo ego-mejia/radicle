@@ -2,9 +2,9 @@ from typing import Any
 
 from pydantic import Field
 
-from radicle.docket.api.schemas.common import Input, Output, UtcDatetime
 from radicle.docket.api.schemas.tickets import TicketSummary
 from radicle.docket.db.models import FilterVisibility
+from radicle.platform.api.schemas import Input, Output, UtcDatetime
 
 
 class Layout(Input):

@@ -3,13 +3,13 @@ from typing import Any
 from fastapi import APIRouter, Response
 from pydantic import Field
 
-from radicle.docket.api.deps import AppSettings, CurrentPrincipal, Db
 from radicle.docket.api.jobs import JobOut, job_out
-from radicle.docket.api.schemas.common import Input, Output
 from radicle.docket.api.schemas.tickets import TicketOut
 from radicle.docket.api.ticket_views import ticket_out
 from radicle.docket.services import bulk, moving, tickets
 from radicle.docket.services.access import project_access
+from radicle.platform.api.deps import AppSettings, CurrentPrincipal, Db
+from radicle.platform.api.schemas import Input, Output
 from radicle.platform.services import audit
 
 router = APIRouter(tags=["clone, move and bulk"])

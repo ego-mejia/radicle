@@ -3,9 +3,9 @@ from pydantic import Field
 from sqlalchemy import text
 
 from radicle import __version__
-from radicle.docket.api.deps import AppSettings, Db, set_session_cookies
-from radicle.docket.api.schemas.common import Output
 from radicle.docket.api.schemas.users import Health, SetupIn, SetupStatus, UserOut, Version
+from radicle.platform.api.deps import AppSettings, Db, set_session_cookies
+from radicle.platform.api.schemas import Output
 from radicle.platform.errors import ProblemError
 from radicle.platform.services import audit, auth, images, users
 

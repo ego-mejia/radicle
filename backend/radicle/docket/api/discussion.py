@@ -3,9 +3,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Query, Response
 
-from radicle.docket.api.deps import CurrentPrincipal, Db
-from radicle.docket.api.pagination import Limit, decode_cursor, encode_cursor
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.tickets import (
     CommentIn,
     CommentOut,
@@ -16,6 +13,9 @@ from radicle.docket.api.schemas.tickets import (
 from radicle.docket.api.ticket_views import ctx_ref, user_ref
 from radicle.docket.db.models import Comment, LinkType, ProjectRole
 from radicle.docket.services import comments, relations, tickets
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.pagination import Limit, decode_cursor, encode_cursor
+from radicle.platform.api.schemas import Page
 from radicle.platform.errors import ValidationFailed
 
 router = APIRouter(tags=["links and comments"])

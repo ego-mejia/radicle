@@ -3,8 +3,6 @@ from uuid import UUID
 from fastapi import APIRouter, Response
 from sqlalchemy import select
 
-from radicle.docket.api.deps import AppSettings, CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.dashboards import (
     DashboardCreate,
     DashboardDetail,
@@ -19,6 +17,8 @@ from radicle.docket.api.schemas.dashboards import (
 from radicle.docket.api.ticket_views import summaries_out
 from radicle.docket.db.models import DashboardWidget, Project, User
 from radicle.docket.services import dashboards, periods
+from radicle.platform.api.deps import AppSettings, CurrentPrincipal, Db
+from radicle.platform.api.schemas import Page
 
 router = APIRouter(tags=["dashboards"])
 

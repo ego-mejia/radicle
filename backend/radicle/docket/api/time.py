@@ -2,12 +2,12 @@ from uuid import UUID
 
 from fastapi import APIRouter, Response
 
-from radicle.docket.api.deps import CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.tickets import UserRef, VoteOut, WorklogIn, WorklogOut, WorklogPatch
 from radicle.docket.api.ticket_views import user_ref
 from radicle.docket.db.models import ProjectRole, Worklog
 from radicle.docket.services import tickets, timetracking
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.schemas import Page
 
 router = APIRouter(tags=["votes and time"])
 MEMBER = ProjectRole.member

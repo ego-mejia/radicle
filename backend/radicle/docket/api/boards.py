@@ -3,7 +3,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Query, Response
 
-from radicle.docket.api.deps import AppSettings, CurrentPrincipal, Db
 from radicle.docket.api.schemas.boards import (
     BoardCreate,
     BoardDataOut,
@@ -19,13 +18,14 @@ from radicle.docket.api.schemas.boards import (
     QuickFilterIn,
     QuickFilterOut,
 )
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.tickets import WarningOut
 from radicle.docket.api.sprints import sprint_out
 from radicle.docket.api.ticket_views import summaries_out
 from radicle.docket.db.models import Board, BoardKind, Project, ProjectRole, Status, Swimlane
 from radicle.docket.services import boards, sprints
 from radicle.docket.services.access import project_access
+from radicle.platform.api.deps import AppSettings, CurrentPrincipal, Db
+from radicle.platform.api.schemas import Page
 
 router = APIRouter(tags=["boards"])
 ADMIN = ProjectRole.admin

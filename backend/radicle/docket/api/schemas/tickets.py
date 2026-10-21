@@ -3,7 +3,6 @@ from typing import Any, Literal
 
 from pydantic import Field
 
-from radicle.docket.api.schemas.common import Input, Output, UtcDatetime
 from radicle.docket.db.models import (
     Classification,
     Origin,
@@ -14,6 +13,7 @@ from radicle.docket.db.models import (
     TicketType,
     UserKind,
 )
+from radicle.platform.api.schemas import Input, Output, UtcDatetime
 
 
 class UserRef(Output):

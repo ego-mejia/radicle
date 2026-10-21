@@ -2,7 +2,6 @@ from typing import Any
 
 from pydantic import Field
 
-from radicle.docket.api.schemas.common import Input, Output, UtcDatetime
 from radicle.docket.api.schemas.sprints import SprintOut
 from radicle.docket.api.schemas.tickets import TicketSummary, WarningOut
 from radicle.docket.db.models import (
@@ -14,6 +13,7 @@ from radicle.docket.db.models import (
     WipMode,
 )
 from radicle.docket.services.boards import DEFAULT_CARD_FIELDS
+from radicle.platform.api.schemas import Input, Output, UtcDatetime
 
 
 class ColumnConf(Input):

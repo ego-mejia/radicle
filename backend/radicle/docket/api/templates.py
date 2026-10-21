@@ -2,8 +2,6 @@ from uuid import UUID
 
 from fastapi import APIRouter
 
-from radicle.docket.api.deps import CurrentPrincipal, Db, InstanceAdmin
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.templates import (
     LinkedProjectOut,
     SyncRunOut,
@@ -16,6 +14,8 @@ from radicle.docket.api.schemas.templates import (
 from radicle.docket.db.models import Project, Template, TemplateSyncRun
 from radicle.docket.services import templates
 from radicle.docket.services.template_config import parse
+from radicle.platform.api.deps import CurrentPrincipal, Db, InstanceAdmin
+from radicle.platform.api.schemas import Page
 from radicle.platform.services import audit
 
 router = APIRouter(prefix="/templates", tags=["templates"])

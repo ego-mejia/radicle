@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 from sqlalchemy import func, select
 
-from radicle.docket.api.deps import AppSettings, CurrentPrincipal, Db
 from radicle.docket.api.schemas.search import (
     FieldInfo,
     ProjectValues,
@@ -16,6 +15,7 @@ from radicle.docket.db.models import Area, Milestone, ProjectMember, Status, Tic
 from radicle.docket.query.fields import FIELDS, FUNCTIONS, KEYWORDS, SORT_FIELDS, custom_field
 from radicle.docket.services import custom_fields, search
 from radicle.docket.services.access import project_access
+from radicle.platform.api.deps import AppSettings, CurrentPrincipal, Db
 
 router = APIRouter(tags=["search"])
 

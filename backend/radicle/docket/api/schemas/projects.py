@@ -4,7 +4,6 @@ from uuid import UUID
 
 from pydantic import ConfigDict, Field
 
-from radicle.docket.api.schemas.common import Input, Output, UtcDatetime
 from radicle.docket.api.schemas.fields import CustomFieldOut
 from radicle.docket.api.schemas.tickets import UserRef
 from radicle.docket.db.models import (
@@ -17,6 +16,7 @@ from radicle.docket.db.models import (
     TicketType,
     UserKind,
 )
+from radicle.platform.api.schemas import Input, Output, UtcDatetime
 
 
 class CategoryCounts(Output):

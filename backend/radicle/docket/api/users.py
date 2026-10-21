@@ -2,9 +2,6 @@ from uuid import UUID
 
 from fastapi import APIRouter, Response
 
-from radicle.docket.api.deps import AppSettings, Db, InstanceAdmin
-from radicle.docket.api.pagination import DEFAULT_LIMIT, Limit, decode_cursor, encode_cursor
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.users import (
     AgentCreate,
     AgentCreated,
@@ -18,6 +15,9 @@ from radicle.docket.api.schemas.users import (
 )
 from radicle.docket.core import mcp_catalog
 from radicle.docket.db.models import User, UserKind
+from radicle.platform.api.deps import AppSettings, Db, InstanceAdmin
+from radicle.platform.api.pagination import DEFAULT_LIMIT, Limit, decode_cursor, encode_cursor
+from radicle.platform.api.schemas import Page
 from radicle.platform.errors import ValidationFailed
 from radicle.platform.services import audit, auth, users
 

@@ -2,9 +2,6 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Header, Query, Response
 
-from radicle.docket.api.deps import CurrentPrincipal, Db
-from radicle.docket.api.pagination import Limit
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.tickets import (
     ChecklistPatch,
     EventOut,
@@ -22,6 +19,9 @@ from radicle.docket.api.ticket_views import event_out, summaries_out, ticket_out
 from radicle.docket.db.models import ProjectRole
 from radicle.docket.services import history, security, tickets, transitions
 from radicle.docket.services.access import project_access
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.pagination import Limit
+from radicle.platform.api.schemas import Page
 from radicle.platform.errors import ValidationFailed
 from radicle.platform.services import audit
 

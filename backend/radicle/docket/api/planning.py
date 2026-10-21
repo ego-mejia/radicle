@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Response
 
 from radicle.docket.api import serializers as out
-from radicle.docket.api.deps import CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.projects import (
     AreaCreate,
     AreaOut,
@@ -16,6 +14,8 @@ from radicle.docket.api.schemas.tickets import UserRef
 from radicle.docket.db.models import MilestoneStatus
 from radicle.docket.services import milestone_recap, planning
 from radicle.docket.services.access import project_access
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.schemas import Page
 
 router = APIRouter(prefix="/projects/{key}", tags=["areas and milestones"])
 

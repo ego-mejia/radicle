@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Query
 from pydantic import Field
 
-from radicle.docket.api.deps import AppSettings, CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Input, Output
 from radicle.docket.api.schemas.tickets import TicketOut, TicketSummary
 from radicle.docket.api.ticket_views import summaries_out, ticket_out
 from radicle.docket.db.models import Classification, Origin, Priority, ProjectRole, TicketType
 from radicle.docket.services import inbox, public_form, tickets
 from radicle.docket.services.access import project_access
+from radicle.platform.api.deps import AppSettings, CurrentPrincipal, Db
+from radicle.platform.api.schemas import Input, Output
 from radicle.platform.services import audit
 
 router = APIRouter(tags=["inbox"])

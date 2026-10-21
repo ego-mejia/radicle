@@ -15,8 +15,8 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
-from radicle.docket.api.ratelimit import login_limiter
 from radicle.platform import security
+from radicle.platform.api.ratelimit import login_limiter
 from radicle.platform.config import get_settings
 from radicle.platform.db.session import get_db
 from radicle.platform.services import queue

@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Response
 
-from radicle.docket.api.deps import CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.fields import (
     CustomFieldCreate,
     CustomFieldOut,
@@ -12,6 +10,8 @@ from radicle.docket.api.serializers import fields_out
 from radicle.docket.db.models import ProjectRole
 from radicle.docket.services import custom_fields, templates
 from radicle.docket.services.access import project_access
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.schemas import Page
 
 router = APIRouter(prefix="/projects/{key}/fields", tags=["custom fields"])
 
