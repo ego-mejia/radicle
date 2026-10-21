@@ -2770,7 +2770,18 @@
         "failed": "Failed"
       },
       "published": "published",
-      "missing": "draft: missing {{fields}}"
+      "missing": "draft: missing {{fields}}",
+      "tab": "Import",
+      "checking": "Reading the export…",
+      "another": "Import something else",
+      "history": "Earlier imports",
+      "statuses": {
+        "uploaded": "Uploaded",
+        "checked": "Checked",
+        "running": "Running",
+        "done": "Done",
+        "failed": "Failed"
+      }
     }
   },
   "notifications": {
