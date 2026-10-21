@@ -33,6 +33,31 @@ describe('FolioAdminView', () => {
     );
   });
 
+  it('switches to a metadata catalog', async () => {
+    mockFetch({
+      'GET /api/v1/folio/admin/grants': { status: 200, body: { items: [everyone] } },
+      'GET /api/v1/folio/admin/audiences': {
+        status: 200,
+        body: {
+          items: [
+            {
+              key: 'ingenieria',
+              name: 'Ingeniería',
+              description: '',
+              position: 0,
+              archived: false,
+            },
+          ],
+        },
+      },
+    });
+    const client = makeClient();
+    client.setQueryData(folioKeys.me, admin);
+    renderWithProviders(<FolioAdminView />, client);
+    await userEvent.click(await screen.findByRole('tab', { name: 'Audiences' }));
+    expect(await screen.findByText('Ingeniería')).toBeInTheDocument();
+  });
+
   it('turns away readers and creators', async () => {
     mockFetch({});
     const client = makeClient();

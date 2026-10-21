@@ -1781,7 +1781,30 @@
       "title": "Approvals"
     },
     "catalogs": {
-      "title": "Catalogs"
+      "title": "Catalogs",
+      "tabs": "Folio admin sections",
+      "roles": "Global roles",
+      "names": {
+        "doc-types": "Document types",
+        "audiences": "Audiences",
+        "languages": "Languages"
+      },
+      "help": {
+        "doc-types": "Every published page has one: how-to, guide, build spec… Archived types stay on old pages but can't be chosen.",
+        "audiences": "Who a page is written for. A page can have several.",
+        "languages": "The languages pages are written in, by code: es, en…"
+      },
+      "key": "Key",
+      "name": "Name",
+      "description": "Description",
+      "archived": "Archived",
+      "none": "No entries yet.",
+      "added": "Added",
+      "up": "Move {{name}} up",
+      "down": "Move {{name}} down",
+      "edit": "Edit {{name}}",
+      "archive": "Archive {{name}}",
+      "restore": "Restore {{name}}"
     }
   }
 }
