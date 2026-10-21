@@ -2429,6 +2429,18 @@
     "inAppFor": "En la app: {{label}}",
     "emailFor": "Por email: {{label}}",
     "emailOff": "El email está apagado en este servidor: un admin define RADICLE_SMTP_HOST para prenderlo.",
-    "noTypes": "Todavía no hay avisos."
+    "noTypes": "Todavía no hay avisos.",
+    "types": {
+      "folio": {
+        "comment": "Comentarios en páginas que sigues o hilos en los que participas",
+        "comment_mention": "Menciones en comentarios",
+        "page_published": "Se publica una página que sigues",
+        "page_mention": "Te mencionan en una página",
+        "submission_pending": "La página de un agente espera aprobación",
+        "task_assigned": "Te asignan una tarea",
+        "page_shared": "Alguien comparte una página contigo",
+        "page_outdated": "Una página de la que eres dueño quedó desactualizada"
+      }
+    }
   }
 }
