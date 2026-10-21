@@ -4,7 +4,8 @@ import styled from 'styled-components';
 export const Screen = styled.div`
   position: fixed;
   inset: 0;
-  z-index: 20;
+  /* Full screen: above the Folio bar (z-index 30), which would cover its toolbar. */
+  z-index: 40;
   display: flex;
   flex-direction: column;
   background: ${({ theme }) => theme.color.surface};

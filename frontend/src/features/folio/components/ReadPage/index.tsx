@@ -14,6 +14,7 @@ import { headingsOf, readingMinutes } from '../DocContent/anchors';
 import { FocusReader } from '../FocusReader';
 import { PageMeta } from '../PageMeta';
 import { PageToc } from '../PageToc';
+import { RootsArt } from '../RootsArt';
 import * as S from './style';
 import { usePage } from '../../hooks/usePage';
 
@@ -88,7 +89,9 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
         </S.Actions>
       </S.Bar>
 
-      <S.Cover $image={n.cover_asset_id ? assetUrl(n.cover_asset_id) : null} aria-hidden />
+      <S.Cover $image={n.cover_asset_id ? assetUrl(n.cover_asset_id) : null} aria-hidden>
+        {!n.cover_asset_id && <RootsArt />}
+      </S.Cover>
 
       <S.Layout>
         <S.Article>
