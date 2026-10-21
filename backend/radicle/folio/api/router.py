@@ -29,6 +29,7 @@ from radicle.folio.api import spaces as spaces_api
 from radicle.folio.api import submissions as submissions_api
 from radicle.folio.api import tasks as tasks_api
 from radicle.folio.api import templates as templates_api
+from radicle.folio.api import tickets as tickets_api
 from radicle.folio.api import visuals as visuals_api
 from radicle.folio.api import whiteboards as whiteboards_api
 from radicle.folio.db.models import FolioRole, GranteeType
@@ -162,4 +163,5 @@ router.include_router(page_list_api.router)
 router.include_router(databases_api.router)
 router.include_router(visuals_api.router)
 router.include_router(whiteboards_api.router)
+router.include_router(tickets_api.router)
 router.include_router(ai_api.router)

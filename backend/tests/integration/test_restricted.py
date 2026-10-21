@@ -207,6 +207,13 @@ COVERED: dict[str, list[str]] = {
     "/api/v1/filters": ["/filters"],
     "/api/v1/search/fields": ["/search/fields?project=PA"],
     "/api/v1/projects/{key}/inbox": ["/projects/PA/inbox", "/projects/PA/inbox?tab=approved"],
+    # Folio reads tickets through docket.public (Folio 4.1).
+    "/api/v1/folio/tickets/preview": ["/folio/tickets/preview?keys=PA-1,PA-3"],
+    "/api/v1/folio/tickets/query": [
+        "/folio/tickets/query?rql=project = PA",
+        f"/folio/tickets/query?rql=text ~ {SECRET}",
+    ],
+    "/api/v1/folio/links": ["/folio/links?ticket=PA-1"],
 }
 # Routes that never show ticket content (configuration, people, the user's own data).
 EXEMPT = {
@@ -281,6 +288,8 @@ EXEMPT = {
     "/api/v1/folio/admin/home/history",
     "/api/v1/folio/templates/{template_id}",
     "/api/v1/folio/nodes/{node_id}/comments",
+    # A doc linked to a restricted ticket: test_folio_tickets_api.py.
+    "/api/v1/folio/nodes/{node_id}/ticket-links",
     "/api/v1/folio/people",
     "/api/v1/folio/spaces/{key}/archived",
     "/api/v1/folio/watch/{target_type}/{target_id}",
@@ -329,6 +338,7 @@ async def test_nothing_leaks_through_get_routes(
         "/tickets/PA-2/links",
         "/tickets/PA-2/attachments",
         f"/attachments/{world['attachment']}/content",
+        "/folio/links?ticket=PA-2",
     ):
         r = await client.get(API + url, headers=member.headers)
         assert r.status_code == 404, (url, r.text)
