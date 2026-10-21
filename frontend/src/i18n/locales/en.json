@@ -1952,6 +1952,34 @@
       "blank": "Blank page",
       "blankHint": "Start with an empty page.",
       "preview": "Preview of {{name}}"
+    },
+    "social": {
+      "label": "Reactions and follow",
+      "reactions": "Reactions",
+      "react_one": "React with {{emoji}} ({{count}})",
+      "react_other": "React with {{emoji}} ({{count}})",
+      "watch": "Follow",
+      "unwatch": "Unfollow",
+      "favorite": "Add to favorites",
+      "unfavorite": "In favorites"
+    },
+    "quality": {
+      "title": "Page status",
+      "until": "Verified, it lasts until {{date}}.",
+      "outdated": "This page is past its verification: check that it is still right.",
+      "verify": "Verify",
+      "verifyAgain": "Verify again",
+      "review": "Mark in review",
+      "transfer": "Transfer owner",
+      "transferTitle": "Transfer the page",
+      "newOwner": "New owner",
+      "newOwnerHint": "Their handle, e.g. @ana. They must be able to read Folio.",
+      "transferred": "Now @{{handle}} owns it",
+      "done": {
+        "verified": "Verified",
+        "in_review": "Marked in review",
+        "published": "Published"
+      }
     }
   },
   "notifications": {

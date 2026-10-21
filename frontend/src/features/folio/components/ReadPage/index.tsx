@@ -13,6 +13,8 @@ import { DocContent } from '../DocContent';
 import { headingsOf, readingMinutes } from '../DocContent/anchors';
 import { FocusReader } from '../FocusReader';
 import { PageMeta } from '../PageMeta';
+import { PageQuality } from '../PageQuality';
+import { PageSocial } from '../PageSocial';
 import { PageToc } from '../PageToc';
 import { RootsArt } from '../RootsArt';
 import * as S from './style';
@@ -23,7 +25,8 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   const { t } = useTranslation();
   const errorMessage = useErrorMessage();
   const page = usePage(nodeId);
-  const [focus, setFocus] = useFocusMode(useMe().handle);
+  const me = useMe();
+  const [focus, setFocus] = useFocusMode(me.handle);
   const { node } = page;
 
   if (node.isPending) return <PageSpinner />;
@@ -114,11 +117,16 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
               )}
             </span>
           </S.Byline>
+          {n.version != null && <PageSocial nodeId={n.id} />}
           <DocContent doc={page.content} childPages={page.children} size="large" />
         </S.Article>
         <S.Aside>
           <PageToc headings={headingsOf(page.content)} />
           <PageMeta metadata={page.metadata} status={n.status} version={n.version} />
+          <PageQuality
+            node={n}
+            canManage={owner === me.handle || !!page.space?.permissions.includes('admin')}
+          />
         </S.Aside>
       </S.Layout>
     </S.Page>

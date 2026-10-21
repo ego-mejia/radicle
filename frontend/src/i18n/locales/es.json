@@ -1952,6 +1952,34 @@
       "blank": "Página en blanco",
       "blankHint": "Empieza con una página vacía.",
       "preview": "Vista previa de {{name}}"
+    },
+    "social": {
+      "label": "Reacciones y seguir",
+      "reactions": "Reacciones",
+      "react_one": "Reaccionar con {{emoji}} ({{count}})",
+      "react_other": "Reaccionar con {{emoji}} ({{count}})",
+      "watch": "Seguir",
+      "unwatch": "Dejar de seguir",
+      "favorite": "Agregar a favoritos",
+      "unfavorite": "En favoritos"
+    },
+    "quality": {
+      "title": "Estado de la página",
+      "until": "Verificada, vence el {{date}}.",
+      "outdated": "Esta página ya pasó su verificación: revisa que siga siendo correcta.",
+      "verify": "Verificar",
+      "verifyAgain": "Verificar de nuevo",
+      "review": "Marcar en revisión",
+      "transfer": "Transferir dueño",
+      "transferTitle": "Transferir la página",
+      "newOwner": "Nuevo dueño",
+      "newOwnerHint": "Su handle, p. ej. @ana. Debe poder leer Folio.",
+      "transferred": "Ahora es de @{{handle}}",
+      "done": {
+        "verified": "Verificada",
+        "in_review": "Marcada en revisión",
+        "published": "Publicada"
+      }
     }
   },
   "notifications": {
