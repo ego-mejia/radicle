@@ -5,6 +5,7 @@ import uuid
 import zipfile
 
 import pytest
+from docx import Document
 from httpx import AsyncClient
 from PIL import Image
 from sqlalchemy import select
@@ -129,6 +130,18 @@ async def test_a_space_to_a_static_html_site(db: AsyncSession, team: Team, guide
     assert 'href="../style.css"' in page and 'href="../index.html">← Guías' in page
     image = next(n for n in zf.namelist() if n.endswith("diagrama.png"))
     assert f'src="../{image}"' in page
+
+
+async def test_a_space_to_word(db: AsyncSession, team: Team, guides: dict) -> None:
+    luis = await _user(db, team.member.handle)
+    row = await exports.create_export(db, luis, guides["space"], ExportFormat.docx)
+    await run_jobs(db)
+    await db.refresh(row)
+    assert row.status == ExportStatus.done and row.filename == "guias.docx", row.stats
+    doc = Document(io.BytesIO((await exports.download(db, luis, row.id))[1]))
+    texts = [p.text for p in doc.paragraphs]
+    assert "Conectar un agente" in texts and "Paso 1" in texts
+    assert "Salarios" not in texts and len(doc.inline_shapes) == 1  # the guide's image
 
 
 async def test_who_may_export_and_what(db: AsyncSession, team: Team, guides: dict) -> None:
