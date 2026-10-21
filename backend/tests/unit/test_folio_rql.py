@@ -32,6 +32,9 @@ def sql(q: str) -> str:
         ("text IS EMPTY", 0, "cannot be EMPTY"),
         ("title IN (a, b)", 0, "does not support IN"),
         ('text ~ " "', 7, "Empty search text"),
+        ("status = fresh", 9, "Use draft, published"),
+        ("watched_by = today()", 13, "currentUser()"),
+        ("has_open_tasks = maybe", 17, "true or false"),
     ],
 )
 def test_errors_say_where(q: str, position: int, says: str) -> None:
@@ -46,5 +49,9 @@ def test_aliases_and_shapes() -> None:
     assert "folio_chunks" in sql('text ~ "mcp"')
     assert "parent_id" in sql("parent IS EMPTY") and "LIKE" in sql("parent = 9f3c")
     assert "published_at IS NULL" in sql("published IS EMPTY")
+    assert "folio_watches" in sql("watched_by = currentUser()")
+    assert "folio_favorites" in sql("favorite_of = ana")
+    assert "folio_action_items" in sql("has_open_tasks = true")
+    assert "status" in sql("status IN (verified, outdated)")
     compiled = compile_query(parse("ORDER BY published DESC, title"), CTX)
     assert len(compiled.order_by) == 4  # both sorts, then updated and id as tie-breakers

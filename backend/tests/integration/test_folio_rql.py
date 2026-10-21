@@ -1,11 +1,14 @@
 """RQL for docs (Folio 1.6): every field with its operators, the spec's examples, sorting,
 paging, and errors that say where they are."""
 
+import uuid
+
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from radicle.folio.db.collab import FolioActionItem
 from radicle.folio.db.models import FolioGlobalGrant
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, METADATA
@@ -82,6 +85,31 @@ async def test_every_field(client: AsyncClient, team: Team, docs: dict) -> None:
     }
     for q, want in expected.items():
         assert set(await ids(client, team, q, "instance")) == want, q
+
+
+async def test_phase_2_fields(
+    client: AsyncClient, db: AsyncSession, team: Team, docs: dict
+) -> None:
+    g, d = docs["guide"], docs["deploy"]
+    i, m = team.instance.headers, team.member.headers
+    await client.patch(f"{API}/nodes/{g}/status", headers=i, json={"status": "verified"})
+    assert (await client.put(f"{API}/watch/node/{d}", headers=m)).status_code == 204
+    assert (await client.put(f"{API}/favorites/node/{g}", headers=m)).status_code == 204
+    db.add(FolioActionItem(node_id=uuid.UUID(d), item_key="t1", text="Revisar", done=False))
+    db.add(FolioActionItem(node_id=uuid.UUID(g), item_key="t2", text="Hecho", done=True))
+    await db.flush()
+    expected = {
+        "status = verified": {g},
+        "status IN (published, verified)": {g, d},
+        "status != verified AND space = docs": {d},
+        "watched_by = currentUser()": {d},
+        f"watched_by = {team.member.handle}": {d},
+        "favorite_of = currentUser()": {g},
+        "has_open_tasks = true": {d},
+        "has_open_tasks = false AND space = docs": {g},
+    }
+    for q, want in expected.items():
+        assert set(await ids(client, team, q)) == want, q
 
 
 async def test_spec_examples(client: AsyncClient, team: Team, docs: dict) -> None:
