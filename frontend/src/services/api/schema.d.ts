@@ -732,6 +732,87 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/admin/home/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Draft
+         * @description The layout being edited, or the published one when nobody has started.
+         */
+        get: operations["get_draft_api_v1_folio_admin_home_draft_get"];
+        /**
+         * Put Draft
+         * @description Save the draft; 422 lists every block that's wrong (an RQL error says where).
+         */
+        put: operations["put_draft_api_v1_folio_admin_home_draft_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/admin/home/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** History */
+        get: operations["history_api_v1_folio_admin_home_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/admin/home/history/{layout_id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Restore
+         * @description Publish an earlier layout again, as a new entry in the history.
+         */
+        post: operations["restore_api_v1_folio_admin_home_history__layout_id__restore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/admin/home/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publish
+         * @description Readers see the draft from now on; the previous layout stays in the history.
+         */
+        post: operations["publish_api_v1_folio_admin_home_publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/admin/{catalog}": {
         parameters: {
             query?: never;
@@ -5894,6 +5975,73 @@ export interface components {
              */
             url: string;
         };
+        /** HomeBlock */
+        HomeBlock: {
+            /** Config */
+            config?: {
+                [key: string]: unknown;
+            };
+            /** H */
+            h: number;
+            /** Id */
+            id: string;
+            /**
+             * Type
+             * @description featured, announcement, posts, query, for_you, most_read, spaces, text, search, chat
+             */
+            type: string;
+            /** W */
+            w: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
+        /** HomeDraftOut */
+        HomeDraftOut: {
+            layout: components["schemas"]["HomeLayoutBody"];
+            /**
+             * Saved
+             * @description False while it is the published layout, unedited
+             */
+            saved: boolean;
+            /** Updated At */
+            updated_at: string | null;
+        };
+        /** HomeLayoutBody */
+        HomeLayoutBody: {
+            /** Blocks */
+            blocks: {
+                [key: string]: unknown;
+            }[];
+            /** Columns */
+            columns: number;
+        };
+        /** HomeLayoutIn */
+        HomeLayoutIn: {
+            /** Blocks */
+            blocks: components["schemas"]["HomeBlock"][];
+            /**
+             * Columns
+             * @default 12
+             */
+            columns?: number;
+        };
+        /** HomeLayoutVersionOut */
+        HomeLayoutVersionOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Is Active */
+            is_active: boolean;
+            layout: components["schemas"]["HomeLayoutBody"];
+            /** Published At */
+            published_at: string | null;
+            /** Published By */
+            published_by: string | null;
+        };
         /** HomeOut */
         HomeOut: {
             /**
@@ -6839,6 +6987,13 @@ export interface components {
         Page_GroupRoleOut_: {
             /** Items */
             items: components["schemas"]["GroupRoleOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[HomeLayoutVersionOut] */
+        Page_HomeLayoutVersionOut_: {
+            /** Items */
+            items: components["schemas"]["HomeLayoutVersionOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -11065,6 +11220,130 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_draft_api_v1_folio_admin_home_draft_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomeDraftOut"];
+                };
+            };
+        };
+    };
+    put_draft_api_v1_folio_admin_home_draft_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HomeLayoutIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomeDraftOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    history_api_v1_folio_admin_home_history_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_HomeLayoutVersionOut_"];
+                };
+            };
+        };
+    };
+    restore_api_v1_folio_admin_home_history__layout_id__restore_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                layout_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomeLayoutVersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    publish_api_v1_folio_admin_home_publish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomeLayoutVersionOut"];
                 };
             };
         };
