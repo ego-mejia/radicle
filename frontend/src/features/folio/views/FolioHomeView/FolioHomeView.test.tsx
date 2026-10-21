@@ -21,6 +21,7 @@ function card(id: string, title: string, extra: Partial<FolioCard> = {}): FolioC
     author_name: 'Fernando',
     published_at: '2026-10-20T10:00:00Z',
     reading_minutes: 6,
+    status: 'published',
     ...extra,
   };
 }

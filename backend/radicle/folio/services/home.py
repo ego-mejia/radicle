@@ -41,6 +41,7 @@ class Card:
     author_name: str | None
     published_at: datetime | None
     reading_minutes: int
+    status: str
 
 
 @dataclass(frozen=True)
@@ -93,6 +94,7 @@ def _card(node: FolioNode, space: FolioSpace, version: FolioVersion, author: Use
         author_name=author.display_name if author else None,
         published_at=node.published_at,
         reading_minutes=max(1, round(words / WORDS_PER_MINUTE)),
+        status=node.status.value,
     )
 
 

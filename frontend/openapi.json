@@ -359,6 +359,17 @@
             "title": "Slug",
             "type": "string"
           },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "in_review",
+              "verified",
+              "outdated"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -370,6 +381,7 @@
           "title",
           "slug",
           "icon",
+          "status",
           "archived_at",
           "archived_by"
         ],
@@ -2101,6 +2113,17 @@
             "title": "Space Name",
             "type": "string"
           },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "in_review",
+              "verified",
+              "outdated"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -2121,7 +2144,8 @@
           "author",
           "author_name",
           "published_at",
-          "reading_minutes"
+          "reading_minutes",
+          "status"
         ],
         "title": "CardOut",
         "type": "object"
@@ -4858,6 +4882,17 @@
             "title": "Space",
             "type": "string"
           },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "in_review",
+              "verified",
+              "outdated"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -4879,7 +4914,8 @@
           "space",
           "doc_type",
           "score",
-          "matched_by"
+          "matched_by",
+          "status"
         ],
         "title": "HitOut",
         "type": "object"
@@ -4928,7 +4964,7 @@
             "type": "array"
           },
           "most_read": {
-            "description": "For now, the most recently published",
+            "description": "By reads in the last 7 days",
             "items": {
               "$ref": "#/components/schemas/CardOut"
             },
@@ -6595,6 +6631,7 @@
           "title",
           "slug",
           "icon",
+          "status",
           "space",
           "parent_id",
           "cover_asset_id",
@@ -6605,7 +6642,6 @@
           "version",
           "metadata",
           "content_json",
-          "status",
           "verified_until",
           "archived_at",
           "can_edit",
@@ -6688,6 +6724,17 @@
             "title": "Slug",
             "type": "string"
           },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "in_review",
+              "verified",
+              "outdated"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -6698,7 +6745,8 @@
           "kind",
           "title",
           "slug",
-          "icon"
+          "icon",
+          "status"
         ],
         "title": "NodeRef",
         "type": "object"
@@ -13308,6 +13356,17 @@
             "title": "Slug",
             "type": "string"
           },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "in_review",
+              "verified",
+              "outdated"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -13319,6 +13378,7 @@
           "title",
           "slug",
           "icon",
+          "status",
           "children"
         ],
         "title": "TreeItem",
