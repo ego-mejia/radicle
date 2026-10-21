@@ -271,6 +271,8 @@ EXEMPT = {
     "/api/v1/folio/search",
     "/api/v1/folio/home",
     "/api/v1/folio/nodes",
+    "/api/v1/folio/templates",
+    "/api/v1/folio/templates/{template_id}",
     "/api/v1/folio/spaces/{key}/archived",
     "/api/v1/folio/watch/{target_type}/{target_id}",
     "/api/v1/folio/reactions/{target_type}/{target_id}",

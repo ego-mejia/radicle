@@ -67,6 +67,7 @@ def _urls(s: dict) -> dict[str, list[str]]:
         "/api/v1/folio/reactions/{target_type}/{target_id}": [f"{API}/reactions/node/{p}"],
         "/api/v1/folio/me/recents": [f"{API}/me/recents"],
         "/api/v1/folio/me/favorites": [f"{API}/me/favorites"],
+        "/api/v1/folio/templates": [f"{API}/templates"],
         "/api/v1/folio/nodes": [
             f"{API}/nodes",
             f"{API}/nodes?q=title ~ secreto",
@@ -91,6 +92,8 @@ EXEMPT = {
     "/api/v1/folio/metadata-schema",
     "/api/v1/folio/admin/{catalog}",
     "/api/v1/folio/assets/{asset_id}",  # covered below: ids of hidden pages' assets
+    # Templates hold no page; a hidden space's templates: test_folio_templates_api.py.
+    "/api/v1/folio/templates/{template_id}",
 }
 
 

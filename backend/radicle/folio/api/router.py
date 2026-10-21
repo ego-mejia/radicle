@@ -18,6 +18,7 @@ from radicle.folio.api import sharing as sharing_api
 from radicle.folio.api import social as social_api
 from radicle.folio.api import spaces as spaces_api
 from radicle.folio.api import submissions as submissions_api
+from radicle.folio.api import templates as templates_api
 from radicle.folio.db.models import FolioRole, GranteeType
 from radicle.folio.services import roles
 from radicle.platform import authz
@@ -137,3 +138,4 @@ router.include_router(query_api.router)
 router.include_router(home_api.router)
 router.include_router(organize_api.router)
 router.include_router(social_api.router)
+router.include_router(templates_api.router)
