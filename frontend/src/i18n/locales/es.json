@@ -1798,7 +1798,11 @@
       "due": "Vence",
       "diagram": "Diagrama",
       "diagramError": "Este diagrama no compila:",
-      "formulaError": "Esta fórmula no compila"
+      "formulaError": "Esta fórmula no compila",
+      "chart": "Gráfica",
+      "chartEmpty": "Esta gráfica aún no tiene datos: pon una tabla con números justo antes.",
+      "showTable": "Ver tabla",
+      "showChart": "Ver gráfica"
     },
     "editor": {
       "title": "Editor",
