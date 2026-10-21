@@ -9,12 +9,17 @@ import { EmbedCard } from '../../../EmbedCard';
 import { Diagram } from '../../../Diagram';
 import { Formula } from '../../../Formula';
 import { VisualFrame } from '../../../VisualFrame';
+import { ChartBlock } from '../../../ChartBlock';
+import type { ChartKind } from '../../../ChartBlock/components/ChartView';
+import { type ChartData, tableData } from '../../../ChartBlock/tableData';
 import * as S from './style';
 
 export type ChildPage = { id: string; title: string; slug: string };
 
 type Props = {
   node: DocNode;
+  /** The block just before, for a chart drawn from the table above it. */
+  previous?: DocNode;
   headings: Heading[];
   childPages: ChildPage[];
   /** Renders nested blocks, stacked. */
@@ -35,7 +40,7 @@ function mediaSrc(attrs: DocNode['attrs']): string | undefined {
 }
 
 /** Panels, expands, columns, the table of contents, child pages and media. */
-export function RichBlock({ node: n, headings, childPages, children }: Props) {
+export function RichBlock({ node: n, previous, headings, childPages, children }: Props) {
   const { t } = useTranslation();
   const a = n.attrs ?? {};
   switch (n.type) {
@@ -118,6 +123,25 @@ export function RichBlock({ node: n, headings, childPages, children }: Props) {
           viewId={a.view ? String(a.view) : null}
           embedded
         />
+      );
+    case 'chart':
+      return (
+        <ChartBlock
+          kind={String(a.kind ?? 'bar') as ChartKind}
+          title={a.title ? String(a.title) : null}
+          data={a.source === 'table' ? tableData(previous) : ((a.data as ChartData) ?? null)}
+        />
+      );
+    case 'comparison':
+      return (
+        <S.Compare $sides={(n.content ?? []).length}>
+          {(n.content ?? []).map((side, i) => (
+            <section key={i}>
+              {side.attrs?.title ? <h4>{String(side.attrs.title)}</h4> : null}
+              {children(side.content)}
+            </section>
+          ))}
+        </S.Compare>
       );
     case 'embed':
       return <EmbedCard url={String(a.url)} title={a.title ? String(a.title) : null} />;

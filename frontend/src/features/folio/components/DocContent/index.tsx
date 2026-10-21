@@ -22,7 +22,7 @@ export function DocContent({ doc, childPages = [], size = 'regular' }: Props) {
   const stack = (nodes: DocNode[] = []) => (
     <S.Flow>
       {nodes.map((n, i) => (
-        <Fragment key={i}>{block(n, false)}</Fragment>
+        <Fragment key={i}>{block(n, false, nodes[i - 1])}</Fragment>
       ))}
     </S.Flow>
   );
@@ -30,7 +30,7 @@ export function DocContent({ doc, childPages = [], size = 'regular' }: Props) {
   const items = (nodes: DocNode[] = []) =>
     nodes.map((item, i) => <li key={i}>{stack(item.content)}</li>);
 
-  const block = (n: DocNode, top: boolean): ReactNode => {
+  const block = (n: DocNode, top: boolean, previous?: DocNode): ReactNode => {
     const a = n.attrs ?? {};
     switch (n.type) {
       case 'paragraph':
@@ -111,7 +111,7 @@ export function DocContent({ doc, childPages = [], size = 'regular' }: Props) {
         );
       default:
         return (
-          <RichBlock node={n} headings={headings} childPages={childPages}>
+          <RichBlock node={n} previous={previous} headings={headings} childPages={childPages}>
             {stack}
           </RichBlock>
         );
@@ -120,8 +120,8 @@ export function DocContent({ doc, childPages = [], size = 'regular' }: Props) {
 
   return (
     <S.Doc $size={size}>
-      {(doc?.content ?? []).map((n, i) => (
-        <Fragment key={i}>{block(n, true)}</Fragment>
+      {(doc?.content ?? []).map((n, i, all) => (
+        <Fragment key={i}>{block(n, true, all[i - 1])}</Fragment>
       ))}
     </S.Doc>
   );

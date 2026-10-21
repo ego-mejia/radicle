@@ -65,4 +65,17 @@ describe('RichBlock', () => {
     expect(screen.queryByRole('img')).toBeNull();
     expect(screen.queryByRole('navigation')).toBeNull();
   });
+  it('puts two or three sides next to each other, each with its heading', async () => {
+    const side = (title: string, text: string) => b('comparisonSide', { title }, p(t(text)));
+    renderWithProviders(
+      <DocContent
+        doc={doc(b('comparison', {}, side('Antes', 'lento'), side('Después', 'rápido')))}
+      />,
+    );
+    const before = await screen.findByRole('heading', { name: 'Antes' });
+    expect(before.closest('section')).toHaveTextContent('lento');
+    expect(screen.getByRole('heading', { name: 'Después' }).closest('section')).toHaveTextContent(
+      'rápido',
+    );
+  });
 });

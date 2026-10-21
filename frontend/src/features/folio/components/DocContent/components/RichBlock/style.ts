@@ -97,3 +97,25 @@ export const Toc = styled.nav`
 export const TocLink = styled.a<{ $depth: number }>`
   padding-left: ${({ $depth }) => `${$depth * 14}px`};
 `;
+
+export const Compare = styled.div<{ $sides: number }>`
+  display: grid;
+  grid-template-columns: repeat(${({ $sides }) => $sides}, minmax(0, 1fr));
+  gap: ${({ theme }) => theme.space.md};
+
+  section {
+    padding: ${({ theme }) => theme.space.md};
+    border: 1px solid ${({ theme }) => theme.color.border};
+    border-radius: ${({ theme }) => theme.radius.md};
+  }
+
+  h4 {
+    margin: 0 0 ${({ theme }) => theme.space.sm};
+    padding-bottom: ${({ theme }) => theme.space.xs};
+    border-bottom: 2px solid ${({ theme }) => theme.color.accentFill};
+  }
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+`;
