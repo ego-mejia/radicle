@@ -113,9 +113,13 @@ def build_tree(
     *,
     title_of: TitleOf = stem,
     index_names: tuple[str, ...] = ("index.md", "readme.md"),
+    prepare: Callable[[Page], None] | None = None,
+    leaves: dict[str, Page] | None = None,
 ) -> dict[str, Page]:
     """A page per Markdown file and a folder per directory, nested as on disk. A directory
-    next to `X.md` (Notion) or holding an index file becomes that page's children."""
+    next to `X.md` (Notion) or holding an index file becomes that page's children.
+    `prepare` reads source-specific properties from a page; `leaves` (by path) are other
+    pages, like Notion databases, placed in the tree where their file is."""
     paths = sorted(p for p in files if is_page(p))
     pages: dict[str, Page] = {}
     owner: dict[str, str] = {}  # directory -> external id of the page that holds it
@@ -157,8 +161,13 @@ def build_tree(
             labels=labels_from(meta),
             author=str(meta.get("author") or meta.get("owner") or "") or None,
         )
+        if prepare is not None:
+            prepare(page)
         pages[path] = page
         page.parent_id = parent_of(parent_dir)
+    for path, leaf in (leaves or {}).items():
+        leaf.parent_id = parent_of(posixpath.dirname(path))
+        pages[path] = leaf
     for path, page in list(pages.items()):
         if page.kind == "page":
             rewrite_refs(page, path, files, bundle)
@@ -175,7 +184,8 @@ def read_markdown(files: Files) -> Bundle:
 
 
 def ordered(pages: dict[str, Page]) -> list[Page]:
-    """Parents before their children, so the run can create them in one pass."""
+    """Parents before their children, so the run can create them in one pass; otherwise
+    in the order the files were read (by path)."""
     out: list[Page] = []
     seen: set[str] = set()
 
@@ -187,6 +197,6 @@ def ordered(pages: dict[str, Page]) -> list[Page]:
         seen.add(page.external_id)
         out.append(page)
 
-    for key in sorted(pages, key=lambda k: k.removeprefix("dir:")):
-        visit(pages[key])
+    for page in list(pages.values()):
+        visit(page)
     return out
