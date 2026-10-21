@@ -671,6 +671,84 @@ export interface paths {
         patch: operations["patch_filter_api_v1_filters__filter_id__patch"];
         trace?: never;
     };
+    "/api/v1/folio/admin/grants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Grants
+         * @description Global Folio roles: everyone first, then groups and users. Folio admins only.
+         */
+        get: operations["list_grants_api_v1_folio_admin_grants_get"];
+        put?: never;
+        /**
+         * Set Grant
+         * @description Give a user, a group or everyone a global role; it replaces their previous one.
+         */
+        post: operations["set_grant_api_v1_folio_admin_grants_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/admin/grants/{grant_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Grant */
+        delete: operations["delete_grant_api_v1_folio_admin_grants__grant_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Health */
+        get: operations["health_api_v1_folio_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Me
+         * @description Your effective Folio role. 404 when no grant reaches you: Folio is hidden then.
+         */
+        get: operations["me_api_v1_folio_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/groups": {
         parameters: {
             query?: never;
@@ -3621,6 +3699,29 @@ export interface components {
          * @enum {string}
          */
         FilterVisibility: "private" | "project" | "instance";
+        /** FolioHealthOut */
+        FolioHealthOut: {
+            /**
+             * Status
+             * @constant
+             */
+            status: "ok";
+        };
+        /** FolioMeOut */
+        FolioMeOut: {
+            /** Display Name */
+            display_name: string;
+            /** Handle */
+            handle: string;
+            /** Kind */
+            kind: string;
+            /**
+             * Role
+             * @description Highest of the direct, group and everyone grants
+             * @enum {string}
+             */
+            role: "reader" | "creator" | "admin";
+        };
         /** FormSchemaOut */
         FormSchemaOut: {
             /** Fields */
@@ -3634,6 +3735,47 @@ export interface components {
             /** Transition */
             transition: string | null;
             type: components["schemas"]["TicketType"];
+        };
+        /** GrantIn */
+        GrantIn: {
+            /**
+             * Grantee
+             * @description Handle or group name; omit for everyone
+             */
+            grantee?: string | null;
+            /**
+             * Grantee Type
+             * @enum {string}
+             */
+            grantee_type: "user" | "group" | "everyone";
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "reader" | "creator" | "admin";
+        };
+        /** GrantOut */
+        GrantOut: {
+            /**
+             * Grantee
+             * @description Handle or group name; null for everyone
+             */
+            grantee: string | null;
+            /**
+             * Grantee Type
+             * @enum {string}
+             */
+            grantee_type: "user" | "group" | "everyone";
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "reader" | "creator" | "admin";
         };
         /** GrantsPut */
         GrantsPut: {
@@ -4264,6 +4406,13 @@ export interface components {
         Page_FilterOut_: {
             /** Items */
             items: components["schemas"]["FilterOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[GrantOut] */
+        Page_GrantOut_: {
+            /** Items */
+            items: components["schemas"]["GrantOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -7872,6 +8021,128 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_grants_api_v1_folio_admin_grants_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_GrantOut_"];
+                };
+            };
+        };
+    };
+    set_grant_api_v1_folio_admin_grants_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GrantIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrantOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_grant_api_v1_folio_admin_grants__grant_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                grant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    health_api_v1_folio_health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioHealthOut"];
+                };
+            };
+        };
+    };
+    me_api_v1_folio_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioMeOut"];
                 };
             };
         };
