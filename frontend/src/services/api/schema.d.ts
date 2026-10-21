@@ -1422,6 +1422,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/people": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * People
+         * @description For @mentions: active people and agents who can read Folio, best matches first.
+         */
+        get: operations["people_api_v1_folio_people_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/reactions/{target_type}/{target_id}": {
         parameters: {
             query?: never;
@@ -3832,7 +3852,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post";
+            kind: "page" | "folder" | "blog_post" | "live_doc";
             /** Slug */
             slug: string;
             /**
@@ -5251,6 +5271,15 @@ export interface components {
              */
             role: "reader" | "creator" | "admin";
         };
+        /** FolioPersonOut */
+        FolioPersonOut: {
+            /** Handle */
+            handle: string;
+            /** Kind */
+            kind: string;
+            /** Name */
+            name: string;
+        };
         /** FolioReactionOut */
         FolioReactionOut: {
             /** Count */
@@ -6205,7 +6234,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post";
+            kind: "page" | "folder" | "blog_post" | "live_doc";
             /**
              * Parent
              * @description Page or folder; never for posts
@@ -6288,7 +6317,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post";
+            kind: "page" | "folder" | "blog_post" | "live_doc";
             /**
              * Metadata
              * @description Of the published version
@@ -6349,7 +6378,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post";
+            kind: "page" | "folder" | "blog_post" | "live_doc";
             /** Slug */
             slug: string;
             /**
@@ -6497,6 +6526,13 @@ export interface components {
         Page_FilterOut_: {
             /** Items */
             items: components["schemas"]["FilterOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[FolioPersonOut] */
+        Page_FolioPersonOut_: {
+            /** Items */
+            items: components["schemas"]["FolioPersonOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -8619,7 +8655,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post";
+            kind: "page" | "folder" | "blog_post" | "live_doc";
             /** Slug */
             slug: string;
             /**
@@ -12035,6 +12071,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    people_api_v1_folio_people_get: {
+        parameters: {
+            query?: {
+                /** @description Start of a handle or a name */
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_FolioPersonOut_"];
                 };
             };
             /** @description Validation Error */
