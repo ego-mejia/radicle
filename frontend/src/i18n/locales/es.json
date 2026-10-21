@@ -2675,7 +2675,41 @@
       "fileHint": "Hasta 100 MB.",
       "noSpaces": "Todavía no administras ningún space de equipo; solo los admins de un space importan en él.",
       "upload": "Subir y revisar",
-      "uploading": "Subiendo…"
+      "uploading": "Subiendo…",
+      "totals": {
+        "pages": "páginas",
+        "folders": "carpetas",
+        "databases": "databases",
+        "attachments": "archivos",
+        "updates": "ya importadas",
+        "with_errors": "con problemas"
+      },
+      "authors": "Autores",
+      "authorsHelp": "En quién se convierte cada autor del export; serán dueños de sus páginas. Las personas con el mismo correo se eligen solas.",
+      "authorOf": "En quién se convierte {{name}}",
+      "nobody": "Nadie (pongo el dueño después)",
+      "defaults": "Publicar las páginas completas",
+      "defaultsHelp": "Opcional. Lo importado llega como borrador; con esta metadata se publican las páginas que quedan completas.",
+      "description": "Descripción",
+      "pages": "Qué va a pasar",
+      "page": "Página",
+      "action": "Acción",
+      "labels": "Labels",
+      "files": "Archivos",
+      "rows_one": "{{count}} fila",
+      "rows_other": "{{count}} filas",
+      "kinds": {
+        "folder": "carpeta",
+        "database": "database",
+        "page": "página"
+      },
+      "actions": {
+        "create": "Nueva",
+        "update": "Actualiza"
+      },
+      "checkAgain": "Revisar de nuevo",
+      "run_one": "Importar {{count}} página",
+      "run_other": "Importar {{count}} páginas"
     }
   },
   "notifications": {

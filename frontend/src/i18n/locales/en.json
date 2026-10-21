@@ -2675,7 +2675,41 @@
       "fileHint": "Up to 100 MB.",
       "noSpaces": "You don't administer any team space yet; only a space's admins import into it.",
       "upload": "Upload and check",
-      "uploading": "Uploading…"
+      "uploading": "Uploading…",
+      "totals": {
+        "pages": "pages",
+        "folders": "folders",
+        "databases": "databases",
+        "attachments": "files",
+        "updates": "already imported",
+        "with_errors": "with problems"
+      },
+      "authors": "Authors",
+      "authorsHelp": "Who each author in the export becomes in Radicle; they'll own their pages. People with the same email are picked for you.",
+      "authorOf": "Who {{name}} becomes",
+      "nobody": "Nobody (I'll set the owner later)",
+      "defaults": "Publish complete pages",
+      "defaultsHelp": "Optional. Imported pages are drafts; with this metadata, the ones whose metadata is then complete are published.",
+      "description": "Description",
+      "pages": "What will happen",
+      "page": "Page",
+      "action": "Action",
+      "labels": "Labels",
+      "files": "Files",
+      "rows_one": "{{count}} row",
+      "rows_other": "{{count}} rows",
+      "kinds": {
+        "folder": "folder",
+        "database": "database",
+        "page": "page"
+      },
+      "actions": {
+        "create": "New",
+        "update": "Update"
+      },
+      "checkAgain": "Check again",
+      "run_one": "Import {{count}} page",
+      "run_other": "Import {{count}} pages"
     }
   },
   "notifications": {
