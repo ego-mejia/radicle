@@ -3,7 +3,7 @@ import styled from 'styled-components';
 /** Fixed at the selection, in viewport coordinates. */
 export const Float = styled.div`
   position: fixed;
-  z-index: 25;
+  z-index: 50; /* above the full-screen editor (40) */
 `;
 
 export const Trigger = styled.button`

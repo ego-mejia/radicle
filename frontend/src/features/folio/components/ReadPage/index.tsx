@@ -16,6 +16,7 @@ import { CommentsPanel } from '../CommentsPanel';
 import { DocContent } from '../DocContent';
 import { headingsOf, readingMinutes } from '../DocContent/anchors';
 import { FocusReader } from '../FocusReader';
+import { MarginComments } from '../MarginComments';
 import { NodeMenu } from '../NodeMenu';
 import { PageMeta } from '../PageMeta';
 import { PageQuality } from '../PageQuality';
@@ -36,7 +37,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   const [comments, setComments] = useState(false);
   const content = useRef<HTMLDivElement>(null);
   const discussion = useComments(nodeId);
-  useCommentHighlights(content, discussion.threads.data, page.content);
+  useCommentHighlights(content, discussion.threads.data, [page.content, focus]);
   const { node } = page;
 
   if (node.isPending) return <PageSpinner />;
@@ -53,6 +54,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   const owner = meta.owner ? String(meta.owner) : null;
   const description = meta.description ? String(meta.description) : '';
   const params = { page: `${n.id}-${n.slug}` };
+  const canComment = !!page.space?.permissions.includes('comment');
 
   if (focus)
     return (
@@ -63,6 +65,19 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
         content={page.content}
         childPages={page.children}
         onExit={() => setFocus(false)}
+        contentRef={content}
+        margin={
+          <>
+            <MarginComments nodeId={n.id} canComment={canComment} />
+            {canComment && (
+              <SelectionComment
+                container={content}
+                mentions={discussion.mentions}
+                onComment={(anchor, body) => discussion.add.mutateAsync({ body, anchor })}
+              />
+            )}
+          </>
+        }
       />
     );
 

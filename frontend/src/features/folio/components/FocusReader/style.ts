@@ -58,9 +58,38 @@ export const Exit = styled.button`
   cursor: pointer;
 `;
 
+/** The column centered; inline comments in the right margin when there is room. */
+export const Body = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 660px) minmax(0, 1fr);
+  gap: ${({ theme }) => theme.space.xxl};
+
+  @media (max-width: 1100px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+`;
+
+export const Side = styled.div`
+  max-width: 300px;
+  padding-top: 120px;
+
+  @media (max-width: 1100px) {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: ${({ theme }) => `0 ${theme.space.lg} 64px`};
+  }
+`;
+
 export const Column = styled.article`
+  grid-column: 2;
+  width: 100%;
   max-width: 660px;
   margin: 0 auto;
+
+  @media (max-width: 1100px) {
+    grid-column: 1;
+  }
+
   padding: 40px 28px 96px;
   display: flex;
   flex-direction: column;

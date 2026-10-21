@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type ReactNode, type Ref, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DocContent } from '../DocContent';
 import { type DocNode, readingMinutes } from '../DocContent/anchors';
@@ -13,6 +13,10 @@ type Props = {
   content: DocNode | null | undefined;
   childPages: ChildPage[];
   onExit: () => void;
+  /** Beside the column, e.g. the inline comments. */
+  margin?: ReactNode;
+  /** Wraps the page's content, for selection and highlights. */
+  contentRef?: Ref<HTMLDivElement>;
 };
 
 /** How far down the page the reader is, from 0 to 1. */
@@ -35,7 +39,16 @@ function useScrollProgress(): number {
 }
 
 /** Focus mode: one narrow column, larger type, a progress bar and the minutes left. */
-export function FocusReader({ title, kicker, description, content, childPages, onExit }: Props) {
+export function FocusReader({
+  title,
+  kicker,
+  description,
+  content,
+  childPages,
+  onExit,
+  margin,
+  contentRef,
+}: Props) {
   const { t } = useTranslation();
   const progress = useScrollProgress();
   const minutes = readingMinutes(content);
@@ -58,12 +71,17 @@ export function FocusReader({ title, kicker, description, content, childPages, o
           {t('folio.reader.focus.exit')}
         </S.Exit>
       </S.Bar>
-      <S.Column>
-        {kicker && <S.Kicker>{kicker}</S.Kicker>}
-        <S.Title>{title}</S.Title>
-        {description && <S.Lead>{description}</S.Lead>}
-        <DocContent doc={content} childPages={childPages} size="large" />
-      </S.Column>
+      <S.Body>
+        <S.Column>
+          {kicker && <S.Kicker>{kicker}</S.Kicker>}
+          <S.Title>{title}</S.Title>
+          {description && <S.Lead>{description}</S.Lead>}
+          <div ref={contentRef}>
+            <DocContent doc={content} childPages={childPages} size="large" />
+          </div>
+        </S.Column>
+        {margin && <S.Side>{margin}</S.Side>}
+      </S.Body>
     </S.Page>
   );
 }

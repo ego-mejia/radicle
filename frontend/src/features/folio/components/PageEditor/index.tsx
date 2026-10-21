@@ -27,10 +27,12 @@ import { SlashCommand } from '../../editor/slash';
 import { FolioUploads } from '../../editor/uploads';
 import { pickFiles } from '../../hooks/pickFiles';
 import { EditorProse } from '../EditorProse';
+import { SelectionComment } from '../SelectionComment';
 import { PageHeader } from './components/PageHeader';
 import { mediaBlocks } from './media';
 import * as S from './style';
 import { useAutosave } from '../../hooks/useAutosave';
+import { useComments } from '../../hooks/useComments';
 
 type Props = {
   nodeId: string;
@@ -77,6 +79,8 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
   const failed = (error: unknown) => toast(errorMessage(error), 'error');
   const upload = (file: File) => uploadAsset(node.id, file);
   const editorRef = useRef<Editor | null>(null);
+  const bodyEl = useRef<HTMLDivElement>(null);
+  const discussion = useComments(node.id);
 
   const body = useAutosave(async (doc: Record<string, unknown>) => {
     const saved = await saveDraft(node.id, { content_json: doc });
@@ -194,8 +198,20 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
             onDone={() => editor?.commands.focus('start')}
           />
           <EditorProse>
-            <EditorContent editor={editor} />
+            <div ref={bodyEl}>
+              <EditorContent editor={editor} />
+            </div>
           </EditorProse>
+          {node.version != null && (
+            <SelectionComment
+              container={bodyEl}
+              mentions={discussion.mentions}
+              onComment={async (anchor, text) => {
+                await Promise.all([body.flush(), header.flush()]);
+                await discussion.add.mutateAsync({ body: text, anchor });
+              }}
+            />
+          )}
         </S.Page>
       </S.Scroll>
     </S.Screen>
