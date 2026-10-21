@@ -29,6 +29,7 @@ dependencies = [
     "markdown-it-py>=3.0",
     "pgvector>=0.3",
     "pycrdt==0.14.8",
+    "python-docx>=1.1",
 ]
 
 [project.scripts]

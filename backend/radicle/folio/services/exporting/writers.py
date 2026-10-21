@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.exports import ExportFormat, FolioExport
 from radicle.folio.db.models import FolioSpace
-from radicle.folio.services.exporting import html, markdown
+from radicle.folio.services.exporting import html, markdown, word
 from radicle.folio.services.exporting.pages import ExportPage
 
 
@@ -27,4 +27,8 @@ async def write(
     if row.format == ExportFormat.html:
         data = await html.write(db, space, pages, single=row.node_id is not None)
         return Output(data, f"{name}-html.zip", "application/zip")
+    if row.format == ExportFormat.docx:
+        data = await word.write(db, pages)
+        mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        return Output(data, f"{name}.docx", mime)
     raise ValueError(f"{row.format.value} exports are not available yet")
