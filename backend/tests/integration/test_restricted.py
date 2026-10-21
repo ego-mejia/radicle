@@ -216,6 +216,10 @@ EXEMPT = {
     "/api/v1/setup/status",
     "/api/v1/me",
     "/api/v1/me/preferences",
+    # Only your own notifications; each app's resolver already left out what you can't see.
+    "/api/v1/me/notifications",
+    "/api/v1/me/notifications/stream",
+    "/api/v1/me/notification-preferences",
     "/api/v1/me/tokens",
     "/api/v1/users",
     "/api/v1/users/{handle}",

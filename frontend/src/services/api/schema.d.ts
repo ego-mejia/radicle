@@ -1475,6 +1475,84 @@ export interface paths {
         patch: operations["patch_me_api_v1_me_patch"];
         trace?: never;
     };
+    "/api/v1/me/notification-preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Preferences
+         * @description Every notification type with whether it reaches you in the app and by email.
+         */
+        get: operations["get_preferences_api_v1_me_notification_preferences_get"];
+        /** Put Preference */
+        put: operations["put_preference_api_v1_me_notification_preferences_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Notifications
+         * @description Newest first, with how many are unread.
+         */
+        get: operations["list_notifications_api_v1_me_notifications_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/notifications/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Read Notifications */
+        post: operations["read_notifications_api_v1_me_notifications_read_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/notifications/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Stream
+         * @description Live signals for the bell (text/event-stream).
+         */
+        get: operations["stream_api_v1_me_notifications_stream_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me/preferences": {
         parameters: {
             query?: never;
@@ -5359,6 +5437,39 @@ export interface components {
             /** Title */
             title: string;
         };
+        /** NotificationOut */
+        NotificationOut: {
+            /** Actor Id */
+            actor_id: string | null;
+            /** App */
+            app: string;
+            /** Body */
+            body: string;
+            /** Created At */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Link */
+            link: string | null;
+            /** Read */
+            read: boolean;
+            /** Title */
+            title: string;
+            /** Type */
+            type: string;
+        };
+        /** NotificationsPage */
+        NotificationsPage: {
+            /** Items */
+            items: components["schemas"]["NotificationOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+            /** Unread */
+            unread: number;
+        };
         /**
          * Origin
          * @enum {string}
@@ -5628,16 +5739,32 @@ export interface components {
                 [key: string]: boolean;
             };
         };
-        /** PreferencesOut */
-        PreferencesOut: {
-            /** Density */
-            density: string;
-            /** Language */
-            language: string | null;
-            /** Shortcuts */
-            shortcuts: boolean;
-            /** Theme */
-            theme: string;
+        /** PreferenceIn */
+        PreferenceIn: {
+            /** App */
+            app: string;
+            /**
+             * Channel
+             * @enum {string}
+             */
+            channel: "in_app" | "email";
+            /** Enabled */
+            enabled: boolean;
+            /** Type */
+            type: string;
+        };
+        /** PreferenceOut */
+        PreferenceOut: {
+            /** App */
+            app: string;
+            /** Email */
+            email: boolean;
+            /** In App */
+            in_app: boolean;
+            /** Label */
+            label: string;
+            /** Type */
+            type: string;
         };
         /**
          * Priority
@@ -5922,6 +6049,21 @@ export interface components {
             emoji: string;
             /** Users */
             users: string[];
+        };
+        /** ReadIn */
+        ReadIn: {
+            /**
+             * Ids
+             * @description Leave out to mark all read
+             */
+            ids?: string[] | null;
+        };
+        /** ReadOut */
+        ReadOut: {
+            /** Marked */
+            marked: number;
+            /** Unread */
+            unread: number;
         };
         /**
          * RemainingMode
@@ -7841,6 +7983,17 @@ export interface components {
             /** Target Project */
             target_project: string;
         };
+        /** PreferencesOut */
+        radicle__docket__api__work__PreferencesOut: {
+            /** Density */
+            density: string;
+            /** Language */
+            language: string | null;
+            /** Shortcuts */
+            shortcuts: boolean;
+            /** Theme */
+            theme: string;
+        };
         /** MoveIn */
         radicle__folio__api__spaces__MoveIn: {
             /**
@@ -7858,6 +8011,16 @@ export interface components {
              * @description null moves it to the root
              */
             parent?: string | null;
+        };
+        /** PreferencesOut */
+        radicle__platform__api__notifications__PreferencesOut: {
+            /**
+             * Email Available
+             * @description False until an admin configures SMTP
+             */
+            email_available: boolean;
+            /** Items */
+            items: components["schemas"]["PreferenceOut"][];
         };
     };
     responses: never;
@@ -11128,6 +11291,145 @@ export interface operations {
             };
         };
     };
+    get_preferences_api_v1_me_notification_preferences_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["radicle__platform__api__notifications__PreferencesOut"];
+                };
+            };
+        };
+    };
+    put_preference_api_v1_me_notification_preferences_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreferenceIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["radicle__platform__api__notifications__PreferencesOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_notifications_api_v1_me_notifications_get: {
+        parameters: {
+            query?: {
+                unread_only?: boolean;
+                cursor?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NotificationsPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_notifications_api_v1_me_notifications_read_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReadIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReadOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    stream_api_v1_me_notifications_stream_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     get_preferences_api_v1_me_preferences_get: {
         parameters: {
             query?: never;
@@ -11143,7 +11445,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PreferencesOut"];
+                    "application/json": components["schemas"]["radicle__docket__api__work__PreferencesOut"];
                 };
             };
         };
@@ -11169,7 +11471,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PreferencesOut"];
+                    "application/json": components["schemas"]["radicle__docket__api__work__PreferencesOut"];
                 };
             };
             /** @description Validation Error */

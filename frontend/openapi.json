@@ -6163,6 +6163,108 @@
         "title": "NodeRef",
         "type": "object"
       },
+      "NotificationOut": {
+        "properties": {
+          "actor_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Id"
+          },
+          "app": {
+            "title": "App",
+            "type": "string"
+          },
+          "body": {
+            "title": "Body",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link"
+          },
+          "read": {
+            "title": "Read",
+            "type": "boolean"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "app",
+          "type",
+          "title",
+          "body",
+          "link",
+          "actor_id",
+          "read",
+          "created_at"
+        ],
+        "title": "NotificationOut",
+        "type": "object"
+      },
+      "NotificationsPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/NotificationOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "unread": {
+            "title": "Unread",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor",
+          "unread"
+        ],
+        "title": "NotificationsPage",
+        "type": "object"
+      },
       "Origin": {
         "enum": [
           "team",
@@ -7175,39 +7277,70 @@
         "title": "PermissionsPut",
         "type": "object"
       },
-      "PreferencesOut": {
+      "PreferenceIn": {
+        "additionalProperties": false,
         "properties": {
-          "density": {
-            "title": "Density",
+          "app": {
+            "title": "App",
             "type": "string"
           },
-          "language": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
+          "channel": {
+            "enum": [
+              "in_app",
+              "email"
             ],
-            "title": "Language"
+            "title": "Channel",
+            "type": "string"
           },
-          "shortcuts": {
-            "title": "Shortcuts",
+          "enabled": {
+            "title": "Enabled",
             "type": "boolean"
           },
-          "theme": {
-            "title": "Theme",
+          "type": {
+            "title": "Type",
             "type": "string"
           }
         },
         "required": [
-          "theme",
-          "language",
-          "shortcuts",
-          "density"
+          "app",
+          "type",
+          "channel",
+          "enabled"
         ],
-        "title": "PreferencesOut",
+        "title": "PreferenceIn",
+        "type": "object"
+      },
+      "PreferenceOut": {
+        "properties": {
+          "app": {
+            "title": "App",
+            "type": "string"
+          },
+          "email": {
+            "title": "Email",
+            "type": "boolean"
+          },
+          "in_app": {
+            "title": "In App",
+            "type": "boolean"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "app",
+          "type",
+          "label",
+          "in_app",
+          "email"
+        ],
+        "title": "PreferenceOut",
         "type": "object"
       },
       "Priority": {
@@ -7965,6 +8098,47 @@
           "users"
         ],
         "title": "ReactionOut",
+        "type": "object"
+      },
+      "ReadIn": {
+        "additionalProperties": false,
+        "properties": {
+          "ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Leave out to mark all read",
+            "title": "Ids"
+          }
+        },
+        "title": "ReadIn",
+        "type": "object"
+      },
+      "ReadOut": {
+        "properties": {
+          "marked": {
+            "title": "Marked",
+            "type": "integer"
+          },
+          "unread": {
+            "title": "Unread",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "marked",
+          "unread"
+        ],
+        "title": "ReadOut",
         "type": "object"
       },
       "RemainingMode": {
@@ -13660,6 +13834,41 @@
         "title": "MoveIn",
         "type": "object"
       },
+      "radicle__docket__api__work__PreferencesOut": {
+        "properties": {
+          "density": {
+            "title": "Density",
+            "type": "string"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "shortcuts": {
+            "title": "Shortcuts",
+            "type": "boolean"
+          },
+          "theme": {
+            "title": "Theme",
+            "type": "string"
+          }
+        },
+        "required": [
+          "theme",
+          "language",
+          "shortcuts",
+          "density"
+        ],
+        "title": "PreferencesOut",
+        "type": "object"
+      },
       "radicle__folio__api__spaces__MoveIn": {
         "additionalProperties": false,
         "properties": {
@@ -13704,6 +13913,28 @@
           }
         },
         "title": "MoveIn",
+        "type": "object"
+      },
+      "radicle__platform__api__notifications__PreferencesOut": {
+        "properties": {
+          "email_available": {
+            "description": "False until an admin configures SMTP",
+            "title": "Email Available",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PreferenceOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "email_available",
+          "items"
+        ],
+        "title": "PreferencesOut",
         "type": "object"
       }
     }
@@ -18788,6 +19019,201 @@
         ]
       }
     },
+    "/api/v1/me/notification-preferences": {
+      "get": {
+        "description": "Every notification type with whether it reaches you in the app and by email.",
+        "operationId": "get_preferences_api_v1_me_notification_preferences_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/radicle__platform__api__notifications__PreferencesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Preferences",
+        "tags": [
+          "notifications"
+        ]
+      },
+      "put": {
+        "operationId": "put_preference_api_v1_me_notification_preferences_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreferenceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/radicle__platform__api__notifications__PreferencesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Preference",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/me/notifications": {
+      "get": {
+        "description": "Newest first, with how many are unread.",
+        "operationId": "list_notifications_api_v1_me_notifications_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "unread_only",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Unread Only",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationsPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Notifications",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/me/notifications/read": {
+      "post": {
+        "operationId": "read_notifications_api_v1_me_notifications_read_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Notifications",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
+    "/api/v1/me/notifications/stream": {
+      "get": {
+        "description": "Live signals for the bell (text/event-stream).",
+        "operationId": "stream_api_v1_me_notifications_stream_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Stream",
+        "tags": [
+          "notifications"
+        ]
+      }
+    },
     "/api/v1/me/preferences": {
       "get": {
         "operationId": "get_preferences_api_v1_me_preferences_get",
@@ -18796,7 +19222,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PreferencesOut"
+                  "$ref": "#/components/schemas/radicle__docket__api__work__PreferencesOut"
                 }
               }
             },
@@ -18828,7 +19254,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PreferencesOut"
+                  "$ref": "#/components/schemas/radicle__docket__api__work__PreferencesOut"
                 }
               }
             },

@@ -149,6 +149,8 @@ async def _deliver(db: AsyncSession, event: OutboxEvent, kind: EventType, notice
                     body=notice.body,
                     link=notice.link,
                     actor_id=event.actor_id,
+                    # The clock, not now(): one dispatch writes many, newest last.
+                    created_at=utcnow(),
                 )
             )
             await db.execute(

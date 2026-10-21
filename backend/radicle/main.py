@@ -47,11 +47,13 @@ from radicle.folio.mcp import catalog as folio_catalog
 from radicle.folio.mcp import server as folio_mcp
 from radicle.platform import authz, mcp_tools
 from radicle.platform.api import ai as ai_api
+from radicle.platform.api import notifications as notifications_api
 from radicle.platform.config import get_settings
 from radicle.platform.crypto import require_key
 from radicle.platform.db.session import dispose_engine
 from radicle.platform.errors import NotFound, install_error_handlers
 from radicle.platform.services.audit import RequestInfoMiddleware
+from radicle.platform.services.notify_hub import hub as notify_hub
 
 API_PREFIX = "/api/v1"
 
@@ -63,6 +65,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         folio_mcp.server.session_manager.run(),
     ):
         yield
+    await notify_hub.close()
     await dispose_engine()
 
 
@@ -118,6 +121,7 @@ def create_app() -> FastAPI:
         assistant,
         audit,
         ai_api,
+        notifications_api,
     ):
         api.include_router(module.router)
     api.include_router(folio_router)
