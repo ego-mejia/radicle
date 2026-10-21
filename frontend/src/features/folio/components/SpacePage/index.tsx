@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { FilePlus, FolderPlus, PenLine } from 'lucide-react';
+import { FilePlus, FolderPlus, PenLine, Radio } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
@@ -63,6 +63,10 @@ export function SpacePage({ spaceKey }: { spaceKey: string }) {
               <Button onClick={() => setCreating('blog_post')}>
                 <PenLine aria-hidden />
                 {t('folio.space.new.blog_post')}
+              </Button>
+              <Button onClick={() => setCreating('live_doc')}>
+                <Radio aria-hidden />
+                {t('folio.space.new.live_doc')}
               </Button>
               <Button onClick={() => setCreating('folder')}>
                 <FolderPlus aria-hidden />

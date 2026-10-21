@@ -149,6 +149,16 @@ describe('ReadPage', () => {
     expect(screen.queryByRole('link', { name: 'History' })).toBeNull();
   });
 
+  it('shows a live doc as it is now to those who cannot write in it', async () => {
+    api(
+      { ...NODE, kind: 'live_doc', version: null, status: 'draft', can_edit: false },
+      { ...SPACE, permissions: ['view'] },
+    );
+    renderWithProviders(<ReadPage nodeId="n1" />);
+    expect(await screen.findByText('Necesitas ser admin.')).toBeInTheDocument();
+    expect(screen.queryByRole('note')).toBeNull();
+  });
+
   it('explains a page it cannot open', async () => {
     mockFetch({});
     renderWithProviders(<ReadPage nodeId="n1" />);

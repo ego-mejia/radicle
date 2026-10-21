@@ -25,6 +25,8 @@ export function usePage(id: string) {
   const node = useQuery({ queryKey: folioKeys.node(id), queryFn: () => fetchNode(id) });
   const key = node.data?.space ?? '';
   const published = node.data?.version != null;
+  // A live doc is never published: everyone reads what is written now.
+  const live = node.data?.kind === 'live_doc';
   const space = useQuery({
     queryKey: folioKeys.space(key),
     queryFn: () => fetchSpace(key),
@@ -38,7 +40,7 @@ export function usePage(id: string) {
   const draft = useQuery({
     queryKey: folioKeys.draft(id),
     queryFn: () => fetchDraft(id),
-    enabled: node.isSuccess && !published,
+    enabled: node.isSuccess && !published && !live,
   });
   const tree = useQuery({
     queryKey: folioKeys.tree(key),
@@ -46,7 +48,7 @@ export function usePage(id: string) {
     enabled: !!key,
   });
 
-  const content = (published ? node.data?.content_json : draft.data?.content_json) as
+  const content = (published || live ? node.data?.content_json : draft.data?.content_json) as
     DocNode | null | undefined;
   return {
     node,
@@ -54,7 +56,7 @@ export function usePage(id: string) {
     canEdit: node.data?.can_edit ?? false,
     author: versions.data?.[0]?.author ?? null,
     draft,
-    isDraft: !published,
+    isDraft: !published && !live,
     content,
     metadata: published ? node.data?.metadata : draft.data?.metadata,
     children: tree.data ? (findIn(tree.data, id)?.children ?? []) : [],

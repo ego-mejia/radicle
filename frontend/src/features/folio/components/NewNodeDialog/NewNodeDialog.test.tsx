@@ -62,6 +62,30 @@ describe('NewNodeDialog', () => {
     );
   });
 
+  it('creates a live doc under its parent, without templates', async () => {
+    const calls = mockFetch({
+      'POST /api/v1/folio/nodes': {
+        status: 201,
+        body: { id: 'n7', slug: 'minuta', space: 'docs' },
+      },
+    });
+    renderWithProviders(
+      <NewNodeDialog space="docs" kind="live_doc" parent="f1" open onOpenChange={vi.fn()} />,
+    );
+    expect(await screen.findByRole('dialog', { name: 'New live doc' })).toBeInTheDocument();
+    expect(screen.queryByRole('radiogroup')).toBeNull();
+    await userEvent.type(screen.getByLabelText('Title'), 'Minuta');
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }));
+    await vi.waitFor(() =>
+      expect(calls.find((c) => c.method === 'POST')?.body).toEqual({
+        space: 'docs',
+        kind: 'live_doc',
+        title: 'Minuta',
+        parent: 'f1',
+      }),
+    );
+  });
+
   it('folders have no templates', async () => {
     mockFetch({});
     renderWithProviders(<NewNodeDialog space="docs" kind="folder" open onOpenChange={vi.fn()} />);
