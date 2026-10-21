@@ -5,7 +5,16 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import BigInteger, DateTime, ForeignKey, Index, Text, func, text
+from sqlalchemy import (
+    BigInteger,
+    DateTime,
+    ForeignKey,
+    Index,
+    Text,
+    UniqueConstraint,
+    func,
+    text,
+)
 from sqlalchemy.dialects.postgresql import CITEXT, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -124,6 +133,9 @@ class FolioNode(Base):
     cover_asset_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
     # Byte order, as fractional ranks expect, whatever the database locale.
     rank: Mapped[str] = mapped_column(Text(collation="C"))
+    published_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("folio_versions.id", name="fk_folio_nodes_published_version", use_alter=True)
+    )
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
@@ -221,3 +233,38 @@ class FolioAudience(_CatalogEntry, Base):
 
 class FolioLanguage(_CatalogEntry, Base):
     __tablename__ = "folio_languages"
+
+
+class FolioVersion(Base):
+    """A published version. Insert only: a database trigger rejects changes, and restoring
+    an old version creates a new one."""
+
+    __tablename__ = "folio_versions"
+    __table_args__ = (UniqueConstraint("node_id", "number", name="uq_folio_versions_number"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    node_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("folio_nodes.id"), index=True)
+    number: Mapped[int] = mapped_column(BigInteger)
+    title: Mapped[str] = mapped_column(Text)
+    content_json: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    content_md: Mapped[str] = mapped_column(Text)
+    content_text: Mapped[str] = mapped_column(Text)
+    metadata_: Mapped[dict[str, Any]] = mapped_column("metadata", JSONB)
+    change_note: Mapped[str | None] = mapped_column(Text)
+    author_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    approved_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    restored_from: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("folio_versions.id"))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, server_default=func.now()
+    )
+
+
+class FolioNodeLabel(Base):
+    """Labels of the published version, for filters, RQL and the RAG metadata."""
+
+    __tablename__ = "folio_node_labels"
+
+    node_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("folio_nodes.id", ondelete="CASCADE"), primary_key=True
+    )
+    label: Mapped[str] = mapped_column(Text, primary_key=True, index=True)
