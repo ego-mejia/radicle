@@ -125,12 +125,15 @@ def _best_per_document(rows: list[tuple[FolioChunk, str, float]]) -> list[Hit]:
 async def _text(db: AsyncSession, visible: ColumnElement[bool], q: str, f: Filters) -> list[Hit]:
     query = _query(q)
     rank = func.ts_rank_cd(FolioChunk.search_vector, query)
+    # Cover density scores only the best cover, so the page's sections tie on its title;
+    # counting every match breaks the tie in favor of the section that is about it.
+    frequency = func.ts_rank(FolioChunk.search_vector, query)
     snippet = func.ts_headline(_config("spanish"), FolioChunk.text, query, SNIPPET)
     rows = await db.execute(
         select(FolioChunk, snippet, rank)
         .join(FolioNode, FolioNode.id == FolioChunk.node_id)
         .where(visible, FolioChunk.search_vector.op("@@")(query), *_where(f))
-        .order_by(rank.desc(), FolioChunk.id)
+        .order_by(rank.desc(), frequency.desc(), FolioChunk.id)
         .limit(CANDIDATES)
     )
     return _best_per_document([(c, s, r) for c, s, r in rows.all()])
