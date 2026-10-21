@@ -1795,7 +1795,8 @@
         "label_one": "{{count}} person in this document",
         "label_other": "{{count}} people in this document",
         "agentWriting": "{{name}} is writing"
-      }
+      },
+      "history": "Snapshots"
     },
     "publish": {
       "title": "Publish",
@@ -2147,6 +2148,18 @@
     },
     "embed": {
       "opensNewTab": "(opens in a new tab)"
+    },
+    "liveHistory": {
+      "title": "Snapshots",
+      "back": "Back to the doc",
+      "none": "No snapshots yet: the first one is taken 10 minutes after someone writes.",
+      "snapshots": "Snapshots",
+      "nobody": "No changes",
+      "restore": "Restore this snapshot",
+      "restoreTitle": "Restore this snapshot?",
+      "restoreText": "The doc goes back to this snapshot for everyone writing in it. Nothing is lost: the current text stays as a snapshot.",
+      "restoreConfirm": "Restore it",
+      "restored": "The doc is back to that snapshot"
     }
   },
   "notifications": {
