@@ -2500,7 +2500,15 @@
       "notHelpful": "No me sirvió",
       "note": "¿Qué faltó?",
       "notePlaceholder": "¿Qué faltó o estuvo mal?",
-      "sendNote": "Enviar"
+      "sendNote": "Enviar",
+      "unanswered": {
+        "tab": "Chat",
+        "title": "Preguntas que los docs no respondieron",
+        "help": "Preguntas respondidas sin fuente, o cuya respuesta alguien marcó como que no le sirvió. Cada una es un doc que vale la pena escribir.",
+        "empty": "Hasta ahora cada pregunta encontró su respuesta en los docs.",
+        "down": "Marcada como que no sirvió",
+        "noSource": "Sin fuente en los docs"
+      }
     },
     "glossary": {
       "source": "Fuente: {{title}}",

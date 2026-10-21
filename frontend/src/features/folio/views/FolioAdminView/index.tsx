@@ -15,6 +15,7 @@ import { Tabs } from '../../../../components/ui/Tabs';
 import { GlossaryAdmin } from '../../components/GlossaryAdmin';
 import { HomeEditor } from '../../components/HomeEditor';
 import { TemplatesAdmin } from '../../components/TemplatesAdmin';
+import { UnansweredQuestions } from '../../components/UnansweredQuestions';
 import {
   type FolioCatalog,
   type FolioGrant,
@@ -148,7 +149,7 @@ function AddGrant() {
   );
 }
 
-type Section = 'roles' | 'templates' | 'home' | 'glossary' | FolioCatalog;
+type Section = 'roles' | 'templates' | 'home' | 'glossary' | 'chat' | FolioCatalog;
 const CATALOGS: FolioCatalog[] = ['doc-types', 'audiences', 'languages'];
 
 /** Folio, Admin: global roles (Folio 0.5), the metadata catalogs (Folio 1.3), templates
@@ -172,6 +173,7 @@ export function FolioAdminView() {
           { id: 'templates', label: t('folio.templates.title') },
           { id: 'home', label: t('folio.homeEditor.title') },
           { id: 'glossary', label: t('folio.glossary.title') },
+          { id: 'chat', label: t('folio.chat.unanswered.tab') },
         ]}
       />
       <F.Section>
@@ -183,6 +185,8 @@ export function FolioAdminView() {
           <HomeEditor />
         ) : section === 'glossary' ? (
           <GlossaryAdmin />
+        ) : section === 'chat' ? (
+          <UnansweredQuestions />
         ) : (
           <CatalogEditor key={section} catalog={section} />
         )}
