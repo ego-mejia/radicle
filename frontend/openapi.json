@@ -3194,6 +3194,54 @@
         "title": "FilterVisibility",
         "type": "string"
       },
+      "FolioHealthOut": {
+        "properties": {
+          "status": {
+            "const": "ok",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "FolioHealthOut",
+        "type": "object"
+      },
+      "FolioMeOut": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "handle": {
+            "title": "Handle",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "role": {
+            "description": "Highest of the direct, group and everyone grants",
+            "enum": [
+              "reader",
+              "creator",
+              "admin"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "handle",
+          "display_name",
+          "kind",
+          "role"
+        ],
+        "title": "FolioMeOut",
+        "type": "object"
+      },
       "FormSchemaOut": {
         "properties": {
           "fields": {
@@ -3234,6 +3282,94 @@
           "fields"
         ],
         "title": "FormSchemaOut",
+        "type": "object"
+      },
+      "GrantIn": {
+        "additionalProperties": false,
+        "properties": {
+          "grantee": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Handle or group name; omit for everyone",
+            "title": "Grantee"
+          },
+          "grantee_type": {
+            "enum": [
+              "user",
+              "group",
+              "everyone"
+            ],
+            "title": "Grantee Type",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "reader",
+              "creator",
+              "admin"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "grantee_type",
+          "role"
+        ],
+        "title": "GrantIn",
+        "type": "object"
+      },
+      "GrantOut": {
+        "properties": {
+          "grantee": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Handle or group name; null for everyone",
+            "title": "Grantee"
+          },
+          "grantee_type": {
+            "enum": [
+              "user",
+              "group",
+              "everyone"
+            ],
+            "title": "Grantee Type",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "reader",
+              "creator",
+              "admin"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "grantee_type",
+          "grantee",
+          "role"
+        ],
+        "title": "GrantOut",
         "type": "object"
       },
       "GrantsPut": {
@@ -5063,6 +5199,34 @@
           "next_cursor"
         ],
         "title": "Page[FilterOut]",
+        "type": "object"
+      },
+      "Page_GrantOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GrantOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[GrantOut]",
         "type": "object"
       },
       "Page_GroupOut_": {
@@ -13733,6 +13897,147 @@
         "summary": "Patch Filter",
         "tags": [
           "filters, ranking and preferences"
+        ]
+      }
+    },
+    "/api/v1/folio/admin/grants": {
+      "get": {
+        "description": "Global Folio roles: everyone first, then groups and users. Folio admins only.",
+        "operationId": "list_grants_api_v1_folio_admin_grants_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_GrantOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Grants",
+        "tags": [
+          "folio"
+        ]
+      },
+      "post": {
+        "description": "Give a user, a group or everyone a global role; it replaces their previous one.",
+        "operationId": "set_grant_api_v1_folio_admin_grants_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrantIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrantOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Grant",
+        "tags": [
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/admin/grants/{grant_id}": {
+      "delete": {
+        "operationId": "delete_grant_api_v1_folio_admin_grants__grant_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "grant_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Grant Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Grant",
+        "tags": [
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/health": {
+      "get": {
+        "operationId": "health_api_v1_folio_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioHealthOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/me": {
+      "get": {
+        "description": "Your effective Folio role. 404 when no grant reaches you: Folio is hidden then.",
+        "operationId": "me_api_v1_folio_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioMeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Me",
+        "tags": [
+          "folio"
         ]
       }
     },
