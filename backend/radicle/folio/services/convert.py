@@ -12,10 +12,11 @@ Markdown has no syntax for some blocks, so they use directives (documented in
     Hidden text                     Right                       :status[Done]{color=green}
     :::                             :::                         :u[underlined]
                                     ::::                        @handle (a mention)
+                                                                :ticket[PA-4]
 
 The visual blocks of phase 3 are fences (```visual{format=svg description="..."},
 ```mermaid, ```math, ```chart{kind=bar}, ```timeline), ::::compare with :::side, and
-::pages{label=...}.
+::pages{label=...}. Phase 4 adds ::tickets{rql="..."} (a Docket ticket table).
 
 Images keep size and alignment as `![alt](src "caption"){size=large align=center}`.
 Tables become GFM tables; merged cells, widths and cell colors don't survive Markdown.
@@ -80,6 +81,8 @@ def inline(nodes: list[Node]) -> str:
             out.append(f":status[{_escape(attrs['text'])}]{_attrs(color=attrs.get('color'))}")
         elif kind == "inlineFormula":
             out.append(f"${_code_span(attrs['latex'])}$")
+        elif kind == "ticket":
+            out.append(f":ticket[{attrs['key']}]")
     return "".join(out)
 
 
@@ -232,6 +235,10 @@ def block(node: Node, depth: int = 0) -> str:
             space=attrs.get("space"),
             order=attrs.get("order"),
         )
+    if kind == "ticketTable":
+        return "::tickets" + _attrs(
+            rql=attrs["rql"], title=attrs.get("title"), limit=attrs.get("limit")
+        )
     if kind == "databaseView":
         return "::database" + _attrs(id=attrs["database"], view=attrs.get("view"))
     if kind == "whiteboard":
@@ -283,6 +290,10 @@ def _text_of(node: Node, out: list[str]) -> None:
         out.append(attrs["text"])
     elif kind == "inlineFormula":
         out.append(attrs["latex"])
+    elif kind == "ticket":
+        out.append(attrs["key"])
+    elif kind == "ticketTable" and attrs.get("title"):
+        out.append(attrs["title"] + "\n")
     elif kind == "image":
         out.append(" ".join(v for v in (attrs.get("alt"), attrs.get("caption")) if v))
     elif kind in ("file", "video"):

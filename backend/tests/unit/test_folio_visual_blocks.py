@@ -42,6 +42,9 @@ VISUAL = {"format": "svg", "code": "<svg></svg>", "description": "Un dibujo"}
         (block("timeline", items=[{"title": "x", "status": "late"}]), "is one of done"),
         (block("pageList", label="x", order="random"), "must be one of newest, title"),
         (block("paragraph", {"type": "inlineFormula"}), "latex"),
+        (block("paragraph", {"type": "ticket", "attrs": {"key": "pa-4"}}), "like PA-4"),
+        (block("ticketTable", rql="project = PA", limit=500), "at most 100"),
+        (block("ticketTable"), "rql"),
     ],
 )
 def test_the_schema_says_what_is_wrong(node: dict, says: str) -> None:
@@ -61,6 +64,12 @@ def test_valid_blocks_pass() -> None:
         block("whiteboard", whiteboard="0b7e2c41-5a3d-4f6e-9c8b-1d2e3f4a5b6c"),
     ]
     assert schema.validate(doc(*nodes)) == doc(*nodes)
+
+
+def test_ticket_keys_in_markdown_and_text() -> None:
+    parsed = from_markdown("Ver :ticket[pa-4] y `:ticket[PA-5]`.")
+    assert parsed["content"][0]["content"][1] == {"type": "ticket", "attrs": {"key": "PA-4"}}
+    assert convert.to_text(parsed) == "Ver PA-4 y :ticket[PA-5]."
 
 
 def test_markdown_round_trip_of_a_visual_with_backticks() -> None:

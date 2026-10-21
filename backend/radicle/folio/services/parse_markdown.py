@@ -20,7 +20,7 @@ _md = MarkdownIt("commonmark", {"html": False}).enable(["table", "strikethrough"
 
 _OPEN = re.compile(r"^(:{3,})(panel|expand|columns|column|compare|side)(\{.*\})?\s*$")
 _CLOSE = re.compile(r"^:{3,}\s*$")
-_LEAF = re.compile(r"^::(file|video|pages|database|whiteboard|embed)(\{.*\})\s*$")
+_LEAF = re.compile(r"^::(file|video|pages|database|whiteboard|embed|tickets)(\{.*\})\s*$")
 _INFO = re.compile(r"^(?P<name>[\w-]+)\s*(?P<attrs>\{.*\})?\s*$")
 _ACTION = re.compile(r"^::task\[(?P<label>.*)\](?P<attrs>\{[^}]*\})?\s*$")
 _FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
@@ -28,6 +28,7 @@ _ATTR = re.compile(r'(\w+)=("(?:[^"\\]|\\.)*"|[^\s}]+)')
 _INLINE = re.compile(
     r":status\[(?P<status>[^\]]*)\](?P<status_attrs>\{[^}]*\})?"
     r"|(?<![\w@.])@(?P<handle>[a-z0-9][a-z0-9_-]{0,63})"
+    r"|:ticket\[(?P<ticket>[A-Za-z][A-Za-z0-9]{1,9}-\d{1,9})\]"
 )
 _TASK = re.compile(r"^\[( |x|X)\] ")
 _BOX = re.compile(r"^\[([ x~])\]\s*")
@@ -112,6 +113,8 @@ def _text(text: str, marks: list[Node]) -> list[Node]:
             out.append(_textnode(text[pos : match.start()], marks))
         if match.group("handle"):
             out.append({"type": "mention", "attrs": {"handle": match.group("handle")}})
+        elif match.group("ticket"):
+            out.append({"type": "ticket", "attrs": {"key": match.group("ticket").upper()}})
         else:
             attrs: dict[str, Any] = {"text": match.group("status") or "status"}
             color = _attrs(match.group("status_attrs")).get("color")
@@ -531,6 +534,13 @@ def _convert(items: list[Any], parent: str = "doc") -> list[Node]:
                 if attrs.get("view"):
                     view["view"] = attrs["view"]
                 out.append({"type": "databaseView", "attrs": view})
+            elif name == "tickets" and attrs.get("rql"):
+                table: dict[str, Any] = {"rql": attrs["rql"][:2000]}
+                if attrs.get("title"):
+                    table["title"] = attrs["title"][:200]
+                if (attrs.get("limit") or "").isdigit():
+                    table["limit"] = min(max(int(attrs["limit"]), 1), 100)
+                out.append({"type": "ticketTable", "attrs": table})
             elif name == "whiteboard" and attrs.get("id"):
                 out.append({"type": "whiteboard", "attrs": {"whiteboard": attrs["id"]}})
         else:
