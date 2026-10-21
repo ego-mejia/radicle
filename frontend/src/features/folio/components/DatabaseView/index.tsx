@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Lock, Plus, SlidersHorizontal } from 'lucide-react';
+import { Columns3, Lock, Plus, SlidersHorizontal } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
@@ -16,6 +16,7 @@ import {
   fetchRows,
 } from '../../../../services/api/folioDatabases';
 import { useRowEdits } from '../../hooks/useRowEdits';
+import { ColumnsDialog } from '../ColumnsDialog';
 import { ViewSettings } from '../ViewSettings';
 import { BoardView } from './components/BoardView';
 import { CardsView } from './components/CardsView';
@@ -49,6 +50,7 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
   const edits = useRowEdits(nodeId);
   // The view being changed, or null for a new one; undefined while closed.
   const [settings, setSettings] = useState<DbView | null | undefined>(undefined);
+  const [columnsOpen, setColumnsOpen] = useState(false);
 
   if (database.isError) {
     if (isApiError(database.error, 404))
@@ -99,6 +101,10 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
             <Plus aria-hidden />
             {t('folio.db.newView')}
           </Button>
+          <Button size="sm" variant="ghost" onClick={() => setColumnsOpen(true)}>
+            <Columns3 aria-hidden />
+            {t('folio.db.columns')}
+          </Button>
         </S.Toolbar>
       )}
       {rows.isError && <S.Error role="alert">{errorMessage(rows.error)}</S.Error>}
@@ -110,6 +116,9 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
         />
       ) : (
         !rows.isError && <PageSpinner />
+      )}
+      {columnsOpen && (
+        <ColumnsDialog database={database.data} onClose={() => setColumnsOpen(false)} />
       )}
       {settings !== undefined && (
         <ViewSettings

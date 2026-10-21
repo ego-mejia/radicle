@@ -2271,6 +2271,39 @@
         "lte": "como mucho",
         "empty": "está vacío",
         "not_empty": "no está vacío"
+      },
+      "columns": "Columnas",
+      "columnName": "Nombre de la columna",
+      "columnType": "Tipo",
+      "addColumn": "Agregar columna",
+      "newColumnName": "Columna {{n}}",
+      "removeColumn": "Quitar {{column}}",
+      "typeChange": "Al guardar se borran los valores que no caben en el nuevo tipo.",
+      "cleared_one": "{{count}} valor no cabía en el nuevo tipo de su columna y se borró.",
+      "cleared_other": "{{count}} valores no cabían en el nuevo tipo de su columna y se borraron.",
+      "choices": "Opciones",
+      "choiceValue": "Opción",
+      "choiceColor": "Color",
+      "addChoice": "Agregar opción",
+      "removeChoice": "Quitar {{choice}}",
+      "type": {
+        "text": "Texto",
+        "number": "Número",
+        "date": "Fecha",
+        "select": "Selección",
+        "multi_select": "Selección múltiple",
+        "person": "Persona",
+        "checkbox": "Casilla",
+        "url": "Enlace",
+        "page": "Página"
+      },
+      "color": {
+        "grey": "Gris",
+        "blue": "Azul",
+        "green": "Verde",
+        "yellow": "Amarillo",
+        "red": "Rojo",
+        "purple": "Morado"
       }
     }
   },
