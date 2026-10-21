@@ -1,0 +1,402 @@
+"""Markdown to Folio documents (Folio 1.2); `convert.to_markdown` goes the other way. The
+syntax is in docs/folio/markdown.md. Directives are resolved line by line first (never in
+fenced code); the rest goes through markdown-it (CommonMark, GFM tables and strike, no HTML).
+"""
+
+import re
+from dataclasses import dataclass, field
+from typing import Any
+
+from markdown_it import MarkdownIt
+from markdown_it.token import Token
+
+from radicle.folio.services import schema
+
+Node = dict[str, Any]
+
+_md = MarkdownIt("commonmark", {"html": False}).enable(["table", "strikethrough"])
+
+_OPEN = re.compile(r"^(:{3,})(panel|expand|columns|column)(\{.*\})?\s*$")
+_CLOSE = re.compile(r"^:{3,}\s*$")
+_LEAF = re.compile(r"^::(file|video)(\{.*\})\s*$")
+_FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
+_ATTR = re.compile(r'(\w+)=("(?:[^"\\]|\\.)*"|[^\s}]+)')
+_INLINE = re.compile(
+    r":status\[(?P<status>[^\]]*)\](?P<status_attrs>\{[^}]*\})?"
+    r"|(?<![\w@.])@(?P<handle>[a-z0-9][a-z0-9_-]{0,63})"
+)
+_TASK = re.compile(r"^\[( |x|X)\] ")
+
+
+def _attrs(text: str | None) -> dict[str, str]:
+    if not text:
+        return {}
+    out = {}
+    for key, value in _ATTR.findall(text.strip("{}")):
+        if value.startswith('"'):
+            value = re.sub(r"\\(.)", r"\1", value[1:-1])
+        out[key] = value
+    return out
+
+
+@dataclass
+class _Container:
+    name: str
+    attrs: dict[str, str]
+    items: list[Any] = field(default_factory=list)
+
+
+def _segments(markdown: str) -> list[Any]:
+    """Lines grouped into Markdown text, directive containers and leaf directives."""
+    root = _Container("doc", {})
+    stack = [root]
+    buffer: list[str] = []
+    fence: str | None = None
+
+    def flush() -> None:
+        if buffer:
+            stack[-1].items.append("\n".join(buffer))
+            buffer.clear()
+
+    for line in markdown.replace("\r\n", "\n").split("\n"):
+        mark = _FENCE.match(line)
+        if fence is not None:
+            buffer.append(line)
+            if mark and mark.group(1)[0] == fence[0] and len(mark.group(1)) >= len(fence):
+                fence = None
+            continue
+        if mark:
+            fence = mark.group(1)
+            buffer.append(line)
+            continue
+        stripped = line.strip()
+        if (opened := _OPEN.match(stripped)) is not None:
+            flush()
+            container = _Container(opened.group(2), _attrs(opened.group(3)))
+            stack[-1].items.append(container)
+            stack.append(container)
+        elif _CLOSE.match(stripped) and len(stack) > 1:
+            flush()
+            stack.pop()
+        elif (leaf := _LEAF.match(stripped)) is not None:
+            flush()
+            stack[-1].items.append((leaf.group(1), _attrs(leaf.group(2))))
+        elif stripped in ("[[toc]]", "[[children]]"):
+            flush()
+            stack[-1].items.append(("toc" if stripped == "[[toc]]" else "children", {}))
+        else:
+            buffer.append(line)
+    flush()
+    return root.items
+
+
+# --- inline ---------------------------------------------------------------------------------
+
+
+def _text(text: str, marks: list[Node]) -> list[Node]:
+    """Plain text with mentions and inline status pulled out."""
+    out: list[Node] = []
+    pos = 0
+    in_code = any(m["type"] == "code" for m in marks)
+    for match in [] if in_code else _INLINE.finditer(text):
+        if match.start() > pos:
+            out.append(_textnode(text[pos : match.start()], marks))
+        if match.group("handle"):
+            out.append({"type": "mention", "attrs": {"handle": match.group("handle")}})
+        else:
+            attrs: dict[str, Any] = {"text": match.group("status") or "status"}
+            color = _attrs(match.group("status_attrs")).get("color")
+            if color in schema.STATUS_COLORS:
+                attrs["color"] = color
+            out.append({"type": "status", "attrs": attrs})
+        pos = match.end()
+    if pos < len(text):
+        out.append(_textnode(text[pos:], marks))
+    return [n for n in out if n["type"] != "text" or n["text"]]
+
+
+def _textnode(text: str, marks: list[Node]) -> Node:
+    node: Node = {"type": "text", "text": text}
+    if marks:
+        node["marks"] = [dict(m) for m in marks]
+    return node
+
+
+_ORDER = ("bold", "italic", "strike", "underline", "code", "link")
+
+
+def _sorted_marks(marks: list[Node]) -> list[Node]:
+    return sorted(marks, key=lambda m: _ORDER.index(m["type"]))
+
+
+def _inline(tokens: list[Token]) -> list[Node]:
+    out: list[Node] = []
+    marks: list[Node] = []
+    underline = 0
+    pairs = {"strong": "bold", "em": "italic", "s": "strike"}
+
+    def current() -> list[Node]:
+        extra = [{"type": "underline"}] if underline else []
+        return _sorted_marks(marks + extra)
+
+    for tok in tokens:
+        kind = tok.type
+        if kind == "text":
+            text = tok.content
+            # :u[...] may span several tokens (:u[**x**]); track the brackets.
+            while text:
+                if ":u[" in text:
+                    before, _, text = text.partition(":u[")
+                    out += _text(before, current())
+                    underline += 1
+                    continue
+                if underline and "]" in text:
+                    before, _, text = text.partition("]")
+                    out += _text(before, current())
+                    underline -= 1
+                    continue
+                out += _text(text, current())
+                text = ""
+        elif kind == "code_inline":
+            out.append(_textnode(tok.content, _sorted_marks([*current(), {"type": "code"}])))
+        elif kind in ("softbreak",):
+            out += _text(" ", current())
+        elif kind == "hardbreak":
+            out.append({"type": "hardBreak"})
+        elif kind.endswith("_open") and kind[:-5] in pairs:
+            marks.append({"type": pairs[kind[:-5]]})
+        elif kind.endswith("_close") and kind[:-6] in pairs:
+            name = pairs[kind[:-6]]
+            marks = [m for m in marks if m["type"] != name]
+        elif kind == "link_open":
+            marks.append({"type": "link", "attrs": {"href": str(tok.attrs.get("href", ""))}})
+        elif kind == "link_close":
+            marks = [m for m in marks if m["type"] != "link"]
+    return _merge(out)
+
+
+def _merge(nodes: list[Node]) -> list[Node]:
+    out: list[Node] = []
+    for node in nodes:
+        last = out[-1] if out else None
+        if (
+            last is not None
+            and node["type"] == last["type"] == "text"
+            and node.get("marks") == last.get("marks")
+        ):
+            last["text"] += node["text"]
+        else:
+            out.append(node)
+    return out
+
+
+# --- blocks ---------------------------------------------------------------------------------
+
+
+def _image(inline_tokens: list[Token]) -> Node | None:
+    """A paragraph that is only an image (and its {size align}) is an image block."""
+    parts = [t for t in inline_tokens if not (t.type == "text" and not t.content.strip())]
+    if not parts or parts[0].type != "image":
+        return None
+    extra = parts[1:]
+    if len(extra) > 1 or (extra and not re.fullmatch(r"\{.*\}", extra[0].content.strip())):
+        return None
+    tok = parts[0]
+    src = str(tok.attrs.get("src", ""))
+    attrs: dict[str, Any] = {}
+    if src.startswith("asset:"):
+        attrs["assetId"] = src[len("asset:") :]
+    elif src:
+        attrs["src"] = src
+    alt = "".join(c.content for c in (tok.children or []))
+    if alt:
+        attrs["alt"] = alt
+    if tok.attrs.get("title"):
+        attrs["caption"] = str(tok.attrs["title"])
+    options = _attrs(extra[0].content.strip()) if extra else {}
+    if options.get("size") in schema.IMAGE_SIZES:
+        attrs["size"] = options["size"]
+    if options.get("align") in schema.ALIGNS:
+        attrs["align"] = options["align"]
+    return {"type": "image", "attrs": attrs}
+
+
+def _paragraph(inline_tokens: list[Token]) -> Node:
+    return _image(inline_tokens) or {"type": "paragraph", "content": _inline(inline_tokens)}
+
+
+def _clean(node: Node) -> Node:
+    if node.get("content") == []:
+        del node["content"]
+    return node
+
+
+class _Blocks:
+    def __init__(self, tokens: list[Token]) -> None:
+        self.tokens = tokens
+        self.i = 0
+
+    def until(self, closing: str | None) -> list[Node]:
+        out: list[Node] = []
+        while self.i < len(self.tokens):
+            tok = self.tokens[self.i]
+            if closing and tok.type == closing:
+                self.i += 1
+                return out
+            node = self.one()
+            if node is not None:
+                out.append(node)
+        return out
+
+    def one(self) -> Node | None:
+        tok = self.tokens[self.i]
+        self.i += 1
+        kind = tok.type
+        if kind == "heading_open":
+            level = min(int(tok.tag[1]), 4)
+            content = _inline(self.tokens[self.i].children or [])
+            self.i += 2
+            return _clean({"type": "heading", "attrs": {"level": level}, "content": content})
+        if kind == "paragraph_open":
+            node = _paragraph(self.tokens[self.i].children or [])
+            self.i += 2
+            return _clean(node)
+        if kind in ("bullet_list_open", "ordered_list_open"):
+            return self.list(tok)
+        if kind == "blockquote_open":
+            return {"type": "blockquote", "content": self.until("blockquote_close") or [_empty()]}
+        if kind in ("fence", "code_block"):
+            code = tok.content[:-1] if tok.content.endswith("\n") else tok.content
+            block: Node = {"type": "codeBlock", "attrs": {"language": tok.info.strip() or None}}
+            if code:
+                block["content"] = [{"type": "text", "text": code}]
+            return block
+        if kind == "hr":
+            return {"type": "horizontalRule"}
+        if kind == "table_open":
+            return self.table()
+        return None  # html is off; anything else carries no content
+
+    def list(self, opening: Token) -> Node:
+        ordered = opening.type == "ordered_list_open"
+        closing = "ordered_list_close" if ordered else "bullet_list_close"
+        items: list[Node] = []
+        task = not ordered
+        while self.tokens[self.i].type != closing:
+            self.i += 1  # list_item_open
+            content = self.until("list_item_close") or [_empty()]
+            first = content[0]
+            match = None
+            if first["type"] == "paragraph" and first.get("content"):
+                head = first["content"][0]
+                if head["type"] == "text" and not head.get("marks"):
+                    match = _TASK.match(head["text"])
+            if match is None:
+                task = False
+            items.append({"content": content, "task": match})
+        self.i += 1
+        if task:
+            return {"type": "taskList", "content": [_task(item) for item in items]}
+        node: Node = {
+            "type": "orderedList" if ordered else "bulletList",
+            "content": [{"type": "listItem", "content": item["content"]} for item in items],
+        }
+        if ordered:
+            node["attrs"] = {"start": int(opening.attrs.get("start", 1) or 1)}
+        return node
+
+    def table(self) -> Node:
+        rows: list[Node] = []
+        cell_type = "tableHeader"
+        while self.tokens[self.i].type != "table_close":
+            tok = self.tokens[self.i]
+            self.i += 1
+            if tok.type == "tbody_open":
+                cell_type = "tableCell"
+            elif tok.type == "tr_open":
+                rows.append({"type": "tableRow", "content": []})
+            elif tok.type in ("th_open", "td_open"):
+                inline_tok = self.tokens[self.i]
+                content = _inline(inline_tok.children or [])
+                paragraph = _clean({"type": "paragraph", "content": content})
+                rows[-1]["content"].append({"type": cell_type, "content": [paragraph]})
+                self.i += 2
+        self.i += 1
+        return {"type": "table", "content": rows}
+
+
+def _task(item: dict[str, Any]) -> Node:
+    content = item["content"]
+    first = content[0]
+    head = first["content"][0]
+    rest = head["text"][item["task"].end() :]
+    first["content"] = ([{**head, "text": rest}] if rest else []) + first["content"][1:]
+    _clean(first)
+    checked = item["task"].group(1).lower() == "x"
+    return {"type": "taskItem", "attrs": {"checked": checked}, "content": content}
+
+
+def _empty() -> Node:
+    return {"type": "paragraph"}
+
+
+def _markdown_blocks(text: str) -> list[Node]:
+    return _Blocks(_md.parse(text)).until(None)
+
+
+def _convert(items: list[Any], parent: str = "doc") -> list[Node]:
+    out: list[Node] = []
+    for item in items:
+        if isinstance(item, str):
+            out += _markdown_blocks(item)
+        elif isinstance(item, tuple):
+            name, attrs = item
+            if name == "toc":
+                out.append({"type": "tableOfContents"})
+            elif name == "children":
+                out.append({"type": "childPages"})
+            elif name == "file" and attrs.get("asset"):
+                file_attrs: dict[str, Any] = {"assetId": attrs["asset"]}
+                if attrs.get("name"):
+                    file_attrs["name"] = attrs["name"]
+                if attrs.get("type"):
+                    file_attrs["mimeType"] = attrs["type"]
+                if (attrs.get("size") or "").isdigit():
+                    file_attrs["size"] = int(attrs["size"])
+                out.append({"type": "file", "attrs": file_attrs})
+            elif name == "video":
+                keys = (("src", "src"), ("assetId", "asset"), ("caption", "caption"))
+                video = {k: attrs[v] for k, v in keys if attrs.get(v)}
+                out.append({"type": "video", "attrs": video})
+        else:
+            out += _container(item, parent)
+    return out
+
+
+def _container(c: _Container, parent: str) -> list[Node]:
+    inner = _convert(c.items, c.name) or [_empty()]
+    if c.name == "panel":
+        kind = c.attrs.get("kind")
+        kind = kind if kind in schema.PANEL_KINDS else "info"
+        return [{"type": "panel", "attrs": {"kind": kind}, "content": inner}]
+    if c.name == "expand":
+        attrs = {"title": c.attrs["title"]} if c.attrs.get("title") else {}
+        node: Node = {"type": "expand", "content": inner}
+        if attrs:
+            node["attrs"] = attrs
+        return [node]
+    if c.name == "columns":
+        columns = [n for n in inner if n["type"] == "column"][:3]
+        if len(columns) < 2:
+            return [n for col in columns for n in col["content"]] or inner
+        layout = c.attrs.get("layout")
+        if layout not in schema.COLUMN_LAYOUTS:
+            layout = "three" if len(columns) == 3 else "two"
+        return [{"type": "columns", "attrs": {"layout": layout}, "content": columns}]
+    # A column only means something inside columns; elsewhere it keeps its content.
+    return [{"type": "column", "content": inner}] if parent == "columns" else inner
+
+
+def from_markdown(markdown: str) -> Node:
+    """A valid Folio document; unknown or misplaced directives degrade to their content."""
+    return schema.validate({"type": "doc", "content": _convert(_segments(markdown))})
