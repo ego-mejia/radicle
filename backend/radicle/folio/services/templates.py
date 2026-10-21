@@ -23,7 +23,7 @@ from radicle.folio.db.templates import FolioTemplate, TemplateKind, TemplateScop
 from radicle.folio.services import access, nodes, schema, sharing, spaces
 from radicle.folio.services.parse_markdown import from_markdown
 from radicle.folio.services.quality import today
-from radicle.folio.services.template_library import BUILTINS
+from radicle.folio.services.template_library import BUILTINS, SPACE_BUILTINS
 from radicle.platform import authz
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.errors import NotFound, ValidationFailed
@@ -58,6 +58,20 @@ async def ensure_builtins(db: AsyncSession) -> None:
                 doc_type_key=b.doc_type,
                 content_json=from_markdown(b.markdown),
                 default_metadata=b.metadata,
+            )
+        )
+    for sb in SPACE_BUILTINS:
+        if sb.key in have:
+            continue
+        db.add(
+            FolioTemplate(
+                kind=TemplateKind.space,
+                scope=TemplateScope.global_,
+                builtin_key=sb.key,
+                name=sb.name,
+                description=sb.description,
+                icon=sb.icon,
+                structure=sb.structure,
             )
         )
     await db.flush()

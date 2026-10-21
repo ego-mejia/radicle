@@ -43,7 +43,7 @@ async def test_the_included_templates_appear_once(db: AsyncSession, team: Team) 
     }
     await templates.list_templates(db, fernando)
     count = await db.scalar(select(func.count()).select_from(FolioTemplate))
-    assert count == len(first) == 6
+    assert count == len(first) == 7
 
 
 async def test_acceptance_a_build_spec_from_its_template(
