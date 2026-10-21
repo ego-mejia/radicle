@@ -26,6 +26,7 @@ import { BLOCKS } from '../../editor/blocks';
 import { SlashCommand } from '../../editor/slash';
 import { FolioUploads } from '../../editor/uploads';
 import { pickFiles } from '../../hooks/pickFiles';
+import { AiMenu } from '../AiMenu';
 import { EditorProse } from '../EditorProse';
 import { SelectionComment } from '../SelectionComment';
 import { PageHeader } from './components/PageHeader';
@@ -182,6 +183,7 @@ function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
             {t('folio.editor.history')}
           </S.Back>
         )}
+        {editor && <AiMenu editor={editor} nodeId={node.id} space={node.space} />}
         <S.SaveState role="status" $error={state === 'error' || state === 'offline'}>
           {t(`folio.editor.state.${state}`)}
         </S.SaveState>

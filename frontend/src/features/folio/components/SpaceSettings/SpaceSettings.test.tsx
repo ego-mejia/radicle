@@ -15,6 +15,7 @@ const SPACE = {
   created_at: '2026-10-20T10:00:00Z',
   permissions: ['view', 'admin'],
   verify_days: 90,
+  ai_enabled: true,
 } as FolioSpace;
 
 describe('SpaceSettings', () => {
@@ -40,5 +41,17 @@ describe('SpaceSettings', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(await screen.findByText('Settings saved')).toBeInTheDocument();
     expect(calls.at(-1)?.body).toEqual({ verify_days: 30 });
+  });
+
+  it('turns the editor AI off in the space', async () => {
+    const calls = mockFetch({
+      'PATCH /api/v1/folio/spaces/docs': { status: 200, body: { ...SPACE, ai_enabled: false } },
+    });
+    renderWithProviders(<SpaceSettings space={SPACE} />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Space settings' }));
+    await userEvent.click(screen.getByRole('checkbox', { name: /Editor AI/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+    expect(await screen.findByText('Settings saved')).toBeInTheDocument();
+    expect(calls.at(-1)?.body).toEqual({ verify_days: 90, ai_enabled: false });
   });
 });

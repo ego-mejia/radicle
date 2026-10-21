@@ -2212,7 +2212,9 @@
       "title": "Space settings",
       "verifyDays": "Days a verification lasts",
       "verifyDaysHint": "After this many days a Verified page turns Outdated and its owner is told (1 to 730).",
-      "saved": "Settings saved"
+      "saved": "Settings saved",
+      "ai": "Editor AI",
+      "aiHint": "Summarize, rewrite and suggest metadata while writing in this space."
     },
     "tasks": {
       "title": "My tasks",
@@ -2411,6 +2413,16 @@
         "choose": "Choose a whiteboard",
         "none": "No whiteboards you can see yet."
       }
+    },
+    "ai": {
+      "button": "AI",
+      "summarize": "Summarize the page",
+      "summaryTitle": "Summary",
+      "summaryHeading": "Summary",
+      "thinking": "Thinking…",
+      "proposalNote": "A proposal: nothing changes in the page until you insert it.",
+      "again": "Try again",
+      "insertSummary": "Insert at the top"
     }
   },
   "notifications": {
