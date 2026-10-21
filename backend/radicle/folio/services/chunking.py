@@ -51,8 +51,11 @@ def _block_text(node: Node) -> str:
         return str(attrs.get("name") or attrs.get("caption") or "")
     if node["type"] == "embed":
         return " ".join(v for v in (attrs.get("title"), attrs["url"]) if v)
-    if node["type"] in ("tableOfContents", "childPages", "horizontalRule"):
+    if node["type"] in ("tableOfContents", "childPages", "horizontalRule", "pageList"):
         return ""
+    if node["type"] in ("visual", "diagram", "formula", "chart", "timeline"):
+        # Their description, caption and data; a visual's code is not what people search.
+        return convert.to_text({"type": "doc", "content": [node]})
     return convert.block(node)
 
 

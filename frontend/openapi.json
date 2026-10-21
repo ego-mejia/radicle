@@ -1061,6 +1061,48 @@
         "title": "BlockChangeOut",
         "type": "object"
       },
+      "BlockIn": {
+        "additionalProperties": false,
+        "properties": {
+          "after_heading": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Add it at the end of this section; the end of the doc if not",
+            "title": "After Heading"
+          },
+          "block": {
+            "additionalProperties": true,
+            "description": "One block of the document schema (TipTap JSON)",
+            "title": "Block",
+            "type": "object"
+          }
+        },
+        "required": [
+          "block"
+        ],
+        "title": "BlockIn",
+        "type": "object"
+      },
+      "BlockOut": {
+        "properties": {
+          "content_md": {
+            "description": "The whole draft after adding the block",
+            "title": "Content Md",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content_md"
+        ],
+        "title": "BlockOut",
+        "type": "object"
+      },
       "BlockedPolicy": {
         "enum": [
           "warn",
@@ -15711,6 +15753,83 @@
         "title": "VersionOut",
         "type": "object"
       },
+      "VisualCheckIn": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "format": {
+            "enum": [
+              "svg",
+              "html"
+            ],
+            "title": "Format",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "format",
+          "code"
+        ],
+        "title": "VisualCheckIn",
+        "type": "object"
+      },
+      "VisualCheckOut": {
+        "properties": {
+          "problems": {
+            "description": "What to fix before it goes in a page",
+            "items": {
+              "type": "string"
+            },
+            "title": "Problems",
+            "type": "array"
+          },
+          "valid": {
+            "description": "False when a problem would stop it",
+            "title": "Valid",
+            "type": "boolean"
+          },
+          "warnings": {
+            "description": "What would make it better (tokens, description)",
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "valid",
+          "problems",
+          "warnings"
+        ],
+        "title": "VisualCheckOut",
+        "type": "object"
+      },
       "VoteOut": {
         "properties": {
           "vote_count": {
@@ -20745,6 +20864,61 @@
         ]
       }
     },
+    "/api/v1/folio/nodes/{node_id}/blocks": {
+      "post": {
+        "description": "Add a block to the draft under a heading. Visuals are checked first.",
+        "operationId": "add_block_api_v1_folio_nodes__node_id__blocks_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlockIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlockOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Block",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/nodes/{node_id}/comments": {
       "get": {
         "description": "The page's threads, oldest first, with their replies. Orphaned inline threads keep\ntheir quote.",
@@ -23429,6 +23603,49 @@
           }
         },
         "summary": "Update Template",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/visuals/check": {
+      "post": {
+        "description": "What the sandbox would block in a visual, and how to make it follow the theme.",
+        "operationId": "check_visual_api_v1_folio_visuals_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisualCheckIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisualCheckOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Check Visual",
         "tags": [
           "folio",
           "folio"
