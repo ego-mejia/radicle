@@ -364,7 +364,8 @@
             "enum": [
               "page",
               "folder",
-              "blog_post"
+              "blog_post",
+              "live_doc"
             ],
             "title": "Kind",
             "type": "string"
@@ -4277,6 +4278,29 @@
         "title": "FolioMeOut",
         "type": "object"
       },
+      "FolioPersonOut": {
+        "properties": {
+          "handle": {
+            "title": "Handle",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "handle",
+          "name",
+          "kind"
+        ],
+        "title": "FolioPersonOut",
+        "type": "object"
+      },
       "FolioReactionOut": {
         "properties": {
           "count": {
@@ -6848,7 +6872,8 @@
             "enum": [
               "page",
               "folder",
-              "blog_post"
+              "blog_post",
+              "live_doc"
             ],
             "title": "Kind",
             "type": "string"
@@ -7032,7 +7057,8 @@
             "enum": [
               "page",
               "folder",
-              "blog_post"
+              "blog_post",
+              "live_doc"
             ],
             "title": "Kind",
             "type": "string"
@@ -7215,7 +7241,8 @@
             "enum": [
               "page",
               "folder",
-              "blog_post"
+              "blog_post",
+              "live_doc"
             ],
             "title": "Kind",
             "type": "string"
@@ -7732,6 +7759,34 @@
           "next_cursor"
         ],
         "title": "Page[FilterOut]",
+        "type": "object"
+      },
+      "Page_FolioPersonOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FolioPersonOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[FolioPersonOut]",
         "type": "object"
       },
       "Page_FolioTemplateOut_": {
@@ -13977,7 +14032,8 @@
             "enum": [
               "page",
               "folder",
-              "blog_post"
+              "blog_post",
+              "live_doc"
             ],
             "title": "Kind",
             "type": "string"
@@ -19803,6 +19859,54 @@
           }
         },
         "summary": "Restore",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/people": {
+      "get": {
+        "description": "For @mentions: active people and agents who can read Folio, best matches first.",
+        "operationId": "people_api_v1_folio_people_get",
+        "parameters": [
+          {
+            "description": "Start of a handle or a name",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "Start of a handle or a name",
+              "maxLength": 64,
+              "title": "Q",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_FolioPersonOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "People",
         "tags": [
           "folio",
           "folio"

@@ -13,6 +13,7 @@ from radicle.folio.api import comments as comments_api
 from radicle.folio.api import drafts as drafts_api
 from radicle.folio.api import home as home_api
 from radicle.folio.api import organize as organize_api
+from radicle.folio.api import people as people_api
 from radicle.folio.api import publishing as publishing_api
 from radicle.folio.api import query as query_api
 from radicle.folio.api import search as search_api
@@ -145,3 +146,4 @@ router.include_router(templates_api.router)
 router.include_router(collab_api.router)
 router.include_router(comments_api.router)
 router.include_router(tasks_api.router)
+router.include_router(people_api.router)

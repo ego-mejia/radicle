@@ -96,6 +96,8 @@ EXEMPT = {
     "/api/v1/folio/assets/{asset_id}",  # covered below: ids of hidden pages' assets
     # Templates hold no page; a hidden space's templates: test_folio_templates_api.py.
     "/api/v1/folio/templates/{template_id}",
+    # Names and handles of people who read Folio, for @mentions; no page data.
+    "/api/v1/folio/people",
 }
 
 
