@@ -66,6 +66,12 @@ export const Actions = styled.div`
     text-decoration: none;
     cursor: pointer;
   }
+  /* The page's ⋯ menu: square, or the padding above leaves its icon a dot. */
+  button[aria-haspopup='menu'] {
+    justify-content: center;
+    width: 40px;
+    padding: 0;
+  }
 
   svg {
     width: 16px;
