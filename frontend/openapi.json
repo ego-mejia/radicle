@@ -8450,6 +8450,18 @@
             "title": "Command Url",
             "type": "string"
           },
+          "events_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Slack's Events API URL, for link previews",
+            "title": "Events Url"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -8481,7 +8493,8 @@
           "name",
           "active",
           "notices",
-          "command_url"
+          "command_url",
+          "events_url"
         ],
         "title": "IntegrationOut",
         "type": "object"
@@ -29958,6 +29971,52 @@
           }
         },
         "summary": "Chat Command",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/hooks/chat/{integration_id}/events": {
+      "post": {
+        "description": "Slack's Events API (Request URL): Radicle previews its own links (`link_shared`).",
+        "operationId": "chat_events_api_v1_hooks_chat__integration_id__events_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "integration_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Integration Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Chat Events Api V1 Hooks Chat  Integration Id  Events Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Events",
         "tags": [
           "integrations"
         ]

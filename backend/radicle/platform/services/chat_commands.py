@@ -237,12 +237,17 @@ async def teams_command(
     return {"type": "message", "text": await run(db, user, text)}
 
 
-async def handle(
-    db: AsyncSession, integration_id: uuid.UUID, headers: dict[str, str], body: bytes
-) -> dict[str, Any]:
+async def active(db: AsyncSession, integration_id: uuid.UUID) -> Integration:
     integration = await db.get(Integration, integration_id)
     if integration is None or not integration.active:
         raise NotFound("No active integration here. Check the URL in Admin, Integrations.")
+    return integration
+
+
+async def handle(
+    db: AsyncSession, integration_id: uuid.UUID, headers: dict[str, str], body: bytes
+) -> dict[str, Any]:
+    integration = await active(db, integration_id)
     creds = integrations.credentials(integration)
     if integration.kind == IntegrationKind.slack:
         check_slack(creds["signing_secret"], headers, body)
