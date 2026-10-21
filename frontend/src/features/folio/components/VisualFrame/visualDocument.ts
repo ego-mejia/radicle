@@ -40,13 +40,17 @@ const HOST_SCRIPT = `(() => {
     style.textContent = ':root{' + Object.entries(d.tokens || {})
       .map(([k, v]) => k + ':' + String(v).replace(/[;{}<]/g, '')).join(';') + '}';
   });
+  // The body's height, not the root's: the root is never shorter than the iframe, so a
+  // frame that grew once (say, while narrow) could never shrink back.
   let last = 0;
   const report = () => {
-    const h = Math.ceil(Math.max(root.scrollHeight, document.body ? document.body.scrollHeight : 0));
+    const h = Math.ceil(document.body ? document.body.scrollHeight : root.scrollHeight);
     if (h !== last) { last = h; parent.postMessage({ type: '${HEIGHT_MESSAGE}', height: h }, '*'); }
   };
   addEventListener('load', report);
-  new ResizeObserver(report).observe(root);
+  const sizes = new ResizeObserver(report);
+  sizes.observe(root);
+  addEventListener('DOMContentLoaded', () => sizes.observe(document.body));
 })();`;
 
 // The color-scheme follows the theme: when it differs from the page's, Chrome paints the
