@@ -1674,7 +1674,18 @@
       "expand": "Expandir {{title}}",
       "move": "Mover {{title}}",
       "dropRoot": "Suelta aquí para moverla al primer nivel",
-      "emptyTree": "Todavía no hay páginas."
+      "emptyTree": "Todavía no hay páginas.",
+      "notFound": "Este space no está disponible",
+      "personal": "Space personal",
+      "pages": "Páginas",
+      "posts": "Blog posts",
+      "noPosts": "Todavía no hay blog posts.",
+      "new": {
+        "page": "Nueva página",
+        "folder": "Nueva carpeta",
+        "blog_post": "Nuevo blog post",
+        "title": "Título"
+      }
     },
     "reader": {
       "title": "Página",
