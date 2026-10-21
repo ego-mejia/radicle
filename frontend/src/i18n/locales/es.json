@@ -1828,7 +1828,14 @@
       "kind": "Tipo",
       "docType": "Tipo de documento",
       "language": "Idioma",
-      "label": "Label"
+      "label": "Label",
+      "rql": "Consulta con RQL",
+      "rqlLabel": "Consulta RQL",
+      "run": "Ejecutar",
+      "rqlNone": "Ningún doc coincide con esta consulta.",
+      "docTitle": "Título",
+      "published": "Publicado",
+      "draft": "Sin publicar"
     },
     "approvals": {
       "title": "Aprobaciones",
