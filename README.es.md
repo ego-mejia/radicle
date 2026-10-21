@@ -49,6 +49,7 @@ Esta es la versión en español del README. La versión principal, en inglés, e
 | 🔒 **Control de acceso en serio** | Grupos, matriz de permisos por proyecto, tickets restringidos que no aparecen en ningún lado (búsqueda, boards, reportes, MCP), SSO con OpenID Connect y un audit log que nadie puede modificar. |
 | 🗺️ **Planea y ve** | Boards Kanban y Scrum, sprints, timeline con pronóstico, diez reportes agile y generales, y dashboards que armas arrastrando. |
 | 🟢 **Una guía adentro** | Radi, la mascota, responde cómo hacer las cosas con la guía de uso y, con el LLM que elijas, te lleva por la pantalla paso a paso. |
+| 📚 **Docs junto a los tickets** | **Folio**, la segunda app, guarda la documentación del equipo: spaces, un editor por bloques, versiones, permisos por página, búsqueda que entiende preguntas y un MCP para que los agentes lean y propongan docs que un admin aprueba. |
 | ⚡ **Rápido para trabajar** | Lenguaje de queries (RQL), paleta de comandos, atajos para todo y temas claro y oscuro. En inglés y en español. |
 | 🏠 **Tuyo** | Un `docker compose up`. PostgreSQL, tu servidor, tus datos. |
 
@@ -369,12 +370,51 @@ Cambia entre claro y oscuro con el botón de la luna, y entre inglés y español
 
 **Úsalo como app de escritorio.** Radicle se puede instalar como app propia, con Radi en el Dock y su propia ventana: en Chrome da clic en **Instalar** en la barra de direcciones, o en Safari elige **Archivo → Añadir al Dock**.
 
-### 15. Folio y el proveedor de IA
+### 15. Folio: los docs de tu equipo
 
-Radicle está creciendo con una segunda app, **Radicle Folio**, para documentación (specs en `docs/folio/`). Docket, el tracker de tickets, y Folio comparten usuarios, grupos, agentes y el inicio de sesión: abre el menú del logo (o usa `g f` / `g d`) para cambiar de app, y cada una abre donde la dejaste.
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Radicle ya tiene una segunda app: **Folio**, para documentación. Abre el menú del logo o presiona <kbd>g</kbd> <kbd>f</kbd>, y <kbd>g</kbd> <kbd>d</kbd> para regresar a Docket.
 
-- **Admin → Settings → AI provider** define un solo proveedor para chat y embeddings (OpenAI, un servidor compatible con OpenAI como Voyage, Ollama, o Anthropic para chat). La llave se guarda cifrada; **Test connection** genera un embedding corto y muestra dimensiones y latencia. Sin proveedor, todo lo demás funciona.
-- **Folio → Admin → Global roles** decide quién lee, crea o administra Folio: una persona, un grupo o todos (por default todos leen). Quien no tiene ningún rol no ve Folio.
+Docket (el tracker de tickets) y Folio comparten personas, grupos, agentes y el inicio de sesión. Cada app abre donde la dejaste.
+
+<p align="center"><img src="docs/images/folio-home.png" alt="Home de Folio" width="900"></p>
+
+- **Home.** Una portada tipo revista: el doc destacado, el último anuncio, AI Tools, los últimos posts, lo más leído y cada space con su número de docs. **Write** empieza una página o un blog post en cualquier space donde puedas crear.
+- **Spaces y páginas.** Cada equipo tiene un space con un árbol de páginas y folders (arrástralos para reordenarlos o anidarlos) y un blog. Cada persona tiene además su space personal.
+
+<p align="center">
+  <img src="docs/images/folio-space.png" alt="Un space con su árbol y sus blog posts" width="49%">
+  <img src="docs/images/folio-read.png" alt="Lectura de una página como revista" width="49%">
+</p>
+
+- **Lectura.** Las páginas se leen como revista, con el índice "On this page", el dueño, estado, tipo, idioma y labels. El **modo enfoque** deja solo el texto y una barra de progreso, y recuerda tu elección. En claro y oscuro, como todo Radicle.
+- **Escritura.** Un editor a pantalla completa guarda tu borrador mientras escribes. Presiona <kbd>/</kbd> para cualquier bloque (encabezados, listas, checklists, tablas, código, paneles, expandibles, columnas, imágenes, archivos y video) o usa atajos de Markdown. Pega o suelta imágenes para subirlas.
+
+<p align="center">
+  <img src="docs/images/folio-editor.png" alt="El editor con el menú /" width="49%">
+  <img src="docs/images/folio-publish.png" alt="Publicar con metadata" width="49%">
+</p>
+
+- **Publicación.** Cada página lleva la metadata que tu equipo necesita: descripción, tipo de documento, labels, dueño, audiencias e idioma. Publicar la revisa campo por campo. Cada publicación es una versión inmutable: compara dos cualesquiera y restaura una vieja, que se vuelve una versión nueva.
+- **Estado.** El dueño marca una página *In review* o *Verified*; la verificación vence a los días del space (90 por default), la página pasa a *Outdated* y su dueño recibe aviso. La búsqueda sube las verificadas y baja las vencidas.
+- **Permisos.** Roles globales (reader, creator, admin) en **Folio → Admin**, permisos por space y restricciones por página. Una página restringida y todo lo que tiene abajo desaparecen para los demás: árbol, búsqueda, RQL, la home y el MCP.
+- **Agentes y aprobación.** Los agentes escriben por MCP como cualquiera, pero lo que publican espera en **Approvals** hasta que un admin de Folio lo aprueba o lo rechaza con un comentario para el agente.
+
+<p align="center">
+  <img src="docs/images/folio-history.png" alt="Historial con el diff entre versiones" width="49%">
+  <img src="docs/images/folio-approvals.png" alt="La cola de aprobación" width="49%">
+</p>
+
+- **Búsqueda.** Escribe una pregunta en la barra de arriba y Folio encuentra la sección que la responde, en español e inglés. La búsqueda híbrida mezcla palabras y significado (con un proveedor de IA para los embeddings); los filtros la acotan por space, tipo, tipo de documento, idioma o label. El mismo RQL de Docket consulta docs: `space = ai-tools AND #onboarding AND published >= -30d ORDER BY published DESC`.
+
+<p align="center"><img src="docs/images/folio-search.png" alt="Resultados de búsqueda con las coincidencias resaltadas" width="820"></p>
+
+- **Proveedor de IA.** **Admin → Settings → AI provider** define un solo proveedor para chat y embeddings (OpenAI, un servidor compatible con OpenAI como Voyage, Ollama, o Anthropic para chat). La llave se guarda cifrada; **Test connection** muestra dimensiones y latencia. Sin proveedor, la búsqueda usa solo palabras.
+- **MCP de Folio.** `/mcp/folio` acepta los mismos tokens que `/mcp`. Los agentes buscan (`search_docs`, `query_docs`), leen páginas en Markdown (`get_page`), ven qué pide publicar (`get_metadata_schema`), escriben (`create_page`, `update_draft`) y mandan a aprobación (`submit_for_publication`, `list_my_submissions`). Los admins eligen qué tools de Folio puede usar cada agente, igual que con las de Docket.
+
+```bash
+claude mcp add --transport http radicle-folio https://radicle.example.com/mcp/folio \
+  --header "Authorization: Bearer rdc_el_token_del_agente"
+```
 
 ## ⚙️ Configuración
 
@@ -395,6 +435,8 @@ Todo se configura con variables de entorno (ve [`.env.example`](.env.example)).
 | `RADICLE_AUDIT_RETENTION_DAYS` | `730` | Días que se guarda el audit log. |
 | `RADICLE_SESSION_DAYS` | `14` | Duración de la sesión (se renueva con el uso). |
 | `RADICLE_ASSISTANT_*` | sin definir | El LLM de Radi; ve [Conoce a Radi](#-conoce-a-radi). Sin él, Radi responde con la guía. |
+| `RADICLE_SMTP_HOST`, `_PORT`, `_USER`, `_PASSWORD`, `_FROM`, `_TLS` | sin definir, `587` | Avisos por email. Sin host, los avisos son solo en la app. El puerto 465 usa TLS implícito. |
+| `RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE` | `10` | Intentos de inicio de sesión por IP por minuto. |
 | `POSTGRES_*` | `radicle` | Credenciales de la base. Cambia el password en producción. |
 
 El contenedor `worker` corre los trabajos en segundo plano: propagación de templates, variantes de imágenes, ediciones masivas grandes, ranking, snapshots diarios y retención del audit log. Si no está corriendo, esos trabajos esperan en la cola.
@@ -408,7 +450,7 @@ El contenedor `worker` corre los trabajos en segundo plano: propagación de temp
 | Capa | Stack |
 | --- | --- |
 | Backend | Python 3.12, FastAPI, SQLAlchemy 2 (async), Alembic, Pydantic 2, Procrastinate (jobs sobre Postgres), Authlib (OIDC) |
-| Base de datos | PostgreSQL 16, con búsqueda full-text en inglés y español |
+| Base de datos | PostgreSQL 16 con pgvector, búsqueda full-text en inglés y español |
 | Frontend | React 18, TypeScript, TanStack Router y Query, styled-components, dnd-kit, Recharts, i18next |
 | MCP | SDK oficial de MCP para Python, Streamable HTTP en `/mcp` |
 | Calidad | pytest con testcontainers (Postgres y Keycloak reales), mypy estricto, ruff, Vitest, E2E con Playwright |
@@ -446,8 +488,8 @@ Las etapas 1 a 4 están completas: core y MCP, configuración y trabajo diario, 
 **Radicle Folio (docs)**
 
 - [x] Fase 0: plataforma compartida (backend partido en `platform`, `docket` y `folio`, autorización genérica, proveedor de IA, switch de suite, esqueleto de Folio).
-- [ ] Fase 1: spaces y páginas, editor, publicación con versiones, permisos, envíos de agentes con aprobación, búsqueda RAG y MCP de Folio.
-- [ ] Fase 2: colaboración en tiempo real, comentarios, menciones, live docs.
+- [x] Fase 1: spaces y páginas, editor, publicación con versiones, permisos, envíos de agentes con aprobación, búsqueda RAG y MCP de Folio.
+- [ ] Fase 2 (en curso): colaboración en tiempo real, comentarios, menciones, live docs. Ya está: avisos en la app y por email, archivar, mover y copiar páginas, verificación que vence, seguir, favoritos y reacciones.
 - [ ] Fase 3: templates, editor de la home, bloques visuales, whiteboards y databases.
 - [ ] Fase 4: tickets dentro de los docs y chat con citas.
 - [ ] Fase 5: páginas públicas, importar y exportar, Slack y Teams, webhooks.

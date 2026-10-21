@@ -693,18 +693,60 @@ Nota: los E2E `stage1` y `stage3` estaban rotos desde #60 (botones de área y mi
 
 ## Folio fase 1: Core de publicación + MCP
 
-Spec: `docs/folio/fase-1.md`. Decisión de base: [0037](decisions/0037-pgvector-y-dimension-de-embeddings.md).
+Spec: `docs/folio/fase-1.md`. Decisión de base: [0037](decisions/0037-pgvector-y-dimension-de-embeddings.md). Tickets RAD-16 a RAD-23 cerrados con screenshots; milestone Folio Fase 1 cerrado.
+
+| # | Entregable | Estado | PRs |
+| --- | --- | --- | --- |
+| 1.1 | Spaces y árbol | Listo | #84–#87, #139, #144, #145 |
+| 1.2 | Editor base | Listo | #88–#92, #119, #127, #130, #140, #146, #163 |
+| 1.3 | Publicación y versiones | Listo | #93–#96, #121, #124, #153, #154, #165 |
+| 1.4 | Permisos | Listo | #97–#100, #162 |
+| 1.5 | Agentes y aprobación | Listo | #101, #102, #131, #148 |
+| 1.6 | RAG, búsqueda y RQL | Listo | #103–#113, #149, #152, #157, #164, #166 |
+| 1.7 | MCP de Folio | Listo | #111, #114, #115, #168 |
+| 1.8 | UI | Listo | #116, #118, #125–#159 y los arreglos de abajo |
+
+**Qué se hizo**
+
+- **Spaces y árbol:** spaces de equipo y personales, páginas, folders y blog posts con rank fraccional (`COLLATE "C"`), mover dentro del árbol, eventos de nodo append-only.
+- **Editor:** esquema TipTap validado en el servidor, Markdown en los dos sentidos (directivas en `docs/folio/markdown.md`), borradores, assets (imágenes, archivos, video), ícono y portada. En la UI: TipTap a pantalla completa con menú `/`, atajos de Markdown, subir al pegar y autoguardado.
+- **Publicación:** catálogos de tipos, audiencias e idiomas; metadata obligatoria con errores por campo; versiones inmutables (trigger), diff por bloques y de metadata, restaurar como versión nueva.
+- **Permisos:** roles globales, permisos por space y restricciones de vista y edición por página, con la regla de visibilidad en SQL (CTE recursivo). `tests/integration/test_folio_leaks.py` enumera todas las rutas GET de Folio y falla si una no está cubierta.
+- **Agentes:** lo que publica un agente es un envío pendiente; los admins lo aprueban o lo rechazan con comentario.
+- **Búsqueda:** chunks por sección con metadata, pgvector con índices HNSW por dimensión, búsqueda de texto (español e inglés), semántica e híbrida (RRF), con visibilidad en SQL antes de rankear. Si ninguna página tiene todas las palabras, busca con cualquiera (#164). RQL de docs sobre el motor de Docket, que pasó a `platform/query`.
+- **MCP:** 12 tools en `/mcp/folio`; un solo catálogo de tools con límites por agente para todas las apps (`platform/mcp_tools.py`, `platform/mcp/server.py`).
+- **UI:** home bento (`GET /folio/home`), space con árbol arrastrable, lectura revista y modo enfoque, editor, publicar, historial con diff, cola de aprobación, catálogos y búsqueda con barra RQL. Hecha en paralelo por cuatro agentes, cada uno en su worktree.
+
+**Bugs encontrados al probar en Chrome y corregidos:** la barra de Folio tapaba la del editor (#163); la portada de las páginas salía vacía (#163); una pregunta sin todas sus palabras no encontraba nada (#164); los fragmentos de búsqueda mostraban Markdown (#166); los títulos largos del árbol se cortaban sin "…" y el diff se veía como texto plano (#165); Editar se mostraba aunque una restricción de edición lo impidiera (#162); el tag de tipo no se veía en modo oscuro (#169); una página titulada como su primera sección caía en la intro (#113).
+
+### Aceptación de la fase
+
+| Criterio | Dónde |
+| --- | --- |
+| Space con folder, páginas anidadas y blog post, en su sidebar y en la home | `test_folio_tree.py`, `test_folio_home.py`, screenshots en RAD-16 |
+| Guía con todos los bloques y una imagen pegada | `folio_docs.EVERY_BLOCK` (round-trip servidor y editor), `test_folio_assets.py` |
+| Sin descripción no publica; completarla publica | `test_folio_publish.py`, `e2e/suite-folio1.spec.ts` |
+| Comparar la versión 1 con la 3 y restaurar la 1 | `test_folio_versions.py`, screenshot en RAD-18 |
+| Rol creator solo para un grupo; los demás no ven Escribir | `test_folio_roles.py`, `e2e/suite.spec.ts`, screenshot en RAD-19 |
+| Una página restringida desaparece para los demás, también en la búsqueda semántica | `test_folio_leaks.py`, `test_folio_search.py`, `tests/mcp/test_folio_mcp_read.py` |
+| Un agente por MCP propone un post a partir de un repo; queda pendiente y se aprueba en la cola | `tests/mcp/test_folio_mcp_write.py`, `e2e/suite-folio1.spec.ts` |
+| "cómo conecto un agente" da la guía correcta en la sección correcta | `test_folio_search.py::test_acceptance_the_right_guide_at_the_right_section` |
+| Lectura revista y modo enfoque, claro y oscuro | Screenshots en RAD-23 |
+| Docket sigue pasando todos sus tests | Suite completa y E2E: 31/31 en Chrome sobre una instancia limpia |
+
+## Folio fase 2: Colaboración (en curso)
+
+Spec: `docs/folio/fase-2.md`. Decisión: [0038](decisions/0038-eventos-y-notificaciones-en-platform.md).
 
 | # | Entregable | Estado |
 | --- | --- | --- |
-| 1.1 | Spaces y árbol | Pendiente |
-| 1.2 | Editor base | Pendiente |
-| 1.3 | Publicación y versiones | Pendiente |
-| 1.4 | Permisos | Pendiente |
-| 1.5 | Agentes y aprobación | Pendiente |
-| 1.6 | RAG, búsqueda y RQL | Pendiente |
-| 1.7 | MCP de Folio | Pendiente |
-| 1.8 | UI | Pendiente |
+| 2.1 | Bus de eventos y notificaciones en platform | Backend listo (#117, #120, #122, #123, #129); falta la campanita en la UI |
+| 2.2 | Tiempo real | Pendiente (tablas listas en #155) |
+| 2.3 | Comentarios | Pendiente (tablas listas en #155) |
+| 2.4 | Menciones, reacciones, watch, compartir y action items | Watch, favoritos y reacciones listos (#160, #161) |
+| 2.5 | Live docs | Pendiente |
+| 2.6 | Organización | Backend listo: archivar (#142), copiar y mover entre spaces (#147) |
+| 2.7 | Calidad y navegación | Backend de estados, vencimiento, dueño y recientes listo (#133, #151, #160) |
 
-Orden de trabajo: el backend de 1.1 a 1.7 primero (cada entregable en PRs de menos de 500 líneas), luego la UI de 1.8 por pantallas.
-
+- **Eventos:** outbox en la misma transacción, despacho con `SKIP LOCKED`, entregas únicas por evento, persona y canal, preferencias por tipo y canal, email por SMTP con reintentos, y un stream SSE sobre `LISTEN/NOTIFY`.
+- **E2E:** `RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE` se puede subir para correrlos (las specs entran más de diez veces por minuto).

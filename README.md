@@ -13,7 +13,7 @@
 <p align="center">
   <a href="LICENSE"><img alt="License: AGPL v3" src="https://img.shields.io/badge/license-AGPLv3-4D7C0F?style=flat-square"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-C6F432?style=flat-square&labelColor=1A2E05"></a>
-  <img alt="MCP tools" src="https://img.shields.io/badge/MCP-52%20tools-C6F432?style=flat-square&labelColor=1A2E05">
+  <img alt="MCP tools" src="https://img.shields.io/badge/MCP-63%20tools-C6F432?style=flat-square&labelColor=1A2E05">
   <a href="README.es.md"><img alt="Leer en español" src="https://img.shields.io/badge/lee%20en-espa%C3%B1ol-F1F2F4?style=flat-square"></a>
 </p>
 
@@ -46,7 +46,7 @@
   - [12. Audit log](#12-audit-log)
   - [13. AI agents over MCP](#13-ai-agents-over-mcp)
   - [14. Keyboard, command palette and themes](#14-keyboard-command-palette-and-themes)
-  - [15. Folio and the AI provider](#15-folio-and-the-ai-provider)
+  - [15. Folio: your team's docs](#15-folio-your-teams-docs)
 - [Configuration](#%EF%B8%8F-configuration)
 - [Architecture](#%EF%B8%8F-architecture)
 - [Development](#-development)
@@ -63,6 +63,7 @@
 | 🔒 **Serious access control** | Groups, a permission matrix per project, restricted tickets that are invisible everywhere (search, boards, reports, MCP), OpenID Connect SSO and an append-only audit log. |
 | 🗺️ **Plan and see** | Kanban and Scrum boards, sprints, a timeline with forecasts, ten agile and general reports and drag-and-drop dashboards. |
 | 🟢 **A guide inside** | Radi, the mascot, answers how-to questions from the usage guide and, with an LLM of your choice, walks you through the screen step by step. |
+| 📚 **Docs next to the tickets** | **Folio**, the second app, keeps the team's documentation: spaces, a block editor, versions, per-page permissions, search that understands questions, and an MCP so agents read and propose docs that an admin approves. |
 | ⚡ **Fast to work in** | A query language (RQL), a command palette, keyboard shortcuts for everything and light and dark themes. In English and Spanish. |
 | 🏠 **Yours** | One `docker compose up`. PostgreSQL, your server, your data. |
 
@@ -398,12 +399,51 @@ Switch between light and dark with the moon button, and between English and Span
 
 **Use it as a desktop app.** Radicle can be installed as its own app, with Radi in the Dock and its own window: in Chrome click **Install** in the address bar, or in Safari choose **File → Add to Dock**.
 
-### 15. Folio and the AI provider
+### 15. Folio: your team's docs
 
-Radicle is growing a second app, **Radicle Folio**, for documentation (specs in `docs/folio/`). Docket, the ticket tracker, and Folio share users, groups, agents and the sign-in: open the menu on the logo (or press `g f` / `g d`) to switch, and each app opens where you left it.
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Radicle has a second app now: **Folio**, for documentation. Open the menu on the logo, or press <kbd>g</kbd> <kbd>f</kbd>, and press <kbd>g</kbd> <kbd>d</kbd> to come back to Docket.
 
-- **Admin → Settings → AI provider** sets one provider for chat and embeddings (OpenAI, an OpenAI-compatible server such as Voyage, Ollama, or Anthropic for chat). The key is stored encrypted; **Test connection** embeds a short text and shows the dimensions and latency. Without a provider, everything else works.
-- **Folio → Admin → Global roles** decides who reads, creates or administers Folio: a person, a group or everyone (everyone reads by default). People without any role don't see Folio.
+Docket (the ticket tracker) and Folio share people, groups, agents and the sign-in. Each app opens where you left it.
+
+<p align="center"><img src="docs/images/folio-home.png" alt="Folio home" width="900"></p>
+
+- **Home.** A magazine-like front page: the featured doc, the latest announcement, AI Tools, the latest posts, the most read and every space with its doc count. **Write** starts a page or a blog post in any space where you can create.
+- **Spaces and pages.** Each team gets a space with a tree of pages and folders (drag to reorder or nest them) and a blog. Everyone also has a personal space.
+
+<p align="center">
+  <img src="docs/images/folio-space.png" alt="A space with its tree and blog posts" width="49%">
+  <img src="docs/images/folio-read.png" alt="Reading a page as a magazine" width="49%">
+</p>
+
+- **Reading.** Pages read like a magazine, with an "On this page" index, the owner, status, type, language and labels. **Focus mode** leaves just the text and a progress bar, and it remembers your choice. Light and dark, like the rest of Radicle.
+- **Writing.** A full-screen editor saves your draft as you type. Press <kbd>/</kbd> for any block (headings, lists, checklists, tables, code, panels, expands, columns, images, files and video), or write Markdown shortcuts. Paste or drop images to upload them.
+
+<p align="center">
+  <img src="docs/images/folio-editor.png" alt="The editor with the / menu" width="49%">
+  <img src="docs/images/folio-publish.png" alt="Publishing with metadata" width="49%">
+</p>
+
+- **Publishing.** Every page carries the metadata your team needs: a description, document type, labels, owner, audiences and language. Publishing checks them field by field. Each publish is an immutable version: compare any two and restore an old one, which becomes a new version.
+- **Status.** Owners mark a page *In review* or *Verified*; verification expires after the space's days (90 by default) and the page turns *Outdated*, and its owner is told. Search lifts verified pages and lowers outdated ones.
+- **Permissions.** Global roles (reader, creator, admin) in **Folio → Admin**, permissions per space, and restrictions per page. A restricted page and everything under it disappear for everyone else: tree, search, RQL, the home and the MCP.
+- **Agents and approval.** Agents write over MCP like anyone else, but what they publish waits in **Approvals** until a Folio admin approves it or rejects it with a comment for the agent.
+
+<p align="center">
+  <img src="docs/images/folio-history.png" alt="History with a diff between versions" width="49%">
+  <img src="docs/images/folio-approvals.png" alt="The approval queue" width="49%">
+</p>
+
+- **Search.** Type a question in the bar at the top and Folio finds the section that answers it, in English and Spanish. Hybrid search mixes words and meaning (with an AI provider for embeddings); filters narrow it by space, type, document type, language or label. The same RQL as Docket queries docs: `space = ai-tools AND #onboarding AND published >= -30d ORDER BY published DESC`.
+
+<p align="center"><img src="docs/images/folio-search.png" alt="Search results with highlighted matches" width="820"></p>
+
+- **AI provider.** **Admin → Settings → AI provider** sets one provider for chat and embeddings (OpenAI, an OpenAI-compatible server such as Voyage, Ollama, or Anthropic for chat). The key is stored encrypted; **Test connection** shows the dimensions and latency. Without one, search uses words only.
+- **Folio's MCP.** `/mcp/folio` takes the same tokens as `/mcp`. Agents search (`search_docs`, `query_docs`), read pages in Markdown (`get_page`), learn what publishing needs (`get_metadata_schema`), write (`create_page`, `update_draft`) and send for approval (`submit_for_publication`, `list_my_submissions`). Admins pick which Folio tools each agent may use, as with Docket's.
+
+```bash
+claude mcp add --transport http radicle-folio https://radicle.example.com/mcp/folio \
+  --header "Authorization: Bearer rdc_your_agent_token"
+```
 
 ## ⚙️ Configuration
 
@@ -424,6 +464,8 @@ Everything is set with environment variables (see [`.env.example`](.env.example)
 | `RADICLE_AUDIT_RETENTION_DAYS` | `730` | Days the audit log is kept. |
 | `RADICLE_SESSION_DAYS` | `14` | Session length (sliding). |
 | `RADICLE_ASSISTANT_*` | unset | Radi's LLM; see [Meet Radi](#-meet-radi). Without it, Radi answers from the guide. |
+| `RADICLE_SMTP_HOST`, `_PORT`, `_USER`, `_PASSWORD`, `_FROM`, `_TLS` | unset, `587` | Email notifications. Without a host, notifications are in-app only. Port 465 uses implicit TLS. |
+| `RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE` | `10` | Sign-in attempts per IP per minute. |
 | `POSTGRES_*` | `radicle` | Database credentials. Change the password in production. |
 
 The `worker` container runs background jobs: template propagation, image variants, large bulk edits, ranking, daily snapshots and audit retention. If it is down, those jobs wait in the queue.
@@ -437,7 +479,7 @@ The `worker` container runs background jobs: template propagation, image variant
 | Layer | Stack |
 | --- | --- |
 | Backend | Python 3.12, FastAPI, SQLAlchemy 2 (async), Alembic, Pydantic 2, Procrastinate (jobs on Postgres), Authlib (OIDC) |
-| Database | PostgreSQL 16, with full-text search in English and Spanish |
+| Database | PostgreSQL 16 with pgvector, full-text search in English and Spanish |
 | Frontend | React 18, TypeScript, TanStack Router and Query, styled-components, dnd-kit, Recharts, i18next |
 | MCP | Official Python MCP SDK, Streamable HTTP at `/mcp` (Docket) and `/mcp/folio` (Folio) |
 | Quality | pytest with testcontainers (real Postgres and Keycloak), mypy strict, ruff, Vitest, Playwright E2E |
@@ -475,8 +517,8 @@ Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning
 **Radicle Folio (docs)**
 
 - [x] Phase 0: shared platform (one backend split into `platform`, `docket` and `folio`, generic authorization, AI provider, suite switch, Folio's skeleton).
-- [ ] Phase 1: spaces and pages, the editor, publishing with versions, permissions, agent submissions with approval, RAG search and Folio's MCP.
-- [ ] Phase 2: real-time collaboration, comments, mentions, live docs.
+- [x] Phase 1: spaces and pages, the editor, publishing with versions, permissions, agent submissions with approval, RAG search and Folio's MCP.
+- [ ] Phase 2 (in progress): real-time collaboration, comments, mentions, live docs. Done so far: notifications in the app and by email, archiving, moving and copying pages, verification that expires, following, favorites and reactions.
 - [ ] Phase 3: templates, the home editor, visual blocks, whiteboards and databases.
 - [ ] Phase 4: tickets inside docs and chat with citations.
 - [ ] Phase 5: public pages, import and export, Slack and Teams, webhooks.
