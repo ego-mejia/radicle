@@ -14,6 +14,7 @@ import {
   type SearchFilters as Filters,
   type SearchMode,
 } from '../../../../services/api/folio';
+import { RqlBar } from './components/RqlBar';
 import { SearchFilters } from './components/SearchFilters';
 import { SearchHit } from './components/SearchHit';
 import * as S from './style';
@@ -24,13 +25,13 @@ const MODES: SearchMode[] = ['hybrid', 'text', 'semantic'];
 export function FolioSearchView() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const params = useSearch({ strict: false }) as { q?: string; mode?: SearchMode };
+  const params = useSearch({ strict: false }) as { q?: string; mode?: SearchMode; rql?: string };
   const q = params.q ?? '';
   const mode = params.mode ?? 'hybrid';
   const [draft, setDraft] = useState(q);
   const [filters, setFilters] = useState<Filters>({});
-  const go = (next: { q?: string; mode?: SearchMode }) =>
-    void navigate({ to: '/folio/search', search: { q, mode, ...next } });
+  const go = (next: { q?: string; mode?: SearchMode; rql?: string }) =>
+    void navigate({ to: '/folio/search', search: { q, mode, rql: params.rql, ...next } });
 
   const results = useQuery({
     queryKey: folioKeys.search(q, mode, filters),
@@ -79,6 +80,7 @@ export function FolioSearchView() {
             ))}
           </S.Results>
         ))}
+      <RqlBar rql={params.rql ?? ''} onRun={(rql) => go({ rql: rql || undefined })} />
     </S.Wrap>
   );
 }

@@ -1828,7 +1828,14 @@
       "kind": "Type",
       "docType": "Document type",
       "language": "Language",
-      "label": "Label"
+      "label": "Label",
+      "rql": "Query with RQL",
+      "rqlLabel": "RQL query",
+      "run": "Run",
+      "rqlNone": "No docs match this query.",
+      "docTitle": "Title",
+      "published": "Published",
+      "draft": "Not published"
     },
     "approvals": {
       "title": "Approvals",
