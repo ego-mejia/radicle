@@ -82,6 +82,7 @@ export const EVERY_BLOCK: JSONContent = {
     node('file', { assetId: 'a1', name: 'spec.pdf', mimeType: 'application/pdf', size: 1024 }),
     node('video', { src: 'https://example.com/v.mp4', caption: 'Demo' }),
     node('embed', { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', title: 'La demo' }),
+    node('databaseView', { database: '6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14', view: 'board' }),
     node('horizontalRule'),
     p(t('Fin')),
   ],
