@@ -13,9 +13,8 @@ from radicle.folio.db.models import (
     FolioVersion,
     NodeKind,
 )
-from radicle.folio.services import convert, nodes, schema
+from radicle.folio.services import access, convert, nodes, schema
 from radicle.folio.services.metadata import validate_metadata
-from radicle.platform import authz
 from radicle.platform.db.models import User, UserKind, utcnow
 from radicle.platform.errors import Conflict, Forbidden, ValidationFailed
 
@@ -88,7 +87,7 @@ async def publish(
 ) -> FolioVersion:
     """Publish the draft. Agents never publish directly: their work goes to approval
     (Folio 1.5). If someone published after this draft started, `confirm` is needed."""
-    (await authz.authorize(db, user, "folio", "folio.create")).raise_if_denied()
+    await access.require_edit(db, user, node)
     if user.kind != UserKind.human:
         raise Forbidden(
             "Agents don't publish directly: send the page for approval and a Folio admin "

@@ -36,7 +36,6 @@ async def user(db: AsyncSession, handle: str) -> User:
 async def world(db: AsyncSession, team: Team) -> dict:
     admin = await user(db, team.instance.handle)
     space = await spaces.create_space(db, admin, key="docs", name="Docs")
-    db.add_all(access.default_grants(space, admin))
     page = await nodes.create_node(db, admin, space, kind=NodeKind.page, title="Pública")
     child = await nodes.create_node(
         db, admin, space, kind=NodeKind.page, title="Hija", parent_id=page.id

@@ -1,8 +1,10 @@
 """Who may see and do what in Folio (Folio 1.4).
 
 - The global role (reader, creator, admin) is the ceiling: readers never create or delete,
-  and Folio admins (instance admins included) may do everything everywhere.
+  and Folio admins (instance admins included) may do everything, everywhere but in
+  other people's personal spaces.
 - Each space grants permissions to users, groups or everyone; `admin` includes them all.
+- Personal spaces are their owner's alone, even for Folio admins.
 - A page's view restriction hides it, and everything under it, from whoever is not named
   in it. An edit restriction applies to that page only.
 - Pages never published are seen only by people who can write in their space.
@@ -31,6 +33,7 @@ from radicle.folio.db.models import (
 )
 from radicle.folio.services import roles
 from radicle.platform.db.models import GroupMember, User
+from radicle.platform.errors import Forbidden
 
 ALL = frozenset(p.value for p in SpacePermission)
 READER_CAP = frozenset({"view", "comment", "export", "admin"})
@@ -92,7 +95,9 @@ def visible_nodes(user: User, role: FolioRole | None) -> ColumnElement[bool]:
     if role is None:
         return FolioNode.id.is_(None)  # matches nothing
     if role == FolioRole.admin:
-        live_spaces = select(FolioSpace.id).where(FolioSpace.deleted_at.is_(None))
+        live_spaces = select(FolioSpace.id).where(
+            FolioSpace.deleted_at.is_(None), _not_private(user)
+        )
         return and_(
             FolioNode.space_id.in_(live_spaces),
             ~FolioNode.id.in_(_deleted_nodes()),
@@ -109,6 +114,11 @@ def visible_nodes(user: User, role: FolioRole | None) -> ColumnElement[bool]:
         *([FolioNode.space_id.in_(writable)] if writable is not None else []),
     )
     return and_(readable, ready, ~FolioNode.id.in_(_hidden_nodes(user)))
+
+
+def _not_private(user: User) -> ColumnElement[bool]:
+    """Personal spaces are their owner's alone, even for Folio admins."""
+    return or_(FolioSpace.owner_id.is_(None), FolioSpace.owner_id == user.id)
 
 
 def _deleted_nodes() -> Select[Any]:
@@ -141,6 +151,8 @@ async def space_permissions(db: AsyncSession, user: User, space: FolioSpace) -> 
     role = await roles.effective_role(db, user)
     if role is None or space.deleted_at is not None:
         return frozenset()
+    if space.owner_id is not None and space.owner_id != user.id:
+        return frozenset()  # someone else's personal space
     if role == FolioRole.admin:
         return ALL
     rows = await db.scalars(
@@ -159,7 +171,7 @@ async def visible_space_ids(db: AsyncSession, user: User) -> set[uuid.UUID]:
     role = await roles.effective_role(db, user)
     if role is None:
         return set()
-    query = select(FolioSpace.id).where(FolioSpace.deleted_at.is_(None))
+    query = select(FolioSpace.id).where(FolioSpace.deleted_at.is_(None), _not_private(user))
     if role != FolioRole.admin:
         query = query.where(FolioSpace.id.in_(_spaces_with(user, "view")))
     return set(await db.scalars(query))
@@ -229,3 +241,35 @@ def default_grants(space: FolioSpace, creator: User) -> Iterable[FolioSpaceGrant
         grantee_id=creator.id,
         permissions=["admin"],
     )
+
+
+async def require_create(db: AsyncSession, user: User, space: FolioSpace) -> None:
+    if "create" not in await space_permissions(db, user, space):
+        raise Forbidden(
+            f"You can't write in {space.name}: it takes the Folio creator role and the create "
+            "permission in the space. A space admin can give it in the space's permissions.",
+            code="space_permission_denied",
+        )
+
+
+async def require_edit(db: AsyncSession, user: User, node: FolioNode) -> None:
+    if not await may_edit(db, user, node):
+        raise Forbidden(
+            f"You can't edit '{node.title}'. Ask a space admin for the create permission, or "
+            "to be added to the page's edit restriction.",
+            code="page_permission_denied",
+        )
+
+
+async def require_delete(db: AsyncSession, user: User, node: FolioNode) -> None:
+    if not await may_delete(db, user, node):
+        raise Forbidden(
+            f"You can't delete '{node.title}': it takes delete_any, or delete_own for your own "
+            "pages, in the space.",
+            code="page_permission_denied",
+        )
+
+
+async def require_admin(db: AsyncSession, user: User, space: FolioSpace) -> None:
+    if "admin" not in await space_permissions(db, user, space):
+        raise Forbidden(f"Only the admins of {space.name} can change it.", code="space_admin_only")

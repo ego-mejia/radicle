@@ -1,13 +1,16 @@
 """Publishing (Folio 1.3): complete metadata or a 422 that lists what is missing, immutable
 versions, labels, and a warning when someone published after the draft started."""
 
+import uuid
+
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import text, update
+from sqlalchemy import select, text, update
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioDraft
+from radicle.folio.db.models import FolioDraft, FolioNode, FolioSpaceGrant, GranteeType
+from radicle.platform.db.models import User
 from tests.conftest import Team
 from tests.unit.folio_docs import EVERY_BLOCK
 
@@ -118,9 +121,10 @@ async def test_actionable_errors(client: AsyncClient, team: Team, page: dict) ->
 
 
 async def test_readers_and_agents_do_not_publish(
-    client: AsyncClient, team: Team, page: dict
+    client: AsyncClient, db: AsyncSession, team: Team, page: dict
 ) -> None:
     await _draft(client, team, page, content_md="x", metadata=METADATA)
+    await _publish(client, team, page)
     r = await client.post(f"{API}/nodes/{page['id']}/publish", headers=team.member.headers, json={})
     assert r.status_code == 403
     await client.post(
@@ -128,5 +132,18 @@ async def test_readers_and_agents_do_not_publish(
         headers=team.instance.headers,
         json={"grantee_type": "user", "grantee": "agent-backend", "role": "creator"},
     )
+    agent = await db.scalar(select(User).where(User.handle == "agent-backend"))
+    assert agent is not None
+    node = await db.get(FolioNode, uuid.UUID(page["id"]))
+    assert node is not None
+    db.add(
+        FolioSpaceGrant(
+            space_id=node.space_id,
+            grantee_type=GranteeType.user,
+            grantee_id=agent.id,
+            permissions=["create"],
+        )
+    )
+    await db.flush()
     r = await client.post(f"{API}/nodes/{page['id']}/publish", headers=team.agent.headers, json={})
     assert r.status_code == 403 and "approval" in r.json()["detail"]

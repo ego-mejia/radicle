@@ -10,8 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioDraft, FolioNode, FolioVersion
-from radicle.folio.services import publishing
-from radicle.platform import authz
+from radicle.folio.services import access, publishing
 from radicle.platform.db.models import User, UserKind, utcnow
 from radicle.platform.errors import Forbidden, NotFound, ValidationFailed
 
@@ -91,7 +90,7 @@ async def restore(
 ) -> FolioVersion:
     """Publish version `number`'s content and metadata again as a new version. The draft
     follows, so the next edit starts from it."""
-    (await authz.authorize(db, user, "folio", "folio.create")).raise_if_denied()
+    await access.require_edit(db, user, node)
     if user.kind != UserKind.human:
         raise Forbidden("Agents can't restore versions.", code="agents_need_approval")
     old = await get_version(db, node, number)

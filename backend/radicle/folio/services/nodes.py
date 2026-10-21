@@ -12,7 +12,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioNode, FolioNodeEvent, FolioSpace, NodeKind
-from radicle.platform import authz
+from radicle.folio.services import access
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.errors import NotFound, ValidationFailed
 from radicle.platform.services import rank
@@ -43,44 +43,11 @@ def record(db: AsyncSession, node: FolioNode, actor: User, event: str, **data: A
     db.add(FolioNodeEvent(node_id=node.id, actor_id=actor.id, event_type=event, data=data))
 
 
-async def _space_nodes(db: AsyncSession, space: FolioSpace) -> list[FolioNode]:
-    rows = await db.scalars(select(FolioNode).where(FolioNode.space_id == space.id))
-    return list(rows)
-
-
-def _alive(nodes: list[FolioNode]) -> dict[uuid.UUID, FolioNode]:
-    """Nodes not deleted and with no deleted ancestor."""
-    by_id = {n.id: n for n in nodes}
-    alive: dict[uuid.UUID, bool] = {}
-
-    def ok(n: FolioNode) -> bool:
-        if n.id in alive:
-            return alive[n.id]
-        result = n.deleted_at is None and (
-            n.parent_id is None or (n.parent_id in by_id and ok(by_id[n.parent_id]))
-        )
-        alive[n.id] = result
-        return result
-
-    return {n.id: n for n in nodes if ok(n)}
-
-
 async def get_node(db: AsyncSession, user: User, node_id: uuid.UUID) -> FolioNode:
-    """A node you can see. Deleted nodes and those under a deleted ancestor are 404."""
-    from radicle.folio.services import spaces  # avoid an import cycle at module load
-
+    """A node you can see (`access.visible_nodes`); anything else is 404, deleted or
+    restricted alike."""
     node = await db.get(FolioNode, node_id)
-    if node is not None:
-        space = await db.get(FolioSpace, node.space_id)
-        if space is not None:
-            try:
-                await spaces.get_space(db, user, space.key)
-            except NotFound:
-                node = None
-            else:
-                if node.id not in _alive(await _space_nodes(db, space)):
-                    node = None
-    if node is None:
+    if node is None or not await access.can_view(db, user, node_id):
         raise NotFound(f"Page {node_id} not found.", code="node_not_found")
     return node
 
@@ -99,13 +66,16 @@ async def breadcrumbs(db: AsyncSession, node: FolioNode) -> list[FolioNode]:
 
 
 async def _parent(
-    db: AsyncSession, space: FolioSpace, parent_id: uuid.UUID | None
+    db: AsyncSession, user: User, space: FolioSpace, parent_id: uuid.UUID | None
 ) -> FolioNode | None:
     if parent_id is None:
         return None
     parent = await db.get(FolioNode, parent_id)
-    alive = _alive(await _space_nodes(db, space))
-    if parent is None or parent.space_id != space.id or parent.id not in alive:
+    if (
+        parent is None
+        or parent.space_id != space.id
+        or not await access.can_view(db, user, parent_id)
+    ):
         raise _invalid("parent", f"Parent {parent_id} is not a page or folder in {space.key}.")
     if parent.kind == NodeKind.blog_post:
         raise _invalid("parent", "Blog posts cannot have children.")
@@ -134,10 +104,10 @@ async def create_node(
     parent_id: uuid.UUID | None = None,
 ) -> FolioNode:
     """A page or folder (optionally under a parent) or a blog post (never in the tree)."""
-    (await authz.authorize(db, user, "folio", "folio.create")).raise_if_denied()
+    await access.require_create(db, user, space)
     if kind == NodeKind.blog_post and parent_id is not None:
         raise _invalid("parent", "Blog posts live outside the tree: leave parent empty.")
-    parent = await _parent(db, space, parent_id)
+    parent = await _parent(db, user, space, parent_id)
     title = _title(title)
     node = FolioNode(
         space_id=space.id,
@@ -160,10 +130,11 @@ class TreeNode:
     children: list["TreeNode"] = field(default_factory=list)
 
 
-async def tree(db: AsyncSession, space: FolioSpace) -> list[TreeNode]:
-    """Pages and folders of the space as a forest, siblings by rank. No blog posts."""
-    alive = _alive(await _space_nodes(db, space))
-    items = {i: TreeNode(n) for i, n in alive.items() if n.kind != NodeKind.blog_post}
+async def tree(db: AsyncSession, user: User, space: FolioSpace) -> list[TreeNode]:
+    """The pages and folders of the space you can see, as a forest, siblings by rank."""
+    ids = await access.visible_ids(db, user, space)
+    rows = await db.scalars(select(FolioNode).where(FolioNode.id.in_(ids)))
+    items = {n.id: TreeNode(n) for n in rows if n.kind != NodeKind.blog_post}
     roots: list[TreeNode] = []
     for item in items.values():
         parent = items.get(item.node.parent_id) if item.node.parent_id else None
@@ -179,14 +150,19 @@ async def tree(db: AsyncSession, space: FolioSpace) -> list[TreeNode]:
 
 
 async def posts(
-    db: AsyncSession, space: FolioSpace, *, before: datetime | None = None, limit: int = 20
+    db: AsyncSession,
+    user: User,
+    space: FolioSpace,
+    *,
+    before: datetime | None = None,
+    limit: int = 20,
 ) -> list[FolioNode]:
-    """Blog posts, newest first (by publication date, or creation until published)."""
+    """Blog posts you can see, newest first (by publication, or creation until published)."""
     when = func.coalesce(FolioNode.published_at, FolioNode.created_at)
     query = select(FolioNode).where(
         FolioNode.space_id == space.id,
         FolioNode.kind == NodeKind.blog_post,
-        FolioNode.deleted_at.is_(None),
+        await access.node_filter(db, user),
     )
     if before is not None:
         query = query.where(when < before)
@@ -204,7 +180,7 @@ class NodeChanges:
 
 
 async def update_node(db: AsyncSession, user: User, node: FolioNode, ch: NodeChanges) -> FolioNode:
-    (await authz.authorize(db, user, "folio", "folio.create")).raise_if_denied()
+    await access.require_edit(db, user, node)
     if ch.title is not None:
         old = node.title
         node.title = _title(ch.title)
@@ -235,13 +211,13 @@ async def move_node(
 ) -> FolioNode:
     """Move within the space: under `parent_id` (None for the root), placed after
     `after_id` and/or before `before_id` among its new siblings (else at the end)."""
-    (await authz.authorize(db, user, "folio", "folio.create")).raise_if_denied()
+    await access.require_edit(db, user, node)
     if node.kind == NodeKind.blog_post:
         raise _invalid("parent", "Blog posts live outside the tree and cannot be moved in it.")
     space = await db.get(FolioSpace, node.space_id)
     if space is None:  # pragma: no cover - a node always has its space
         raise NotFound(f"Page {node.id} not found.", code="node_not_found")
-    parent = await _parent(db, space, parent_id)
+    parent = await _parent(db, user, space, parent_id)
     ancestor = parent
     while ancestor is not None:
         if ancestor.id == node.id:
@@ -283,7 +259,7 @@ async def move_node(
 
 async def delete_node(db: AsyncSession, user: User, node: FolioNode) -> None:
     """Soft delete; its children disappear with it."""
-    (await authz.authorize(db, user, "folio", "folio.create")).raise_if_denied()
+    await access.require_delete(db, user, node)
     node.deleted_at = utcnow()
     record(db, node, user, "deleted")
     await db.flush()

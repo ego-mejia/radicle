@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioNodeEvent
 from tests.conftest import Clock, Team
+from tests.integration.folio_helpers import publish
 from tests.unit.folio_docs import EVERY_BLOCK
 
 API = "/api/v1/folio"
@@ -92,6 +93,9 @@ async def test_readers_cannot_read_or_write_drafts(
     client: AsyncClient, team: Team, page: dict
 ) -> None:
     url = f"{API}/nodes/{page['id']}/draft"
+    # Unpublished pages don't exist for readers; published ones they read but don't edit.
+    assert (await client.get(url, headers=team.member.headers)).status_code == 404
+    await publish(client, team, page["id"])
     assert (await client.get(url, headers=team.member.headers)).status_code == 403
     r = await client.put(url, headers=team.member.headers, json={"content_md": "x"})
     assert r.status_code == 403
