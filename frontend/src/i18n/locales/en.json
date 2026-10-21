@@ -500,6 +500,7 @@
         "context": "Context",
         "find_work": "Find work",
         "folio_read": "Folio: read docs",
+        "folio_write": "Folio: write docs",
         "tickets": "Tickets",
         "collaboration": "Collaboration",
         "files_and_time": "Files and time",

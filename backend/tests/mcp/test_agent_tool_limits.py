@@ -21,7 +21,11 @@ async def test_catalog_lists_every_registered_tool(
         registered = {t.name for t in (await mcp.list_tools()).tools}
     async with folio_mcp(client, board.agent) as folio:
         on_folio = {t.name for t in (await folio.list_tools()).tools}
-    assert [t["name"] for t in catalog] == [*mcp_catalog.TOOLS, *folio_catalog.READ]
+    assert [t["name"] for t in catalog] == [
+        *mcp_catalog.TOOLS,
+        *folio_catalog.READ,
+        *folio_catalog.WRITE,
+    ]
     assert set(mcp_catalog.TOOLS) == registered
     assert {t.name for t in folio_catalog.CATALOG} == on_folio
     assert next(t for t in catalog if t["name"] == "get_page")["group"] == "folio_read"

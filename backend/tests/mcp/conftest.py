@@ -62,6 +62,7 @@ def error_text(result: Any) -> str:
 
 @asynccontextmanager
 async def folio_mcp(client: AsyncClient, actor: Actor) -> AsyncIterator[Client]:
+    """A client on /mcp/folio. Open one per test: the session manager runs only once."""
     app = client._transport.app  # type: ignore[attr-defined]
     started, stop = asyncio.Event(), asyncio.Event()
 
