@@ -2,7 +2,7 @@ import { createLink } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import type { FolioCard } from '../../../../../../services/api/folio';
 import { cardMeta, kindLabel, pageParams } from '../../meta';
-import { StatusBadge } from '../../../../components/StatusBadge';
+import { StatusBadge } from '../../../StatusBadge';
 import * as S from './style';
 
 const ItemLink = createLink(S.Item);

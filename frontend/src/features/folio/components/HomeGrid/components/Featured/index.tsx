@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../../../../../components/ui/Avatar';
 import { assetUrl, type FolioCard } from '../../../../../../services/api/folio';
 import { cardMeta, kindLabel, pageParams } from '../../meta';
-import { RootsArt } from '../../../../components/RootsArt';
-import { StatusBadge } from '../../../../components/StatusBadge';
+import { RootsArt } from '../../../RootsArt';
+import { StatusBadge } from '../../../StatusBadge';
 import * as S from './style';
 
 const CardLink = createLink(S.Card);

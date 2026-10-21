@@ -1667,7 +1667,8 @@
       "docTitle": "Title",
       "startWriting": "Start writing",
       "noWritableSpace": "You can't write in any space yet. A space admin can give you the create permission.",
-      "forYou": "For you"
+      "forYou": "For you",
+      "docsTitle": "Docs"
     },
     "space": {
       "title": "Space",
