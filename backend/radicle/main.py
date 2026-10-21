@@ -37,6 +37,7 @@ from radicle.api import (
     users,
     work,
 )
+from radicle.core import mcp_catalog, mcp_tools
 from radicle.core.config import get_settings
 from radicle.core.crypto import require_key
 from radicle.core.errors import NotFound, install_error_handlers
@@ -58,6 +59,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 def create_app() -> FastAPI:
     settings = get_settings()
     require_key()  # no secret key, no app: secrets in the database depend on it
+    mcp_tools.register(mcp_catalog.TOOLS)
     app = FastAPI(
         title="Radicle",
         version=__version__,

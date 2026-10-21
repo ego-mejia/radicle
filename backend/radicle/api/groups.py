@@ -15,7 +15,7 @@ from radicle.api.schemas.groups import (
 )
 from radicle.api.ticket_views import user_ref
 from radicle.db.models import Group, Project, ProjectRole
-from radicle.services import audit, groups, permission_matrix
+from radicle.services import audit, groups, permission_matrix, project_groups
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["groups and permissions"])
@@ -122,7 +122,7 @@ async def list_group_roles(key: str, principal: CurrentPrincipal, db: Db) -> Pag
     return Page(
         items=[
             GroupRoleOut(group=g.name, role=r, member_count=counts.get(g.id, 0))
-            for g, r in await groups.project_groups(db, access.project)
+            for g, r in await project_groups.project_groups(db, access.project)
         ]
     )
 
@@ -134,7 +134,7 @@ async def put_group_role(
     """Every member of the group gets this role in the project (their highest role wins)."""
     access = await project_access(db, principal.user, key, write=True, permission="members.manage")
     g = await groups.get_group(db, group)
-    previous = await groups.set_group_role(db, access, g, body.role)
+    previous = await project_groups.set_group_role(db, access, g, body.role)
     audit.record(
         db,
         principal.user,
@@ -151,7 +151,7 @@ async def put_group_role(
 @router.delete("/projects/{key}/group-roles/{group}", status_code=204)
 async def delete_group_role(key: str, group: str, principal: CurrentPrincipal, db: Db) -> Response:
     access = await project_access(db, principal.user, key, write=True, permission="members.manage")
-    role = await groups.remove_group_role(db, access, await groups.get_group(db, group))
+    role = await project_groups.remove_group_role(db, access, await groups.get_group(db, group))
     audit.record(
         db,
         principal.user,

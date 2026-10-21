@@ -21,12 +21,11 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, JSONB, TSVECTOR, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from radicle.db.models.base import Base, utcnow
+from radicle.db.models.base import Base, _enum, utcnow
 from radicle.db.models.projects import (
     Resolution,
     Status,
     TicketType,
-    _enum,
     resolution_enum,
     ticket_type_enum,
 )

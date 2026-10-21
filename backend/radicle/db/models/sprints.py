@@ -19,8 +19,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from radicle.db.models.base import Base, utcnow
-from radicle.db.models.projects import _enum
+from radicle.db.models.base import Base, _enum, utcnow
 
 
 class SprintState(enum.StrEnum):
