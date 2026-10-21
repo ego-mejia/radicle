@@ -5,8 +5,8 @@ from typing import Annotated, Any, Literal
 from mcp.server.mcpserver import Context, MCPServer
 from pydantic import Field
 
-from radicle.docket.mcp.api import api
 from radicle.docket.mcp.tools.common import Key, Priority
+from radicle.platform.mcp.api import api
 
 Score = Annotated[int, Field(ge=1, le=5)]
 Classification = Literal["idea", "experiment", "complaint", "suggestion"]

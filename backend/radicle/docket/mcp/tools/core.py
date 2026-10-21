@@ -6,7 +6,6 @@ from typing import Annotated, Any, Literal
 from mcp.server.mcpserver import Context, MCPServer
 from pydantic import BaseModel, ConfigDict, Field
 
-from radicle.docket.mcp.api import APIError, api
 from radicle.docket.mcp.tools.common import (
     APIErrorMessage,
     Key,
@@ -20,6 +19,7 @@ from radicle.docket.mcp.tools.common import (
     detailed,
     project_schema,
 )
+from radicle.platform.mcp.api import APIError, api
 
 
 class TicketChanges(BaseModel):

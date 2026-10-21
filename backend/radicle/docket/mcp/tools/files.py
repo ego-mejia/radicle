@@ -7,8 +7,8 @@ from typing import Annotated, Any, Literal
 from mcp.server.mcpserver import Context, MCPServer
 from pydantic import Field
 
-from radicle.docket.mcp.api import api
 from radicle.docket.mcp.tools.common import APIErrorMessage, Key
+from radicle.platform.mcp.api import api
 
 MCP_UPLOAD_LIMIT = 10 * 1024 * 1024
 READ_LIMIT = 200 * 1024

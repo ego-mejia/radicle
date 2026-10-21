@@ -5,8 +5,8 @@ from typing import Annotated, Any, Literal
 from mcp.server.mcpserver import Context, MCPServer
 from pydantic import Field
 
-from radicle.docket.mcp.api import api
 from radicle.docket.mcp.tools.common import APIErrorMessage, Key, TicketType, _search_out, compact
+from radicle.platform.mcp.api import api
 
 
 def register(server: MCPServer) -> None:
