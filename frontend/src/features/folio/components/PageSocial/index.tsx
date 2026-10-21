@@ -19,7 +19,15 @@ import * as S from './style';
 export const REACTIONS = ['👍', '❤️', '🎉', '👀', '🚀', '✅'] as const;
 
 /** Reactions, Follow, the favorite star and Share under a page's byline. */
-export function PageSocial({ nodeId, title = '' }: { nodeId: string; title?: string }) {
+export function PageSocial({
+  nodeId,
+  title = '',
+  space,
+}: {
+  nodeId: string;
+  title?: string;
+  space?: string;
+}) {
   const { t } = useTranslation();
   const [sharing, setSharing] = useState(false);
   const toast = useToast();
@@ -99,7 +107,13 @@ export function PageSocial({ nodeId, title = '' }: { nodeId: string; title?: str
           {t('folio.share.button')}
         </S.Toggle>
       </S.Toggles>
-      <ShareDialog nodeId={nodeId} title={title} open={sharing} onOpenChange={setSharing} />
+      <ShareDialog
+        nodeId={nodeId}
+        title={title}
+        space={space}
+        open={sharing}
+        onOpenChange={setSharing}
+      />
     </S.Bar>
   );
 }

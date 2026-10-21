@@ -5,13 +5,17 @@ import { Button } from '../../../../components/ui/Button';
 import { Field } from '../../../../components/ui/Field';
 import { Input, Textarea } from '../../../../components/ui/Input';
 import { Modal } from '../../../../components/ui/Modal';
+import { Tabs } from '../../../../components/ui/Tabs';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { shareNode, type ShareResult } from '../../../../services/api/folioWork';
+import { PublicLink } from './components/PublicLink';
 import * as S from './style';
 
 type Props = {
   nodeId: string;
   title: string;
+  /** The page's space, to share it whole too. */
+  space?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
@@ -22,9 +26,11 @@ const list = (text: string) =>
     .map((v) => v.trim())
     .filter(Boolean);
 
-/** Send a page to people and groups with a message; optionally let them in. */
-export function ShareDialog({ nodeId, title, open, onOpenChange }: Props) {
+/** Send a page to people and groups with a message, optionally letting them in; or give
+ * the page or its space a public link. */
+export function ShareDialog({ nodeId, title, space, open, onOpenChange }: Props) {
   const { t } = useTranslation();
+  const [tab, setTab] = useState<'people' | 'public'>('people');
   const errorMessage = useErrorMessage();
   const [users, setUsers] = useState('');
   const [groups, setGroups] = useState('');
@@ -57,7 +63,7 @@ export function ShareDialog({ nodeId, title, open, onOpenChange }: Props) {
       onOpenChange={close}
       title={t('folio.share.title', { title })}
       footer={
-        result ? (
+        result || tab === 'public' ? (
           <Button variant="primary" onClick={() => close(false)}>
             {t('folio.share.done')}
           </Button>
@@ -75,7 +81,21 @@ export function ShareDialog({ nodeId, title, open, onOpenChange }: Props) {
         )
       }
     >
-      {result ? (
+      <Tabs
+        label={t('folio.share.tabs')}
+        value={tab}
+        onChange={setTab}
+        tabs={[
+          { id: 'people', label: t('folio.share.people') },
+          { id: 'public', label: t('folio.share.public.tab') },
+        ]}
+      />
+      {tab === 'public' ? (
+        <S.Form>
+          <PublicLink target={{ node: nodeId }} label={t('folio.share.public.page')} />
+          {space && <PublicLink target={{ space }} label={t('folio.share.public.space')} />}
+        </S.Form>
+      ) : result ? (
         <S.Result role="status">
           <p>
             {result.notified.length

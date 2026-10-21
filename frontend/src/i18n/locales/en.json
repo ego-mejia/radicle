@@ -2320,7 +2320,25 @@
       "sent": "Sent to {{names}}.",
       "nobody": "Nobody was notified.",
       "granted": "They can see it now: {{names}}.",
-      "cannotSee": "{{names}} can't see this page, so they weren't notified. Share again with the box checked to let them in."
+      "cannotSee": "{{names}} can't see this page, so they weren't notified. Share again with the box checked to let them in.",
+      "tabs": "Share with",
+      "people": "People",
+      "public": {
+        "tab": "Public link",
+        "page": "This page",
+        "space": "The whole space",
+        "create": "Create link",
+        "noindex": "Hide from search engines",
+        "copy": "Copy",
+        "copied": "Link copied.",
+        "revoke": "Revoke",
+        "revoked": "Link revoked: it no longer opens.",
+        "url": "Public link",
+        "views_one": "Opened once",
+        "views_other": "Opened {{count}} times",
+        "hidden": "hidden from search engines",
+        "adminsOnly": "Only the space's admins create public links."
+      }
     },
     "embed": {
       "opensNewTab": "(opens in a new tab)"
