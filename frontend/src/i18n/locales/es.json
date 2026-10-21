@@ -2085,7 +2085,9 @@
       "structureHint": "JSON: {\"pages\": [{\"title\", \"kind\": \"page\" | \"folder\", \"template\": el id de un template de página o build-spec, \"children\": [...]}], \"grants\": [...]}",
       "badJson": "Eso no es JSON válido.",
       "save": "Guardar",
-      "saved": "Template guardado"
+      "saved": "Template guardado",
+      "blankSpace": "Space vacío",
+      "blankSpaceHint": "Empieza sin páginas."
     },
     "social": {
       "label": "Reacciones y seguir",
@@ -2329,6 +2331,13 @@
         "firstView": "Su primera vista",
         "none": "Aún no hay databases que puedas ver."
       }
+    },
+    "newSpace": {
+      "button": "Nuevo space",
+      "title": "Nuevo space",
+      "name": "Nombre",
+      "key": "Clave",
+      "keyHint": "En los enlaces: minúsculas, dígitos y guiones."
     }
   },
   "notifications": {

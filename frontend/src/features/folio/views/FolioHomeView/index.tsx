@@ -4,6 +4,7 @@ import { EmptyState } from '../../../../components/ui/EmptyState';
 import { PageSpinner } from '../../../../components/ui/Spinner';
 import { fetchHome, folioHomeKey } from '../../../../services/api/folio';
 import { HomeGrid } from '../../components/HomeGrid';
+import { NewSpaceButton } from './components/NewSpaceButton';
 import { WriteButton } from './components/WriteButton';
 import * as S from './style';
 
@@ -18,7 +19,10 @@ export function FolioHomeView() {
     <S.Wrap>
       <S.Top>
         <S.Heading>{t('folio.home.title')}</S.Heading>
-        {home.can_write && <WriteButton />}
+        <S.Actions>
+          <NewSpaceButton />
+          {home.can_write && <WriteButton />}
+        </S.Actions>
       </S.Top>
       {empty && (
         <EmptyState

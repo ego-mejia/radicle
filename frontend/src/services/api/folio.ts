@@ -18,6 +18,7 @@ export type FolioListedPage = S['ListedPageOut'];
 export type FolioTemplateIn = S['FolioTemplateIn'];
 export type FolioTemplatePatch = S['FolioTemplatePatch'];
 export type NodeFromTemplateIn = S['NodeFromTemplateIn'];
+export type SpaceFromTemplateIn = S['SpaceFromTemplateIn'];
 export type FolioDraft = S['DraftOut'];
 export type FolioDraftIn = S['DraftIn'];
 export type FolioPublishIn = S['PublishIn'];
@@ -453,6 +454,11 @@ export async function archiveTemplate(id: string): Promise<void> {
 /** A page or post whose draft starts with the template's document and metadata. */
 export async function createFromTemplate(body: NodeFromTemplateIn): Promise<FolioNode> {
   return unwrap(await api.POST('/api/v1/folio/nodes/from-template', { body }));
+}
+
+/** A space with the template's folders, pages and grants. */
+export async function createSpaceFromTemplate(body: SpaceFromTemplateIn): Promise<FolioSpace> {
+  return unwrap(await api.POST('/api/v1/folio/spaces/from-template', { body }));
 }
 
 /** A pasted link's card, and an iframe URL for the providers that embed (Folio 3.7). */

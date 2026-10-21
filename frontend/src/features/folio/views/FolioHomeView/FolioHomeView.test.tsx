@@ -43,4 +43,22 @@ describe('FolioHomeView', () => {
     expect(screen.getByText('Press Write to publish the first one.')).toBeInTheDocument();
     expect(screen.getByRole('search', { name: 'Search the docs' })).toBeInTheDocument();
   });
+
+  it('offers a new space to Folio creators only', async () => {
+    const me = (role: string) => ({ status: 200, body: { handle: 'ana', role } });
+    mockFetch({
+      'GET /api/v1/folio/home': { status: 200, body: HOME },
+      'GET /api/v1/folio/me': me('creator'),
+    });
+    const { unmount } = renderWithProviders(<FolioHomeView />);
+    expect(await screen.findByRole('button', { name: 'New space' })).toBeInTheDocument();
+    unmount();
+    mockFetch({
+      'GET /api/v1/folio/home': { status: 200, body: HOME },
+      'GET /api/v1/folio/me': me('reader'),
+    });
+    renderWithProviders(<FolioHomeView />);
+    await screen.findByRole('link', { name: 'Welcome to Radicle' });
+    expect(screen.queryByRole('button', { name: 'New space' })).not.toBeInTheDocument();
+  });
 });

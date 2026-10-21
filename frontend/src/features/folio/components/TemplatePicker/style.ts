@@ -66,3 +66,15 @@ export const Preview = styled.section`
   border-radius: ${({ theme }) => theme.radius.lg};
   background: ${({ theme }) => theme.color.surface2};
 `;
+
+export const Outline = styled.ul`
+  margin: 0;
+  padding-left: ${({ theme }) => theme.space.lg};
+  list-style: none;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  line-height: 1.8;
+
+  ${Preview} > & {
+    padding-left: 0;
+  }
+`;
