@@ -58,3 +58,8 @@ export const Actions = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
+
+export const State = styled.span`
+  float: right;
+  color: ${({ theme }) => theme.color.textMuted};
+`;

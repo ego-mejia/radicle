@@ -5,6 +5,24 @@ import { mockFetch, renderWithProviders } from '../../../../test/renderWithProvi
 import { SPEC } from '../TemplatePicker/fixtures';
 import { TemplateForm } from '.';
 
+// TipTap needs layout APIs jsdom lacks; the form's job is to save what the body reports.
+vi.mock('../TemplateBody', () => ({
+  TemplateBody: ({
+    content,
+    onChange,
+  }: {
+    content: unknown;
+    onChange: (doc: Record<string, unknown>) => void;
+  }) => (
+    <div>
+      <p>{JSON.stringify(content).includes('Entregables') ? 'Entregables' : ''}</p>
+      <button type="button" onClick={() => onChange({ type: 'doc', content: [] })}>
+        write
+      </button>
+    </div>
+  ),
+}));
+
 const SCHEMA = {
   fields: [],
   doc_types: [
@@ -26,9 +44,7 @@ describe('TemplateForm', () => {
     renderWithProviders(
       <TemplateForm template={{ ...SPEC, default_metadata: { labels: ['spec'] } }} />,
     );
-    expect(await screen.findByRole('region', { name: 'Template content' })).toHaveTextContent(
-      'Entregables',
-    );
+    expect(await screen.findByText('Entregables')).toBeInTheDocument();
     expect(screen.getByText(/Variables: \{\{date\}\}, \{\{author\}\}/)).toBeInTheDocument();
     const name = screen.getByLabelText('Name');
     await userEvent.clear(name);
@@ -60,5 +76,27 @@ describe('TemplateForm', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(await screen.findByText('That is not valid JSON.')).toBeInTheDocument();
     expect(calls.some((c) => c.method === 'PATCH')).toBe(false);
+  });
+
+  it('saves what you write in the body with the rest of the form', async () => {
+    const calls = mockFetch({
+      'GET /api/v1/folio/metadata-schema': { status: 200, body: SCHEMA },
+      'PATCH /api/v1/folio/templates/t1': (_req, body) => ({
+        status: 200,
+        body: { ...SPEC, ...(body as object) },
+      }),
+    });
+    renderWithProviders(<TemplateForm template={SPEC} />);
+    await userEvent.click(await screen.findByRole('button', { name: 'write' }));
+    await vi.waitFor(
+      () =>
+        expect(calls.find((c) => c.method === 'PATCH')?.body).toMatchObject({
+          name: 'Build spec',
+          doc_type_key: 'build-spec',
+          content_json: { type: 'doc', content: [] },
+        }),
+      { timeout: 4000 },
+    );
+    expect(await screen.findByText('Saved')).toBeInTheDocument();
   });
 });
