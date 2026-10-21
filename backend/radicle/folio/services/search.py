@@ -200,7 +200,12 @@ async def search(
         for h in hits:
             h.matched_by = ["text"]
         return hits[:limit]
-    semantic = await _semantic(db, visible, q, f)
+    try:
+        semantic = await _semantic(db, visible, q, f)
+    except ai.AiUnavailable:
+        if mode == "semantic":
+            raise
+        semantic = None  # the provider is down: hybrid still answers with text
     if mode == "semantic":
         if semantic is None:
             raise ValidationFailed(

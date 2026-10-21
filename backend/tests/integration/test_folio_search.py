@@ -110,6 +110,25 @@ async def test_semantic_and_hybrid_with_a_provider(
     assert top["node_id"] == deploy and sorted(top["matched_by"]) == ["semantic", "text"]
 
 
+async def test_hybrid_survives_a_provider_that_fails(
+    client: AsyncClient, team: Team, docs: dict, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from radicle.platform.services import ai
+
+    await client.put(
+        "/api/v1/admin/ai",
+        headers=team.instance.headers,
+        json={"provider": "openai", "embedding_model": "m", "api_key": "k"},
+    )
+    monkeypatch.setattr(ai, "transport", httpx.MockTransport(lambda r: httpx.Response(500)))
+    params = {"q": "conecta agente"}
+    r = await client.get(f"{API}/search", params=params, headers=team.member.headers)
+    assert r.status_code == 200 and r.json()["items"][0]["matched_by"] == ["text"]
+    params["mode"] = "semantic"
+    r = await client.get(f"{API}/search", params=params, headers=team.member.headers)
+    assert r.status_code >= 400 and "500" in r.json()["detail"]
+
+
 async def test_semantic_without_a_provider_says_how(
     client: AsyncClient, team: Team, docs: dict
 ) -> None:
