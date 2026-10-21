@@ -4228,7 +4228,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database" | "whiteboard";
             /** Slug */
             slug: string;
             /**
@@ -6706,7 +6706,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database" | "whiteboard";
             /** Published At */
             published_at: string | null;
             /** Slug */
@@ -7036,7 +7036,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database" | "whiteboard";
             /**
              * Parent
              * @description Page or folder; never for posts
@@ -7054,7 +7054,7 @@ export interface components {
          * NodeKind
          * @enum {string}
          */
-        NodeKind: "page" | "folder" | "blog_post" | "live_doc" | "database";
+        NodeKind: "page" | "folder" | "blog_post" | "live_doc" | "database" | "whiteboard";
         /** NodeMoveIn */
         NodeMoveIn: {
             /**
@@ -7119,7 +7119,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database" | "whiteboard";
             /**
              * Metadata
              * @description Of the published version
@@ -7180,7 +7180,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database" | "whiteboard";
             /** Slug */
             slug: string;
             /**
@@ -9517,7 +9517,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database" | "whiteboard";
             /** Slug */
             slug: string;
             /**

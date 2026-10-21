@@ -76,6 +76,7 @@ class NodeKind(enum.StrEnum):
     blog_post = "blog_post"
     live_doc = "live_doc"  # always editable, never published (Folio 2.5)
     database = "database"  # typed rows and views, never published (Folio 3.6)
+    whiteboard = "whiteboard"  # an Excalidraw scene, never published (Folio 3.5)
 
 
 class NodeStatus(enum.StrEnum):

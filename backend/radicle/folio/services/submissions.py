@@ -33,6 +33,8 @@ async def submit(
     await access.require_edit(db, agent, node)
     if node.kind == NodeKind.database:
         raise _invalid("node", "Databases aren't published: add rows to them directly.")
+    if node.kind == NodeKind.whiteboard:
+        raise _invalid("node", "Whiteboards aren't published: draw on them directly.")
     if node.kind == NodeKind.live_doc:
         raise _invalid(
             "node",

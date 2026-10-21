@@ -46,7 +46,7 @@ FIELDS: dict[str, Field] = {
             Kind.enum,
             EQ,
             in_list=True,
-            values=("page", "folder", "blog_post", "live_doc", "database"),
+            values=("page", "folder", "blog_post", "live_doc", "database", "whiteboard"),
         ),
         Field("doc_type", Kind.meta, EQ, in_list=True, empty=True, description="e.g. how-to"),
         Field("label", Kind.meta_list, EQ, in_list=True, empty=True, description="Also #label"),
