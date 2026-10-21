@@ -1,4 +1,5 @@
-"""Fetching URLs that people paste, without letting them reach inside the network (SSRF).
+"""Fetching URLs people paste or configure (link previews, webhooks), without letting them
+reach inside the network (SSRF).
 
 Only http and https; the host is resolved once and every address must be public (no
 loopback, private, link-local such as cloud metadata, multicast or reserved ranges); the
@@ -18,6 +19,7 @@ import httpx
 from radicle.platform.errors import ValidationFailed
 
 TIMEOUT = 5.0
+POST_TIMEOUT = 10.0
 MAX_BYTES = 1_000_000
 MAX_REDIRECTS = 3
 USER_AGENT = "Radicle link preview (+https://github.com/ego-mejia/radicle)"
@@ -56,7 +58,7 @@ class Fetched:
 async def _checked_address(url: str) -> tuple[str, str]:
     parts = urlsplit(url)
     if parts.scheme not in ("http", "https") or not parts.hostname:
-        raise Blocked("Only http and https links can be previewed.")
+        raise Blocked("Only http and https addresses are allowed.")
     host = parts.hostname
     try:
         literal = ipaddress.ip_address(host)
@@ -67,8 +69,57 @@ async def _checked_address(url: str) -> tuple[str, str]:
         except OSError:
             raise Blocked(f"{host} could not be found.") from None
     if not addresses or not all(_public(a) for a in addresses):
-        raise Blocked(f"{host} is not a public address, so it can't be previewed.")
+        raise Blocked(f"{host} is not a public address, so Radicle won't connect to it.")
     return host, addresses[0]
+
+
+async def check(url: str) -> None:
+    """Raise Blocked unless `url` is http(s) on a public address (to validate settings)."""
+    await _checked_address(url)
+
+
+async def _pinned(
+    client: httpx.AsyncClient,
+    method: str,
+    url: str,
+    headers: dict[str, str],
+    content: bytes | None = None,
+) -> tuple[str, httpx.Request]:
+    """A request to `url`'s checked public address, with the original Host and SNI."""
+    host, address = await _checked_address(url)
+    parts = urlsplit(url)
+    netloc = f"[{address}]" if ":" in address else address
+    if parts.port:
+        netloc += f":{parts.port}"
+    pinned = urlunsplit((parts.scheme, netloc, parts.path or "/", parts.query, ""))
+    request = client.build_request(
+        method,
+        pinned,
+        headers={"Host": parts.netloc, **headers},
+        content=content,
+        extensions={"sni_hostname": host},
+    )
+    return host, request
+
+
+@dataclass(frozen=True)
+class Posted:
+    status: int
+    text: str  # the start of the answer, for the delivery log
+
+
+async def post(url: str, content: bytes, headers: dict[str, str]) -> Posted:
+    """POST to a public address (webhooks, chat integrations). Redirects are not followed:
+    a receiver that moved answers 3xx and the caller treats it as a failure."""
+    async with httpx.AsyncClient(
+        transport=transport, timeout=POST_TIMEOUT, follow_redirects=False
+    ) as client:
+        host, request = await _pinned(client, "POST", url, headers, content)
+        try:
+            response = await client.send(request)
+        except httpx.HTTPError as exc:
+            raise Blocked(f"{host} did not answer ({type(exc).__name__}).") from None
+        return Posted(response.status_code, response.text[:1000])
 
 
 async def fetch(url: str) -> Fetched:
@@ -77,18 +128,8 @@ async def fetch(url: str) -> Fetched:
         transport=transport, timeout=TIMEOUT, follow_redirects=False
     ) as client:
         for _ in range(MAX_REDIRECTS + 1):
-            host, address = await _checked_address(url)
-            parts = urlsplit(url)
-            netloc = f"[{address}]" if ":" in address else address
-            if parts.port:
-                netloc += f":{parts.port}"
-            pinned = urlunsplit((parts.scheme, netloc, parts.path or "/", parts.query, ""))
-            request = client.build_request(
-                "GET",
-                pinned,
-                headers={"Host": parts.netloc, "User-Agent": USER_AGENT, "Accept": "text/html"},
-                extensions={"sni_hostname": host},
-            )
+            accept = {"User-Agent": USER_AGENT, "Accept": "text/html"}
+            host, request = await _pinned(client, "GET", url, accept)
             try:
                 response = await client.send(request, stream=True)
             except httpx.HTTPError as exc:
