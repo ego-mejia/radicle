@@ -110,3 +110,32 @@ async def test_errors_explain_what_works(client: AsyncClient, db: AsyncSession, 
             "not found"
             in error_text(await folio.call_tool("get_space_tree", {"space": "nada"})).lower()
         )
+
+
+async def test_every_tool_explains_missing_access(
+    client: AsyncClient, db: AsyncSession, team: Team
+) -> None:
+    """Without a Folio grant each tool, reading or writing, says why instead of failing."""
+    await _docs(client, db, team)
+    i = team.instance.headers
+    grants = (await client.get(f"{API}/admin/grants", headers=i)).json()["items"]
+    for g in grants:
+        await client.delete(f"{API}/admin/grants/{g['id']}", headers=i)
+    some_id = "00000000-0000-0000-0000-000000000000"
+    calls = {
+        "list_spaces": {},
+        "get_space_tree": {"space": "docs"},
+        "search_docs": {"query": "agente"},
+        "query_docs": {"rql": "space = docs"},
+        "get_page": {"id": some_id},
+        "get_metadata_schema": {},
+        "get_versions": {"id": some_id},
+        "create_page": {"space": "docs", "title": "x", "content_md": "x", "metadata": {}},
+        "update_draft": {"id": some_id, "content_md": "x"},
+        "submit_for_publication": {"id": some_id, "change_note": "x"},
+        "list_my_submissions": {},
+    }
+    async with folio_mcp(client, team.agent) as folio:
+        for tool, args in calls.items():
+            text = error_text(await folio.call_tool(tool, args))
+            assert "no access to Folio" in text, (tool, text)
