@@ -92,6 +92,7 @@ COVERED = {
     "ask_docs",
     "get_build_spec_items",
     "create_tickets_from_build_spec",
+    "get_page_analytics",
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
@@ -108,6 +109,7 @@ EXEMPT = {
     "create_live_doc",
     "validate_visual",  # checks code it is sent; touches no page
     "get_docs_for_ticket",  # docs of a ticket you see; test_folio_mcp_tickets.py
+    "get_search_gaps",  # Folio admins only; test_folio_mcp_analytics.py
 }
 
 
@@ -145,7 +147,13 @@ async def test_restricted_pages_never_show_up(
             "create_tickets_from_build_spec": {"project": "PA", "dry_run": False},
             **VISUAL_CALLS,
         }
-        reads = ("get_page", "get_versions", "list_comments", "query_database")
+        reads = (
+            "get_page",
+            "get_versions",
+            "list_comments",
+            "query_database",
+            "get_page_analytics",
+        )
         for tool in (*reads, "get_build_spec_items", *writes):
             args = {"id": ids["secret"]} | writes.get(tool, {})
             text = error_text(await folio.call_tool(tool, args))
@@ -204,6 +212,8 @@ async def test_every_tool_explains_missing_access(
         "get_build_spec_items": {"id": some_id},
         "create_tickets_from_build_spec": {"id": some_id, "project": "PA"},
         "ask_docs": {"question": "¿Cómo conecto un agente?"},
+        "get_page_analytics": {"id": some_id},
+        "get_search_gaps": {},
         **{tool: {"id": some_id} | args for tool, args in VISUAL_CALLS.items()},
     }
     async with folio_mcp(client, team.agent) as folio:
