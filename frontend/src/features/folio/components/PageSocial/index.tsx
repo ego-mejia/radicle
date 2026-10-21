@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Bell, BellOff, Star } from 'lucide-react';
+import { Bell, BellOff, Share2, Star } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { useToast } from '../../../../hooks/useToast';
@@ -12,13 +13,15 @@ import {
   setWatching,
   socialKeys,
 } from '../../../../services/api/folioSocial';
+import { ShareDialog } from '../ShareDialog';
 import * as S from './style';
 
 export const REACTIONS = ['👍', '❤️', '🎉', '👀', '🚀', '✅'] as const;
 
-/** Reactions, Follow and the favorite star under a page's byline. */
-export function PageSocial({ nodeId }: { nodeId: string }) {
+/** Reactions, Follow, the favorite star and Share under a page's byline. */
+export function PageSocial({ nodeId, title = '' }: { nodeId: string; title?: string }) {
   const { t } = useTranslation();
+  const [sharing, setSharing] = useState(false);
   const toast = useToast();
   const errorMessage = useErrorMessage();
   const client = useQueryClient();
@@ -91,7 +94,12 @@ export function PageSocial({ nodeId }: { nodeId: string }) {
           <Star aria-hidden />
           {starred ? t('folio.social.unfavorite') : t('folio.social.favorite')}
         </S.Toggle>
+        <S.Toggle type="button" onClick={() => setSharing(true)}>
+          <Share2 aria-hidden />
+          {t('folio.share.button')}
+        </S.Toggle>
       </S.Toggles>
+      <ShareDialog nodeId={nodeId} title={title} open={sharing} onOpenChange={setSharing} />
     </S.Bar>
   );
 }

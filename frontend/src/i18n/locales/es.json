@@ -2119,6 +2119,22 @@
       "removed": "Usuario eliminado",
       "comment": "Comentar",
       "commentOn": "Comentar el texto seleccionado"
+    },
+    "share": {
+      "button": "Compartir",
+      "title": "Compartir '{{title}}'",
+      "users": "Personas",
+      "usersHint": "Handles, separados por comas o espacios",
+      "groups": "Grupos",
+      "message": "Mensaje",
+      "grantView": "Darles acceso si una restricción no los deja verla",
+      "send": "Enviar",
+      "cancel": "Cancelar",
+      "done": "Listo",
+      "sent": "Enviado a {{names}}.",
+      "nobody": "No se avisó a nadie.",
+      "granted": "Ya pueden verla: {{names}}.",
+      "cannotSee": "{{names}} no puede ver esta página, así que no recibió aviso. Comparte de nuevo con la casilla marcada para darle acceso."
     }
   },
   "notifications": {
