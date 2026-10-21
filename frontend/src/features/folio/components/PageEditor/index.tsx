@@ -2,25 +2,33 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Placeholder } from '@tiptap/extensions';
 import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 import { ArrowLeft } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
 import { PageSpinner } from '../../../../components/ui/Spinner';
+import { useErrorMessage } from '../../../../hooks/useErrorMessage';
+import { useToast } from '../../../../hooks/useToast';
 import {
+  assetUrl,
   fetchDraft,
   fetchNode,
   folioKeys,
   nodePath,
   patchNode,
   saveDraft,
+  uploadAsset,
   type FolioDraft,
   type FolioNode,
 } from '../../../../services/api/folio';
 import { folioExtensions } from '../../editor/extensions';
 import { toFolioDoc } from '../../editor/schema';
+import { BLOCKS } from '../../editor/blocks';
 import { SlashCommand } from '../../editor/slash';
+import { FolioUploads } from '../../editor/uploads';
+import { pickFiles } from '../../hooks/pickFiles';
 import { EditorProse } from '../EditorProse';
 import { PageHeader } from './components/PageHeader';
+import { mediaBlocks } from './media';
 import * as S from './style';
 import { useAutosave } from '../../hooks/useAutosave';
 
@@ -63,6 +71,12 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState(node.title);
   const [icon, setIcon] = useState(node.icon);
+  const [cover, setCover] = useState(node.cover_asset_id);
+  const toast = useToast();
+  const errorMessage = useErrorMessage();
+  const failed = (error: unknown) => toast(errorMessage(error), 'error');
+  const upload = (file: File) => uploadAsset(node.id, file);
+  const editorRef = useRef<Editor | null>(null);
 
   const body = useAutosave(async (doc: Record<string, unknown>) => {
     const saved = await saveDraft(node.id, { content_json: doc });
@@ -77,7 +91,10 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
     () => [
       ...folioExtensions(),
       Placeholder.configure({ placeholder: t('folio.editor.bodyPlaceholder') }),
-      SlashCommand,
+      SlashCommand.configure({
+        items: [...BLOCKS, ...mediaBlocks(() => editorRef.current, upload, failed)],
+      }),
+      FolioUploads.configure({ upload, onError: failed }),
       ...extensions,
     ],
     // The editor is built once; the language does not change while writing.
@@ -89,6 +106,26 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
     content: draft.content_json,
     onUpdate: ({ editor: e }) => body.change(toFolioDoc(e.getJSON())),
   });
+  editorRef.current = editor;
+
+  const changeCover = async (assetId: string | null) => {
+    try {
+      const saved = await patchNode(node.id, { cover_asset_id: assetId });
+      queryClient.setQueryData(folioKeys.node(node.id), saved);
+      setCover(assetId);
+    } catch (error) {
+      failed(error);
+    }
+  };
+  const pickCover = async () => {
+    const [file] = await pickFiles('image/*', false);
+    if (!file) return;
+    try {
+      await changeCover((await upload(file)).id);
+    } catch (error) {
+      failed(error);
+    }
+  };
 
   const states = [body.state, header.state];
   const state = states.includes('error')
@@ -121,8 +158,28 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
         )}
       </S.Bar>
       <S.Scroll>
+        {cover && (
+          <S.Cover>
+            <img src={assetUrl(cover)} alt="" />
+            <S.CoverTools>
+              <Button size="sm" onClick={() => void pickCover()}>
+                {t('folio.editor.changeCover')}
+              </Button>
+              <Button size="sm" onClick={() => void changeCover(null)}>
+                {t('folio.editor.removeCover')}
+              </Button>
+            </S.CoverTools>
+          </S.Cover>
+        )}
         <S.Page>
           <PageHeader
+            tools={
+              !cover && (
+                <Button size="sm" variant="ghost" onClick={() => void pickCover()}>
+                  {t('folio.editor.addCover')}
+                </Button>
+              )
+            }
             title={title}
             icon={icon}
             // Each save sends title and icon together, so the latest save keeps both.

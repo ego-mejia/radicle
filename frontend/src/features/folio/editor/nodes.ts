@@ -2,6 +2,8 @@
 // schema. Each renders plain HTML with data attributes; the editor styles them.
 
 import { InputRule, mergeAttributes, Node } from '@tiptap/core';
+import type { DOMOutputSpec } from '@tiptap/pm/model';
+import { assetUrl } from '../../../services/api/folio';
 import type { ColumnLayout, PanelKind, StatusColor } from './schema';
 
 /** `assetId` → `data-asset-id`. */
@@ -75,7 +77,11 @@ export const Column = Node.create({
 });
 
 /** A block with no content of its own, like the table of contents. */
-function atom(name: string, attrs: Record<string, ReturnType<typeof data>> = {}) {
+type Attrs = Record<string, unknown>;
+type Inner = (attrs: Attrs) => DOMOutputSpec[];
+
+/** A block with no content of its own, like the table of contents; `inner` draws it. */
+function atom(name: string, attrs: Record<string, ReturnType<typeof data>> = {}, inner?: Inner) {
   return Node.create({
     name,
     group: 'block',
@@ -84,34 +90,50 @@ function atom(name: string, attrs: Record<string, ReturnType<typeof data>> = {})
     draggable: true,
     addAttributes: () => attrs,
     parseHTML: () => [{ tag: `div[data-folio="${name}"]` }],
-    renderHTML: ({ HTMLAttributes }) => [
+    renderHTML: ({ node, HTMLAttributes }) => [
       'div',
       mergeAttributes(HTMLAttributes, { 'data-folio': name }),
+      ...(inner?.(node.attrs) ?? []),
     ],
   });
 }
 
+/** Uploaded media point at the asset; linked media keep their own src. */
+const source = (attrs: Attrs) =>
+  typeof attrs.src === 'string' ? attrs.src : attrs.assetId ? assetUrl(String(attrs.assetId)) : '';
+
+const caption = (attrs: Attrs): DOMOutputSpec[] =>
+  attrs.caption ? [['span', { class: 'caption' }, String(attrs.caption)]] : [];
+
 export const TableOfContents = atom('tableOfContents');
 export const ChildPages = atom('childPages');
-export const Image = atom('image', {
-  assetId: data('assetId'),
-  src: data('src'),
-  alt: data('alt'),
-  caption: data('caption'),
-  size: data('size'),
-  align: data('align'),
-});
-export const File = atom('file', {
-  assetId: data('assetId'),
-  name: data('name', ''),
-  mimeType: data('mimeType'),
-  size: numeric('size'),
-});
-export const Video = atom('video', {
-  assetId: data('assetId'),
-  src: data('src'),
-  caption: data('caption'),
-});
+export const Image = atom(
+  'image',
+  {
+    assetId: data('assetId'),
+    src: data('src'),
+    alt: data('alt'),
+    caption: data('caption'),
+    size: data('size'),
+    align: data('align'),
+  },
+  (attrs) => [['img', { src: source(attrs), alt: String(attrs.alt ?? '') }], ...caption(attrs)],
+);
+export const File = atom(
+  'file',
+  {
+    assetId: data('assetId'),
+    name: data('name', ''),
+    mimeType: data('mimeType'),
+    size: numeric('size'),
+  },
+  (attrs) => [['a', { href: source(attrs), download: String(attrs.name) }, String(attrs.name)]],
+);
+export const Video = atom(
+  'video',
+  { assetId: data('assetId'), src: data('src'), caption: data('caption') },
+  (attrs) => [['video', { src: source(attrs), controls: 'true' }], ...caption(attrs)],
+);
 
 function inlineAtom(name: string, attrs: Record<string, ReturnType<typeof data>>, label: string) {
   return Node.create({
