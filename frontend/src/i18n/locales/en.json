@@ -1666,7 +1666,8 @@
       "kind": "Type",
       "docTitle": "Title",
       "startWriting": "Start writing",
-      "noWritableSpace": "You can't write in any space yet. A space admin can give you the create permission."
+      "noWritableSpace": "You can't write in any space yet. A space admin can give you the create permission.",
+      "forYou": "For you"
     },
     "space": {
       "title": "Space",

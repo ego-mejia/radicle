@@ -8,6 +8,7 @@ export type FolioCopyIn = S['CopyIn'];
 export type FolioReaction = S['FolioReactionOut'];
 export type FolioFavorites = S['FavoritesOut'];
 export type FolioSpacePatch = S['SpacePatch'];
+export type FolioFeedItem = S['FeedItemOut'];
 export type NodeStatus = FolioNode['status'];
 export type Followable = 'node' | 'space';
 export type Reactable = 'node' | 'comment';
@@ -19,6 +20,7 @@ export const socialKeys = {
   reactions: (type: Reactable, id: string) => ['folio', 'reactions', type, id] as const,
   recents: ['folio', 'me', 'recents'] as const,
   favorites: ['folio', 'me', 'favorites'] as const,
+  feed: ['folio', 'me', 'feed'] as const,
 };
 
 const node = (id: string) => ({ params: { path: { node_id: id } } });
@@ -104,4 +106,9 @@ export async function setReaction(
   const path = '/api/v1/folio/reactions/{target_type}/{target_id}/{emoji}' as const;
   const params = { params: { path: { target_type: type, target_id: id, emoji } } };
   return unwrap(on ? await api.PUT(path, params) : await api.DELETE(path, params));
+}
+
+/** What the people and spaces you follow published, then the week's most read in your spaces. */
+export async function fetchFeed(limit = 6): Promise<FolioFeedItem[]> {
+  return unwrap(await api.GET('/api/v1/folio/me/feed', { params: { query: { limit } } })).items;
 }
