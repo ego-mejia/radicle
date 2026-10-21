@@ -8903,6 +8903,11 @@ export interface components {
         };
         /** TreeItem */
         TreeItem: {
+            /**
+             * Can Delete
+             * @description You may archive it, delete it or move it to another space
+             */
+            can_delete: boolean;
             /** Children */
             children: components["schemas"]["TreeItem"][];
             /** Icon */

@@ -168,3 +168,17 @@ async def test_space_admins_set_how_long_verification_lasts(
         f"{API}/spaces/ver", headers=team.member.headers, json={"verify_days": 10}
     )
     assert r.status_code == 403
+
+
+async def test_the_tree_says_what_you_may_delete(
+    client: AsyncClient, team: Team, space: dict
+) -> None:
+    i = team.instance.headers
+    r = await client.post(
+        f"{API}/nodes", headers=i, json={"space": space["key"], "kind": "page", "title": "Raíz"}
+    )
+    await publish(client, team, r.json()["id"])
+    mine = (await client.get(f"{API}/spaces/{space['key']}/tree", headers=i)).json()
+    assert mine[0]["can_delete"] is True
+    theirs = await client.get(f"{API}/spaces/{space['key']}/tree", headers=team.member.headers)
+    assert theirs.json()[0]["can_delete"] is False  # readers view the space

@@ -13,10 +13,11 @@ import { PlaceDialog, type Place } from './components/PlaceDialog';
 import * as S from './style';
 
 type Props = {
-  node: { id: string; title: string; kind: string; space: string };
+  node: { id: string; title: string; kind: string; space: string; can_delete?: boolean };
 };
 
-/** Move, Copy and Archive for a page, folder or post. The API says when you may not. */
+/** Move, Copy and Archive for a page, folder or post. Move and Archive need delete, so
+ * they only show with can_delete; the API still has the last word. */
 export function NodeMenu({ node }: Props) {
   const { t } = useTranslation();
   const toast = useToast();
@@ -75,26 +76,34 @@ export function NodeMenu({ node }: Props) {
           </S.Trigger>
         }
         items={[
-          {
-            key: 'move',
-            label: t('folio.organize.moveEllipsis'),
-            icon: <FolderInput />,
-            onSelect: () => setDialog('move'),
-          },
+          ...(node.can_delete === false
+            ? []
+            : [
+                {
+                  key: 'move',
+                  label: t('folio.organize.moveEllipsis'),
+                  icon: <FolderInput />,
+                  onSelect: () => setDialog('move'),
+                },
+              ]),
           {
             key: 'copy',
             label: t('folio.organize.copyEllipsis'),
             icon: <Copy />,
             onSelect: () => setDialog('copy'),
           },
-          { separator: true, key: 'sep' },
-          {
-            key: 'archive',
-            label: t('folio.organize.archive'),
-            icon: <Archive />,
-            danger: true,
-            onSelect: () => setDialog('archive'),
-          },
+          ...(node.can_delete === false
+            ? []
+            : [
+                { separator: true as const, key: 'sep' },
+                {
+                  key: 'archive',
+                  label: t('folio.organize.archive'),
+                  icon: <Archive />,
+                  danger: true,
+                  onSelect: () => setDialog('archive'),
+                },
+              ]),
         ]}
       />
       {(dialog === 'move' || dialog === 'copy') && (
