@@ -2429,6 +2429,18 @@
     "inAppFor": "In the app: {{label}}",
     "emailFor": "By email: {{label}}",
     "emailOff": "Email is off on this server: an admin sets RADICLE_SMTP_HOST to turn it on.",
-    "noTypes": "No notifications yet."
+    "noTypes": "No notifications yet.",
+    "types": {
+      "folio": {
+        "comment": "Comments on pages you follow or threads you're in",
+        "comment_mention": "Mentions in comments",
+        "page_published": "A page you follow is published",
+        "page_mention": "You are mentioned in a page",
+        "submission_pending": "An agent's page waits for approval",
+        "task_assigned": "A task is assigned to you",
+        "page_shared": "Someone shares a page with you",
+        "page_outdated": "A page you own is outdated"
+      }
+    }
   }
 }

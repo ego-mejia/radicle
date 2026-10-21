@@ -23,7 +23,7 @@ describe('NotificationPreferences', () => {
       'PUT /api/v1/me/notification-preferences': { status: 200, body: PREFS(true, false) },
     });
     renderWithProviders(<NotificationPreferences />);
-    const inApp = await screen.findByRole('checkbox', { name: 'In the app: You were mentioned' });
+    const inApp = await screen.findByRole('checkbox', { name: 'In the app: Mentions in comments' });
     expect(inApp).toBeChecked();
     fireEvent.click(inApp);
     await waitFor(() => expect(inApp).not.toBeChecked());
@@ -38,9 +38,24 @@ describe('NotificationPreferences', () => {
   it('disables email and says why when SMTP is off', async () => {
     mockFetch({ 'GET /api/v1/me/notification-preferences': { status: 200, body: PREFS(false) } });
     renderWithProviders(<NotificationPreferences />);
-    const email = await screen.findByRole('checkbox', { name: 'By email: You were mentioned' });
+    const email = await screen.findByRole('checkbox', { name: 'By email: Mentions in comments' });
     expect(email).toBeDisabled();
     expect(email).not.toBeChecked();
     expect(screen.getByText(/Email is off/)).toBeInTheDocument();
+  });
+
+  it("shows the server's label for a type it has no translation for", async () => {
+    const body = PREFS(true);
+    body.items.push({
+      app: 'folio',
+      type: 'brand_new',
+      label: 'Something new happens',
+      in_app: true,
+      email: true,
+    });
+    mockFetch({ 'GET /api/v1/me/notification-preferences': { status: 200, body } });
+    renderWithProviders(<NotificationPreferences />);
+    expect(await screen.findByText('Mentions in comments')).toBeInTheDocument();
+    expect(screen.getByText('Something new happens')).toBeInTheDocument();
   });
 });

@@ -46,28 +46,32 @@ export function NotificationPreferences() {
             </tr>
           </thead>
           <tbody>
-            {data.items.map((p) => (
-              <tr key={`${p.app}.${p.type}`}>
-                <th scope="row">{p.label}</th>
-                <td>
-                  <input
-                    type="checkbox"
-                    aria-label={t('notifications.inAppFor', { label: p.label })}
-                    checked={p.in_app}
-                    onChange={(e) => toggle(p, 'in_app', e.target.checked)}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="checkbox"
-                    aria-label={t('notifications.emailFor', { label: p.label })}
-                    checked={data.email_available && p.email}
-                    disabled={!data.email_available}
-                    onChange={(e) => toggle(p, 'email', e.target.checked)}
-                  />
-                </td>
-              </tr>
-            ))}
+            {data.items.map((p) => {
+              // Known types are translated; one an app adds later shows the server's label.
+              const label = t(`notifications.types.${p.app}.${p.type}`, { defaultValue: p.label });
+              return (
+                <tr key={`${p.app}.${p.type}`}>
+                  <th scope="row">{label}</th>
+                  <td>
+                    <input
+                      type="checkbox"
+                      aria-label={t('notifications.inAppFor', { label })}
+                      checked={p.in_app}
+                      onChange={(e) => toggle(p, 'in_app', e.target.checked)}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      aria-label={t('notifications.emailFor', { label })}
+                      checked={data.email_available && p.email}
+                      disabled={!data.email_available}
+                      onChange={(e) => toggle(p, 'email', e.target.checked)}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </S.Table>
       )}
