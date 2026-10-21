@@ -52,18 +52,33 @@ class Event:
     data: dict[str, Any]
 
 
-def available(cfg: ai.AiConfig) -> bool:
-    return cfg.enabled and bool(cfg.chat_model)
+FEATURE = "folio_chat"
+OFF = {
+    "no_provider": "The docs chat needs an AI provider with a chat model. An instance admin "
+    "sets it in Admin, AI provider.",
+    "off": "The docs chat is turned off for Folio in Admin, AI provider.",
+}
+
+
+def _off(cfg: ai.AiConfig) -> str | None:
+    if not cfg.enabled or not cfg.chat_model:
+        return OFF["no_provider"]
+    if not cfg.features.get(FEATURE, True):
+        return OFF["off"]
+    return None
+
+
+async def unavailable(db: AsyncSession) -> str | None:
+    """Why the chat is off, or None when it is on."""
+    return _off(await ai.load(db))
 
 
 async def _require_available(db: AsyncSession) -> ai.AiConfig:
     cfg = await ai.load(db)
-    if not available(cfg):
+    off = _off(cfg)
+    if off:
         raise ValidationFailed(
-            "The docs chat needs an AI provider with a chat model. An instance admin sets it "
-            "in Admin, AI provider.",
-            code="no_chat_model",
-            errors=[{"field": "provider", "message": "not configured"}],
+            off, code="no_chat_model", errors=[{"field": "provider", "message": "off"}]
         )
     return cfg
 

@@ -9,6 +9,7 @@ from pydantic import Field
 from radicle.folio.api import ai as ai_api
 from radicle.folio.api import assets as assets_api
 from radicle.folio.api import catalogs as catalogs_api
+from radicle.folio.api import chat as chat_api
 from radicle.folio.api import collab as collab_api
 from radicle.folio.api import comments as comments_api
 from radicle.folio.api import databases as databases_api
@@ -167,3 +168,4 @@ router.include_router(whiteboards_api.router)
 router.include_router(tickets_api.router)
 router.include_router(ai_api.router)
 router.include_router(glossary_api.router)
+router.include_router(chat_api.router)

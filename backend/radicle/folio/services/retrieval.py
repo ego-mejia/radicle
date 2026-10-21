@@ -14,10 +14,10 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import ColumnElement, Float, cast, func, select
+from sqlalchemy import ColumnElement, Float, and_, cast, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioChunk, FolioNode
+from radicle.folio.db.models import FolioChunk, FolioNode, FolioSpace
 from radicle.folio.services import access, search
 from radicle.platform.db.models import User
 from radicle.platform.services import ai
@@ -173,6 +173,8 @@ async def retrieve(
     if not q:
         return []
     f = filters or search.Filters()
-    visible = await access.node_filter(db, user)
+    # A space that turned its AI off keeps its pages away from the model too.
+    ai_on = select(FolioSpace.id).where(FolioSpace.ai_enabled.is_(True))
+    visible = and_(await access.node_filter(db, user), FolioNode.space_id.in_(ai_on))
     found = {"text": await _text(db, visible, q, f), "semantic": await _semantic(db, visible, q, f)}
     return rerank(q, fuse(found), top)

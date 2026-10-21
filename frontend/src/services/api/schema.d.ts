@@ -691,6 +691,26 @@ export interface paths {
         patch: operations["check_off_api_v1_folio_action_items__item_id__patch"];
         trace?: never;
     };
+    "/api/v1/folio/admin/chat/unanswered": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Unanswered Questions
+         * @description Folio admins: questions the docs didn't answer, or whose answer got a thumbs down.
+         */
+        get: operations["unanswered_questions_api_v1_folio_admin_chat_unanswered_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/admin/grants": {
         parameters: {
             query?: never;
@@ -963,6 +983,111 @@ export interface paths {
         get: operations["get_asset_api_v1_folio_assets__asset_id__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/chat/availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Chat Availability
+         * @description Whether the chat shows at all: it needs an AI provider with a chat model.
+         */
+        get: operations["chat_availability_api_v1_folio_chat_availability_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/chat/messages/{message_id}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Give Chat Feedback
+         * @description Thumbs up or down on one of your answers, with an optional note.
+         */
+        post: operations["give_chat_feedback_api_v1_folio_chat_messages__message_id__feedback_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/chat/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Chat Sessions
+         * @description Your chat sessions, the most recent first.
+         */
+        get: operations["list_chat_sessions_api_v1_folio_chat_sessions_get"];
+        put?: never;
+        /**
+         * Create Chat Session
+         * @description A new, empty session; its title comes from the first question if you leave it out.
+         */
+        post: operations["create_chat_session_api_v1_folio_chat_sessions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/chat/sessions/{session_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Chat Session
+         * @description A session of yours with its questions and answers.
+         */
+        get: operations["get_chat_session_api_v1_folio_chat_sessions__session_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/chat/sessions/{session_id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ask In Chat Session
+         * @description Ask the docs. The answer streams as server-sent events: `delta` with `{text}` as it is
+         *     written, then `done` with the saved message and its citations, or `error`.
+         */
+        post: operations["ask_in_chat_session_api_v1_folio_chat_sessions__session_id__messages_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5152,6 +5277,26 @@ export interface components {
              */
             todo: number;
         };
+        /** ChatAvailabilityOut */
+        ChatAvailabilityOut: {
+            /** Available */
+            available: boolean;
+            /**
+             * Message
+             * @description Why it is off and who can turn it on
+             */
+            message: string | null;
+        };
+        /** ChatFeedbackIn */
+        ChatFeedbackIn: {
+            /** Note */
+            note?: string | null;
+            /**
+             * Value
+             * @enum {string}
+             */
+            value: "up" | "down";
+        };
         /** ChatIn */
         ChatIn: {
             /**
@@ -5167,6 +5312,30 @@ export interface components {
         ChatMessage: {
             /** Content */
             content: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "user" | "assistant";
+        };
+        /** ChatMessageOut */
+        ChatMessageOut: {
+            /** Citations */
+            citations: components["schemas"]["CitationOut"][];
+            /** Content */
+            content: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Feedback */
+            feedback: ("up" | "down") | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
             /**
              * Role
              * @enum {string}
@@ -5208,6 +5377,76 @@ export interface components {
              */
             tour: components["schemas"]["TourStepOut"][];
         };
+        /** ChatQuestionIn */
+        ChatQuestionIn: {
+            /**
+             * Audience
+             * @description Only docs for this audience
+             */
+            audience?: string | null;
+            /** Content */
+            content: string;
+            /**
+             * Doc Type
+             * @description Only docs of this type
+             */
+            doc_type?: string | null;
+            /**
+             * Space
+             * @description Only docs in this space
+             */
+            space?: string | null;
+        };
+        /** ChatSessionDetailOut */
+        ChatSessionDetailOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Messages */
+            messages: components["schemas"]["ChatMessageOut"][];
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** ChatSessionIn */
+        ChatSessionIn: {
+            /**
+             * Title
+             * @default
+             */
+            title?: string;
+        };
+        /** ChatSessionOut */
+        ChatSessionOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Title */
+            title: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
         /** ChecklistItemOut */
         ChecklistItemOut: {
             /** Assignee */
@@ -5228,6 +5467,40 @@ export interface components {
         ChecklistPatch: {
             /** Checked */
             checked: boolean;
+        };
+        /** CitationOut */
+        CitationOut: {
+            /**
+             * Anchor
+             * @description The section's anchor; None for the page's start
+             */
+            anchor: string | null;
+            /**
+             * N
+             * @description The [n] the answer uses
+             */
+            n: number;
+            /**
+             * Node Id
+             * Format: uuid
+             */
+            node_id: string;
+            /**
+             * Outdated
+             * @description The doc is marked Outdated: show a warning
+             */
+            outdated: boolean;
+            /** Section */
+            section: string;
+            /** Title */
+            title: string;
+            /**
+             * Url
+             * @description Link to the page at the section
+             */
+            url: string;
+            /** Version */
+            version: number | null;
         };
         /**
          * Classification
@@ -7768,6 +8041,13 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** Page[ChatSessionOut] */
+        Page_ChatSessionOut_: {
+            /** Items */
+            items: components["schemas"]["ChatSessionOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** Page[CommentOut] */
         Page_CommentOut_: {
             /** Items */
@@ -7975,6 +8255,13 @@ export interface components {
         Page_TokenOut_: {
             /** Items */
             items: components["schemas"]["TokenOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[UnansweredOut] */
+        Page_UnansweredOut_: {
+            /** Items */
+            items: components["schemas"]["UnansweredOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -10123,6 +10410,22 @@ export interface components {
             area?: string | null;
             type: components["schemas"]["TicketType"];
         };
+        /** UnansweredOut */
+        UnansweredOut: {
+            /** Answer */
+            answer: string;
+            /**
+             * Asked At
+             * Format: date-time
+             */
+            asked_at: string;
+            /** Feedback */
+            feedback: ("up" | "down") | null;
+            /** Feedback Note */
+            feedback_note: string | null;
+            /** Question */
+            question: string;
+        };
         /** UserCreate */
         UserCreate: {
             /** Display Name */
@@ -12168,6 +12471,37 @@ export interface operations {
             };
         };
     };
+    unanswered_questions_api_v1_folio_admin_chat_unanswered_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_UnansweredOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_grants_api_v1_folio_admin_grants_get: {
         parameters: {
             query?: never;
@@ -12659,6 +12993,192 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    chat_availability_api_v1_folio_chat_availability_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatAvailabilityOut"];
+                };
+            };
+        };
+    };
+    give_chat_feedback_api_v1_folio_chat_messages__message_id__feedback_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatFeedbackIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatMessageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_chat_sessions_api_v1_folio_chat_sessions_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ChatSessionOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_chat_session_api_v1_folio_chat_sessions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatSessionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatSessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_chat_session_api_v1_folio_chat_sessions__session_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatSessionDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ask_in_chat_session_api_v1_folio_chat_sessions__session_id__messages_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatQuestionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                    "text/event-stream": unknown;
+                };
             };
             /** @description Validation Error */
             422: {

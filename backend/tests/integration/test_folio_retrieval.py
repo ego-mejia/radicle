@@ -4,8 +4,10 @@ filters; and the re-ranking."""
 import uuid
 
 from httpx import AsyncClient
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from radicle.folio.db.models import FolioSpace
 from radicle.folio.services import retrieval, search
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_chat_helpers import docs, user
@@ -45,6 +47,15 @@ async def test_filters_narrow_the_passages(db: AsyncSession, team: Team, docs: d
         db, member, "agente docker", filters=search.Filters(doc_type="guide")
     )
     assert {str(p.node_id) for p in found} == {docs["deploy"]}
+
+
+async def test_a_space_with_its_ai_off_stays_out(db: AsyncSession, team: Team, docs: dict) -> None:
+    space = await db.scalar(select(FolioSpace).where(FolioSpace.key == "docs"))
+    assert space is not None
+    space.ai_enabled = False
+    await db.flush()
+    admin = await user(db, team.instance.handle)
+    assert await retrieval.retrieve(db, admin, "¿Cómo conecto un agente?") == []
 
 
 def _p(node: uuid.UUID, chunk: int, score: float, section: str = "", status: str = "") -> object:
