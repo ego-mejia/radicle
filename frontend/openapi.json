@@ -5494,6 +5494,307 @@
         "title": "FolioThreadOut",
         "type": "object"
       },
+      "FolioTicketAssignee": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "handle": {
+            "title": "Handle",
+            "type": "string"
+          }
+        },
+        "required": [
+          "handle",
+          "display_name"
+        ],
+        "title": "FolioTicketAssignee",
+        "type": "object"
+      },
+      "FolioTicketLinkIn": {
+        "additionalProperties": false,
+        "properties": {
+          "anchor": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "examples": [
+              "conecta-un-agente"
+            ],
+            "title": "Anchor"
+          },
+          "key": {
+            "examples": [
+              "PA-4"
+            ],
+            "maxLength": 30,
+            "minLength": 3,
+            "title": "Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "title": "FolioTicketLinkIn",
+        "type": "object"
+      },
+      "FolioTicketLinkOut": {
+        "properties": {
+          "anchor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anchor"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "item_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Key"
+          },
+          "kind": {
+            "enum": [
+              "mention",
+              "created_from_text",
+              "build_spec_item",
+              "manual"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "restricted": {
+            "description": "You can't see the ticket in Docket",
+            "title": "Restricted",
+            "type": "boolean"
+          },
+          "ticket": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FolioTicketOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "anchor",
+          "item_key",
+          "restricted",
+          "ticket",
+          "created_at"
+        ],
+        "title": "FolioTicketLinkOut",
+        "type": "object"
+      },
+      "FolioTicketLinksOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FolioTicketLinkOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "FolioTicketLinksOut",
+        "type": "object"
+      },
+      "FolioTicketOut": {
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "assignee": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FolioTicketAssignee"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "checklist_done": {
+            "title": "Checklist Done",
+            "type": "integer"
+          },
+          "checklist_total": {
+            "title": "Checklist Total",
+            "type": "integer"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milestone"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "status_category": {
+            "enum": [
+              "todo",
+              "in_progress",
+              "done"
+            ],
+            "title": "Status Category",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          },
+          "url": {
+            "description": "The ticket in Docket, e.g. /t/PA-4",
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title",
+          "type",
+          "status",
+          "status_category",
+          "priority",
+          "assignee",
+          "area",
+          "milestone",
+          "checklist_done",
+          "checklist_total",
+          "url"
+        ],
+        "title": "FolioTicketOut",
+        "type": "object"
+      },
+      "FolioTicketPreview": {
+        "properties": {
+          "key": {
+            "description": "As asked, upper-cased",
+            "title": "Key",
+            "type": "string"
+          },
+          "restricted": {
+            "description": "Not found, or you can't see it in Docket",
+            "title": "Restricted",
+            "type": "boolean"
+          },
+          "ticket": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FolioTicketOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "restricted",
+          "ticket"
+        ],
+        "title": "FolioTicketPreview",
+        "type": "object"
+      },
+      "FolioTicketPreviewsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FolioTicketPreview"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "FolioTicketPreviewsOut",
+        "type": "object"
+      },
+      "FolioTicketQueryOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FolioTicketOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "title": "FolioTicketQueryOut",
+        "type": "object"
+      },
       "FormSchemaOut": {
         "properties": {
           "fields": {
@@ -5534,6 +5835,217 @@
           "fields"
         ],
         "title": "FormSchemaOut",
+        "type": "object"
+      },
+      "GlossarySource": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "slug"
+        ],
+        "title": "GlossarySource",
+        "type": "object"
+      },
+      "GlossaryTermIn": {
+        "additionalProperties": false,
+        "properties": {
+          "aliases": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Aliases",
+            "type": "array"
+          },
+          "definition": {
+            "title": "Definition",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The id of the source page",
+            "title": "Source"
+          },
+          "term": {
+            "title": "Term",
+            "type": "string"
+          }
+        },
+        "required": [
+          "term",
+          "definition"
+        ],
+        "title": "GlossaryTermIn",
+        "type": "object"
+      },
+      "GlossaryTermOut": {
+        "properties": {
+          "aliases": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Aliases",
+            "type": "array"
+          },
+          "definition": {
+            "title": "Definition",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GlossarySource"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The doc it comes from, if you can see it"
+          },
+          "status": {
+            "enum": [
+              "suggested",
+              "approved",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "term": {
+            "title": "Term",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "term",
+          "aliases",
+          "definition",
+          "status",
+          "source",
+          "updated_at"
+        ],
+        "title": "GlossaryTermOut",
+        "type": "object"
+      },
+      "GlossaryTermPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "aliases": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aliases"
+          },
+          "definition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Definition"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null removes it",
+            "title": "Source"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "suggested",
+                  "approved",
+                  "rejected"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "approved shows it to readers",
+            "title": "Status"
+          },
+          "term": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Term"
+          }
+        },
+        "title": "GlossaryTermPatch",
+        "type": "object"
+      },
+      "GlossaryTermsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GlossaryTermOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "GlossaryTermsOut",
         "type": "object"
       },
       "GrantIO": {
@@ -13631,6 +14143,155 @@
         "title": "TicketCreate",
         "type": "object"
       },
+      "TicketDocOut": {
+        "properties": {
+          "anchor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anchor"
+          },
+          "kind": {
+            "enum": [
+              "mention",
+              "created_from_text",
+              "build_spec_item",
+              "manual"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "node": {
+            "$ref": "#/components/schemas/NodeRef"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          },
+          "url": {
+            "description": "The doc, at the linked section when there is one",
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "node",
+          "space",
+          "kind",
+          "anchor",
+          "url"
+        ],
+        "title": "TicketDocOut",
+        "type": "object"
+      },
+      "TicketDocsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TicketDocOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "TicketDocsOut",
+        "type": "object"
+      },
+      "TicketFromTextIn": {
+        "additionalProperties": false,
+        "properties": {
+          "anchor": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Its section",
+            "title": "Anchor"
+          },
+          "area": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milestone"
+          },
+          "project": {
+            "examples": [
+              "PA"
+            ],
+            "maxLength": 10,
+            "minLength": 1,
+            "title": "Project",
+            "type": "string"
+          },
+          "text": {
+            "description": "The selection or action item",
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Else the first line",
+            "title": "Title"
+          },
+          "type": {
+            "default": "task",
+            "enum": [
+              "task",
+              "bug",
+              "draft"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "project"
+        ],
+        "title": "TicketFromTextIn",
+        "type": "object"
+      },
       "TicketOut": {
         "properties": {
           "area": {
@@ -20528,6 +21189,160 @@
         ]
       }
     },
+    "/api/v1/folio/glossary": {
+      "get": {
+        "description": "Approved terms, A to Z, for tooltips when reading.",
+        "operationId": "list_glossary_api_v1_folio_glossary_get",
+        "parameters": [
+          {
+            "description": "Not approved: Folio admins only",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "suggested",
+                    "approved",
+                    "rejected"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Not approved: Folio admins only",
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GlossaryTermsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Glossary",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "description": "A term written by a Folio admin, approved right away.",
+        "operationId": "create_glossary_term_api_v1_folio_glossary_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GlossaryTermIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GlossaryTermOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Glossary Term",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/glossary/{term_id}": {
+      "patch": {
+        "description": "Edit, approve or reject a term. Folio admins only.",
+        "operationId": "patch_glossary_term_api_v1_folio_glossary__term_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "term_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Term Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GlossaryTermPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GlossaryTermOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Glossary Term",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/health": {
       "get": {
         "operationId": "health_api_v1_folio_health_get",
@@ -20614,6 +21429,55 @@
           }
         },
         "summary": "Get Link Preview",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/links": {
+      "get": {
+        "description": "The docs linked to a ticket that you may see (the Docs panel in Docket).",
+        "operationId": "docs_for_ticket_api_v1_folio_links_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "ticket",
+            "required": true,
+            "schema": {
+              "examples": [
+                "PA-4"
+              ],
+              "maxLength": 30,
+              "minLength": 3,
+              "title": "Ticket",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketDocsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Docs For Ticket",
         "tags": [
           "folio",
           "folio"
@@ -22196,6 +23060,206 @@
           }
         },
         "summary": "Set Status",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/ticket-links": {
+      "get": {
+        "description": "The doc's tickets: mentioned, created from its text, from its deliverables or linked\nby hand.",
+        "operationId": "list_ticket_links_api_v1_folio_nodes__node_id__ticket_links_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioTicketLinksOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Ticket Links",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "description": "Link the doc, or one of its sections, to a ticket. Needs edit on the page.",
+        "operationId": "add_ticket_link_api_v1_folio_nodes__node_id__ticket_links_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FolioTicketLinkIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioTicketLinkOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Ticket Link",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/ticket-links/{link_id}": {
+      "delete": {
+        "operationId": "remove_ticket_link_api_v1_folio_nodes__node_id__ticket_links__link_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "link_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Link Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove Ticket Link",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/tickets": {
+      "post": {
+        "description": "Create a Docket ticket from a selection or an action item, linked to its section.\nWhoever can read the doc may, if Docket lets them create tickets in the project.",
+        "operationId": "create_ticket_from_text_api_v1_folio_nodes__node_id__tickets_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketFromTextIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioTicketLinkOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Ticket From Text",
         "tags": [
           "folio",
           "folio"
@@ -24031,6 +25095,115 @@
           }
         },
         "summary": "Update Template",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/tickets/preview": {
+      "get": {
+        "description": "Live status, assignee and checklist of tickets for smart links, in the order asked.\nA ticket you can't see in Docket comes back restricted, with no title.",
+        "operationId": "preview_tickets_api_v1_folio_tickets_preview_get",
+        "parameters": [
+          {
+            "description": "Comma-separated: PA-4,PA-7",
+            "in": "query",
+            "name": "keys",
+            "required": true,
+            "schema": {
+              "description": "Comma-separated: PA-4,PA-7",
+              "maxLength": 2000,
+              "minLength": 3,
+              "title": "Keys",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioTicketPreviewsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview Tickets",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/tickets/query": {
+      "get": {
+        "description": "The ticket table block: Docket's RQL, only the tickets you can see in Docket.",
+        "operationId": "query_tickets_api_v1_folio_tickets_query_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "rql",
+            "required": true,
+            "schema": {
+              "examples": [
+                "project = PA AND status != Done"
+              ],
+              "maxLength": 2000,
+              "minLength": 1,
+              "title": "Rql",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioTicketQueryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Query Tickets",
         "tags": [
           "folio",
           "folio"

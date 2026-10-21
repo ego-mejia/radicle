@@ -13,6 +13,7 @@ from radicle.folio.api import collab as collab_api
 from radicle.folio.api import comments as comments_api
 from radicle.folio.api import databases as databases_api
 from radicle.folio.api import drafts as drafts_api
+from radicle.folio.api import glossary as glossary_api
 from radicle.folio.api import home as home_api
 from radicle.folio.api import home_layouts as home_layouts_api
 from radicle.folio.api import links as links_api
@@ -165,3 +166,4 @@ router.include_router(visuals_api.router)
 router.include_router(whiteboards_api.router)
 router.include_router(tickets_api.router)
 router.include_router(ai_api.router)
+router.include_router(glossary_api.router)

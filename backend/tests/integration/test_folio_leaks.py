@@ -100,6 +100,8 @@ def _urls(s: dict) -> dict[str, list[str]]:
         "/api/v1/folio/nodes/{node_id}/ticket-links": [f"{API}/nodes/{p}/ticket-links"],
         "/api/v1/folio/links": [f"{API}/links?ticket=PA-1"],
         "/api/v1/folio/ai/availability": [f"{API}/ai/availability?space=docs"],
+        # test_folio_glossary.py checks a term whose source page is restricted.
+        "/api/v1/folio/glossary": [f"{API}/glossary"],
     }
 
 
