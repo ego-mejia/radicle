@@ -5,6 +5,7 @@ import { assetUrl } from '../../../../../../services/api/folio';
 import type { DocNode, Heading } from '../../anchors';
 import { toneOf } from '../Inline/tone';
 import { EmbedCard } from '../../../EmbedCard';
+import { VisualFrame } from '../../../VisualFrame';
 import * as S from './style';
 
 export type ChildPage = { id: string; title: string; slug: string };
@@ -93,6 +94,14 @@ export function RichBlock({ node: n, headings, childPages, children }: Props) {
         </S.Figure>
       );
     }
+    case 'visual':
+      return (
+        <VisualFrame
+          code={String(a.code ?? '')}
+          title={a.title ? String(a.title) : null}
+          description={String(a.description ?? '')}
+        />
+      );
     case 'embed':
       return <EmbedCard url={String(a.url)} title={a.title ? String(a.title) : null} />;
     case 'file':
