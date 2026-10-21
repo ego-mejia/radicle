@@ -41,6 +41,7 @@ from radicle.docket.core import mcp_catalog
 from radicle.docket.core.authz import DocketAuthz
 from radicle.docket.mcp import server as mcp_server
 from radicle.docket.public.router import router as public_router
+from radicle.folio.api import ical as folio_ical
 from radicle.folio.api.public_page import router as folio_public_page
 from radicle.folio.api.router import router as folio_router
 from radicle.folio.authz import FolioAuthz
@@ -133,6 +134,7 @@ def create_app() -> FastAPI:
     api.include_router(folio_router)
     app.include_router(api)
     app.include_router(public_router)
+    app.include_router(folio_ical.router)
     app.include_router(folio_public_page)
     mcp_server.mount(app)
     folio_mcp.mount(app)
