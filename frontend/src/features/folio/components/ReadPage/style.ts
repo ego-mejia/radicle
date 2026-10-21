@@ -78,6 +78,13 @@ export const Cover = styled.div<{ $image: string | null }>`
   height: 240px;
   background: ${darkTheme.color.bg};
   border-top: 3px solid ${({ theme }) => theme.color.accentFill};
+  color: ${({ theme }) => theme.color.accentFill};
+  overflow: hidden;
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
   ${({ $image }) =>
     $image &&
     css`
