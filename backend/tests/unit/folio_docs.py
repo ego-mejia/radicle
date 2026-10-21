@@ -110,6 +110,7 @@ EVERY_BLOCK: dict[str, Any] = {
             block("comparisonSide", p(t("más rápido"))),
         ),
         block("pageList", label="onboarding", limit=5, space="docs"),
+        block("embed", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", title="La demo"),
         block("horizontalRule"),
         p(t("Fin")),
     ],

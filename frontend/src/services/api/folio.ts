@@ -13,6 +13,7 @@ export type FolioNode = S['NodeOut'];
 export type FolioNodeIn = S['NodeIn'];
 export type FolioMoveIn = S['NodeMoveIn'];
 export type FolioTemplate = S['FolioTemplateOut'];
+export type FolioLinkPreview = S['LinkPreviewOut'];
 export type FolioTemplateIn = S['FolioTemplateIn'];
 export type FolioTemplatePatch = S['FolioTemplatePatch'];
 export type NodeFromTemplateIn = S['NodeFromTemplateIn'];
@@ -50,6 +51,7 @@ export const folioKeys = {
   diff: (id: string, from: number, to: number) => ['folio', 'nodes', id, 'diff', from, to] as const,
   schema: ['folio', 'metadata-schema'] as const,
   template: (id: string) => ['folio', 'template', id] as const,
+  linkPreview: (url: string) => ['folio', 'link-preview', url] as const,
   templates: (kind: 'page' | 'space', space?: string) =>
     ['folio', 'templates', kind, space ?? 'all'] as const,
   catalog: (name: FolioCatalog) => ['folio', 'catalog', name] as const,
@@ -380,4 +382,9 @@ export async function archiveTemplate(id: string): Promise<void> {
 /** A page or post whose draft starts with the template's document and metadata. */
 export async function createFromTemplate(body: NodeFromTemplateIn): Promise<FolioNode> {
   return unwrap(await api.POST('/api/v1/folio/nodes/from-template', { body }));
+}
+
+/** A pasted link's card, and an iframe URL for the providers that embed (Folio 3.7). */
+export async function fetchLinkPreview(url: string): Promise<FolioLinkPreview> {
+  return unwrap(await api.GET('/api/v1/folio/link-preview', { params: { query: { url } } }));
 }

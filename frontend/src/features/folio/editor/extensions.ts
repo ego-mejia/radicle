@@ -1,6 +1,7 @@
 // The editor's extensions: StarterKit, tables and task lists, plus Folio's own blocks.
 // Together they accept exactly the server's schema (see schema.ts).
 
+import { Embed } from './embed';
 import type { AnyExtension } from '@tiptap/core';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import { TableCell, TableHeader, TableKit } from '@tiptap/extension-table';
@@ -64,6 +65,7 @@ export function folioExtensions(): AnyExtension[] {
     Image,
     File,
     Video,
+    Embed,
     Mention,
     Status,
     ActionItem,

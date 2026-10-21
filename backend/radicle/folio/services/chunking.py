@@ -49,6 +49,8 @@ def _block_text(node: Node) -> str:
         return " ".join(v for v in (attrs.get("alt"), attrs.get("caption")) if v)
     if node["type"] in ("file", "video"):
         return str(attrs.get("name") or attrs.get("caption") or "")
+    if node["type"] == "embed":
+        return " ".join(v for v in (attrs.get("title"), attrs["url"]) if v)
     if node["type"] in ("tableOfContents", "childPages", "horizontalRule"):
         return ""
     return convert.block(node)

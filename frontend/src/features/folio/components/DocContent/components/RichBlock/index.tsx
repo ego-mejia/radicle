@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { assetUrl } from '../../../../../../services/api/folio';
 import type { DocNode, Heading } from '../../anchors';
 import { toneOf } from '../Inline/tone';
+import { EmbedCard } from '../../../EmbedCard';
 import * as S from './style';
 
 export type ChildPage = { id: string; title: string; slug: string };
@@ -92,6 +93,8 @@ export function RichBlock({ node: n, headings, childPages, children }: Props) {
         </S.Figure>
       );
     }
+    case 'embed':
+      return <EmbedCard url={String(a.url)} title={a.title ? String(a.title) : null} />;
     case 'file':
       return (
         <S.File href={assetUrl(String(a.assetId))} download={a.name ? String(a.name) : true}>

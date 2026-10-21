@@ -20,7 +20,7 @@ _md = MarkdownIt("commonmark", {"html": False}).enable(["table", "strikethrough"
 
 _OPEN = re.compile(r"^(:{3,})(panel|expand|columns|column|compare|side)(\{.*\})?\s*$")
 _CLOSE = re.compile(r"^:{3,}\s*$")
-_LEAF = re.compile(r"^::(file|video|pages)(\{.*\})\s*$")
+_LEAF = re.compile(r"^::(file|video|pages|embed)(\{.*\})\s*$")
 _INFO = re.compile(r"^(?P<name>[\w-]+)\s*(?P<attrs>\{.*\})?\s*$")
 _ACTION = re.compile(r"^::task\[(?P<label>.*)\](?P<attrs>\{[^}]*\})?\s*$")
 _FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
@@ -480,6 +480,11 @@ def _convert(items: list[Any], parent: str = "doc") -> list[Node]:
                 keys = (("src", "src"), ("assetId", "asset"), ("caption", "caption"))
                 video = {k: attrs[v] for k, v in keys if attrs.get(v)}
                 out.append({"type": "video", "attrs": video})
+            elif name == "embed" and attrs.get("url", "").startswith(("https://", "http://")):
+                embed: dict[str, Any] = {"url": attrs["url"]}
+                if attrs.get("title"):
+                    embed["title"] = attrs["title"]
+                out.append({"type": "embed", "attrs": embed})
             elif name == "task":
                 out.append(_action_item(attrs))
             elif name == "pages" and attrs.get("label"):
