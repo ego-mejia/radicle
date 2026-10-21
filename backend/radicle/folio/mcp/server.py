@@ -9,6 +9,7 @@ from mcp.server.mcpserver import Context
 from radicle import __version__
 from radicle.folio.mcp import (
     analytics,
+    calendars,
     chat,
     comments,
     databases,
@@ -64,6 +65,7 @@ tickets.register(server)
 tickets.register_build_spec(server)
 chat.register(server)
 analytics.register(server)
+calendars.register(server)
 prompts.register(server)
 
 

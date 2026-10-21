@@ -22,6 +22,7 @@ READ = (
     "ask_docs",
     "get_page_analytics",
     "get_search_gaps",
+    "list_calendar_events",
 )
 
 WRITE = (
@@ -44,6 +45,7 @@ WRITE = (
     "link_ticket",
     "unlink_ticket",
     "create_tickets_from_build_spec",
+    "add_calendar_event",
 )
 
 CATALOG: tuple[Tool, ...] = (
