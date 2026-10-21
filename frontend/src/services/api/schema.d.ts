@@ -3080,6 +3080,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/integrations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Integrations */
+        get: operations["list_integrations_api_v1_integrations_get"];
+        put?: never;
+        /**
+         * Create Integration
+         * @description Credentials are stored encrypted and never returned.
+         */
+        post: operations["create_integration_api_v1_integrations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/integrations/{integration_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Integration */
+        get: operations["get_integration_api_v1_integrations__integration_id__get"];
+        /** Update Integration */
+        put: operations["update_integration_api_v1_integrations__integration_id__put"];
+        post?: never;
+        /** Delete Integration */
+        delete: operations["delete_integration_api_v1_integrations__integration_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/integrations/{integration_id}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test Integration
+         * @description Post a test message on one route now and say what Slack or Teams answered.
+         */
+        post: operations["test_integration_api_v1_integrations__integration_id__test_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/jobs/{job_id}": {
         parameters: {
             query?: never;
@@ -8221,6 +8281,72 @@ export interface components {
             /** Password Login Enabled */
             password_login_enabled: boolean;
         };
+        /** IntegrationIn */
+        IntegrationIn: {
+            /**
+             * Active
+             * @default true
+             */
+            active?: boolean;
+            /**
+             * Credentials
+             * @description Slack: bot_token, signing_secret. Teams: secret. Omit on update to keep.
+             */
+            credentials?: {
+                [key: string]: string;
+            } | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "slack" | "teams";
+            /** Name */
+            name: string;
+            /**
+             * Notices
+             * @description Omit on update to keep
+             */
+            notices?: components["schemas"]["NoticeRoute"][] | null;
+        };
+        /** IntegrationOut */
+        IntegrationOut: {
+            /** Active */
+            active: boolean;
+            /**
+             * Command Url
+             * @description Where Slack or Teams sends /radicle commands
+             */
+            command_url: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "slack" | "teams";
+            /** Name */
+            name: string;
+            /** Notices */
+            notices: components["schemas"]["NoticeRouteOut"][];
+        };
+        /** IntegrationTestIn */
+        IntegrationTestIn: {
+            /**
+             * Route
+             * @description Which notice route to post the test on
+             */
+            route: number;
+        };
+        /** IntegrationTestOut */
+        IntegrationTestOut: {
+            /** Message */
+            message: string;
+            /** Ok */
+            ok: boolean;
+        };
         /** JobOut */
         JobOut: {
             /** Created At */
@@ -8875,6 +9001,40 @@ export interface components {
             status: "draft" | "published" | "in_review" | "verified" | "outdated";
             /** Title */
             title: string;
+        };
+        /** NoticeRoute */
+        NoticeRoute: {
+            /**
+             * Channel
+             * @description Slack channel id (C0123…), or the Teams incoming webhook URL
+             */
+            channel: string;
+            /**
+             * Events
+             * @description Empty means every event
+             */
+            events?: string[];
+            /**
+             * Filter
+             * @description e.g. {"space": "anuncios"}
+             */
+            filter?: {
+                [key: string]: string;
+            };
+        };
+        /** NoticeRouteOut */
+        NoticeRouteOut: {
+            /**
+             * Channel
+             * @description Teams URLs show only their host
+             */
+            channel: string;
+            /** Events */
+            events: string[];
+            /** Filter */
+            filter: {
+                [key: string]: string;
+            };
         };
         /** NotificationOut */
         NotificationOut: {
@@ -18650,6 +18810,189 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Health"];
+                };
+            };
+        };
+    };
+    list_integrations_api_v1_integrations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntegrationOut"][];
+                };
+            };
+        };
+    };
+    create_integration_api_v1_integrations_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntegrationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntegrationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_integration_api_v1_integrations__integration_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                integration_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntegrationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_integration_api_v1_integrations__integration_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                integration_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntegrationIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntegrationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_integration_api_v1_integrations__integration_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                integration_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    test_integration_api_v1_integrations__integration_id__test_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                integration_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntegrationTestIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntegrationTestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

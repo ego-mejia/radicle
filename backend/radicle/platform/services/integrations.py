@@ -18,7 +18,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.platform import crypto
+from radicle.platform.config import get_settings
 from radicle.platform.db.models import Integration, IntegrationKind, User
+
+__all__ = ["Integration", "IntegrationData", "Route"]
 from radicle.platform.errors import NotFound, ValidationFailed
 from radicle.platform.services import events, safe_fetch
 
@@ -104,6 +107,12 @@ def routes(integration: Integration) -> list[Route]:
             channel = crypto.decrypt(channel)
         out.append(Route(channel, list(r.get("events", [])), dict(r.get("filter", {}))))
     return out
+
+
+def command_url(integration: Integration) -> str:
+    """The URL to paste in Slack (slash command, events) or Teams (outgoing webhook)."""
+    base = get_settings().base_url.rstrip("/")
+    return f"{base}/api/v1/hooks/chat/{integration.id}/command"
 
 
 def view(integration: Integration) -> dict[str, Any]:

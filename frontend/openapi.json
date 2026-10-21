@@ -8350,6 +8350,147 @@
         "title": "InstanceSettingsOut",
         "type": "object"
       },
+      "IntegrationIn": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "credentials": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Slack: bot_token, signing_secret. Teams: secret. Omit on update to keep.",
+            "title": "Credentials"
+          },
+          "kind": {
+            "enum": [
+              "slack",
+              "teams"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "notices": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/NoticeRoute"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Omit on update to keep",
+            "title": "Notices"
+          }
+        },
+        "required": [
+          "kind",
+          "name"
+        ],
+        "title": "IntegrationIn",
+        "type": "object"
+      },
+      "IntegrationOut": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "command_url": {
+            "description": "Where Slack or Teams sends /radicle commands",
+            "title": "Command Url",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "slack",
+              "teams"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notices": {
+            "items": {
+              "$ref": "#/components/schemas/NoticeRouteOut"
+            },
+            "title": "Notices",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "active",
+          "notices",
+          "command_url"
+        ],
+        "title": "IntegrationOut",
+        "type": "object"
+      },
+      "IntegrationTestIn": {
+        "additionalProperties": false,
+        "properties": {
+          "route": {
+            "description": "Which notice route to post the test on",
+            "minimum": 0.0,
+            "title": "Route",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "route"
+        ],
+        "title": "IntegrationTestIn",
+        "type": "object"
+      },
+      "IntegrationTestOut": {
+        "properties": {
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ok",
+          "message"
+        ],
+        "title": "IntegrationTestOut",
+        "type": "object"
+      },
       "JobOut": {
         "properties": {
           "created_at": {
@@ -10118,6 +10259,68 @@
           "status"
         ],
         "title": "NodeRef",
+        "type": "object"
+      },
+      "NoticeRoute": {
+        "additionalProperties": false,
+        "properties": {
+          "channel": {
+            "description": "Slack channel id (C0123\u2026), or the Teams incoming webhook URL",
+            "maxLength": 2000,
+            "title": "Channel",
+            "type": "string"
+          },
+          "events": {
+            "description": "Empty means every event",
+            "items": {
+              "type": "string"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "filter": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "e.g. {\"space\": \"anuncios\"}",
+            "title": "Filter",
+            "type": "object"
+          }
+        },
+        "required": [
+          "channel"
+        ],
+        "title": "NoticeRoute",
+        "type": "object"
+      },
+      "NoticeRouteOut": {
+        "properties": {
+          "channel": {
+            "description": "Teams URLs show only their host",
+            "title": "Channel",
+            "type": "string"
+          },
+          "events": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "filter": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Filter",
+            "type": "object"
+          }
+        },
+        "required": [
+          "channel",
+          "events",
+          "filter"
+        ],
+        "title": "NoticeRouteOut",
         "type": "object"
       },
       "NotificationOut": {
@@ -29682,6 +29885,253 @@
         "summary": "Health",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/api/v1/integrations": {
+      "get": {
+        "operationId": "list_integrations_api_v1_integrations_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IntegrationOut"
+                  },
+                  "title": "Response List Integrations Api V1 Integrations Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Integrations",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "description": "Credentials are stored encrypted and never returned.",
+        "operationId": "create_integration_api_v1_integrations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntegrationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/integrations/{integration_id}": {
+      "delete": {
+        "operationId": "delete_integration_api_v1_integrations__integration_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "integration_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Integration Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Integration",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "get": {
+        "operationId": "get_integration_api_v1_integrations__integration_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "integration_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Integration Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Integration",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "put": {
+        "operationId": "update_integration_api_v1_integrations__integration_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "integration_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Integration Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntegrationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Integration",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/integrations/{integration_id}/test": {
+      "post": {
+        "description": "Post a test message on one route now and say what Slack or Teams answered.",
+        "operationId": "test_integration_api_v1_integrations__integration_id__test_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "integration_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Integration Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntegrationTestIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationTestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Test Integration",
+        "tags": [
+          "integrations"
         ]
       }
     },
