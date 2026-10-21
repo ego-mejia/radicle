@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioDraft, FolioNode, FolioNodeEvent, NodeKind
-from radicle.folio.services import access, collab, comments, convert, nodes, schema, ydoc
+from radicle.folio.services import access, actions, collab, comments, convert, nodes, schema, ydoc
 from radicle.folio.services.parse_markdown import from_markdown
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.errors import ValidationFailed
@@ -108,4 +108,5 @@ async def save_draft(
     await db.flush()
     if content_json is not None or content_md is not None:
         await comments.reanchor(db, node, row.content_json)
+        await actions.sync(db, node, row.content_json, user)
     return Draft(row.content_json, row.metadata_, exists=True, draft=row)

@@ -1,6 +1,20 @@
 {
   "components": {
     "schemas": {
+      "ActionItemPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "done": {
+            "title": "Done",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "done"
+        ],
+        "title": "ActionItemPatch",
+        "type": "object"
+      },
       "AgentCreate": {
         "additionalProperties": false,
         "properties": {
@@ -4284,6 +4298,85 @@
           "mine"
         ],
         "title": "FolioReactionOut",
+        "type": "object"
+      },
+      "FolioTaskOut": {
+        "properties": {
+          "bucket": {
+            "enum": [
+              "overdue",
+              "today",
+              "upcoming",
+              "no_date"
+            ],
+            "title": "Bucket",
+            "type": "string"
+          },
+          "done": {
+            "title": "Done",
+            "type": "boolean"
+          },
+          "due": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Due"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "node": {
+            "$ref": "#/components/schemas/NodeRef"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "url": {
+            "description": "The document holding the item",
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "done",
+          "due",
+          "bucket",
+          "node",
+          "url",
+          "updated_at"
+        ],
+        "title": "FolioTaskOut",
+        "type": "object"
+      },
+      "FolioTasksOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FolioTaskOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "FolioTasksOut",
         "type": "object"
       },
       "FolioTemplateIn": {
@@ -17544,6 +17637,61 @@
         ]
       }
     },
+    "/api/v1/folio/action-items/{item_id}": {
+      "patch": {
+        "description": "Check an item off (or back on). The document changes too, live if it is open.",
+        "operationId": "check_off_api_v1_folio_action_items__item_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionItemPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioTaskOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Check Off",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/admin/grants": {
       "get": {
         "description": "Global Folio roles: everyone first, then groups and users. Folio admins only.",
@@ -18268,6 +18416,56 @@
           }
         },
         "summary": "Recents",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/me/tasks": {
+      "get": {
+        "description": "Action items assigned to you in documents you can see, by due date; each says\nwhether it is overdue, due today, upcoming or has no date.",
+        "operationId": "my_tasks_api_v1_folio_me_tasks_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "default": "open",
+              "enum": [
+                "open",
+                "done",
+                "all"
+              ],
+              "title": "Status",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioTasksOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Tasks",
         "tags": [
           "folio",
           "folio"
