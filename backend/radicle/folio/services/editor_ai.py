@@ -30,16 +30,21 @@ class AiOff(ProblemError):
     code = "ai_off"
 
 
-async def unavailable(db: AsyncSession, space: FolioSpace) -> Off | None:
-    """Why the editor AI is off in this space, or None when it is on."""
-    cfg = await ai.load(db)
+def instance_off(cfg: ai.AiConfig) -> Off | None:
+    """Why Folio's AI is off for the whole instance, or None."""
     if not cfg.enabled or not cfg.chat_model:
         return "no_provider"
     if not cfg.features.get(FEATURE, True):
         return "off_for_folio"
-    if not space.ai_enabled:
-        return "off_in_space"
     return None
+
+
+async def unavailable(db: AsyncSession, space: FolioSpace) -> Off | None:
+    """Why the editor AI is off in this space, or None when it is on."""
+    off = instance_off(await ai.load(db))
+    if off is None and not space.ai_enabled:
+        return "off_in_space"
+    return off
 
 
 REASONS: dict[Off, str] = {

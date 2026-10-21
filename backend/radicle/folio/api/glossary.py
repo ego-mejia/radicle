@@ -116,3 +116,12 @@ async def patch_glossary_term(
     )
     row = await glossary.update_term(db, principal.user, term_id, data)
     return await _one(db, principal, row)
+
+
+@router.post("/glossary/suggestions", response_model=GlossaryTermsOut, status_code=201)
+async def suggest_glossary_terms(principal: CurrentPrincipal, db: Db) -> GlossaryTermsOut:
+    """Ask the AI for new terms from the newest Verified docs; they wait for approval."""
+    await _reader(db, principal)
+    made = await glossary.suggest(db, principal.user)
+    terms = await glossary.with_sources(db, principal.user, made)
+    return GlossaryTermsOut(items=[_out(t) for t in terms])
