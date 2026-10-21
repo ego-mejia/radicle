@@ -119,6 +119,8 @@ class FolioSpace(Base):
     verify_days: Mapped[int] = mapped_column(BigInteger, default=90, server_default="90")
     # The space admin can turn the editor AI off here (Folio 4.6).
     ai_enabled: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    # Whether a page's analytics name its readers or only count them (Folio 5.9).
+    show_readers: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
     )
