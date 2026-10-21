@@ -9,6 +9,14 @@ export const Doc = styled.div<{ $size: 'regular' | 'large' }>`
   font-size: ${({ $size }) => ($size === 'large' ? '19px' : '17px')};
   line-height: 1.75;
 
+  /* The section a chat citation or a search result opened (useCitedSection). */
+  [data-cited='true'] {
+    border-radius: ${({ theme }) => theme.radius.md};
+    background: ${({ theme }) => theme.color.accentSoft};
+    box-shadow: 0 0 0 6px ${({ theme }) => theme.color.accentSoft};
+    transition: background 0.4s ease;
+  }
+
   p,
   ul,
   ol,

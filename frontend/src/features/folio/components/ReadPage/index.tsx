@@ -9,6 +9,7 @@ import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { useMe } from '../../../../hooks/useMe';
 import { formatDate } from '../../../../lib/format';
 import { assetUrl } from '../../../../services/api/folio';
+import { useCitedSection } from '../../hooks/useCitedSection';
 import { useCommentHighlights } from '../../hooks/useCommentHighlights';
 import { useComments } from '../../hooks/useComments';
 import { useFocusMode } from '../../hooks/useFocusMode';
@@ -46,6 +47,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   const content = useRef<HTMLDivElement>(null);
   const discussion = useComments(nodeId);
   useCommentHighlights(content, discussion.threads.data, [page.content, focus]);
+  useCitedSection(content, [page.content, focus]);
   const { node } = page;
 
   if (node.isPending) return <PageSpinner />;
