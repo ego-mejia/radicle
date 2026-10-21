@@ -1,5 +1,7 @@
+import type { FolioTemplate } from '../../../../services/api/folio';
+
 /** A page template as the API returns it, for tests. */
-export const SPEC = {
+export const SPEC: FolioTemplate = {
   id: 't1',
   kind: 'page',
   scope: 'global',

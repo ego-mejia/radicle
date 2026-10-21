@@ -49,6 +49,7 @@ export const folioKeys = {
   version: (id: string, n: number) => ['folio', 'nodes', id, 'versions', n] as const,
   diff: (id: string, from: number, to: number) => ['folio', 'nodes', id, 'diff', from, to] as const,
   schema: ['folio', 'metadata-schema'] as const,
+  template: (id: string) => ['folio', 'template', id] as const,
   templates: (kind: 'page' | 'space', space?: string) =>
     ['folio', 'templates', kind, space ?? 'all'] as const,
   catalog: (name: FolioCatalog) => ['folio', 'catalog', name] as const,
@@ -345,6 +346,14 @@ export async function fetchTemplates(
 ): Promise<FolioTemplate[]> {
   return unwrap(await api.GET('/api/v1/folio/templates', { params: { query: { kind, space } } }))
     .items;
+}
+
+export async function fetchTemplate(id: string): Promise<FolioTemplate> {
+  return unwrap(
+    await api.GET('/api/v1/folio/templates/{template_id}', {
+      params: { path: { template_id: id } },
+    }),
+  );
 }
 
 export async function createTemplate(body: FolioTemplateIn): Promise<FolioTemplate> {
