@@ -931,6 +931,30 @@
         "title": "BacklogOut",
         "type": "object"
       },
+      "BlockChangeOut": {
+        "properties": {
+          "block": {
+            "additionalProperties": true,
+            "title": "Block",
+            "type": "object"
+          },
+          "op": {
+            "enum": [
+              "equal",
+              "added",
+              "removed"
+            ],
+            "title": "Op",
+            "type": "string"
+          }
+        },
+        "required": [
+          "op",
+          "block"
+        ],
+        "title": "BlockChangeOut",
+        "type": "object"
+      },
       "BlockedPolicy": {
         "enum": [
           "warn",
@@ -2837,6 +2861,51 @@
         "title": "DependencyOut",
         "type": "object"
       },
+      "DiffOut": {
+        "properties": {
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/BlockChangeOut"
+            },
+            "title": "Blocks",
+            "type": "array"
+          },
+          "from_version": {
+            "title": "From Version",
+            "type": "integer"
+          },
+          "metadata": {
+            "items": {
+              "$ref": "#/components/schemas/FieldChangeOut"
+            },
+            "title": "Metadata",
+            "type": "array"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FieldChangeOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "to_version": {
+            "title": "To Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "from_version",
+          "to_version",
+          "title",
+          "blocks",
+          "metadata"
+        ],
+        "title": "DiffOut",
+        "type": "object"
+      },
       "DiscardIn": {
         "additionalProperties": false,
         "properties": {
@@ -3116,6 +3185,27 @@
           "created_at"
         ],
         "title": "EventOut",
+        "type": "object"
+      },
+      "FieldChangeOut": {
+        "properties": {
+          "after": {
+            "title": "After"
+          },
+          "before": {
+            "title": "Before"
+          },
+          "field": {
+            "title": "Field",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field",
+          "before",
+          "after"
+        ],
+        "title": "FieldChangeOut",
         "type": "object"
       },
       "FieldConf": {
@@ -6351,6 +6441,34 @@
         "title": "Page[UserRef]",
         "type": "object"
       },
+      "Page_VersionOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/VersionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[VersionOut]",
+        "type": "object"
+      },
       "Page_WorklogOut_": {
         "properties": {
           "items": {
@@ -7358,6 +7476,24 @@
         ],
         "title": "Resolution",
         "type": "string"
+      },
+      "RestoreIn": {
+        "additionalProperties": false,
+        "properties": {
+          "change_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Note"
+          }
+        },
+        "title": "RestoreIn",
+        "type": "object"
       },
       "RuleConf": {
         "additionalProperties": false,
@@ -11636,6 +11772,89 @@
         "title": "Version",
         "type": "object"
       },
+      "VersionContentOut": {
+        "properties": {
+          "approved_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The admin who approved an agent's version",
+            "title": "Approved By"
+          },
+          "author": {
+            "title": "Author",
+            "type": "string"
+          },
+          "change_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Note"
+          },
+          "content_json": {
+            "additionalProperties": true,
+            "title": "Content Json",
+            "type": "object"
+          },
+          "content_md": {
+            "title": "Content Md",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "restored_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The version it restored, if any",
+            "title": "Restored From"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number",
+          "title",
+          "change_note",
+          "author",
+          "approved_by",
+          "restored_from",
+          "created_at",
+          "metadata",
+          "content_json",
+          "content_md"
+        ],
+        "title": "VersionContentOut",
+        "type": "object"
+      },
       "VersionOut": {
         "properties": {
           "approved_by": {
@@ -15591,6 +15810,71 @@
         ]
       }
     },
+    "/api/v1/folio/nodes/{node_id}/diff": {
+      "get": {
+        "description": "Blocks added and removed, and metadata fields that changed, from one version to another.",
+        "operationId": "diff_api_v1_folio_nodes__node_id__diff_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "From",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "To",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiffOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Diff",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/nodes/{node_id}/draft": {
       "get": {
         "operationId": "get_draft_api_v1_folio_nodes__node_id__draft_get",
@@ -15792,6 +16076,168 @@
           }
         },
         "summary": "Publish",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/versions": {
+      "get": {
+        "description": "The page's history, newest first, with author, approver and note.",
+        "operationId": "list_versions_api_v1_folio_nodes__node_id__versions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_VersionOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Versions",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/versions/{number}": {
+      "get": {
+        "operationId": "get_version_api_v1_folio_nodes__node_id__versions__number__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionContentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Version",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/versions/{number}/restore": {
+      "post": {
+        "description": "Publish an old version again as a new one; nothing is deleted.",
+        "operationId": "restore_api_v1_folio_nodes__node_id__versions__number__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "number",
+            "required": true,
+            "schema": {
+              "title": "Number",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Restore",
         "tags": [
           "folio",
           "folio"

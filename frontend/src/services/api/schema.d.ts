@@ -906,6 +906,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Diff
+         * @description Blocks added and removed, and metadata fields that changed, from one version to another.
+         */
+        get: operations["diff_api_v1_folio_nodes__node_id__diff_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}/draft": {
         parameters: {
             query?: never;
@@ -962,6 +982,63 @@ export interface paths {
          *     when someone published after this draft started (send `confirm` to go ahead).
          */
         post: operations["publish_api_v1_folio_nodes__node_id__publish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Versions
+         * @description The page's history, newest first, with author, approver and note.
+         */
+        get: operations["list_versions_api_v1_folio_nodes__node_id__versions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/versions/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Version */
+        get: operations["get_version_api_v1_folio_nodes__node_id__versions__number__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/versions/{number}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Restore
+         * @description Publish an old version again as a new one; nothing is deleted.
+         */
+        post: operations["restore_api_v1_folio_nodes__node_id__versions__number__restore_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3222,6 +3299,18 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** BlockChangeOut */
+        BlockChangeOut: {
+            /** Block */
+            block: {
+                [key: string]: unknown;
+            };
+            /**
+             * Op
+             * @enum {string}
+             */
+            op: "equal" | "added" | "removed";
+        };
         /**
          * BlockedPolicy
          * @enum {string}
@@ -3899,6 +3988,18 @@ export interface components {
              */
             conflict: boolean;
         };
+        /** DiffOut */
+        DiffOut: {
+            /** Blocks */
+            blocks: components["schemas"]["BlockChangeOut"][];
+            /** From Version */
+            from_version: number;
+            /** Metadata */
+            metadata: components["schemas"]["FieldChangeOut"][];
+            title: components["schemas"]["FieldChangeOut"] | null;
+            /** To Version */
+            to_version: number;
+        };
         /** DiscardIn */
         DiscardIn: {
             /**
@@ -4020,6 +4121,15 @@ export interface components {
             new_value: unknown;
             /** Old Value */
             old_value: unknown;
+        };
+        /** FieldChangeOut */
+        FieldChangeOut: {
+            /** After */
+            after: unknown;
+            /** Before */
+            before: unknown;
+            /** Field */
+            field: string;
         };
         /** FieldConf */
         FieldConf: {
@@ -5088,6 +5198,13 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** Page[VersionOut] */
+        Page_VersionOut_: {
+            /** Items */
+            items: components["schemas"]["VersionOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** Page[WorklogOut] */
         Page_WorklogOut_: {
             /** Items */
@@ -5474,6 +5591,11 @@ export interface components {
          * @enum {string}
          */
         Resolution: "done" | "wont_do" | "duplicate" | "cannot_reproduce";
+        /** RestoreIn */
+        RestoreIn: {
+            /** Change Note */
+            change_note?: string | null;
+        };
         /** RuleConf */
         RuleConf: {
             /** Config */
@@ -6874,6 +6996,39 @@ export interface components {
             api_version: string;
             /** Version */
             version: string;
+        };
+        /** VersionContentOut */
+        VersionContentOut: {
+            /**
+             * Approved By
+             * @description The admin who approved an agent's version
+             */
+            approved_by: string | null;
+            /** Author */
+            author: string;
+            /** Change Note */
+            change_note: string | null;
+            /** Content Json */
+            content_json: {
+                [key: string]: unknown;
+            };
+            /** Content Md */
+            content_md: string;
+            /** Created At */
+            created_at: string;
+            /** Metadata */
+            metadata: {
+                [key: string]: unknown;
+            };
+            /** Number */
+            number: number;
+            /**
+             * Restored From
+             * @description The version it restored, if any
+             */
+            restored_from: number | null;
+            /** Title */
+            title: string;
         };
         /** VersionOut */
         VersionOut: {
@@ -9195,6 +9350,40 @@ export interface operations {
             };
         };
     };
+    diff_api_v1_folio_nodes__node_id__diff_get: {
+        parameters: {
+            query: {
+                from: number;
+                to: number;
+            };
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiffOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_draft_api_v1_folio_nodes__node_id__draft_get: {
         parameters: {
             query?: never;
@@ -9308,6 +9497,105 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["PublishIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_versions_api_v1_folio_nodes__node_id__versions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_VersionOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_version_api_v1_folio_nodes__node_id__versions__number__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+                number: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionContentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    restore_api_v1_folio_nodes__node_id__versions__number__restore_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+                number: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RestoreIn"];
             };
         };
         responses: {
