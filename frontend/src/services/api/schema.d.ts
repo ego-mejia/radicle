@@ -1067,6 +1067,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search
+         * @description Pages you can see, one result per page at its best section. Hybrid fuses text and
+         *     semantic search; without an AI provider it is text only.
+         */
+        get: operations["search_api_v1_folio_search_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/spaces": {
         parameters: {
             query?: never;
@@ -4585,6 +4606,46 @@ export interface components {
             /** Status */
             status: string;
         };
+        /** HitOut */
+        HitOut: {
+            /** Anchor */
+            anchor: string | null;
+            /** Description */
+            description: string;
+            /** Doc Type */
+            doc_type: string | null;
+            /**
+             * Matched By
+             * @description text, semantic or both
+             */
+            matched_by: string[];
+            /**
+             * Node Id
+             * Format: uuid
+             */
+            node_id: string;
+            /** Score */
+            score: number;
+            /**
+             * Section
+             * @description Heading path of the best matching section
+             */
+            section: string[];
+            /**
+             * Snippet
+             * @description Matching words between ** for text matches
+             */
+            snippet: string;
+            /** Space */
+            space: string;
+            /** Title */
+            title: string;
+            /**
+             * Url
+             * @description Link to the page, at the section
+             */
+            url: string;
+        };
         /** InboxOut */
         InboxOut: {
             /**
@@ -5941,6 +6002,16 @@ export interface components {
             /** Sort Fields */
             sort_fields: string[];
             values: components["schemas"]["ProjectValues"] | null;
+        };
+        /** SearchOut */
+        SearchOut: {
+            /** Items */
+            items: components["schemas"]["HitOut"][];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "hybrid" | "text" | "semantic";
         };
         /** SearchPage */
         SearchPage: {
@@ -9985,6 +10056,50 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_api_v1_folio_search_get: {
+        parameters: {
+            query: {
+                /** @description Words or a question */
+                q: string;
+                mode?: "hybrid" | "text" | "semantic";
+                space?: string | null;
+                kind?: ("page" | "blog_post") | null;
+                doc_type?: string | null;
+                label?: string | null;
+                author?: string | null;
+                owner?: string | null;
+                audience?: string | null;
+                language?: string | null;
+                from?: string | null;
+                to?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SearchOut"];
                 };
             };
             /** @description Validation Error */
