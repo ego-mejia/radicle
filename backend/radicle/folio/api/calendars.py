@@ -146,11 +146,13 @@ async def _events(
 
 @router.get("/calendars", response_model=CalendarsOut)
 async def list_calendars(
-    principal: CurrentPrincipal, db: Db, space: str = Query(description="The space's key")
+    principal: CurrentPrincipal,
+    db: Db,
+    space: str | None = Query(default=None, description="The space's key; default every space"),
 ) -> CalendarsOut:
-    """A space's calendars, by name."""
+    """A space's calendars, or those of every space you can see, by name."""
     user = await _reader(db, principal)
-    found = await spaces.get_space(db, user, space)
+    found = await spaces.get_space(db, user, space) if space else None
     rows = await calendars.list_calendars(db, user, found)
     return CalendarsOut(items=[await _out(db, user, c) for c in rows])
 

@@ -1886,7 +1886,8 @@
         "pageList": "Pages by label",
         "whiteboard": "Whiteboard",
         "ticketTable": "Ticket table",
-        "ticketProgress": "Ticket progress"
+        "ticketProgress": "Ticket progress",
+        "calendar": "Calendar"
       },
       "addCover": "Add cover",
       "changeCover": "Change cover",
@@ -2698,7 +2699,14 @@
       "title": "Calendar",
       "empty": "No calendars yet",
       "emptyAdmin": "Create the first one with New calendar: vacations, releases, on-call.",
-      "emptyReader": "A space admin can create calendars here."
+      "emptyReader": "A space admin can create calendars here.",
+      "block": {
+        "choose": "Choose a calendar",
+        "none": "No calendars you can see yet.",
+        "view": "View",
+        "open": "Open the space's calendars",
+        "noAccess": "You can't see this calendar."
+      }
     },
     "imports": {
       "title": "Import",

@@ -1886,7 +1886,8 @@
         "pageList": "Páginas por label",
         "whiteboard": "Whiteboard",
         "ticketTable": "Tabla de tickets",
-        "ticketProgress": "Avance de tickets"
+        "ticketProgress": "Avance de tickets",
+        "calendar": "Calendario"
       },
       "addCover": "Agregar portada",
       "changeCover": "Cambiar portada",
@@ -2698,7 +2699,14 @@
       "title": "Calendario",
       "empty": "Todavía no hay calendarios",
       "emptyAdmin": "Crea el primero con Nuevo calendario: vacaciones, releases, guardias.",
-      "emptyReader": "Un admin del space puede crear calendarios aquí."
+      "emptyReader": "Un admin del space puede crear calendarios aquí.",
+      "block": {
+        "choose": "Elige un calendario",
+        "none": "Todavía no hay calendarios que puedas ver.",
+        "view": "Vista",
+        "open": "Abrir los calendarios del space",
+        "noAccess": "No puedes ver este calendario."
+      }
     },
     "imports": {
       "title": "Importar",

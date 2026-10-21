@@ -100,6 +100,11 @@ export const BLOCKS: BlockItem[] = [
     run: (c) => c.insertContent({ type: 'whiteboard' }),
   },
   {
+    key: 'calendar',
+    keywords: 'calendar calendario eventos vacaciones releases guardias agenda',
+    run: (c) => c.insertContent({ type: 'calendar' }),
+  },
+  {
     key: 'visual',
     keywords: 'visual svg html dibujo ilustracion grafico custom',
     run: (c) => c.insertContent({ type: 'visual', attrs: { format: 'svg', code: VISUAL_STARTER } }),

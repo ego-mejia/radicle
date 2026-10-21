@@ -55,12 +55,16 @@ async def get_calendar(db: AsyncSession, user: User, calendar_id: uuid.UUID) -> 
     return calendar
 
 
-async def list_calendars(db: AsyncSession, user: User, space: FolioSpace) -> list[FolioCalendar]:
-    if space.id not in await access.visible_space_ids(db, user):
-        return []
+async def list_calendars(
+    db: AsyncSession, user: User, space: FolioSpace | None = None
+) -> list[FolioCalendar]:
+    """A space's calendars, or with no space those of every space the user may see."""
+    visible = await access.visible_space_ids(db, user)
+    if space is not None:
+        visible &= {space.id}
     rows = await db.scalars(
         select(FolioCalendar)
-        .where(FolioCalendar.space_id == space.id)
+        .where(FolioCalendar.space_id.in_(visible))
         .order_by(FolioCalendar.name, FolioCalendar.id)
     )
     return list(rows)

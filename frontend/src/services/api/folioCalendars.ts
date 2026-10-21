@@ -18,14 +18,16 @@ export type EventCategory = CalendarEvent['category'];
 
 export const calendarKeys = {
   all: ['folio', 'calendars'] as const,
-  list: (space: string) => ['folio', 'calendars', 'space', space] as const,
+  list: (space: string | null) => ['folio', 'calendars', 'space', space ?? '*'] as const,
   calendar: (id: string) => ['folio', 'calendars', id] as const,
   agenda: (id: string, start: string, end: string) =>
     ['folio', 'calendars', id, 'agenda', start, end] as const,
 };
 
-export async function fetchCalendars(space: string): Promise<FolioCalendar[]> {
-  const out = unwrap(await api.GET('/api/v1/folio/calendars', { params: { query: { space } } }));
+/** A space's calendars, or with no space those of every space you can see. */
+export async function fetchCalendars(space?: string): Promise<FolioCalendar[]> {
+  const query = space ? { space } : {};
+  const out = unwrap(await api.GET('/api/v1/folio/calendars', { params: { query } }));
   return out.items;
 }
 

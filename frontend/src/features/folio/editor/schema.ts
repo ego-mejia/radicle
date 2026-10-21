@@ -45,6 +45,7 @@ const NODE_ATTRS: Record<string, string[]> = {
   embed: ['url', 'title', 'provider'],
   databaseView: ['database', 'view'],
   whiteboard: ['whiteboard'],
+  calendar: ['calendar', 'view'],
   visual: ['format', 'code', 'title', 'description'],
   diagram: ['language', 'source', 'caption'],
   chart: ['kind', 'title', 'data', 'source'],
@@ -123,6 +124,7 @@ function clean(node: JSONContent): JSONContent | null {
   // A database block is saved once it names its database.
   if (type === 'databaseView' && !node.attrs?.database) return null;
   if (type === 'whiteboard' && !node.attrs?.whiteboard) return null;
+  if (type === 'calendar' && !node.attrs?.calendar) return null;
   if (incomplete(node)) return null;
   const out: JSONContent = { type };
   const attrs = pick(type, node.attrs, NODE_ATTRS[type] ?? []);
