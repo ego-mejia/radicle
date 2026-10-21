@@ -38,4 +38,10 @@ export const GlobalStyle = createGlobalStyle`
     outline: 2px solid ${({ theme }) => theme.color.accent};
     outline-offset: 2px;
   }
+
+  /* Text that open Folio comments point at (CSS Custom Highlight API). */
+  ::highlight(folio-comment) {
+    background-color: ${({ theme }) => theme.color.accentSoft};
+    text-decoration: underline 2px ${({ theme }) => theme.color.accent};
+  }
 `;

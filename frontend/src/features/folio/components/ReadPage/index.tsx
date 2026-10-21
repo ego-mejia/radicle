@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { Glasses, History, MessageSquare, PenLine } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../../../components/ui/Avatar';
 import { EmptyState } from '../../../../components/ui/EmptyState';
@@ -9,6 +9,8 @@ import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { useMe } from '../../../../hooks/useMe';
 import { formatDate } from '../../../../lib/format';
 import { assetUrl } from '../../../../services/api/folio';
+import { useCommentHighlights } from '../../hooks/useCommentHighlights';
+import { useComments } from '../../hooks/useComments';
 import { useFocusMode } from '../../hooks/useFocusMode';
 import { CommentsPanel } from '../CommentsPanel';
 import { DocContent } from '../DocContent';
@@ -20,6 +22,7 @@ import { PageQuality } from '../PageQuality';
 import { PageSocial } from '../PageSocial';
 import { PageToc } from '../PageToc';
 import { RootsArt } from '../RootsArt';
+import { SelectionComment } from '../SelectionComment';
 import * as S from './style';
 import { usePage } from '../../hooks/usePage';
 
@@ -31,6 +34,9 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   const me = useMe();
   const [focus, setFocus] = useFocusMode(me.handle);
   const [comments, setComments] = useState(false);
+  const content = useRef<HTMLDivElement>(null);
+  const discussion = useComments(nodeId);
+  useCommentHighlights(content, discussion.threads.data, page.content);
   const { node } = page;
 
   if (node.isPending) return <PageSpinner />;
@@ -127,7 +133,19 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
             </span>
           </S.Byline>
           {n.version != null && <PageSocial nodeId={n.id} title={n.title} />}
-          <DocContent doc={page.content} childPages={page.children} size="large" />
+          <div ref={content}>
+            <DocContent doc={page.content} childPages={page.children} size="large" />
+          </div>
+          {page.space?.permissions.includes('comment') && (
+            <SelectionComment
+              container={content}
+              mentions={discussion.mentions}
+              onComment={async (anchor, body) => {
+                await discussion.add.mutateAsync({ body, anchor });
+                setComments(true);
+              }}
+            />
+          )}
         </S.Article>
         <S.Aside>
           {comments && (
