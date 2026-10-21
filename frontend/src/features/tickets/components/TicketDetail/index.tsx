@@ -14,6 +14,7 @@ import { useTicket, useTicketActions } from '../../hooks/useTicket';
 import { Attachments } from '../Attachments';
 import { Comments } from '../Comments';
 import { Description } from '../Description';
+import { DocsPanel } from '../DocsPanel';
 import { FieldsPanel } from '../FieldsPanel';
 import { History } from '../History';
 import { Links } from '../Links';
@@ -82,6 +83,7 @@ export function TicketDetail({ ticketKey }: { ticketKey: string }) {
         />
         <Subtickets ticket={ticket} canEdit={may('ticket.create')} />
         <Links ticket={ticket} actions={actions} canEdit={may('link.manage')} />
+        <DocsPanel ticketKey={ticket.key} />
         <S.Activity>
           <Tabs
             label={t('ticket.tabs.comments')}

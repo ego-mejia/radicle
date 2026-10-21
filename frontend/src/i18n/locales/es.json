@@ -176,7 +176,17 @@
     "moveCommentRequired": "Comentario (obligatorio en este paso)",
     "moveTo": "Mover a {{status}}",
     "moreOptions": "Más opciones para mover a {{status}}",
-    "restrictedTicket": "Ticket restringido"
+    "restrictedTicket": "Ticket restringido",
+    "docs": {
+      "title": "Docs",
+      "none": "Ningún doc de Folio liga este ticket.",
+      "kinds": {
+        "mention": "lo menciona",
+        "created_from_text": "lo creó",
+        "build_spec_item": "entregable",
+        "manual": "ligado"
+      }
+    }
   },
   "create": {
     "title": "Crear ticket",
