@@ -28,7 +28,15 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
 
-from radicle.folio.db.models import FolioChunk, FolioNode, FolioSpace, FolioVersion, NodeKind
+from radicle.folio.db.collab import FolioActionItem, FolioFavorite, FolioWatch, TargetType
+from radicle.folio.db.models import (
+    FolioChunk,
+    FolioNode,
+    FolioSpace,
+    FolioVersion,
+    NodeKind,
+    NodeStatus,
+)
 from radicle.folio.query.fields import (
     METADATA_KEY,
     Field,
@@ -143,6 +151,17 @@ class _Compiler:
                     expected=list(f.values),
                 )
             return FolioNode.kind == NodeKind(text.lower())
+        if f.kind is Kind.status:
+            if text.lower() not in f.values:
+                raise RQLError(
+                    f"'{text}' is not a status (at {v.pos}).{suggest(text, f.values)} "
+                    f"Use {', '.join(f.values)}.",
+                    position=v.pos,
+                    expected=list(f.values),
+                )
+            return FolioNode.status == NodeStatus(text.lower())
+        if f.kind is Kind.relation:
+            return self.relation(f, self.person(v))
         if f.kind is Kind.meta:
             return _nn(func.lower(_meta(f).astext) == text.lower())
         if f.kind is Kind.meta_list:
@@ -157,21 +176,43 @@ class _Compiler:
                     position=v.pos,
                     expected=list(f.values),
                 )
-            archived = FolioNode.archived_at.is_not(None)
-            return archived if text.lower() == "true" else not_(archived)
+            if f.name == "has_open_tasks":
+                yes: ColumnElement[bool] = exists().where(
+                    FolioActionItem.node_id == FolioNode.id, FolioActionItem.done.is_(False)
+                )
+            else:
+                yes = FolioNode.archived_at.is_not(None)
+            return yes if text.lower() == "true" else not_(yes)
         return self.parent_equals(v)
 
-    def handle_equals(self, f: Field, v: ast.Value) -> ColumnElement[bool]:
+    def person(self, v: ast.Value) -> Any:
+        """The user id a handle or currentUser() names, as a SQL value."""
         if v.kind == "func":
             if v.raw.lower() != "currentuser()":
                 raise RQLError(
                     f"'{v.raw}' is not a person (at {v.pos}). Use a handle or currentUser().",
                     position=v.pos,
                 )
-            user_id: Any = self.ctx.user_id
-        else:
-            handle = v.text.strip().lstrip("@").lower()
-            user_id = select(User.id).where(User.handle == handle).scalar_subquery()
+            return self.ctx.user_id
+        handle = v.text.strip().lstrip("@").lower()
+        return select(User.id).where(User.handle == handle).scalar_subquery()
+
+    def relation(self, f: Field, user_id: Any) -> ColumnElement[bool]:
+        """watched_by follows the page or its space; favorite_of starred the page."""
+        if f.name == "favorite_of":
+            return exists().where(
+                FolioFavorite.user_id == user_id,
+                FolioFavorite.target_type == TargetType.node,
+                FolioFavorite.target_id == FolioNode.id,
+            )
+        page = (FolioWatch.target_type == TargetType.node) & (FolioWatch.target_id == FolioNode.id)
+        space = (FolioWatch.target_type == TargetType.space) & (
+            FolioWatch.target_id == FolioNode.space_id
+        )
+        return exists().where(FolioWatch.user_id == user_id, page | space)
+
+    def handle_equals(self, f: Field, v: ast.Value) -> ColumnElement[bool]:
+        user_id = self.person(v)
         if f.name == "author":
             return _nn(Published.author_id == user_id)
         handles = select(User.handle).where(User.id == user_id).scalar_subquery()

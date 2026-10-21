@@ -17,6 +17,8 @@ class Kind(StrEnum):
     node = "node"
     datetime = "datetime"
     flag = "flag"
+    status = "status"
+    relation = "relation"  # someone watches or starred it
 
 
 EQ = ("=", "!=")
@@ -53,6 +55,22 @@ FIELDS: dict[str, Field] = {
         Field("updated", Kind.datetime, ("=", *ORDER)),
         Field("published", Kind.datetime, ("=", *ORDER), empty=True),
         Field("archived", Kind.flag, EQ, values=("true", "false"), description="Default false"),
+        Field(
+            "status",
+            Kind.status,
+            EQ,
+            in_list=True,
+            values=("draft", "published", "in_review", "verified", "outdated"),
+        ),
+        Field("watched_by", Kind.relation, EQ, description="Handle or currentUser()"),
+        Field("favorite_of", Kind.relation, EQ, description="Handle or currentUser()"),
+        Field(
+            "has_open_tasks",
+            Kind.flag,
+            EQ,
+            values=("true", "false"),
+            description="Unchecked action items in the page",
+        ),
     )
 }
 ALIASES = {"tag": "label", "type": "doc_type", "labels": "label", "audiences": "audience"}
