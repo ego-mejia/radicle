@@ -1778,7 +1778,39 @@
       "title": "Search"
     },
     "approvals": {
-      "title": "Approvals"
+      "title": "Approvals",
+      "link": "Approvals",
+      "pendingCount": "{{count}} waiting for approval",
+      "subtitleAdmin": "What agents sent to publish. Nothing goes live until an admin approves it.",
+      "subtitleMine": "What you sent to publish and what the reviewers said.",
+      "filter": "Filter by status",
+      "list": "Submissions",
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "superseded": "Superseded"
+      },
+      "empty": {
+        "pending": "Nothing waiting for approval.",
+        "approved": "Nothing approved yet.",
+        "rejected": "Nothing rejected.",
+        "superseded": "Nothing superseded."
+      },
+      "sentBy": "Sent by {{who}} · {{date}}",
+      "reviewComment": "{{who}} said:",
+      "against": "Compared with the published v{{number}}",
+      "firstVersion": "First version of this page: everything is new.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approved": "Published as v{{number}}",
+      "rejected": "Rejected: the agent sees your comment",
+      "rejectTitle": "Reject this submission?",
+      "comment": "What should change",
+      "commentHint": "The agent reads it to fix the draft.",
+      "view": "Show",
+      "changes": "Changes",
+      "preview": "Preview"
     },
     "catalogs": {
       "title": "Catalogs",
