@@ -6,6 +6,7 @@ import { SuiteSwitch } from '../../components/layout/SuiteSwitch';
 import { Avatar } from '../../components/ui/Avatar';
 import { Menu } from '../../components/ui/Menu';
 import { TopbarSearch } from '../../features/folio/components/TopbarSearch';
+import { NotificationBell } from '../../features/notifications/components/NotificationBell';
 import { useMe } from '../../hooks/useMe';
 import { useSuiteShortcuts } from '../../hooks/useSuiteShortcuts';
 import { logout } from '../../services/api/auth';
@@ -60,6 +61,7 @@ export function FolioPage() {
                 {t('folio.admin.link')}
               </S.AdminLink>
             )}
+            <NotificationBell />
             <Menu
               align="end"
               trigger={

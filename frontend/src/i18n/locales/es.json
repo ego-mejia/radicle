@@ -1946,5 +1946,23 @@
       "archive": "Archivar {{name}}",
       "restore": "Restaurar {{name}}"
     }
+  },
+  "notifications": {
+    "bell": "Avisos",
+    "bellUnread_one": "Avisos, {{count}} sin leer",
+    "bellUnread_other": "Avisos, {{count}} sin leer",
+    "title": "Avisos",
+    "markAll": "Marcar todo leído",
+    "empty": "Nada nuevo.",
+    "unread": "Sin leer",
+    "preferences": "Avisos",
+    "preferencesHelp": "Elige qué te llega en la app y por email. Nunca recibes avisos de lo que haces tú.",
+    "type": "Cuándo",
+    "inApp": "En la app",
+    "email": "Email",
+    "inAppFor": "En la app: {{label}}",
+    "emailFor": "Por email: {{label}}",
+    "emailOff": "El email está apagado en este servidor: un admin define RADICLE_SMTP_HOST para prenderlo.",
+    "noTypes": "Todavía no hay avisos."
   }
 }

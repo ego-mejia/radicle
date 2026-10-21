@@ -1946,5 +1946,23 @@
       "archive": "Archive {{name}}",
       "restore": "Restore {{name}}"
     }
+  },
+  "notifications": {
+    "bell": "Notifications",
+    "bellUnread_one": "Notifications, {{count}} unread",
+    "bellUnread_other": "Notifications, {{count}} unread",
+    "title": "Notifications",
+    "markAll": "Mark all read",
+    "empty": "Nothing new.",
+    "unread": "Unread",
+    "preferences": "Notifications",
+    "preferencesHelp": "Choose what reaches you in the app and by email. You never hear about your own actions.",
+    "type": "When",
+    "inApp": "In the app",
+    "email": "Email",
+    "inAppFor": "In the app: {{label}}",
+    "emailFor": "By email: {{label}}",
+    "emailOff": "Email is off on this server: an admin sets RADICLE_SMTP_HOST to turn it on.",
+    "noTypes": "No notifications yet."
   }
 }

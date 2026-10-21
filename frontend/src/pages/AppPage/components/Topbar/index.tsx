@@ -5,6 +5,7 @@ import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, IconButton } from '../../../../components/ui/Button';
 import { Input } from '../../../../components/ui/Input';
+import { NotificationBell } from '../../../../features/notifications/components/NotificationBell';
 import { useCreateTicket } from '../../../../hooks/useCreateTicket';
 import { useHotkey } from '../../../../hooks/useHotkey';
 import { useThemeMode } from '../../../../hooks/useThemeMode';
@@ -107,6 +108,7 @@ export function Topbar({ project, onMenu }: Props) {
           <Plus />
           <span className="label">{t('nav.createTicket')}</span>
         </Button>
+        <NotificationBell />
         <IconButton
           label={mode === 'dark' ? t('nav.lightMode') : t('nav.darkMode')}
           onClick={() => setPreference(mode === 'dark' ? 'light' : 'dark')}
