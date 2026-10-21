@@ -2072,7 +2072,9 @@
       "structureHint": "JSON: {\"pages\": [{\"title\", \"kind\": \"page\" | \"folder\", \"template\": a page template's id or build-spec, \"children\": [...]}], \"grants\": [...]}",
       "badJson": "That is not valid JSON.",
       "save": "Save",
-      "saved": "Template saved"
+      "saved": "Template saved",
+      "blankSpace": "Empty space",
+      "blankSpaceHint": "Start with no pages."
     },
     "social": {
       "label": "Reactions and follow",
@@ -2316,6 +2318,13 @@
         "firstView": "Its first view",
         "none": "No databases you can see yet."
       }
+    },
+    "newSpace": {
+      "button": "New space",
+      "title": "New space",
+      "name": "Name",
+      "key": "Key",
+      "keyHint": "In links: lowercase letters, digits and dashes."
     }
   },
   "notifications": {

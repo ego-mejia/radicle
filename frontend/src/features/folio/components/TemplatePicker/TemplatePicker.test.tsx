@@ -1,9 +1,9 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { mockFetch, renderWithProviders } from '../../../../test/renderWithProviders';
-import { SPEC } from './fixtures';
+import { ENGINEERING, SPEC } from './fixtures';
 import { TemplatePicker } from '.';
 
 function Harness() {
@@ -24,5 +24,18 @@ describe('TemplatePicker', () => {
     );
     const preview = screen.getByRole('region', { name: 'Preview of Build spec' });
     expect(preview).toHaveTextContent('Entregables');
+  });
+
+  it('lists space templates with their folders and pages', async () => {
+    const calls = mockFetch({
+      'GET /api/v1/folio/templates': { status: 200, body: { items: [ENGINEERING] } },
+    });
+    const onChange = vi.fn();
+    renderWithProviders(<TemplatePicker kind="space" value="t2" onChange={onChange} />);
+    expect(await screen.findByRole('radio', { name: /Empty space/ })).toBeInTheDocument();
+    const preview = await screen.findByRole('region', { name: 'Preview of Ingeniería' });
+    expect(preview).toHaveTextContent('Specs');
+    expect(preview).toHaveTextContent('Etapa 1');
+    expect(calls[0]?.path).toContain('kind=space');
   });
 });
