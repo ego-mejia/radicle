@@ -1712,7 +1712,8 @@
         "folder": "Nueva carpeta",
         "blog_post": "Nuevo blog post",
         "title": "Título",
-        "live_doc": "Nuevo doc en vivo"
+        "live_doc": "Nuevo doc en vivo",
+        "database": "Nueva database"
       }
     },
     "reader": {
@@ -2184,6 +2185,15 @@
       "restoreText": "El doc vuelve a este snapshot para todos los que escriben en él. No se pierde nada: el texto actual queda como snapshot.",
       "restoreConfirm": "Restaurarlo",
       "restored": "El doc volvió a ese snapshot"
+    },
+    "db": {
+      "views": "Vistas",
+      "noAccess": "No tienes acceso a esta database.",
+      "empty": "Aún no hay filas.",
+      "noValue": "Sin valor",
+      "board": "Tablero por {{column}}",
+      "checked": "Sí",
+      "openPage": "Abrir página"
     }
   },
   "notifications": {
