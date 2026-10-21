@@ -76,7 +76,7 @@ export function FolioSearchView() {
         ) : (
           <S.Results aria-label={t('folio.searchPage.results')}>
             {results.data.items.map((hit) => (
-              <SearchHit key={hit.node_id} hit={hit} />
+              <SearchHit key={hit.node_id} hit={hit} searchId={results.data.search_id} />
             ))}
           </S.Results>
         ))}

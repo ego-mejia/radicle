@@ -33,6 +33,7 @@ function stub(search: (r: Request) => { status: number; body: unknown }) {
     'GET /api/v1/folio/spaces': { status: 200, body: { items: [{ key: 'docs', name: 'Docs' }] } },
     'GET /api/v1/folio/metadata-schema': SCHEMA,
     'GET /api/v1/folio/search': (r) => search(r),
+    'POST /api/v1/folio/analytics/searches/s1/click': { status: 200, body: {} },
   });
 }
 
@@ -50,6 +51,20 @@ describe('FolioSearchView', () => {
     expect(screen.getByText('meaning')).toBeInTheDocument();
     expect(calls.find((c) => c.path.startsWith('/api/v1/folio/search'))?.path).toContain(
       'q=agent&mode=hybrid',
+    );
+  });
+
+  it('tells analytics which result the search led to', async () => {
+    const calls = stub(() => ({
+      status: 200,
+      body: { mode: 'hybrid', items: [HIT], search_id: 's1' },
+    }));
+    renderWithProviders(<FolioSearchView />);
+    await userEvent.type(await screen.findByRole('searchbox'), 'agent');
+    await userEvent.click(screen.getByRole('button', { name: 'Search' }));
+    await userEvent.click(await screen.findByRole('link', { name: 'Connect an agent' }));
+    await waitFor(() =>
+      expect(calls.find((c) => c.path.endsWith('/click'))?.body).toEqual({ node_id: 'n1' }),
     );
   });
 
