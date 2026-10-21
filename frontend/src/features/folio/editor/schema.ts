@@ -44,6 +44,15 @@ const NODE_ATTRS: Record<string, string[]> = {
   video: ['assetId', 'src', 'caption'],
   embed: ['url', 'title', 'provider'],
   databaseView: ['database', 'view'],
+  visual: ['format', 'code', 'title', 'description'],
+  diagram: ['language', 'source', 'caption'],
+  chart: ['kind', 'title', 'data', 'source'],
+  timeline: ['items'],
+  formula: ['latex'],
+  inlineFormula: ['latex'],
+  comparison: [],
+  comparisonSide: ['title'],
+  pageList: ['label', 'limit', 'space', 'order'],
   text: [],
   hardBreak: [],
   mention: ['handle'],
@@ -76,12 +85,38 @@ function pick(node: string, attrs: Record<string, unknown> | undefined, allowed:
   return Object.keys(kept).length ? kept : undefined;
 }
 
+const blank = (value: unknown) => typeof value !== 'string' || !value.trim();
+
+/** What a visual block still needs before the server takes it, or null when it is
+ * complete. Until then the editor shows it but doesn't save it. */
+export function incomplete(node: JSONContent): string | null {
+  const a = node.attrs ?? {};
+  switch (node.type) {
+    case 'visual':
+      return blank(a.code) ? 'code' : blank(a.description) ? 'description' : null;
+    case 'diagram':
+      return blank(a.source) ? 'source' : null;
+    case 'formula':
+    case 'inlineFormula':
+      return blank(a.latex) ? 'latex' : null;
+    case 'chart':
+      return a.source === 'table' || (Array.isArray(a.data) && a.data.length > 1) ? null : 'data';
+    case 'timeline':
+      return Array.isArray(a.items) && a.items.length ? null : 'items';
+    case 'pageList':
+      return blank(a.label) ? 'label' : null;
+    default:
+      return null;
+  }
+}
+
 function clean(node: JSONContent): JSONContent | null {
   const type = node.type ?? '';
   if (!(type in NODE_ATTRS)) return null;
   if (type === 'text' && !node.text) return null;
   // A database block is saved once it names its database.
   if (type === 'databaseView' && !node.attrs?.database) return null;
+  if (incomplete(node)) return null;
   const out: JSONContent = { type };
   const attrs = pick(type, node.attrs, NODE_ATTRS[type] ?? []);
   if (attrs) out.attrs = attrs;

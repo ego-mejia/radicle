@@ -3,6 +3,7 @@
 
 import { DatabaseViewNode } from './databaseView';
 import { Embed } from './embed';
+import { VISUAL_NODES } from './visualNodes';
 import type { AnyExtension } from '@tiptap/core';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
 import { TableCell, TableHeader, TableKit } from '@tiptap/extension-table';
@@ -69,6 +70,7 @@ export function folioExtensions({ shared = false } = {}): AnyExtension[] {
     File,
     Video,
     Embed,
+    ...VISUAL_NODES,
     DatabaseViewNode,
     Mention,
     Status,

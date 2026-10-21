@@ -12,6 +12,14 @@ export type BlockItem = {
 };
 
 const paragraph: JSONContent = { type: 'paragraph' };
+
+/** What a new visual starts with: the tokens, so it already follows the theme. */
+export const VISUAL_STARTER =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120">' +
+  '<rect width="400" height="120" rx="10" fill="var(--rdc-surface)" stroke="var(--rdc-border)"/>' +
+  '<circle cx="60" cy="60" r="28" fill="var(--rdc-accent-fill)"/>' +
+  '<text x="110" y="66" font-family="var(--rdc-font)" font-size="18" fill="var(--rdc-text)">' +
+  'Visual</text></svg>';
 const column: JSONContent = { type: 'column', content: [paragraph] };
 
 const panel = (kind: PanelKind): BlockItem => ({
@@ -85,6 +93,64 @@ export const BLOCKS: BlockItem[] = [
     key: 'database',
     keywords: 'database board base de datos tablero inventario',
     run: (c) => c.insertContent({ type: 'databaseView' }),
+  },
+  {
+    key: 'visual',
+    keywords: 'visual svg html dibujo ilustracion grafico custom',
+    run: (c) => c.insertContent({ type: 'visual', attrs: { format: 'svg', code: VISUAL_STARTER } }),
+  },
+  {
+    key: 'diagram',
+    keywords: 'diagram mermaid flow flujo diagrama secuencia gantt',
+    run: (c) => c.insertContent({ type: 'diagram', attrs: { source: 'flowchart LR\n  A --> B' } }),
+  },
+  {
+    key: 'chart',
+    keywords: 'chart graph bar line pie grafica barras lineas pastel',
+    run: (c) =>
+      c.insertContent({
+        type: 'chart',
+        attrs: {
+          kind: 'bar',
+          data: [
+            ['', 'Serie'],
+            ['A', 1],
+            ['B', 2],
+          ],
+        },
+      }),
+  },
+  {
+    key: 'timeline',
+    keywords: 'timeline milestones roadmap hitos linea tiempo',
+    run: (c) => c.insertContent({ type: 'timeline', attrs: { items: [{ title: 'Hito' }] } }),
+  },
+  {
+    key: 'comparison',
+    keywords: 'comparison compare versus comparar comparacion lado',
+    run: (c) =>
+      c.insertContent({
+        type: 'comparison',
+        content: [
+          { type: 'comparisonSide', content: [paragraph] },
+          { type: 'comparisonSide', content: [paragraph] },
+        ],
+      }),
+  },
+  {
+    key: 'formula',
+    keywords: 'formula math latex katex ecuacion matematicas',
+    run: (c) => c.insertContent({ type: 'formula', attrs: { latex: 'E = mc^2' } }),
+  },
+  {
+    key: 'inlineFormula',
+    keywords: 'inline formula math latex en linea',
+    run: (c) => c.insertContent({ type: 'inlineFormula', attrs: { latex: 'x^2' } }),
+  },
+  {
+    key: 'pageList',
+    keywords: 'pages label list lista paginas etiqueta',
+    run: (c) => c.insertContent({ type: 'pageList', attrs: { label: '' } }),
   },
   { key: 'divider', keywords: 'hr divider line separador', run: (c) => c.setHorizontalRule() },
 ];

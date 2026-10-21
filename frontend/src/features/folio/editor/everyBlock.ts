@@ -83,6 +83,38 @@ export const EVERY_BLOCK: JSONContent = {
     node('video', { src: 'https://example.com/v.mp4', caption: 'Demo' }),
     node('embed', { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', title: 'La demo' }),
     node('databaseView', { database: '6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14', view: 'board' }),
+    node('visual', {
+      format: 'svg',
+      code: '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--accent)"/></svg>',
+      title: 'Raíz',
+      description: 'Un círculo lima: la semilla de Radicle.',
+    }),
+    node('diagram', { language: 'mermaid', source: 'graph TD\n  A-->B', caption: 'Flujo' }),
+    node('chart', {
+      kind: 'bar',
+      title: 'Tickets por área',
+      data: [
+        ['Área', 'Abiertos', 'Cerrados'],
+        ['Legal', 3, 5],
+        ['Backend', 7, 2.5],
+      ],
+    }),
+    node('timeline', {
+      items: [
+        { date: '2026-11-01', title: 'Beta', text: 'Equipo interno', status: 'done' },
+        { title: 'Lanzamiento' },
+      ],
+    }),
+    node('formula', { latex: 'E = mc^2' }),
+    p(t('En línea '), { type: 'inlineFormula', attrs: { latex: 'a^2 + b^2' } }),
+    node('chart', { kind: 'line', source: 'table' }),
+    node(
+      'comparison',
+      undefined,
+      node('comparisonSide', { title: 'Antes' }, p(t('rápido'))),
+      node('comparisonSide', undefined, p(t('más rápido'))),
+    ),
+    node('pageList', { label: 'onboarding', limit: 5, space: 'docs', order: 'title' }),
     node('horizontalRule'),
     p(t('Fin')),
   ],
