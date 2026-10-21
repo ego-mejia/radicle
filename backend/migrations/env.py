@@ -5,6 +5,7 @@ from alembic import context
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
+import radicle.folio.db.collab
 import radicle.folio.db.models  # noqa: F401  (registers Folio tables)
 from radicle.docket.db.models import Base
 from radicle.platform.config import get_settings
