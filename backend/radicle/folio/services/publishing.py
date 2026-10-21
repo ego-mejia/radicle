@@ -13,7 +13,7 @@ from radicle.folio.db.models import (
     FolioVersion,
     NodeKind,
 )
-from radicle.folio.services import access, convert, nodes, schema
+from radicle.folio.services import access, convert, nodes, rag, schema
 from radicle.folio.services.metadata import validate_metadata
 from radicle.platform.db.models import User, UserKind, utcnow
 from radicle.platform.errors import Conflict, Forbidden, ValidationFailed
@@ -74,6 +74,7 @@ async def create_version(
     event = "restored" if restored_from else "published"
     nodes.record(db, node, author, event, version=version.number)
     await db.flush()
+    await rag.schedule(db, [node.id])
     return version
 
 

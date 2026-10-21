@@ -15,7 +15,7 @@ from radicle.folio.db.models import (
     RestrictionMode,
     SpacePermission,
 )
-from radicle.folio.services import access, nodes
+from radicle.folio.services import access, nodes, rag
 from radicle.platform.db.models import Group, User
 from radicle.platform.errors import ValidationFailed
 from radicle.platform.services import groups, users
@@ -164,6 +164,7 @@ async def set_restrictions(
         raise _invalid(
             "view", "Include yourself (or a group you're in), or you'd lose access to the page."
         )
+    await rag.schedule(db, await rag.subtree(db, node))
     nodes.record(
         db,
         node,
