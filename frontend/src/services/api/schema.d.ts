@@ -1114,6 +1114,50 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/glossary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Glossary
+         * @description Approved terms, A to Z, for tooltips when reading.
+         */
+        get: operations["list_glossary_api_v1_folio_glossary_get"];
+        put?: never;
+        /**
+         * Create Glossary Term
+         * @description A term written by a Folio admin, approved right away.
+         */
+        post: operations["create_glossary_term_api_v1_folio_glossary_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/glossary/{term_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Patch Glossary Term
+         * @description Edit, approve or reject a term. Folio admins only.
+         */
+        patch: operations["patch_glossary_term_api_v1_folio_glossary__term_id__patch"];
+        trace?: never;
+    };
     "/api/v1/folio/health": {
         parameters: {
             query?: never;
@@ -1164,6 +1208,26 @@ export interface paths {
          *     refused.
          */
         get: operations["get_link_preview_api_v1_folio_link_preview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Docs For Ticket
+         * @description The docs linked to a ticket that you may see (the Docs panel in Docket).
+         */
+        get: operations["docs_for_ticket_api_v1_folio_links_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1732,6 +1796,69 @@ export interface paths {
         patch: operations["set_status_api_v1_folio_nodes__node_id__status_patch"];
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/ticket-links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Ticket Links
+         * @description The doc's tickets: mentioned, created from its text, from its deliverables or linked
+         *     by hand.
+         */
+        get: operations["list_ticket_links_api_v1_folio_nodes__node_id__ticket_links_get"];
+        put?: never;
+        /**
+         * Add Ticket Link
+         * @description Link the doc, or one of its sections, to a ticket. Needs edit on the page.
+         */
+        post: operations["add_ticket_link_api_v1_folio_nodes__node_id__ticket_links_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/ticket-links/{link_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Remove Ticket Link */
+        delete: operations["remove_ticket_link_api_v1_folio_nodes__node_id__ticket_links__link_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/tickets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Ticket From Text
+         * @description Create a Docket ticket from a selection or an action item, linked to its section.
+         *     Whoever can read the doc may, if Docket lets them create tickets in the project.
+         */
+        post: operations["create_ticket_from_text_api_v1_folio_nodes__node_id__tickets_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}/unarchive": {
         parameters: {
             query?: never;
@@ -2203,6 +2330,47 @@ export interface paths {
         head?: never;
         /** Update Template */
         patch: operations["update_template_api_v1_folio_templates__template_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/tickets/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preview Tickets
+         * @description Live status, assignee and checklist of tickets for smart links, in the order asked.
+         *     A ticket you can't see in Docket comes back restricted, with no title.
+         */
+        get: operations["preview_tickets_api_v1_folio_tickets_preview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/tickets/query": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Query Tickets
+         * @description The ticket table block: Docket's RQL, only the tickets you can see in Docket.
+         */
+        get: operations["query_tickets_api_v1_folio_tickets_query_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/folio/visuals/check": {
@@ -6217,6 +6385,114 @@ export interface components {
             /** Resolved By */
             resolved_by: string | null;
         };
+        /** FolioTicketAssignee */
+        FolioTicketAssignee: {
+            /** Display Name */
+            display_name: string;
+            /** Handle */
+            handle: string;
+        };
+        /** FolioTicketLinkIn */
+        FolioTicketLinkIn: {
+            /**
+             * Anchor
+             * @example conecta-un-agente
+             */
+            anchor?: string | null;
+            /**
+             * Key
+             * @example PA-4
+             */
+            key: string;
+        };
+        /** FolioTicketLinkOut */
+        FolioTicketLinkOut: {
+            /** Anchor */
+            anchor: string | null;
+            /** Created At */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Item Key */
+            item_key: string | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "mention" | "created_from_text" | "build_spec_item" | "manual";
+            /**
+             * Restricted
+             * @description You can't see the ticket in Docket
+             */
+            restricted: boolean;
+            ticket: components["schemas"]["FolioTicketOut"] | null;
+        };
+        /** FolioTicketLinksOut */
+        FolioTicketLinksOut: {
+            /** Items */
+            items: components["schemas"]["FolioTicketLinkOut"][];
+        };
+        /** FolioTicketOut */
+        FolioTicketOut: {
+            /** Area */
+            area: string | null;
+            assignee: components["schemas"]["FolioTicketAssignee"] | null;
+            /** Checklist Done */
+            checklist_done: number;
+            /** Checklist Total */
+            checklist_total: number;
+            /** Key */
+            key: string;
+            /** Milestone */
+            milestone: string | null;
+            /** Priority */
+            priority: string;
+            /** Status */
+            status: string;
+            /**
+             * Status Category
+             * @enum {string}
+             */
+            status_category: "todo" | "in_progress" | "done";
+            /** Title */
+            title: string;
+            /** Type */
+            type: string;
+            /**
+             * Url
+             * @description The ticket in Docket, e.g. /t/PA-4
+             */
+            url: string;
+        };
+        /** FolioTicketPreview */
+        FolioTicketPreview: {
+            /**
+             * Key
+             * @description As asked, upper-cased
+             */
+            key: string;
+            /**
+             * Restricted
+             * @description Not found, or you can't see it in Docket
+             */
+            restricted: boolean;
+            ticket: components["schemas"]["FolioTicketOut"] | null;
+        };
+        /** FolioTicketPreviewsOut */
+        FolioTicketPreviewsOut: {
+            /** Items */
+            items: components["schemas"]["FolioTicketPreview"][];
+        };
+        /** FolioTicketQueryOut */
+        FolioTicketQueryOut: {
+            /** Items */
+            items: components["schemas"]["FolioTicketOut"][];
+            /** Total */
+            total: number;
+        };
         /** FormSchemaOut */
         FormSchemaOut: {
             /** Fields */
@@ -6230,6 +6506,79 @@ export interface components {
             /** Transition */
             transition: string | null;
             type: components["schemas"]["TicketType"];
+        };
+        /** GlossarySource */
+        GlossarySource: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Slug */
+            slug: string;
+            /** Title */
+            title: string;
+        };
+        /** GlossaryTermIn */
+        GlossaryTermIn: {
+            /** Aliases */
+            aliases?: string[];
+            /** Definition */
+            definition: string;
+            /**
+             * Source
+             * @description The id of the source page
+             */
+            source?: string | null;
+            /** Term */
+            term: string;
+        };
+        /** GlossaryTermOut */
+        GlossaryTermOut: {
+            /** Aliases */
+            aliases: string[];
+            /** Definition */
+            definition: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** @description The doc it comes from, if you can see it */
+            source: components["schemas"]["GlossarySource"] | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "suggested" | "approved" | "rejected";
+            /** Term */
+            term: string;
+            /** Updated At */
+            updated_at: string;
+        };
+        /** GlossaryTermPatch */
+        GlossaryTermPatch: {
+            /** Aliases */
+            aliases?: string[] | null;
+            /** Definition */
+            definition?: string | null;
+            /**
+             * Source
+             * @description null removes it
+             */
+            source?: string | null;
+            /**
+             * Status
+             * @description approved shows it to readers
+             */
+            status?: ("suggested" | "approved" | "rejected") | null;
+            /** Term */
+            term?: string | null;
+        };
+        /** GlossaryTermsOut */
+        GlossaryTermsOut: {
+            /** Items */
+            items: components["schemas"]["GlossaryTermOut"][];
         };
         /** GrantIO */
         GrantIO: {
@@ -9126,6 +9475,62 @@ export interface components {
             /** Title */
             title: string;
             type: components["schemas"]["TicketType"];
+        };
+        /** TicketDocOut */
+        TicketDocOut: {
+            /** Anchor */
+            anchor: string | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "mention" | "created_from_text" | "build_spec_item" | "manual";
+            node: components["schemas"]["NodeRef"];
+            /** Space */
+            space: string;
+            /**
+             * Url
+             * @description The doc, at the linked section when there is one
+             */
+            url: string;
+        };
+        /** TicketDocsOut */
+        TicketDocsOut: {
+            /** Items */
+            items: components["schemas"]["TicketDocOut"][];
+        };
+        /** TicketFromTextIn */
+        TicketFromTextIn: {
+            /**
+             * Anchor
+             * @description Its section
+             */
+            anchor?: string | null;
+            /** Area */
+            area?: string | null;
+            /** Milestone */
+            milestone?: string | null;
+            /**
+             * Project
+             * @example PA
+             */
+            project: string;
+            /**
+             * Text
+             * @description The selection or action item
+             */
+            text: string;
+            /**
+             * Title
+             * @description Else the first line
+             */
+            title?: string | null;
+            /**
+             * Type
+             * @default task
+             * @enum {string}
+             */
+            type?: "task" | "bug" | "draft";
         };
         /** TicketOut */
         TicketOut: {
@@ -12622,6 +13027,106 @@ export interface operations {
             };
         };
     };
+    list_glossary_api_v1_folio_glossary_get: {
+        parameters: {
+            query?: {
+                /** @description Not approved: Folio admins only */
+                status?: ("suggested" | "approved" | "rejected") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GlossaryTermsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_glossary_term_api_v1_folio_glossary_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GlossaryTermIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GlossaryTermOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_glossary_term_api_v1_folio_glossary__term_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                term_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GlossaryTermPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GlossaryTermOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_api_v1_folio_health_get: {
         parameters: {
             query?: never;
@@ -12681,6 +13186,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LinkPreviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    docs_for_ticket_api_v1_folio_links_get: {
+        parameters: {
+            query: {
+                ticket: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketDocsOut"];
                 };
             };
             /** @description Validation Error */
@@ -13735,6 +14271,137 @@ export interface operations {
             };
         };
     };
+    list_ticket_links_api_v1_folio_nodes__node_id__ticket_links_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioTicketLinksOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_ticket_link_api_v1_folio_nodes__node_id__ticket_links_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FolioTicketLinkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioTicketLinkOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_ticket_link_api_v1_folio_nodes__node_id__ticket_links__link_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+                link_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_ticket_from_text_api_v1_folio_nodes__node_id__tickets_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TicketFromTextIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioTicketLinkOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     unarchive_node_api_v1_folio_nodes__node_id__unarchive_post: {
         parameters: {
             query?: never;
@@ -14763,6 +15430,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FolioTemplateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_tickets_api_v1_folio_tickets_preview_get: {
+        parameters: {
+            query: {
+                /** @description Comma-separated: PA-4,PA-7 */
+                keys: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioTicketPreviewsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    query_tickets_api_v1_folio_tickets_query_get: {
+        parameters: {
+            query: {
+                rql: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioTicketQueryOut"];
                 };
             };
             /** @description Validation Error */
