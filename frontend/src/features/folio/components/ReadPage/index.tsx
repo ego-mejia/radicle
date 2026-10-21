@@ -31,6 +31,7 @@ import { RootsArt } from '../RootsArt';
 import { SelectionComment } from '../SelectionComment';
 import * as S from './style';
 import { usePage } from '../../hooks/usePage';
+import { usePageView } from '../../hooks/usePageView';
 
 // With Yjs and Excalidraw, whiteboards load only when one is opened.
 const WhiteboardPage = lazy(() =>
@@ -50,6 +51,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   useCommentHighlights(content, discussion.threads.data, [page.content, focus]);
   useCitedSection(content, [page.content, focus]);
   const { node } = page;
+  usePageView(node.data?.id, node.data?.version != null);
 
   if (node.isPending) return <PageSpinner />;
   if (node.isError)

@@ -9612,10 +9612,9 @@ export interface components {
             mode: "hybrid" | "text" | "semantic";
             /**
              * Search Id
-             * Format: uuid
-             * @description Send it to /analytics/searches/{search_id}/click with the result opened
+             * @description Send it to /analytics/searches/{search_id}/click with the result opened; null with track=false
              */
-            search_id: string;
+            search_id: string | null;
         };
         /** SearchPage */
         SearchPage: {
@@ -16594,6 +16593,8 @@ export interface operations {
                 from?: string | null;
                 to?: string | null;
                 limit?: number;
+                /** @description false for search-as-you-type, so analytics skip it */
+                track?: boolean;
             };
             header?: never;
             path?: never;

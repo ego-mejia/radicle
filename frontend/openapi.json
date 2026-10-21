@@ -12901,10 +12901,17 @@
             "type": "string"
           },
           "search_id": {
-            "description": "Send it to /analytics/searches/{search_id}/click with the result opened",
-            "format": "uuid",
-            "title": "Search Id",
-            "type": "string"
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Send it to /analytics/searches/{search_id}/click with the result opened; null with track=false",
+            "title": "Search Id"
           }
         },
         "required": [
@@ -26653,6 +26660,18 @@
               "minimum": 1,
               "title": "Limit",
               "type": "integer"
+            }
+          },
+          {
+            "description": "false for search-as-you-type, so analytics skip it",
+            "in": "query",
+            "name": "track",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "false for search-as-you-type, so analytics skip it",
+              "title": "Track",
+              "type": "boolean"
             }
           }
         ],

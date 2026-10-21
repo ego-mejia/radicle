@@ -32,6 +32,8 @@ async def test_a_view_and_a_search_show_in_the_analytics(
     url = f"{API}/analytics/searches/{found['search_id']}/click"
     assert (await client.post(url, headers=m, json={"node_id": page})).status_code == 204
     await client.get(f"{API}/search", headers=m, params={"q": "kubernetes"})
+    typing = {"q": "kube", "track": "false"}
+    assert (await client.get(f"{API}/search", headers=m, params=typing)).json()["search_id"] is None
 
     r = await client.get(f"{API}/analytics/pages/{page}", headers=i, params={"days": 7})
     assert r.status_code == 200, r.text

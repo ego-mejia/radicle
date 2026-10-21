@@ -348,9 +348,12 @@ export async function searchDocs(
   mode: SearchMode = 'hybrid',
   filters: SearchFilters = {},
   limit = 10,
+  track = true,
 ): Promise<FolioSearch> {
   return unwrap(
-    await api.GET('/api/v1/folio/search', { params: { query: { q, mode, limit, ...filters } } }),
+    await api.GET('/api/v1/folio/search', {
+      params: { query: { q, mode, limit, track, ...filters } },
+    }),
   );
 }
 

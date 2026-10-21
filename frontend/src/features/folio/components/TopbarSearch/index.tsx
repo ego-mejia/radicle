@@ -23,7 +23,7 @@ export function TopbarSearch() {
   const q = useDebounced(text.trim(), DEBOUNCE_MS);
   const { data } = useQuery({
     queryKey: folioKeys.search(q, 'hybrid', {}),
-    queryFn: () => searchDocs(q, 'hybrid', {}, 5),
+    queryFn: () => searchDocs(q, 'hybrid', {}, 5, false),
     enabled: q.length > 0,
   });
   const hits = q ? (data?.items ?? []) : [];

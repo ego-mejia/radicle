@@ -22,7 +22,7 @@ export function NodePicker({ node, error, onPick }: Props) {
   });
   const { data } = useQuery({
     queryKey: folioKeys.search(q, 'hybrid', {}),
-    queryFn: () => searchDocs(q, 'hybrid', {}, 8),
+    queryFn: () => searchDocs(q, 'hybrid', {}, 8, false),
     enabled: q.length > 0,
   });
   const seen = new Set<string>();

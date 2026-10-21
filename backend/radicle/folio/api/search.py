@@ -34,8 +34,9 @@ class HitOut(Output):
 class SearchOut(Output):
     mode: Literal["hybrid", "text", "semantic"]
     items: list[HitOut]
-    search_id: uuid.UUID = Field(
-        description="Send it to /analytics/searches/{search_id}/click with the result opened"
+    search_id: uuid.UUID | None = Field(
+        description="Send it to /analytics/searches/{search_id}/click with the result opened; "
+        "null with track=false"
     )
 
 
@@ -56,6 +57,9 @@ async def search(
     published_from: date | None = Query(default=None, alias="from"),
     published_to: date | None = Query(default=None, alias="to"),
     limit: int = Query(default=10, ge=1, le=50),
+    track: bool = Query(
+        default=True, description="false for search-as-you-type, so analytics skip it"
+    ),
 ) -> SearchOut:
     """Pages you can see, one result per page at its best section. Hybrid fuses text and
     semantic search; without an AI provider it is text only."""
@@ -75,10 +79,10 @@ async def search(
     hits = await search_service.search(
         db, principal.user, q, mode=mode, filters=filters, limit=limit
     )
-    logged = await analytics.log_search(db, principal.user, q, mode, len(hits))
+    logged = await analytics.log_search(db, principal.user, q, mode, len(hits)) if track else None
     return SearchOut(
         mode=mode,
-        search_id=logged.id,
+        search_id=logged.id if logged else None,
         items=[
             HitOut(
                 node_id=h.node_id,
