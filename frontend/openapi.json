@@ -5529,6 +5529,172 @@
         "title": "HitOut",
         "type": "object"
       },
+      "HomeBlock": {
+        "additionalProperties": false,
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "title": "Config",
+            "type": "object"
+          },
+          "h": {
+            "title": "H",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "type": {
+            "description": "featured, announcement, posts, query, for_you, most_read, spaces, text, search, chat",
+            "title": "Type",
+            "type": "string"
+          },
+          "w": {
+            "title": "W",
+            "type": "integer"
+          },
+          "x": {
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "x",
+          "y",
+          "w",
+          "h"
+        ],
+        "title": "HomeBlock",
+        "type": "object"
+      },
+      "HomeDraftOut": {
+        "properties": {
+          "layout": {
+            "$ref": "#/components/schemas/HomeLayoutBody"
+          },
+          "saved": {
+            "description": "False while it is the published layout, unedited",
+            "title": "Saved",
+            "type": "boolean"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "layout",
+          "saved",
+          "updated_at"
+        ],
+        "title": "HomeDraftOut",
+        "type": "object"
+      },
+      "HomeLayoutBody": {
+        "properties": {
+          "blocks": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Blocks",
+            "type": "array"
+          },
+          "columns": {
+            "title": "Columns",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "columns",
+          "blocks"
+        ],
+        "title": "HomeLayoutBody",
+        "type": "object"
+      },
+      "HomeLayoutIn": {
+        "additionalProperties": false,
+        "properties": {
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/HomeBlock"
+            },
+            "title": "Blocks",
+            "type": "array"
+          },
+          "columns": {
+            "default": 12,
+            "title": "Columns",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "blocks"
+        ],
+        "title": "HomeLayoutIn",
+        "type": "object"
+      },
+      "HomeLayoutVersionOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_active": {
+            "title": "Is Active",
+            "type": "boolean"
+          },
+          "layout": {
+            "$ref": "#/components/schemas/HomeLayoutBody"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "published_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published By"
+          }
+        },
+        "required": [
+          "id",
+          "layout",
+          "is_active",
+          "published_at",
+          "published_by"
+        ],
+        "title": "HomeLayoutVersionOut",
+        "type": "object"
+      },
       "HomeOut": {
         "properties": {
           "ai_tools": {
@@ -8299,6 +8465,34 @@
           "next_cursor"
         ],
         "title": "Page[GroupRoleOut]",
+        "type": "object"
+      },
+      "Page_HomeLayoutVersionOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HomeLayoutVersionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[HomeLayoutVersionOut]",
         "type": "object"
       },
       "Page_MemberOut_": {
@@ -18315,6 +18509,160 @@
         },
         "summary": "Delete Grant",
         "tags": [
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/admin/home/draft": {
+      "get": {
+        "description": "The layout being edited, or the published one when nobody has started.",
+        "operationId": "get_draft_api_v1_folio_admin_home_draft_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeDraftOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Draft",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "put": {
+        "description": "Save the draft; 422 lists every block that's wrong (an RQL error says where).",
+        "operationId": "put_draft_api_v1_folio_admin_home_draft_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HomeLayoutIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeDraftOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Draft",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/admin/home/history": {
+      "get": {
+        "operationId": "history_api_v1_folio_admin_home_history_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_HomeLayoutVersionOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "History",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/admin/home/history/{layout_id}/restore": {
+      "post": {
+        "description": "Publish an earlier layout again, as a new entry in the history.",
+        "operationId": "restore_api_v1_folio_admin_home_history__layout_id__restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "layout_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Layout Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeLayoutVersionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Restore",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/admin/home/publish": {
+      "post": {
+        "description": "Readers see the draft from now on; the previous layout stays in the history.",
+        "operationId": "publish_api_v1_folio_admin_home_publish_post",
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeLayoutVersionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Publish",
+        "tags": [
+          "folio",
           "folio"
         ]
       }
