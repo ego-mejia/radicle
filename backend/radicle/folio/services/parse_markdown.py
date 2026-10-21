@@ -30,6 +30,7 @@ _INLINE = re.compile(
     r"|(?<![\w@.])@(?P<handle>[a-z0-9][a-z0-9_-]{0,63})"
 )
 _TASK = re.compile(r"^\[( |x|X)\] ")
+_BOX = re.compile(r"^\[([ x~])\]\s*")
 
 
 def _attrs(text: str | None) -> dict[str, str]:
@@ -137,20 +138,36 @@ def _sorted_marks(marks: list[Node]) -> list[Node]:
     return sorted(marks, key=lambda m: _ORDER.index(m["type"]))
 
 
+def _inline_math(out: list[Node], tokens: list[Token], i: int) -> bool:
+    """$`latex`$ (as GitLab writes inline math): a code span between two dollar signs.
+    Takes the opening $ off the text before; the caller drops the closing one."""
+    before = out[-1] if out else None
+    after = tokens[i + 1] if i + 1 < len(tokens) else None
+    if not (before and before["type"] == "text" and before["text"].endswith("$")):
+        return False
+    if after is None or after.type != "text" or not after.content.startswith("$"):
+        return False
+    before["text"] = before["text"][:-1]
+    return True
+
+
 def _inline(tokens: list[Token]) -> list[Node]:
     out: list[Node] = []
     marks: list[Node] = []
     underline = 0
     pairs = {"strong": "bold", "em": "italic", "s": "strike"}
+    closing: set[int] = set()  # text tokens that start with the $ closing inline math
 
     def current() -> list[Node]:
         extra = [{"type": "underline"}] if underline else []
         return _sorted_marks(marks + extra)
 
-    for tok in tokens:
+    for i, tok in enumerate(tokens):
         kind = tok.type
         if kind == "text":
             text = tok.content
+            if i in closing:
+                text = text[1:]
             # :u[...] may span several tokens (:u[**x**]); track the brackets.
             while text:
                 if ":u[" in text:
@@ -165,6 +182,10 @@ def _inline(tokens: list[Token]) -> list[Node]:
                     continue
                 out += _text(text, current())
                 text = ""
+        elif kind == "code_inline" and _inline_math(out, tokens, i):
+            out[-1:] = [n for n in out[-1:] if n.get("text") != ""]
+            closing.add(i + 1)
+            out.append({"type": "inlineFormula", "attrs": {"latex": tok.content}})
         elif kind == "code_inline":
             out.append(_textnode(tok.content, _sorted_marks([*current(), {"type": "code"}])))
         elif kind in ("softbreak",):
@@ -364,6 +385,12 @@ def _number(text: str) -> float | int | None:
 
 
 def _chart(attrs: dict[str, str], body: str) -> Node | None:
+    kind = attrs.get("kind") if attrs.get("kind") in schema.CHART_KINDS else "bar"
+    if attrs.get("source") == "table":
+        chart: Node = {"type": "chart", "attrs": {"kind": kind, "source": "table"}}
+        if attrs.get("title"):
+            chart["attrs"]["title"] = attrs["title"]
+        return chart
     lines = [ln for ln in body.split("\n") if ln.strip() and not re.fullmatch(r"[\s|:-]+", ln)]
     if len(lines) < 2:
         return None
@@ -374,8 +401,7 @@ def _chart(attrs: dict[str, str], body: str) -> Node | None:
         cells += [""] * (len(header) - len(cells))
         values = [_number(c) for c in cells[1:]]
         rows.append([cells[0], *[v if v is not None else 0 for v in values]])
-    kind = attrs.get("kind") if attrs.get("kind") in schema.CHART_KINDS else "bar"
-    chart: Node = {"type": "chart", "attrs": {"kind": kind, "data": rows}}
+    chart = {"type": "chart", "attrs": {"kind": kind, "data": rows}}
     if attrs.get("title"):
         chart["attrs"]["title"] = attrs["title"]
     return chart
@@ -386,10 +412,14 @@ def _timeline(body: str) -> Node | None:
     for line in body.split("\n"):
         if not line.strip():
             continue
+        box = _BOX.match(line.strip())
+        line = line.strip()[box.end() :] if box else line
         parts = [p.strip() for p in line.split("|", 2)]
         if len(parts) == 1:
             parts = ["", parts[0]]
         item = {"date": parts[0], "title": parts[1], "text": parts[2] if len(parts) > 2 else ""}
+        if box:
+            item["status"] = {"x": "done", "~": "in_progress", " ": "planned"}[box.group(1)]
         items.append({k: v for k, v in item.items() if v})
     items = [i for i in items if i.get("title")]
     return {"type": "timeline", "attrs": {"items": items}} if items else None
@@ -493,6 +523,8 @@ def _convert(items: list[Any], parent: str = "doc") -> list[Node]:
                     page_list["limit"] = min(max(int(attrs["limit"]), 1), 50)
                 if attrs.get("space"):
                     page_list["space"] = attrs["space"]
+                if attrs.get("order") in schema.PAGE_LIST_ORDERS:
+                    page_list["order"] = attrs["order"]
                 out.append({"type": "pageList", "attrs": page_list})
             elif name == "database" and attrs.get("id"):
                 view: dict[str, Any] = {"database": attrs["id"]}

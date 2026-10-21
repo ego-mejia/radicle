@@ -21997,7 +21997,7 @@
     },
     "/api/v1/folio/page-list": {
       "get": {
-        "description": "Published pages with the label that you can see, newest first.",
+        "description": "Published pages with the label that you can see, newest first or by title.",
         "operationId": "get_page_list_api_v1_folio_page_list_get",
         "parameters": [
           {
@@ -22041,6 +22041,20 @@
               "minimum": 1,
               "title": "Limit",
               "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "schema": {
+              "default": "newest",
+              "enum": [
+                "newest",
+                "title"
+              ],
+              "title": "Order",
+              "type": "string"
             }
           }
         ],

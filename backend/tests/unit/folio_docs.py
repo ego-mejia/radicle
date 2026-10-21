@@ -99,17 +99,19 @@ EVERY_BLOCK: dict[str, Any] = {
         block(
             "timeline",
             items=[
-                {"date": "2026-11-01", "title": "Beta", "text": "Equipo interno"},
+                {"date": "2026-11-01", "title": "Beta", "text": "Equipo interno", "status": "done"},
                 {"title": "Lanzamiento"},
             ],
         ),
         block("formula", latex="E = mc^2"),
+        p(t("En línea "), {"type": "inlineFormula", "attrs": {"latex": "a^2 + b^2"}}),
+        block("chart", kind="line", source="table"),
         block(
             "comparison",
             block("comparisonSide", p(t("rápido")), title="Antes"),
             block("comparisonSide", p(t("más rápido"))),
         ),
-        block("pageList", label="onboarding", limit=5, space="docs"),
+        block("pageList", label="onboarding", limit=5, space="docs", order="title"),
         block("databaseView", database="6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14", view="board"),
         block("embed", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", title="La demo"),
         block("horizontalRule"),

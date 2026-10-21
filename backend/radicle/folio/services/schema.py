@@ -53,6 +53,8 @@ ALIGNS = ("left", "center", "right")
 
 VISUAL_FORMATS = ("svg", "html")
 CHART_KINDS = ("bar", "line", "area", "pie")
+TIMELINE_STATUSES = ("done", "in_progress", "planned")
+PAGE_LIST_ORDERS = ("newest", "title")
 DIAGRAM_LANGUAGES = ("mermaid",)
 MAX_VISUAL = 512 * 1024  # bytes of SVG or HTML (UTF-8)
 MAX_CHART_ROWS = 200
@@ -65,9 +67,14 @@ def _number(value: Any) -> bool:
 
 
 def _check_chart(path: str, attrs: dict[str, Any]) -> None:
-    """data is rows: the first names the columns, the others hold a label and numbers."""
+    """data is rows: the first names the columns, the others hold a label and numbers.
+    With source "table" the chart draws the table just before it and keeps no data."""
     rows = attrs.get("data")
     here = f"{path}.attrs.data"
+    if attrs.get("source") == "table":
+        if rows is not None:
+            raise SchemaError(here, "a chart drawn from the table before it has no data")
+        return
     if not isinstance(rows, list) or len(rows) < 2:
         raise SchemaError(here, "needs a header row and at least one row of values")
     if len(rows) > MAX_CHART_ROWS:
@@ -92,10 +99,12 @@ def _check_timeline(path: str, attrs: dict[str, Any]) -> None:
     here = f"{path}.attrs.items"
     if not isinstance(items, list) or not 1 <= len(items) <= MAX_TIMELINE_ITEMS:
         raise SchemaError(here, f"has 1 to {MAX_TIMELINE_ITEMS} items")
-    limits = {"date": 40, "title": 200, "text": 1000}
+    limits = {"date": 40, "title": 200, "text": 1000, "status": 20}
     for i, item in enumerate(items):
         if not isinstance(item, dict) or set(item) - set(limits) or not item.get("title"):
-            raise SchemaError(f"{here}[{i}]", "items are {date, title, text} with a title")
+            raise SchemaError(f"{here}[{i}]", "items are {date, title, text, status} with a title")
+        if item.get("status") not in (None, *TIMELINE_STATUSES):
+            raise SchemaError(f"{here}[{i}].status", f"is one of {', '.join(TIMELINE_STATUSES)}")
         for key, value in item.items():
             if not isinstance(value, str) or len(value) > limits[key]:
                 raise SchemaError(f"{here}[{i}].{key}", f"is text up to {limits[key]}")
@@ -220,7 +229,8 @@ NODES: dict[str, NodeSpec] = {
         attrs={
             "kind": Attr(str, CHART_KINDS, required=True),
             "title": Attr((str, type(None)), max_length=200),
-            "data": Attr(list, required=True),
+            "data": Attr((list, type(None))),
+            "source": Attr((str, type(None)), ("table", None)),
         },
         check=_check_chart,
     ),
@@ -236,6 +246,7 @@ NODES: dict[str, NodeSpec] = {
             "label": Attr(str, required=True, max_length=50),
             "limit": Attr(int, minimum=1, maximum=50),
             "space": Attr((str, type(None)), max_length=40),
+            "order": Attr(str, PAGE_LIST_ORDERS),
         },
     ),
     # A database's view inside a page (Folio 3.6); the reader without access to the
@@ -264,6 +275,7 @@ NODES: dict[str, NodeSpec] = {
     "text": NodeSpec(INLINE),
     "hardBreak": NodeSpec(INLINE),
     "mention": NodeSpec(INLINE, attrs={"handle": Attr(str, required=True, max_length=64)}),
+    "inlineFormula": NodeSpec(INLINE, attrs={"latex": Attr(str, required=True, max_length=2000)}),
     "status": NodeSpec(
         INLINE,
         attrs={

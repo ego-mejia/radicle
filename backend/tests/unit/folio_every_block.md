@@ -67,12 +67,18 @@ graph TD
 ```
 
 ```timeline
-2026-11-01 | Beta | Equipo interno
+[x] 2026-11-01 | Beta | Equipo interno
  | Lanzamiento
 ```
 
 ```math
 E = mc^2
+```
+
+En línea $`a^2 + b^2`$
+
+```chart{kind=line source=table}
+
 ```
 
 ::::compare
@@ -84,7 +90,7 @@ más rápido
 :::
 ::::
 
-::pages{label=onboarding limit=5 space=docs}
+::pages{label=onboarding limit=5 space=docs order=title}
 
 ::database{id=6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14 view=board}
 

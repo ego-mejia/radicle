@@ -1738,7 +1738,7 @@ export interface paths {
         };
         /**
          * Get Page List
-         * @description Published pages with the label that you can see, newest first.
+         * @description Published pages with the label that you can see, newest first or by title.
          */
         get: operations["get_page_list_api_v1_folio_page_list_get"];
         put?: never;
@@ -13541,6 +13541,7 @@ export interface operations {
                 /** @description Only this space's pages */
                 space?: string | null;
                 limit?: number;
+                order?: "newest" | "title";
             };
             header?: never;
             path?: never;

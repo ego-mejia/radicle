@@ -1,10 +1,10 @@
 """The "list by label" block (Folio 3.4): the published pages with a label that the reader
-can see, newest first. It is resolved when someone reads, with their visibility, so the
+can see, newest first or by title. It is resolved when someone reads, with their visibility, so the
 list never shows a page they can't open."""
 
 from dataclasses import dataclass
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioNode, FolioNodeLabel, FolioSpace
@@ -22,7 +22,13 @@ class Listed:
 
 
 async def pages_with_label(
-    db: AsyncSession, user: User, label: str, *, space: str | None = None, limit: int = 10
+    db: AsyncSession,
+    user: User,
+    label: str,
+    *,
+    space: str | None = None,
+    limit: int = 10,
+    order: str = "newest",
 ) -> list[Listed]:
     wanted = label.strip().lstrip("#").lower()
     if not wanted:
@@ -43,9 +49,9 @@ async def pages_with_label(
     )
     if space:
         query = query.where(FolioSpace.key == space.strip().lower())
-    rows = await db.execute(
-        query.order_by(FolioNode.published_at.desc(), FolioNode.id).limit(
-            min(max(limit, 1), MAX_LIMIT)
-        )
-    )
+    if order == "title":
+        query = query.order_by(func.lower(FolioNode.title), FolioNode.id)
+    else:
+        query = query.order_by(FolioNode.published_at.desc(), FolioNode.id)
+    rows = await db.execute(query.limit(min(max(limit, 1), MAX_LIMIT)))
     return [Listed(node, key) for node, key in rows.all()]
