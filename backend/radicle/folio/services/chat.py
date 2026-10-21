@@ -278,22 +278,6 @@ def message_view(m: FolioChatMessage) -> dict[str, Any]:
     }
 
 
-async def answer_once(
-    db: AsyncSession, user: User, question: str, *, filters: search.Filters | None = None
-) -> FolioChatMessage:
-    """The whole answer in a new session, for agents (`ask_docs`)."""
-    session = await create_session(db, user)
-    done: FolioChatMessage | None = None
-    async for event in await ask(db, user, session, question, filters=filters):
-        if event.name == "error":
-            raise ai.AiUnavailable(str(event.data["detail"]))
-        if event.name == "done":
-            done = await db.get(FolioChatMessage, uuid.UUID(event.data["message"]["id"]))
-    if done is None:  # pragma: no cover - ask always ends with done or error
-        raise ai.AiUnavailable("The chat ended without an answer.")
-    return done
-
-
 async def give_feedback(
     db: AsyncSession, user: User, message_id: uuid.UUID, value: ChatFeedback, note: str | None
 ) -> FolioChatMessage:
