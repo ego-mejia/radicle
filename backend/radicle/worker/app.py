@@ -22,6 +22,7 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.docket.services.periods",
     "radicle.platform.services.audit",
     "radicle.folio.services.rag",
+    "radicle.folio.services.quality",
     "radicle.platform.services.events",
     "radicle.platform.services.email",
 )
@@ -31,6 +32,8 @@ PERIODIC: dict[str, str] = {
     "audit_retention": "30 3 * * *",
     # Picks up events whose wake-up job was lost (a crash between commit and dispatch).
     "platform_dispatch_events": "* * * * *",
+    # Verified pages past their date turn Outdated (Folio 2.7).
+    "folio_outdate": "15 4 * * *",
 }
 
 

@@ -6433,6 +6433,21 @@
         "title": "Origin",
         "type": "string"
       },
+      "OwnerIn": {
+        "additionalProperties": false,
+        "properties": {
+          "owner": {
+            "description": "Handle of the new owner, e.g. @ana",
+            "title": "Owner",
+            "type": "string"
+          }
+        },
+        "required": [
+          "owner"
+        ],
+        "title": "OwnerIn",
+        "type": "object"
+      },
       "Page_ArchivedOut_": {
         "properties": {
           "items": {
@@ -10132,6 +10147,26 @@
           "category"
         ],
         "title": "StatusConf",
+        "type": "object"
+      },
+      "StatusIn": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "description": "verified lasts the space's verify_days; outdated comes from expiry",
+            "enum": [
+              "published",
+              "in_review",
+              "verified"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "StatusIn",
         "type": "object"
       },
       "StatusOut": {
@@ -17604,6 +17639,61 @@
         ]
       }
     },
+    "/api/v1/folio/nodes/{node_id}/owner": {
+      "patch": {
+        "description": "Hand the page to someone else; a new version records it in the history.",
+        "operationId": "transfer_owner_api_v1_folio_nodes__node_id__owner_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OwnerIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Transfer Owner",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/nodes/{node_id}/publish": {
       "post": {
         "description": "Publish the draft as the next version (201). Agents send it for approval instead\n(202, a submission). 422 lists every missing metadata field; 409 when someone published\nafter this draft started (send `confirm` to go ahead).",
@@ -17768,6 +17858,61 @@
           }
         },
         "summary": "Put Restrictions",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/status": {
+      "patch": {
+        "description": "The owner or a space admin marks a published page in review or verified.",
+        "operationId": "set_status_api_v1_folio_nodes__node_id__status_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatusIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Status",
         "tags": [
           "folio",
           "folio"

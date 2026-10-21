@@ -1,13 +1,14 @@
 """Organizing nodes over REST (Folio 2.6): archive and restore, the Archived section."""
 
 import uuid
+from typing import Literal
 
 from fastapi import APIRouter
 from pydantic import Field
 
 from radicle.folio.api.spaces import NodeOut, NodeRef, _node, _ref
-from radicle.folio.db.models import FolioSpace
-from radicle.folio.services import archive, copying, nodes, spaces
+from radicle.folio.db.models import FolioSpace, NodeStatus
+from radicle.folio.services import archive, copying, nodes, quality, spaces
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Input, Page, UtcDatetime
@@ -42,6 +43,37 @@ async def copy_node(
         include_children=body.include_children,
     )
     return await _node(db, copy)
+
+
+class StatusIn(Input):
+    status: Literal["published", "in_review", "verified"] = Field(
+        description="verified lasts the space's verify_days; outdated comes from expiry"
+    )
+
+
+class OwnerIn(Input):
+    owner: str = Field(description="Handle of the new owner, e.g. @ana")
+
+
+@router.patch("/nodes/{node_id}/status", response_model=NodeOut)
+async def set_status(
+    node_id: uuid.UUID, body: StatusIn, principal: CurrentPrincipal, db: Db
+) -> NodeOut:
+    """The owner or a space admin marks a published page in review or verified."""
+    await _reader(db, principal)
+    node = await nodes.get_node(db, principal.user, node_id)
+    changed = await quality.set_status(db, principal.user, node, NodeStatus(body.status))
+    return await _node(db, changed)
+
+
+@router.patch("/nodes/{node_id}/owner", response_model=NodeOut)
+async def transfer_owner(
+    node_id: uuid.UUID, body: OwnerIn, principal: CurrentPrincipal, db: Db
+) -> NodeOut:
+    """Hand the page to someone else; a new version records it in the history."""
+    await _reader(db, principal)
+    node = await nodes.get_node(db, principal.user, node_id)
+    return await _node(db, await quality.transfer_owner(db, principal.user, node, body.owner))
 
 
 class ArchivedOut(NodeRef):
