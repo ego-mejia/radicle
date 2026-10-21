@@ -421,6 +421,18 @@ Docket (el tracker de tickets) y Folio comparten personas, grupos, agentes y el 
   <img src="docs/images/folio-comments.png" alt="Un hilo de comentario inline junto a su cita" width="49%">
 </p>
 <p align="center"><img src="docs/images/folio-tasks.png" alt="Mis tareas agrupadas por fecha" width="820"></p>
+
+- **Templates.** Empieza una página desde un template (Build spec, Decision log, How-to, Meeting notes, Product requirements, Retrospectiva) o un space completo desde un template de space como **Equipo de ingeniería**, con sus carpetas y páginas. Los admins de Folio los editan en **Folio → Admin → Templates**.
+- **La home a tu manera.** **Folio → Admin → Home** es un grid de 12 columnas: agrega destacados, anuncios, listas por space o label, consultas RQL, Para ti, lo más leído y texto; luego ve la vista previa y publica. Cada quien ve solo lo que puede leer.
+- **Bloques visuales.** Desde `/`: diagramas Mermaid, gráficas (también desde la tabla de arriba), timelines, comparaciones lado a lado, fórmulas KaTeX, una lista viva de páginas por label y el bloque **Visual** para tu propio SVG o HTML animado, en sandbox y con el tema claro u oscuro. Los agentes los agregan por MCP (`insert_visual`, `insert_diagram`, `insert_chart`, `insert_timeline`).
+- **Whiteboards y databases.** Dibuja con otros en un whiteboard de Excalidraw e incrústalo en cualquier página. Una database guarda filas con columnas por tipo, vistas como tabla, tarjetas o un tablero donde arrastras las tarjetas; incrusta cualquier vista en una página.
+- **Embeds.** Pega un link de YouTube o Figma en su propia línea y se ve dentro de la página; los demás links quedan como tarjeta con su vista previa.
+
+<p align="center">
+  <img src="docs/images/folio-visual.png" alt="Un bloque visual animado y un diagrama Mermaid en un post" width="49%">
+  <img src="docs/images/folio-database.png" alt="Una database vista como tablero agrupado por estado" width="49%">
+</p>
+
 - **MCP de Folio.** `/mcp/folio` acepta los mismos tokens que `/mcp`. Los agentes buscan (`search_docs`, `query_docs`), leen páginas en Markdown (`get_page`), ven qué pide publicar (`get_metadata_schema`), escriben (`create_page`, `update_draft`) y mandan a aprobación (`submit_for_publication`, `list_my_submissions`). Los admins eligen qué tools de Folio puede usar cada agente, igual que con las de Docket.
 
 ```bash
@@ -502,7 +514,7 @@ Las etapas 1 a 4 están completas: core y MCP, configuración y trabajo diario, 
 - [x] Fase 0: plataforma compartida (backend partido en `platform`, `docket` y `folio`, autorización genérica, proveedor de IA, switch de suite, esqueleto de Folio).
 - [x] Fase 1: spaces y páginas, editor, publicación con versiones, permisos, envíos de agentes con aprobación, búsqueda RAG y MCP de Folio.
 - [x] Fase 2: edición en tiempo real con carets y punteros con nombre, comentarios anclados al texto, menciones, avisos en la app y por email, reacciones, seguir, compartir, action items y Mis tareas, live docs con snapshots, mover, copiar y archivar páginas, dueños y estados que vencen, y el feed Para ti.
-- [ ] Fase 3: templates, editor de la home, bloques visuales, whiteboards y databases.
+- [x] Fase 3: templates de páginas y spaces, editor de la home, bloques visuales (diagramas, gráficas, timelines, fórmulas y visuales en sandbox), whiteboards, databases y embeds.
 - [ ] Fase 4: tickets dentro de los docs y chat con citas.
 - [ ] Fase 5: páginas públicas, importar y exportar, Slack y Teams, webhooks.
 

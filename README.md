@@ -445,6 +445,18 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
   <img src="docs/images/folio-comments.png" alt="An inline comment thread beside its quote" width="49%">
 </p>
 <p align="center"><img src="docs/images/folio-tasks.png" alt="My tasks grouped by due date" width="820"></p>
+
+- **Templates.** Start a page from a template (Build spec, Decision log, How-to, Meeting notes, Product requirements, Retrospective) or a whole space from a space template such as **Equipo de ingeniería** (an engineering team), with its folders and pages. Folio admins edit them in **Folio → Admin → Templates**.
+- **The home, your way.** **Folio → Admin → Home** is a 12-column grid: add featured posts, announcements, lists by space or label, RQL queries, For you, the most read and text, then preview and publish. Each reader only sees what they can read.
+- **Visual blocks.** From `/`: Mermaid diagrams, charts (also from the table above them), timelines, side-by-side comparisons, KaTeX formulas, a live list of pages by label, and the **Visual** block for your own animated SVG or HTML, sandboxed and following the light or dark theme. Agents add them over MCP (`insert_visual`, `insert_diagram`, `insert_chart`, `insert_timeline`).
+- **Whiteboards and databases.** Draw together on an Excalidraw whiteboard and drop it into any page. A database keeps rows with typed columns, seen as a table, cards or a board you drag cards across; embed any view in a page.
+- **Embeds.** Paste a YouTube or Figma link on its own line and it plays in the page; other links become a card with their preview.
+
+<p align="center">
+  <img src="docs/images/folio-visual.png" alt="An animated visual block and a Mermaid diagram in a post" width="49%">
+  <img src="docs/images/folio-database.png" alt="A database seen as a board grouped by status" width="49%">
+</p>
+
 - **Search.** Type a question in the bar at the top and Folio finds the section that answers it, in English and Spanish. Hybrid search mixes words and meaning (with an AI provider for embeddings); filters narrow it by space, type, document type, language or label. The same RQL as Docket queries docs: `space = ai-tools AND #onboarding AND published >= -30d ORDER BY published DESC`.
 
 <p align="center"><img src="docs/images/folio-search.png" alt="Search results with highlighted matches" width="820"></p>
@@ -531,7 +543,7 @@ Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning
 - [x] Phase 0: shared platform (one backend split into `platform`, `docket` and `folio`, generic authorization, AI provider, suite switch, Folio's skeleton).
 - [x] Phase 1: spaces and pages, the editor, publishing with versions, permissions, agent submissions with approval, RAG search and Folio's MCP.
 - [x] Phase 2: real-time editing with named carets and pointers, comments anchored to the text, mentions, notifications in the app and by email, reactions, following, sharing, action items and My tasks, live docs with snapshots, moving, copying and archiving pages, owners and statuses that expire, and the For you feed.
-- [ ] Phase 3: templates, the home editor, visual blocks, whiteboards and databases.
+- [x] Phase 3: templates for pages and spaces, the home editor, visual blocks (diagrams, charts, timelines, formulas and sandboxed visuals), whiteboards, databases and embeds.
 - [ ] Phase 4: tickets inside docs and chat with citations.
 - [ ] Phase 5: public pages, import and export, Slack and Teams, webhooks.
 

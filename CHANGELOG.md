@@ -6,6 +6,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Added
 
+- Folio fase 3 (contenido rico): templates de página y de space (con "Equipo de ingeniería" incluido), editor de la home en un grid de 12 columnas, bloque Visual en sandbox, diagramas Mermaid, gráficas, timeline, comparación, fórmulas KaTeX, lista por label, whiteboards de Excalidraw en tiempo real, databases con vistas de tabla, tarjetas y tablero, y embeds con vista previa de links.
 - Folio fase 2 (colaboración): avisos in-app y por email con preferencias, edición en tiempo real con carets y punteros con nombre, comentarios al pie e inline anclados al texto, menciones, reacciones, seguir, favoritos, compartir, action items con Mis tareas, live docs con snapshots, mover, copiar y archivar páginas, dueño y estados con vencimiento, recientes y el feed Para ti.
 
 ### Changed
@@ -22,6 +23,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Fixed
 
+- Folio: un whiteboard o una database sin elegir ya no impiden guardar el borrador en el editor en tiempo real; el iframe de un visual ya no se pinta blanco en modo oscuro y se encoge a su contenido; la vista y la columna default de una database se traducen.
 - Folio: una tarea que te asignas tú mismo ya no te avisa (y los avisos de tareas dicen quién la asignó); los tipos de aviso en Perfil se traducen.
 
 - Folio: la barra superior tapaba la barra del editor; portada vacía en las páginas; preguntas sin todas sus palabras no encontraban nada; fragmentos de búsqueda con marcas de Markdown; Editar visible pese a una restricción de edición; el tag de tipo no se veía en modo oscuro.
