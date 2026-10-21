@@ -409,6 +409,8 @@ Docket (el tracker de tickets) y Folio comparten personas, grupos, agentes y el 
 <p align="center"><img src="docs/images/folio-search.png" alt="Resultados de búsqueda con las coincidencias resaltadas" width="820"></p>
 
 - **Proveedor de IA.** **Admin → Settings → AI provider** define un solo proveedor para chat y embeddings (OpenAI, un servidor compatible con OpenAI como Voyage, Ollama, o Anthropic para chat). La llave se guarda cifrada; **Test connection** muestra dimensiones y latencia. Sin proveedor, la búsqueda usa solo palabras.
+- **Escribir juntos.** Quienes editan una página escriben en ella al mismo tiempo: ves sus carets y selecciones en su color, quién está en el documento y su mouse con su nombre. Un agente que edita por REST o MCP aparece como "está escribiendo". Publicar toma lo que está en pantalla.
+- **Live docs.** Para minutas y bitácoras: siempre editables, nunca se publican. Folio toma un snapshot cada 10 minutos con quién escribió desde el anterior; **Snapshots** los muestra y restaura cualquiera. Los agentes usan `create_live_doc` y `append_to_live_doc`.
 - **MCP de Folio.** `/mcp/folio` acepta los mismos tokens que `/mcp`. Los agentes buscan (`search_docs`, `query_docs`), leen páginas en Markdown (`get_page`), ven qué pide publicar (`get_metadata_schema`), escriben (`create_page`, `update_draft`) y mandan a aprobación (`submit_for_publication`, `list_my_submissions`). Los admins eligen qué tools de Folio puede usar cada agente, igual que con las de Docket.
 
 ```bash

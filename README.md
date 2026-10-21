@@ -433,6 +433,8 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
   <img src="docs/images/folio-approvals.png" alt="The approval queue" width="49%">
 </p>
 
+- **Write together.** Everyone editing a page writes in it at the same time: you see their carets and selections in their color, who is in the document, and their mouse with their name. An agent editing over REST or MCP shows up as "is writing". Publishing takes what is on screen.
+- **Live docs.** For meeting notes and running logs: always editable, never published. Folio takes a snapshot every 10 minutes with who wrote since the last one; **Snapshots** shows them and restores any. Agents use `create_live_doc` and `append_to_live_doc`.
 - **Search.** Type a question in the bar at the top and Folio finds the section that answers it, in English and Spanish. Hybrid search mixes words and meaning (with an AI provider for embeddings); filters narrow it by space, type, document type, language or label. The same RQL as Docket queries docs: `space = ai-tools AND #onboarding AND published >= -30d ORDER BY published DESC`.
 
 <p align="center"><img src="docs/images/folio-search.png" alt="Search results with highlighted matches" width="820"></p>
