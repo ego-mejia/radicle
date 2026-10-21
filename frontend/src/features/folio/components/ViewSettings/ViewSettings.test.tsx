@@ -22,16 +22,25 @@ const patched = (calls: ReturnType<typeof api>) =>
   calls.find((c) => c.method === 'PATCH')?.body as { views: DbView[] } | undefined;
 
 describe('ViewSettings', () => {
-  it('hides a column in a view, keeping the other views', async () => {
+  it('adds a filter and a sort to a view, keeping the other views', async () => {
     const calls = api();
     const onClose = vi.fn();
     renderWithProviders(<ViewSettings database={DATABASE} view={VIEWS[0]!} onClose={onClose} />);
-    await userEvent.click(await screen.findByRole('checkbox', { name: 'Owner' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Add filter' }));
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Column' }), 'Status');
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Value' }), 'Adopted');
+    await userEvent.click(screen.getByRole('button', { name: 'Add sort' }));
+    const sortColumn = screen.getAllByRole('combobox', { name: 'Column' })[1]!;
+    await userEvent.selectOptions(sortColumn, 'Seats');
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: 'Direction' }), 'desc');
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Owner' }));
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     await waitFor(() => expect(onClose).toHaveBeenCalledWith('table'));
     const views = patched(calls)!.views;
     expect(views.map((v) => v.id)).toEqual(['table', 'board', 'cards']);
     expect(views[0]).toMatchObject({
+      filters: [{ column: 'status', op: 'eq', value: 'Adopted' }],
+      sort: [{ column: 'seats', direction: 'desc' }],
       visible_columns: ['name', 'status', 'seats', 'paid'],
     });
   });

@@ -13,6 +13,7 @@ import {
   dbKeys,
   patchDatabase,
 } from '../../../../services/api/folioDatabases';
+import { ViewRules } from './components/ViewRules';
 import * as S from './style';
 
 type Props = {
@@ -24,7 +25,7 @@ type Props = {
 
 const KINDS: ViewKind[] = ['table', 'cards', 'board'];
 
-/** A view's name, kind and columns. Saving replaces the database's views. */
+/** A view's name, kind, filters, sort and columns. Saving replaces the database's views. */
 export function ViewSettings({ database, view, onClose }: Props) {
   const { t } = useTranslation();
   const errorMessage = useErrorMessage();
@@ -128,6 +129,8 @@ export function ViewSettings({ database, view, onClose }: Props) {
             </Field>
           )}
         </S.Row>
+
+        <ViewRules columns={columns} draft={draft} set={set} />
 
         <S.Section>
           <h3>{t('folio.db.shownColumns')}</h3>
