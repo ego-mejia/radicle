@@ -188,7 +188,7 @@ async def get_tree(key: str, principal: CurrentPrincipal, db: Db) -> list[TreeIt
     """Pages and folders as a tree, siblings in order. Blog posts are under /posts."""
     await _reader(db, principal)
     space = await spaces.get_space(db, principal.user, key)
-    return _tree(await nodes.tree(db, space))
+    return _tree(await nodes.tree(db, principal.user, space))
 
 
 @router.get("/spaces/{key}/posts", response_model=Page[NodeRef])
@@ -202,7 +202,12 @@ async def list_posts(
     """Blog posts, newest first."""
     await _reader(db, principal)
     space = await spaces.get_space(db, principal.user, key)
-    return Page(items=[_ref(p) for p in await nodes.posts(db, space, before=before, limit=limit)])
+    return Page(
+        items=[
+            _ref(p)
+            for p in await nodes.posts(db, principal.user, space, before=before, limit=limit)
+        ]
+    )
 
 
 @router.post("/nodes", response_model=NodeOut, status_code=201)

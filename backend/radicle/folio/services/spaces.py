@@ -1,16 +1,17 @@
-"""Folio spaces (Folio 1.1): team spaces anyone in Folio can read, and one personal space
-per person that only they see. Space permissions arrive with 1.4."""
+"""Folio spaces (Folio 1.1): team spaces, and one personal space per person that only they
+see. Who sees and changes each one comes from its grants (`access`, Folio 1.4)."""
 
 import re
 from dataclasses import dataclass
 
-from sqlalchemy import ColumnElement, or_, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioSpace, SpaceKind
+from radicle.folio.services import access
 from radicle.platform import authz
 from radicle.platform.db.models import User, utcnow
-from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from radicle.platform.errors import Conflict, NotFound, ValidationFailed
 
 KEY_RE = re.compile(r"^[a-z0-9][a-z0-9-]{1,39}$")
 NAME_MAX = 120
@@ -53,26 +54,18 @@ def _not_found(key: str) -> NotFound:
     )
 
 
-def _visible(user: User) -> ColumnElement[bool]:
-    """Team spaces and the user's own personal space, not deleted."""
-    return (FolioSpace.deleted_at.is_(None)) & or_(
-        FolioSpace.kind == SpaceKind.team, FolioSpace.owner_id == user.id
-    )
-
-
 async def list_spaces(db: AsyncSession, user: User) -> list[FolioSpace]:
     """Team spaces by name, then your personal space."""
+    ids = await access.visible_space_ids(db, user)
     rows = await db.scalars(
-        select(FolioSpace).where(_visible(user)).order_by(FolioSpace.kind, FolioSpace.name)
+        select(FolioSpace).where(FolioSpace.id.in_(ids)).order_by(FolioSpace.kind, FolioSpace.name)
     )
     return list(rows)
 
 
 async def get_space(db: AsyncSession, user: User, key: str) -> FolioSpace:
-    space = await db.scalar(
-        select(FolioSpace).where(FolioSpace.key == key.strip().lower(), _visible(user))
-    )
-    if space is None:
+    space = await db.scalar(select(FolioSpace).where(FolioSpace.key == key.strip().lower()))
+    if space is None or space.id not in await access.visible_space_ids(db, user):
         raise _not_found(key)
     return space
 
@@ -100,6 +93,8 @@ async def create_space(
         created_by=user.id,
     )
     db.add(space)
+    await db.flush()
+    db.add_all(access.default_grants(space, user))
     await db.flush()
     return space
 
@@ -129,6 +124,8 @@ async def personal_space(db: AsyncSession, user: User) -> FolioSpace:
     )
     db.add(space)
     await db.flush()
+    db.add_all(access.default_grants(space, user))
+    await db.flush()
     return space
 
 
@@ -141,21 +138,13 @@ class SpaceChanges:
 
 
 async def can_manage(db: AsyncSession, user: User, space: FolioSpace) -> bool:
-    """Until space permissions (1.4): its creator, its owner, or a Folio admin."""
-    if space.owner_id == user.id or space.created_by == user.id:
-        return True
-    return (await authz.authorize(db, user, "folio", "folio.admin")).allowed
-
-
-async def _require_manage(db: AsyncSession, user: User, space: FolioSpace) -> None:
-    if not await can_manage(db, user, space):
-        raise Forbidden(f"Only the admins of {space.name} can change it.", code="space_admin_only")
+    return "admin" in await access.space_permissions(db, user, space)
 
 
 async def update_space(
     db: AsyncSession, user: User, space: FolioSpace, ch: SpaceChanges
 ) -> FolioSpace:
-    await _require_manage(db, user, space)
+    await access.require_admin(db, user, space)
     if ch.name is not None:
         space.name = _name(ch.name)
     if ch.description is not None:
@@ -171,7 +160,7 @@ async def update_space(
 
 async def delete_space(db: AsyncSession, user: User, space: FolioSpace) -> None:
     """Soft delete: the space and everything in it disappear, history stays."""
-    await _require_manage(db, user, space)
+    await access.require_admin(db, user, space)
     if space.kind == SpaceKind.personal:
         raise _invalid("key", "Personal spaces cannot be deleted.")
     space.deleted_at = utcnow()

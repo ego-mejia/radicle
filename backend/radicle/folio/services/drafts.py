@@ -10,9 +10,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioDraft, FolioNode, FolioNodeEvent, NodeKind
-from radicle.folio.services import convert, nodes, schema
+from radicle.folio.services import access, convert, nodes, schema
 from radicle.folio.services.parse_markdown import from_markdown
-from radicle.platform import authz
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.errors import ValidationFailed
 
@@ -80,7 +79,7 @@ async def save_draft(
     metadata: dict[str, Any] | None = None,
 ) -> Draft:
     """Replace the content (JSON or Markdown, not both) and/or the metadata."""
-    (await authz.authorize(db, user, "folio", "folio.create")).raise_if_denied()
+    await access.require_edit(db, user, node)
     _require_content(node)
     if content_json is not None and content_md is not None:
         raise _invalid("content_md", "Send content_json or content_md, not both.")

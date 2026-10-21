@@ -42,10 +42,10 @@ async def test_acceptance_ai_tools_space(db: AsyncSession, admin: User) -> None:
     )
     post = await nodes.create_node(db, admin, space, kind=NodeKind.blog_post, title="Hola")
 
-    assert shape(await nodes.tree(db, space)) == [
+    assert shape(await nodes.tree(db, admin, space)) == [
         ("Get Started", [("Bienvenido", [("Conecta un agente", ["Crea el token"])])])
     ]
-    assert [p.id for p in await nodes.posts(db, space)] == [post.id]
+    assert [p.id for p in await nodes.posts(db, admin, space)] == [post.id]
     assert two.slug == "conecta-un-agente"
     assert [b.title for b in await nodes.breadcrumbs(db, two)] == ["Get Started", "Bienvenido"]
 
@@ -55,13 +55,13 @@ async def test_order_move_and_no_cycles(db: AsyncSession, admin: User) -> None:
     a, b, c = [
         await nodes.create_node(db, admin, space, kind=NodeKind.page, title=t) for t in "ABC"
     ]
-    assert shape(await nodes.tree(db, space)) == ["A", "B", "C"]
+    assert shape(await nodes.tree(db, admin, space)) == ["A", "B", "C"]
     await nodes.move_node(db, admin, c, parent_id=None, before_id=a.id)
-    assert shape(await nodes.tree(db, space)) == ["C", "A", "B"]
+    assert shape(await nodes.tree(db, admin, space)) == ["C", "A", "B"]
     await nodes.move_node(db, admin, a, parent_id=None, after_id=b.id)
-    assert shape(await nodes.tree(db, space)) == ["C", "B", "A"]
+    assert shape(await nodes.tree(db, admin, space)) == ["C", "B", "A"]
     await nodes.move_node(db, admin, b, parent_id=c.id)
-    assert shape(await nodes.tree(db, space)) == [("C", ["B"]), "A"]
+    assert shape(await nodes.tree(db, admin, space)) == [("C", ["B"]), "A"]
 
     with pytest.raises(ValidationFailed, match="under itself"):
         await nodes.move_node(db, admin, c, parent_id=b.id)
@@ -80,7 +80,7 @@ async def test_soft_delete_hides_descendants(db: AsyncSession, admin: User) -> N
         db, admin, space, kind=NodeKind.page, title="Hija", parent_id=parent.id
     )
     await nodes.delete_node(db, admin, parent)
-    assert await nodes.tree(db, space) == []
+    assert await nodes.tree(db, admin, space) == []
     with pytest.raises(NotFound):
         await nodes.get_node(db, admin, child.id)
     with pytest.raises(ValidationFailed, match="not a page or folder"):

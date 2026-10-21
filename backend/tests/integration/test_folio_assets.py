@@ -5,6 +5,7 @@ from httpx import AsyncClient
 
 from radicle.folio.services import assets
 from tests.conftest import Team
+from tests.integration.folio_helpers import publish
 from tests.integration.test_attachments import png
 
 API = "/api/v1/folio"
@@ -34,6 +35,7 @@ async def test_images_shrink_and_show_inline(client: AsyncClient, team: Team, pa
     assert r.status_code == 201, r.text
     body = r.json()
     assert (body["width"], body["height"], body["mime_type"]) == (800, 267, "image/png")
+    await publish(client, team, page["id"])
     shown = await client.get(body["url"], headers=team.member.headers)
     assert shown.status_code == 200 and shown.headers["content-type"] == "image/png"
     assert shown.headers["content-disposition"].startswith("inline")
@@ -70,6 +72,7 @@ async def test_actionable_errors(
 
 
 async def test_readers_see_but_do_not_upload(client: AsyncClient, team: Team, page: dict) -> None:
+    await publish(client, team, page["id"])
     r = await client.post(
         f"{API}/nodes/{page['id']}/assets",
         headers=team.member.headers,

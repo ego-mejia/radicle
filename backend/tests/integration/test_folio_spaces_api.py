@@ -4,6 +4,7 @@ import pytest
 from httpx import AsyncClient
 
 from tests.conftest import Team
+from tests.integration.folio_helpers import publish
 
 API = "/api/v1/folio"
 
@@ -33,6 +34,11 @@ async def test_build_and_read_the_tree(client: AsyncClient, team: Team, space: d
     child = await _node(client, team, kind="page", title="Conecta un agente", parent=page["id"])
     post = await _node(client, team, kind="blog_post", title="Novedades")
     reader = team.member.headers
+    # Readers see folders and published pages; drafts only exist for writers.
+    r = await client.get(f"{API}/spaces/ai-tools/tree", headers=reader)
+    assert [n["title"] for n in r.json()] == ["Get Started"] and r.json()[0]["children"] == []
+    for node in (page, child, post):
+        await publish(client, team, node["id"])
 
     r = await client.get(f"{API}/spaces/ai-tools/tree", headers=reader)
     assert r.status_code == 200
@@ -113,6 +119,7 @@ async def test_actionable_errors(client: AsyncClient, team: Team, space: dict) -
 
 async def test_readers_read_but_do_not_write(client: AsyncClient, team: Team, space: dict) -> None:
     page = await _node(client, team, kind="page", title="Solo lectura")
+    await publish(client, team, page["id"])
     reader = team.member.headers
     assert (await client.get(f"{API}/nodes/{page['id']}", headers=reader)).status_code == 200
     r = await client.post(f"{API}/spaces", headers=reader, json={"key": "mine", "name": "Mío"})

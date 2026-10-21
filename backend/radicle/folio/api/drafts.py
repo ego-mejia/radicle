@@ -6,7 +6,7 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import Field
 
-from radicle.folio.services import drafts, nodes
+from radicle.folio.services import access, drafts, nodes
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Input, Output, UtcDatetime
@@ -40,8 +40,9 @@ def _out(d: drafts.Draft) -> DraftOut:
 
 @router.get("/nodes/{node_id}/draft", response_model=DraftOut)
 async def get_draft(node_id: uuid.UUID, principal: CurrentPrincipal, db: Db) -> DraftOut:
-    (await authz.authorize(db, principal.user, "folio", "folio.create")).raise_if_denied()
+    (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
     node = await nodes.get_node(db, principal.user, node_id)
+    await access.require_edit(db, principal.user, node)
     return _out(await drafts.get_draft(db, node))
 
 

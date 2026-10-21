@@ -6,8 +6,7 @@ import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioAsset, FolioNode
-from radicle.folio.services import nodes
-from radicle.platform import authz
+from radicle.folio.services import access, nodes
 from radicle.platform.config import get_settings
 from radicle.platform.db.models import User
 from radicle.platform.errors import NotFound, ProblemError, ValidationFailed
@@ -54,7 +53,7 @@ async def upload(
     data: bytes,
     resize: str | None = None,
 ) -> FolioAsset:
-    (await authz.authorize(db, user, "folio", "folio.create")).raise_if_denied()
+    await access.require_edit(db, user, node)
     limit = max_bytes()
     if len(data) > limit:
         raise PayloadTooLarge(
