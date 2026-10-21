@@ -2438,7 +2438,11 @@
       "languagePlaceholder": "p. ej. inglés",
       "proposal": "Propuesta de la IA",
       "accept": "Reemplazar la selección",
-      "discard": "Descartar"
+      "discard": "Descartar",
+      "suggesting": "La IA está sugiriendo la metadata…",
+      "suggestions": "Sugerencias de la IA",
+      "use": "Usar la sugerencia para {{field}}",
+      "useShort": "Usar"
     },
     "tickets": {
       "restricted": "Ticket restringido",
