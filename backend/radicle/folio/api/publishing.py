@@ -1,16 +1,16 @@
-"""Publishing over REST (Folio 1.3): /api/v1/folio/nodes/{id}/publish."""
+"""Publishing and version history over REST (Folio 1.3)."""
 
 import uuid
-from typing import Any
+from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from pydantic import Field
 
 from radicle.folio.db.models import FolioVersion
-from radicle.folio.services import nodes, publishing
+from radicle.folio.services import nodes, publishing, versions
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
-from radicle.platform.api.schemas import Input, Output, UtcDatetime
+from radicle.platform.api.schemas import Input, Output, Page, UtcDatetime
 from radicle.platform.db.models import User
 
 router = APIRouter(tags=["folio"])
@@ -61,4 +61,94 @@ async def publish(
     version = await publishing.publish(
         db, principal.user, node, change_note=body.change_note, confirm=body.confirm
     )
+    return await version_out(db, version)
+
+
+class VersionContentOut(VersionOut):
+    content_json: dict[str, Any]
+    content_md: str
+
+
+class BlockChangeOut(Output):
+    op: Literal["equal", "added", "removed"]
+    block: dict[str, Any]
+
+
+class FieldChangeOut(Output):
+    field: str
+    before: Any
+    after: Any
+
+
+class DiffOut(Output):
+    from_version: int
+    to_version: int
+    title: FieldChangeOut | None
+    blocks: list[BlockChangeOut]
+    metadata: list[FieldChangeOut]
+
+
+class RestoreIn(Input):
+    change_note: str | None = None
+
+
+@router.get("/nodes/{node_id}/versions", response_model=Page[VersionOut])
+async def list_versions(
+    node_id: uuid.UUID, principal: CurrentPrincipal, db: Db
+) -> Page[VersionOut]:
+    """The page's history, newest first, with author, approver and note."""
+    (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
+    node = await nodes.get_node(db, principal.user, node_id)
+    return Page(items=[await version_out(db, v) for v in await versions.list_versions(db, node)])
+
+
+@router.get("/nodes/{node_id}/versions/{number}", response_model=VersionContentOut)
+async def get_version(
+    node_id: uuid.UUID, number: int, principal: CurrentPrincipal, db: Db
+) -> VersionContentOut:
+    (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
+    node = await nodes.get_node(db, principal.user, node_id)
+    v = await versions.get_version(db, node, number)
+    base = await version_out(db, v)
+    return VersionContentOut(
+        **base.model_dump(), content_json=v.content_json, content_md=v.content_md
+    )
+
+
+@router.get("/nodes/{node_id}/diff", response_model=DiffOut)
+async def diff(
+    node_id: uuid.UUID,
+    principal: CurrentPrincipal,
+    db: Db,
+    from_: Annotated[int, Query(alias="from", ge=1)],
+    to: Annotated[int, Query(ge=1)],
+) -> DiffOut:
+    """Blocks added and removed, and metadata fields that changed, from one version to another."""
+    (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
+    node = await nodes.get_node(db, principal.user, node_id)
+    old, new = await versions.get_version(db, node, from_), await versions.get_version(db, node, to)
+    d = versions.diff_versions(old, new)
+
+    def field(c: versions.FieldChange) -> FieldChangeOut:
+        return FieldChangeOut(field=c.field, before=c.before, after=c.after)
+
+    return DiffOut(
+        from_version=from_,
+        to_version=to,
+        title=field(d.title) if d.title else None,
+        blocks=[BlockChangeOut(op=b.op, block=b.block) for b in d.blocks],
+        metadata=[field(c) for c in d.metadata],
+    )
+
+
+@router.post(
+    "/nodes/{node_id}/versions/{number}/restore", response_model=VersionOut, status_code=201
+)
+async def restore(
+    node_id: uuid.UUID, number: int, body: RestoreIn, principal: CurrentPrincipal, db: Db
+) -> VersionOut:
+    """Publish an old version again as a new one; nothing is deleted."""
+    (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
+    node = await nodes.get_node(db, principal.user, node_id)
+    version = await versions.restore(db, principal.user, node, number, change_note=body.change_note)
     return await version_out(db, version)
