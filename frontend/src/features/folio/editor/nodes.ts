@@ -1,7 +1,7 @@
 // Folio's blocks that StarterKit lacks, with the same names and attributes as the server's
 // schema. Each renders plain HTML with data attributes; the editor styles them.
 
-import { mergeAttributes, Node } from '@tiptap/core';
+import { InputRule, mergeAttributes, Node } from '@tiptap/core';
 import type { ColumnLayout, PanelKind, StatusColor } from './schema';
 
 /** `assetId` → `data-asset-id`. */
@@ -132,7 +132,23 @@ function inlineAtom(name: string, attrs: Record<string, ReturnType<typeof data>>
   });
 }
 
-export const Mention = inlineAtom('mention', { handle: data('handle', '') }, 'handle');
+// `@handle ` turns into a mention when you type the space after it.
+export const Mention = inlineAtom('mention', { handle: data('handle', '') }, 'handle').extend({
+  addInputRules() {
+    return [
+      new InputRule({
+        find: /(?:^|\s)@([a-z0-9][a-z0-9_-]{0,63}) $/,
+        handler: ({ state, range, match }) => {
+          const start = range.from + match[0].indexOf('@');
+          state.tr.replaceWith(start, range.to, [
+            this.type.create({ handle: match[1] }),
+            state.schema.text(' '),
+          ]);
+        },
+      }),
+    ];
+  },
+});
 export const Status = inlineAtom(
   'status',
   { text: data('text', ''), color: data('color', 'grey' satisfies StatusColor) },
