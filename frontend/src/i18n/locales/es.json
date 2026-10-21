@@ -1789,7 +1789,39 @@
       "title": "Búsqueda"
     },
     "approvals": {
-      "title": "Aprobaciones"
+      "title": "Aprobaciones",
+      "link": "Aprobaciones",
+      "pendingCount": "{{count}} esperando aprobación",
+      "subtitleAdmin": "Lo que los agentes mandaron a publicar. Nada se publica hasta que un admin lo aprueba.",
+      "subtitleMine": "Lo que mandaste a publicar y lo que dijeron quienes lo revisaron.",
+      "filter": "Filtrar por estado",
+      "list": "Envíos",
+      "status": {
+        "pending": "Pendientes",
+        "approved": "Aprobados",
+        "rejected": "Rechazados",
+        "superseded": "Reemplazados"
+      },
+      "empty": {
+        "pending": "Nada esperando aprobación.",
+        "approved": "Todavía no hay aprobados.",
+        "rejected": "No hay rechazados.",
+        "superseded": "No hay reemplazados."
+      },
+      "sentBy": "Enviado por {{who}} · {{date}}",
+      "reviewComment": "{{who}} dijo:",
+      "against": "Comparado con la v{{number}} publicada",
+      "firstVersion": "Primera versión de esta página: todo es nuevo.",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "approved": "Publicado como v{{number}}",
+      "rejected": "Rechazado: el agente ve tu comentario",
+      "rejectTitle": "¿Rechazar este envío?",
+      "comment": "Qué debe cambiar",
+      "commentHint": "El agente lo lee para corregir el borrador.",
+      "view": "Ver",
+      "changes": "Cambios",
+      "preview": "Vista previa"
     },
     "catalogs": {
       "title": "Catálogos",
