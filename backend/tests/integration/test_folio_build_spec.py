@@ -15,6 +15,7 @@ from radicle.platform.errors import Forbidden, ValidationFailed
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, METADATA
 from tests.integration.test_docket_public import _user
+from tests.integration.test_restricted import restrict
 
 SPEC = """# Fase 4
 
@@ -113,3 +114,49 @@ async def test_errors_and_permissions(
     assert r.status_code == 200, r.text
     with pytest.raises(ValidationFailed, match="only build-spec docs"):
         await build_spec.items(db, fernando, spec)
+
+
+async def test_over_rest(client: AsyncClient, board: Team, spec: FolioNode) -> None:
+    i, m = board.instance.headers, board.member.headers
+    nid = spec.id
+    url = f"{API}/nodes/{nid}/build-spec"
+    r = await client.get(f"{url}/items", headers=i)
+    assert r.status_code == 200, r.text
+    first = r.json()["items"][0]
+    assert (first["key"], first["linked"]) == ("4.1", False)
+    assert first["criteria"] == ["Veo su estado", "PA-4 muestra el doc"]
+    body = {"project": "PA", "area": "Backend", "milestone": "V1"}
+    r = await client.post(f"{url}/tickets", headers=i, json=body | {"dry_run": True})
+    assert r.status_code == 201 and [x["ticket"] for x in r.json()["items"]] == [None, None]
+    r = await client.post(f"{url}/tickets", headers=i, json=body)
+    assert r.status_code == 201, r.text
+    made = r.json()["items"]
+    assert [x["ticket"]["key"] for x in made] == ["PA-1", "PA-2"]
+    assert made[0]["ticket"]["checklist_total"] == 2 and made[0]["anchor"] == "entregables"
+    r = await client.get(f"{API}/links", params={"ticket": "PA-1"}, headers=i)
+    assert [(d["kind"], d["anchor"]) for d in r.json()["items"]] == [
+        ("build_spec_item", "entregables")
+    ]
+    # Unpublished, luis doesn't see the doc; published, he reads it but can't create.
+    r = await client.get(f"{url}/items", headers=m)
+    assert r.status_code == 404
+    r = await client.post(f"{API}/nodes/{nid}/publish", headers=i, json={})
+    assert r.status_code in (200, 201), r.text
+    r = await client.get(f"{url}/items", headers=m)
+    assert r.status_code == 200 and r.json()["items"][0]["ticket"]["key"] == "PA-1"
+    r = await client.post(f"{url}/tickets", headers=m, json=body)
+    assert r.status_code == 403, r.text
+    # A ticket luis can't see in Docket: the deliverable shows as restricted, no title.
+    r = await client.post(
+        "/api/v1/projects/PA/security-levels",
+        headers=board.admin.headers,
+        json={"name": "Legal confidencial", "include_participants": False},
+    )
+    assert r.status_code == 201, r.text
+    assert (await restrict(client, board, "PA-2")).status_code == 200
+    r = await client.get(f"{url}/items", headers=m)
+    second = r.json()["items"][1]
+    assert (second["linked"], second["restricted"], second["ticket"]) == (True, True, None)
+    assert "Crear ticket" in second["title"]  # the doc's own text, not Docket's
+    r = await client.post(f"{url}/tickets", headers=i, json=body | {"keys": ["nope"]})
+    assert r.status_code == 422 and "Unknown deliverables" in r.json()["detail"]

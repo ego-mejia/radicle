@@ -132,7 +132,7 @@ def link_out(found: ticket_links.Link) -> FolioTicketLinkOut:
     )
 
 
-async def _reader(db: Db, principal: CurrentPrincipal) -> None:
+async def require_reader(db: Db, principal: CurrentPrincipal) -> None:
     (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
 
 
@@ -144,7 +144,7 @@ async def preview_tickets(
 ) -> FolioTicketPreviewsOut:
     """Live status, assignee and checklist of tickets for smart links, in the order asked.
     A ticket you can't see in Docket comes back restricted, with no title."""
-    await _reader(db, principal)
+    await require_reader(db, principal)
     asked = [k for k in (part.strip() for part in keys.split(",")) if k]
     if len(asked) > docket.MAX_KEYS:
         raise ValidationFailed(
@@ -168,7 +168,7 @@ async def query_tickets(
     limit: int = Query(default=25, ge=1, le=100),
 ) -> FolioTicketQueryOut:
     """The ticket table block: Docket's RQL, only the tickets you can see in Docket."""
-    await _reader(db, principal)
+    await require_reader(db, principal)
     result = await docket.search(db, rql, principal.user, limit=limit)
     return FolioTicketQueryOut(items=[ticket_out(t) for t in result.tickets], total=result.total)
 
@@ -179,7 +179,7 @@ async def list_ticket_links(
 ) -> FolioTicketLinksOut:
     """The doc's tickets: mentioned, created from its text, from its deliverables or linked
     by hand."""
-    await _reader(db, principal)
+    await require_reader(db, principal)
     node = await nodes.get_node(db, principal.user, node_id)
     found = await ticket_links.links_for_node(db, principal.user, node)
     return FolioTicketLinksOut(items=[link_out(f) for f in found])
@@ -190,7 +190,7 @@ async def add_ticket_link(
     node_id: uuid.UUID, body: FolioTicketLinkIn, principal: CurrentPrincipal, db: Db
 ) -> FolioTicketLinkOut:
     """Link the doc, or one of its sections, to a ticket. Needs edit on the page."""
-    await _reader(db, principal)
+    await require_reader(db, principal)
     node = await nodes.get_node(db, principal.user, node_id)
     found = await ticket_links.link(db, principal.user, node, body.key, anchor=body.anchor)
     return link_out(found)
@@ -200,7 +200,7 @@ async def add_ticket_link(
 async def remove_ticket_link(
     node_id: uuid.UUID, link_id: uuid.UUID, principal: CurrentPrincipal, db: Db
 ) -> Response:
-    await _reader(db, principal)
+    await require_reader(db, principal)
     node = await nodes.get_node(db, principal.user, node_id)
     await ticket_links.unlink(db, principal.user, node, link_id)
     return Response(status_code=204)
@@ -212,7 +212,7 @@ async def create_ticket_from_text(
 ) -> FolioTicketLinkOut:
     """Create a Docket ticket from a selection or an action item, linked to its section.
     Whoever can read the doc may, if Docket lets them create tickets in the project."""
-    await _reader(db, principal)
+    await require_reader(db, principal)
     node = await nodes.get_node(db, principal.user, node_id)
     found = await ticket_links.create_from_text(
         db,
@@ -238,7 +238,7 @@ async def docs_for_ticket(
     ticket: str = Query(min_length=3, max_length=30, examples=["PA-4"]),
 ) -> TicketDocsOut:
     """The docs linked to a ticket that you may see (the Docs panel in Docket)."""
-    await _reader(db, principal)
+    await require_reader(db, principal)
     found = await ticket_links.docs_for_ticket(db, principal.user, ticket)
     return TicketDocsOut(
         items=[

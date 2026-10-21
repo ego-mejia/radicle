@@ -1692,6 +1692,174 @@
         "title": "Body_upload_attachment_api_v1_tickets__key__attachments_post",
         "type": "object"
       },
+      "BuildSpecItemOut": {
+        "properties": {
+          "anchor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Its section's heading anchor",
+            "title": "Anchor"
+          },
+          "criteria": {
+            "description": "Acceptance criteria, the ticket's checklist",
+            "items": {
+              "type": "string"
+            },
+            "title": "Criteria",
+            "type": "array"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "key": {
+            "description": "The deliverable's number, e.g. 4.1",
+            "title": "Key",
+            "type": "string"
+          },
+          "linked": {
+            "description": "A ticket was already created for it",
+            "title": "Linked",
+            "type": "boolean"
+          },
+          "restricted": {
+            "description": "Linked, but you can't see the ticket in Docket",
+            "title": "Restricted",
+            "type": "boolean"
+          },
+          "ticket": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FolioTicketOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "title",
+          "description",
+          "criteria",
+          "anchor",
+          "linked",
+          "restricted",
+          "ticket"
+        ],
+        "title": "BuildSpecItemOut",
+        "type": "object"
+      },
+      "BuildSpecItemsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BuildSpecItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "BuildSpecItemsOut",
+        "type": "object"
+      },
+      "BuildSpecTicketsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "area": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area"
+          },
+          "dry_run": {
+            "default": false,
+            "description": "List what would be created, create none",
+            "title": "Dry Run",
+            "type": "boolean"
+          },
+          "keys": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 50,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Deliverables to send; omit for all new ones",
+            "title": "Keys"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milestone"
+          },
+          "project": {
+            "examples": [
+              "PA"
+            ],
+            "maxLength": 10,
+            "minLength": 1,
+            "title": "Project",
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 20,
+            "title": "Tags",
+            "type": "array"
+          },
+          "type": {
+            "default": "task",
+            "enum": [
+              "task",
+              "bug",
+              "draft"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project"
+        ],
+        "title": "BuildSpecTicketsIn",
+        "type": "object"
+      },
       "BulkIn": {
         "additionalProperties": false,
         "properties": {
@@ -22950,6 +23118,106 @@
           }
         },
         "summary": "Add Block",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/build-spec/items": {
+      "get": {
+        "description": "The deliverables of a build-spec doc (its deliverables table, or numbered level-3\nheadings) and each one's ticket, live. Feeds the wizard and the Ticket progress block.",
+        "operationId": "build_spec_items_api_v1_folio_nodes__node_id__build_spec_items_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildSpecItemsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Build Spec Items",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/build-spec/tickets": {
+      "post": {
+        "description": "One Docket task per chosen deliverable that has none yet, with a link to its section\nand its criteria as a checklist. Running it again creates only the new ones. Needs edit\non the doc and Docket's ticket.create in the project.",
+        "operationId": "create_build_spec_tickets_api_v1_folio_nodes__node_id__build_spec_tickets_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuildSpecTicketsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildSpecItemsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Build Spec Tickets",
         "tags": [
           "folio",
           "folio"

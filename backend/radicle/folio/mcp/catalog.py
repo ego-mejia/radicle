@@ -18,6 +18,7 @@ READ = (
     "query_database",
     "validate_visual",
     "get_docs_for_ticket",
+    "get_build_spec_items",
     "ask_docs",
 )
 
@@ -40,6 +41,7 @@ WRITE = (
     "insert_timeline",
     "link_ticket",
     "unlink_ticket",
+    "create_tickets_from_build_spec",
 )
 
 CATALOG: tuple[Tool, ...] = (
