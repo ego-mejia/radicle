@@ -6,6 +6,7 @@ from typing import Literal
 from fastapi import APIRouter, Response
 from pydantic import Field
 
+from radicle.folio.api import drafts as drafts_api
 from radicle.folio.api import spaces as spaces_api
 from radicle.folio.db.models import FolioRole, GranteeType
 from radicle.folio.services import roles
@@ -115,3 +116,4 @@ async def delete_grant(grant_id: uuid.UUID, principal: CurrentPrincipal, db: Db)
 
 
 router.include_router(spaces_api.router)
+router.include_router(drafts_api.router)

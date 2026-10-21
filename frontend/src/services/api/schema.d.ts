@@ -811,6 +811,27 @@ export interface paths {
         patch: operations["patch_node_api_v1_folio_nodes__node_id__patch"];
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/draft": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Draft */
+        get: operations["get_draft_api_v1_folio_nodes__node_id__draft_get"];
+        /**
+         * Put Draft
+         * @description Save the draft: content as JSON or Markdown (one of them), and/or metadata.
+         */
+        put: operations["put_draft_api_v1_folio_nodes__node_id__draft_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}/move": {
         parameters: {
             query?: never;
@@ -3731,6 +3752,54 @@ export interface components {
              * @description Shown to the submitter on the tracking page
              */
             public_comment?: string | null;
+        };
+        /** DraftIn */
+        DraftIn: {
+            /**
+             * Content Json
+             * @description TipTap document
+             */
+            content_json?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Content Md
+             * @description Markdown (docs/folio/markdown.md)
+             */
+            content_md?: string | null;
+            /** Metadata */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** DraftOut */
+        DraftOut: {
+            /**
+             * Content Json
+             * @description TipTap document
+             */
+            content_json: {
+                [key: string]: unknown;
+            };
+            /**
+             * Content Md
+             * @description The same content as Markdown
+             */
+            content_md: string;
+            /**
+             * Metadata
+             * @description May be incomplete until publishing
+             */
+            metadata: {
+                [key: string]: unknown;
+            };
+            /**
+             * Saved
+             * @description False until someone writes
+             */
+            saved: boolean;
+            /** Updated At */
+            updated_at: string | null;
         };
         /** DuplicateIn */
         DuplicateIn: {
@@ -8642,6 +8711,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["NodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_draft_api_v1_folio_nodes__node_id__draft_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DraftOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_draft_api_v1_folio_nodes__node_id__draft_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DraftIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DraftOut"];
                 };
             };
             /** @description Validation Error */
