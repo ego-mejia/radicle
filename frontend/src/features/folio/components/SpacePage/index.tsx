@@ -16,6 +16,7 @@ import {
 } from '../../../../services/api/folio';
 import { type NewKind, NewNodeDialog } from '../NewNodeDialog';
 import { SpaceTree } from '../SpaceTree';
+import { StatusBadge } from '../StatusBadge';
 import * as S from './style';
 
 /** A space: its cover and description, the page tree and its blog posts. */
@@ -86,6 +87,7 @@ export function SpacePage({ spaceKey }: { spaceKey: string }) {
                 <Link to="/folio/p/$page" params={{ page: `${post.id}-${post.slug}` }}>
                   {post.icon && <span aria-hidden>{post.icon}</span>}
                   {post.title}
+                  <StatusBadge status={post.status} />
                 </Link>
               </li>
             ))}

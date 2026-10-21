@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Badge } from '../../../../components/ui/Badge';
 import type { FolioNode } from '../../../../services/api/folio';
+import { StatusBadge } from '../StatusBadge';
 import * as S from './style';
 
 type Props = {
@@ -21,15 +21,7 @@ export function PageMeta({ metadata, status, version }: Props) {
   const audiences = list(m.audiences);
   const rows: [string, React.ReactNode][] = [
     [t('folio.reader.meta.owner'), owner ? `@${owner}` : '—'],
-    [
-      t('folio.reader.meta.status'),
-      <Badge
-        key="status"
-        tone={status === 'verified' ? 'accent' : status === 'outdated' ? 'warning' : 'neutral'}
-      >
-        {t(`folio.reader.status.${status}`)}
-      </Badge>,
-    ],
+    [t('folio.reader.meta.status'), <StatusBadge key="status" status={status} always />],
   ];
   if (m.doc_type) rows.push([t('folio.reader.meta.docType'), String(m.doc_type)]);
   if (m.language) rows.push([t('folio.reader.meta.language'), String(m.language)]);

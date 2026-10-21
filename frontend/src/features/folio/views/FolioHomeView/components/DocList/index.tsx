@@ -2,6 +2,7 @@ import { createLink } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import type { FolioCard } from '../../../../../../services/api/folio';
 import { cardMeta, kindLabel, pageParams } from '../../meta';
+import { StatusBadge } from '../../../../components/StatusBadge';
 import * as S from './style';
 
 const ItemLink = createLink(S.Item);
@@ -24,7 +25,9 @@ export function DocList({ title, docs, numbered = false }: Props) {
                 {numbered && <S.Number>{String(i + 1).padStart(2, '0')}</S.Number>}
                 <S.Text>
                   {!numbered && <S.Kind>{kindLabel(t, doc)}</S.Kind>}
-                  <S.Title>{doc.title}</S.Title>
+                  <S.Title>
+                    {doc.title} <StatusBadge status={doc.status} />
+                  </S.Title>
                   <S.Meta>{numbered ? doc.space_name : cardMeta(t, doc, true)}</S.Meta>
                 </S.Text>
               </ItemLink>

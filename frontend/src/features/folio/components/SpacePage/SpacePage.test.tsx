@@ -17,7 +17,16 @@ const SPACE = {
 const TREE = [
   { id: 'p1', kind: 'page', title: 'Deploy', slug: 'deploy', icon: null, children: [] },
 ];
-const POSTS = [{ id: 'b1', kind: 'blog_post', title: 'Novedades', slug: 'novedades', icon: null }];
+const POSTS = [
+  {
+    id: 'b1',
+    kind: 'blog_post',
+    title: 'Novedades',
+    slug: 'novedades',
+    icon: null,
+    status: 'published',
+  },
+];
 
 function api(space: object = SPACE) {
   return mockFetch({
