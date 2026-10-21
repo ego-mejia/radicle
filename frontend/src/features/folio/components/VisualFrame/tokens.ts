@@ -15,6 +15,7 @@ export function visualTheme(theme: Theme, reducedMotion: boolean): VisualTheme {
       '--rdc-muted': c.textMuted,
       '--rdc-accent': c.accent,
       '--rdc-accent-fill': c.accentFill,
+      '--rdc-on-accent': c.onAccent,
       '--rdc-border': c.border,
       '--rdc-danger': c.danger,
       '--rdc-warning': c.warning,
