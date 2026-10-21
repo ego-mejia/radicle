@@ -77,7 +77,7 @@ export type ImagePreset = 'original' | 'large' | 'medium' | 'small';
 export type Worklog = S['WorklogOut'];
 
 export type SavedFilter = S['FilterOut'];
-export type Preferences = S['PreferencesOut'];
+export type Preferences = S['radicle__docket__api__work__PreferencesOut'];
 
 export type Board = S['BoardOut'];
 export type BoardData = S['BoardDataOut'];
