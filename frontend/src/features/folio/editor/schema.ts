@@ -55,6 +55,7 @@ const NODE_ATTRS: Record<string, string[]> = {
   comparisonSide: ['title'],
   pageList: ['label', 'limit', 'space', 'order'],
   ticketTable: ['rql', 'title', 'limit'],
+  ticketProgress: ['title'],
   text: [],
   hardBreak: [],
   mention: ['handle'],

@@ -135,6 +135,12 @@ export function BlockFields({ type, attrs, onChange }: Props) {
           </S.Row>
         </>
       );
+    case 'ticketProgress':
+      return (
+        <Field label={k('title')}>
+          <Input value={str('title')} onChange={set('title')} />
+        </Field>
+      );
     case 'ticketTable':
       return (
         <>

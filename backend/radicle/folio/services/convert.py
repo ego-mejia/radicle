@@ -239,6 +239,8 @@ def block(node: Node, depth: int = 0) -> str:
         return "::tickets" + _attrs(
             rql=attrs["rql"], title=attrs.get("title"), limit=attrs.get("limit")
         )
+    if kind == "ticketProgress":
+        return "::progress" + (_attrs(title=attrs.get("title")) or "{}")
     if kind == "databaseView":
         return "::database" + _attrs(id=attrs["database"], view=attrs.get("view"))
     if kind == "whiteboard":
@@ -292,7 +294,7 @@ def _text_of(node: Node, out: list[str]) -> None:
         out.append(attrs["latex"])
     elif kind == "ticket":
         out.append(attrs["key"])
-    elif kind == "ticketTable" and attrs.get("title"):
+    elif kind in ("ticketTable", "ticketProgress") and attrs.get("title"):
         out.append(attrs["title"] + "\n")
     elif kind == "image":
         out.append(" ".join(v for v in (attrs.get("alt"), attrs.get("caption")) if v))

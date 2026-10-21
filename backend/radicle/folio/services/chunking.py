@@ -57,6 +57,7 @@ def _block_text(node: Node) -> str:
         "horizontalRule",
         "pageList",
         "ticketTable",
+        "ticketProgress",
     ):
         return ""
     if node["type"] in ("visual", "diagram", "formula", "chart", "timeline"):

@@ -72,6 +72,7 @@ def test_plain_text_for_search() -> None:
         "Flujo graph TD\n  A-->B\n"
         "Tickets por área\nÁrea Abiertos Cerrados\nLegal 3 5\nBackend 7 2.5\n"
         "2026-11-01 Beta Equipo interno\nLanzamiento\n"
-        "E = mc^2\nEn línea a^2 + b^2\nAntes\nrápido\nmás rápido\nPendientes\nLa demo\nFin"
+        "E = mc^2\nEn línea a^2 + b^2\nAntes\nrápido\nmás rápido\n"
+        "Pendientes\nAvance de la fase\nLa demo\nFin"
     )
     assert "**" not in text and ":::" not in text

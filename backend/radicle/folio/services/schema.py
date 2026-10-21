@@ -276,6 +276,8 @@ NODES: dict[str, NodeSpec] = {
             "limit": Attr(int, minimum=1, maximum=100),
         },
     ),
+    # The live status of the tickets made from this build spec's deliverables (Folio 4.3).
+    "ticketProgress": NodeSpec(BLOCK, attrs={"title": Attr((str, type(None)), max_length=200)}),
     # A database's view inside a page (Folio 3.6); the reader without access to the
     # database sees a placeholder, not its rows.
     "databaseView": NodeSpec(

@@ -31,11 +31,12 @@ export function makeClient(me: Me | null = ME) {
   return client;
 }
 
-/** Providers plus a one-route memory router, so components with <Link> render. */
-export function renderWithProviders(ui: React.ReactElement, client = makeClient()) {
+/** Providers plus a one-route memory router, so components with <Link> render; `path` is
+ * the URL it starts at, for components that read it. */
+export function renderWithProviders(ui: React.ReactElement, client = makeClient(), path = '/') {
   const router = createRouter({
     routeTree: createRootRoute({ component: () => ui }),
-    history: createMemoryHistory({ initialEntries: ['/'] }),
+    history: createMemoryHistory({ initialEntries: [path] }),
   });
   return render(
     <QueryClientProvider client={client}>
