@@ -1541,6 +1541,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/page-list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Page List
+         * @description Published pages with the label that you can see, newest first.
+         */
+        get: operations["get_page_list_api_v1_folio_page_list_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/people": {
         parameters: {
             query?: never;
@@ -6137,6 +6157,34 @@ export interface components {
             /** Template Version */
             template_version: number | null;
         };
+        /** ListedPageOut */
+        ListedPageOut: {
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "page" | "folder" | "blog_post" | "live_doc";
+            /** Published At */
+            published_at: string | null;
+            /** Slug */
+            slug: string;
+            /** Space */
+            space: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "published" | "in_review" | "verified" | "outdated";
+            /** Title */
+            title: string;
+        };
         /** LiveOut */
         LiveOut: {
             /**
@@ -6662,6 +6710,11 @@ export interface components {
              * @description Handle of the new owner, e.g. @ana
              */
             owner: string;
+        };
+        /** PageListOut */
+        PageListOut: {
+            /** Items */
+            items: components["schemas"]["ListedPageOut"][];
         };
         /** Page[ArchivedOut] */
         Page_ArchivedOut_: {
@@ -12530,6 +12583,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_page_list_api_v1_folio_page_list_get: {
+        parameters: {
+            query: {
+                /** @description e.g. onboarding */
+                label: string;
+                /** @description Only this space's pages */
+                space?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageListOut"];
                 };
             };
             /** @description Validation Error */

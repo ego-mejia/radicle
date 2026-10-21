@@ -6288,6 +6288,82 @@
         "title": "LinkedProjectOut",
         "type": "object"
       },
+      "ListedPageOut": {
+        "properties": {
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "page",
+              "folder",
+              "blog_post",
+              "live_doc"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "in_review",
+              "verified",
+              "outdated"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "slug",
+          "icon",
+          "status",
+          "space",
+          "published_at"
+        ],
+        "title": "ListedPageOut",
+        "type": "object"
+      },
       "LiveOut": {
         "properties": {
           "content_md": {
@@ -7703,6 +7779,22 @@
           "owner"
         ],
         "title": "OwnerIn",
+        "type": "object"
+      },
+      "PageListOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ListedPageOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "PageListOut",
         "type": "object"
       },
       "Page_ArchivedOut_": {
@@ -20544,6 +20636,84 @@
           }
         },
         "summary": "Restore",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/page-list": {
+      "get": {
+        "description": "Published pages with the label that you can see, newest first.",
+        "operationId": "get_page_list_api_v1_folio_page_list_get",
+        "parameters": [
+          {
+            "description": "e.g. onboarding",
+            "in": "query",
+            "name": "label",
+            "required": true,
+            "schema": {
+              "description": "e.g. onboarding",
+              "maxLength": 50,
+              "minLength": 1,
+              "title": "Label",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Only this space's pages",
+            "in": "query",
+            "name": "space",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only this space's pages",
+              "title": "Space"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Page List",
         "tags": [
           "folio",
           "folio"

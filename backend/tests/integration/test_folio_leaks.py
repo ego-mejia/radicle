@@ -82,6 +82,10 @@ def _urls(s: dict) -> dict[str, list[str]]:
             f"{API}/nodes?q=space = docs ORDER BY title",
         ],
         "/api/v1/folio/home": [f"{API}/home"],
+        "/api/v1/folio/page-list": [
+            f"{API}/page-list?label=mcp",
+            f"{API}/page-list?label=agentes&space=docs",
+        ],
         "/api/v1/folio/search": [
             f"{API}/search?q=secreto",
             f"{API}/search?q=Confidencial&mode=text",
