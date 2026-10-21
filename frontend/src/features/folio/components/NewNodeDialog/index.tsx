@@ -7,7 +7,8 @@ import { Field } from '../../../../components/ui/Field';
 import { Input } from '../../../../components/ui/Input';
 import { Modal } from '../../../../components/ui/Modal';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
-import { createNode, folioKeys } from '../../../../services/api/folio';
+import { createFromTemplate, createNode, folioKeys } from '../../../../services/api/folio';
+import { TemplatePicker } from '../TemplatePicker';
 import * as S from './style';
 
 export type NewKind = 'page' | 'folder' | 'blog_post';
@@ -27,14 +28,15 @@ export function NewNodeDialog({ space, kind, parent = null, open, onOpenChange }
   const queryClient = useQueryClient();
   const errorMessage = useErrorMessage();
   const [title, setTitle] = useState('');
+  const [template, setTemplate] = useState<string | null>(null);
+  const withTemplates = kind !== 'folder';
   const create = useMutation({
-    mutationFn: () =>
-      createNode({
-        space,
-        kind,
-        title: title.trim(),
-        parent: kind === 'blog_post' ? null : parent,
-      }),
+    mutationFn: () => {
+      const where = { space, title: title.trim(), parent: kind === 'blog_post' ? null : parent };
+      return template && kind !== 'folder'
+        ? createFromTemplate({ ...where, template, kind })
+        : createNode({ ...where, kind });
+    },
     onSuccess: async (node) => {
       await queryClient.invalidateQueries({ queryKey: folioKeys.space(space) });
       setTitle('');
@@ -55,6 +57,7 @@ export function NewNodeDialog({ space, kind, parent = null, open, onOpenChange }
       open={open}
       onOpenChange={onOpenChange}
       title={t(`folio.space.new.${kind}`)}
+      width={withTemplates ? 760 : 520}
       footer={
         <>
           <Button onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
@@ -82,6 +85,7 @@ export function NewNodeDialog({ space, kind, parent = null, open, onOpenChange }
             required
           />
         </Field>
+        {withTemplates && <TemplatePicker space={space} value={template} onChange={setTemplate} />}
       </S.Form>
     </Modal>
   );

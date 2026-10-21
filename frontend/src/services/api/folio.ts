@@ -12,6 +12,10 @@ export type FolioNodeRef = S['NodeRef'];
 export type FolioNode = S['NodeOut'];
 export type FolioNodeIn = S['NodeIn'];
 export type FolioMoveIn = S['NodeMoveIn'];
+export type FolioTemplate = S['FolioTemplateOut'];
+export type FolioTemplateIn = S['FolioTemplateIn'];
+export type FolioTemplatePatch = S['FolioTemplatePatch'];
+export type NodeFromTemplateIn = S['NodeFromTemplateIn'];
 export type FolioDraft = S['DraftOut'];
 export type FolioDraftIn = S['DraftIn'];
 export type FolioPublishIn = S['PublishIn'];
@@ -45,6 +49,8 @@ export const folioKeys = {
   version: (id: string, n: number) => ['folio', 'nodes', id, 'versions', n] as const,
   diff: (id: string, from: number, to: number) => ['folio', 'nodes', id, 'diff', from, to] as const,
   schema: ['folio', 'metadata-schema'] as const,
+  templates: (kind: 'page' | 'space', space?: string) =>
+    ['folio', 'templates', kind, space ?? 'all'] as const,
   catalog: (name: FolioCatalog) => ['folio', 'catalog', name] as const,
   submissions: (status?: SubmissionStatus) => ['folio', 'submissions', status ?? 'all'] as const,
   submission: (id: string) => ['folio', 'submission', id] as const,
@@ -329,4 +335,40 @@ export const folioHomeKey = ['folio', 'home'] as const;
 /** The home bento, every block already resolved for you. */
 export async function fetchHome(): Promise<FolioHome> {
   return unwrap(await api.GET('/api/v1/folio/home'));
+}
+
+// --- templates (Folio 3.1) -----------------------------------------------------------
+
+export async function fetchTemplates(
+  kind: 'page' | 'space' = 'page',
+  space?: string,
+): Promise<FolioTemplate[]> {
+  return unwrap(await api.GET('/api/v1/folio/templates', { params: { query: { kind, space } } }))
+    .items;
+}
+
+export async function createTemplate(body: FolioTemplateIn): Promise<FolioTemplate> {
+  return unwrap(await api.POST('/api/v1/folio/templates', { body }));
+}
+
+export async function updateTemplate(id: string, body: FolioTemplatePatch): Promise<FolioTemplate> {
+  return unwrap(
+    await api.PATCH('/api/v1/folio/templates/{template_id}', {
+      params: { path: { template_id: id } },
+      body,
+    }),
+  );
+}
+
+export async function archiveTemplate(id: string): Promise<void> {
+  unwrap(
+    await api.DELETE('/api/v1/folio/templates/{template_id}', {
+      params: { path: { template_id: id } },
+    }),
+  );
+}
+
+/** A page or post whose draft starts with the template's document and metadata. */
+export async function createFromTemplate(body: NodeFromTemplateIn): Promise<FolioNode> {
+  return unwrap(await api.POST('/api/v1/folio/nodes/from-template', { body }));
 }
