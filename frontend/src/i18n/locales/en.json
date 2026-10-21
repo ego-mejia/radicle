@@ -2426,7 +2426,19 @@
       "thinking": "Thinking…",
       "proposalNote": "A proposal: nothing changes in the page until you insert it.",
       "again": "Try again",
-      "insertSummary": "Insert at the top"
+      "insertSummary": "Insert at the top",
+      "rewrite": "Rewrite with AI",
+      "modes": {
+        "clearer": "Clearer",
+        "shorter": "Shorter",
+        "formal": "More formal",
+        "translate": "Translate"
+      },
+      "language": "Language",
+      "languagePlaceholder": "e.g. English",
+      "proposal": "AI proposal",
+      "accept": "Replace the selection",
+      "discard": "Discard"
     },
     "tickets": {
       "restricted": "Restricted ticket",

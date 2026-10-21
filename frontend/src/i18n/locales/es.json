@@ -2426,7 +2426,19 @@
       "thinking": "Pensando…",
       "proposalNote": "Es una propuesta: la página no cambia hasta que la insertes.",
       "again": "Intentar de nuevo",
-      "insertSummary": "Insertar al inicio"
+      "insertSummary": "Insertar al inicio",
+      "rewrite": "Reescribir con IA",
+      "modes": {
+        "clearer": "Más claro",
+        "shorter": "Más corto",
+        "formal": "Más formal",
+        "translate": "Traducir"
+      },
+      "language": "Idioma",
+      "languagePlaceholder": "p. ej. inglés",
+      "proposal": "Propuesta de la IA",
+      "accept": "Reemplazar la selección",
+      "discard": "Descartar"
     },
     "tickets": {
       "restricted": "Ticket restringido",
