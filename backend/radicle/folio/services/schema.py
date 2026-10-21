@@ -122,6 +122,15 @@ def _check_database_view(path: str, attrs: dict[str, Any]) -> None:
         raise SchemaError(f"{path}.attrs.database", "must be a database's id (a uuid)") from None
 
 
+def _check_whiteboard(path: str, attrs: dict[str, Any]) -> None:
+    try:
+        uuid.UUID(str(attrs.get("whiteboard")))
+    except ValueError:
+        raise SchemaError(
+            f"{path}.attrs.whiteboard", "must be a whiteboard's id (a uuid)"
+        ) from None
+
+
 def _check_visual(path: str, attrs: dict[str, Any]) -> None:
     if not str(attrs.get("description", "")).strip():
         raise SchemaError(
@@ -258,6 +267,13 @@ NODES: dict[str, NodeSpec] = {
             "view": Attr((str, type(None)), max_length=40),
         },
         check=_check_database_view,
+    ),
+    # A whiteboard inside a page (Folio 3.5), read only; the reader without access to it
+    # sees a placeholder.
+    "whiteboard": NodeSpec(
+        BLOCK,
+        attrs={"whiteboard": Attr(str, required=True, max_length=36)},
+        check=_check_whiteboard,
     ),
     # A pasted link (Folio 3.7): a card, or an iframe for the providers that embed. The
     # title is kept so the text and the RAG index read something better than a URL.
