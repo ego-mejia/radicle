@@ -2,6 +2,7 @@
 // Together they accept exactly the server's schema (see schema.ts).
 
 import { DatabaseViewNode } from './databaseView';
+import { WhiteboardNode } from './whiteboard';
 import { Embed } from './embed';
 import { VISUAL_NODES } from './visualNodes';
 import type { AnyExtension } from '@tiptap/core';
@@ -72,6 +73,7 @@ export function folioExtensions({ shared = false } = {}): AnyExtension[] {
     Embed,
     ...VISUAL_NODES,
     DatabaseViewNode,
+    WhiteboardNode,
     Mention,
     Status,
     ActionItem,

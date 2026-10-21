@@ -14,6 +14,7 @@ import type { ChartKind } from '../../../ChartBlock/components/ChartView';
 import { type ChartData, tableData } from '../../../ChartBlock/tableData';
 import { PageList } from '../../../PageList';
 import { Timeline, type TimelineItem } from '../../../Timeline';
+import { WhiteboardEmbed } from '../../../WhiteboardEmbed';
 import * as S from './style';
 
 export type ChildPage = { id: string; title: string; slug: string };
@@ -118,6 +119,8 @@ export function RichBlock({ node: n, previous, headings, childPages, children }:
       );
     case 'formula':
       return <Formula latex={String(a.latex ?? '')} />;
+    case 'whiteboard':
+      return <WhiteboardEmbed nodeId={String(a.whiteboard)} />;
     case 'databaseView':
       return (
         <DatabaseView

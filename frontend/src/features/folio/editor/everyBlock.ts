@@ -83,6 +83,7 @@ export const EVERY_BLOCK: JSONContent = {
     node('video', { src: 'https://example.com/v.mp4', caption: 'Demo' }),
     node('embed', { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', title: 'La demo' }),
     node('databaseView', { database: '6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14', view: 'board' }),
+    node('whiteboard', { whiteboard: '0b7e2c41-5a3d-4f6e-9c8b-1d2e3f4a5b6c' }),
     node('visual', {
       format: 'svg',
       code: '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--accent)"/></svg>',

@@ -95,6 +95,11 @@ export const BLOCKS: BlockItem[] = [
     run: (c) => c.insertContent({ type: 'databaseView' }),
   },
   {
+    key: 'whiteboard',
+    keywords: 'whiteboard pizarra dibujo excalidraw diagrama boceto',
+    run: (c) => c.insertContent({ type: 'whiteboard' }),
+  },
+  {
     key: 'visual',
     keywords: 'visual svg html dibujo ilustracion grafico custom',
     run: (c) => c.insertContent({ type: 'visual', attrs: { format: 'svg', code: VISUAL_STARTER } }),
