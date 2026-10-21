@@ -1,3 +1,4 @@
+from radicle.platform.db.models.ai import AiProvider, AiSettings
 from radicle.platform.db.models.audit import AuditApp, AuditEntry
 from radicle.platform.db.models.base import Base, utcnow
 from radicle.platform.db.models.groups import Group, GroupMember
@@ -6,6 +7,8 @@ from radicle.platform.db.models.sso import AuthSource, InstanceSetting, SsoProvi
 from radicle.platform.db.models.users import ApiToken, Session, User, UserKind
 
 __all__ = [
+    "AiProvider",
+    "AiSettings",
     "ApiToken",
     "AuditApp",
     "AuditEntry",
