@@ -712,6 +712,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/assets/{asset_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Asset
+         * @description The bytes, shown inline for images, PDFs and video and downloaded otherwise.
+         */
+        get: operations["get_asset_api_v1_folio_assets__asset_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/health": {
         parameters: {
             query?: never;
@@ -809,6 +829,26 @@ export interface paths {
         head?: never;
         /** Patch Node */
         patch: operations["patch_node_api_v1_folio_nodes__node_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/assets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Asset
+         * @description Upload an image, file or video to a page. Images lose EXIF and shrink to `resize`.
+         */
+        post: operations["upload_asset_api_v1_folio_nodes__node_id__assets_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/folio/nodes/{node_id}/draft": {
@@ -2942,6 +2982,31 @@ export interface components {
             /** Position */
             position?: number | null;
         };
+        /** AssetOut */
+        AssetOut: {
+            /** Created At */
+            created_at: string;
+            /** Filename */
+            filename: string;
+            /** Height */
+            height: number | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Mime Type */
+            mime_type: string;
+            /** Size Bytes */
+            size_bytes: number;
+            /**
+             * Url
+             * @description Where to show or download it
+             */
+            url: string;
+            /** Width */
+            width: number | null;
+        };
         /** AssistantSettingsIn */
         AssistantSettingsIn: {
             /**
@@ -3236,6 +3301,19 @@ export interface components {
             /** Name */
             name: string;
             type: components["schemas"]["TicketType"];
+        };
+        /** Body_upload_asset_api_v1_folio_nodes__node_id__assets_post */
+        Body_upload_asset_api_v1_folio_nodes__node_id__assets_post: {
+            /**
+             * File
+             * @description The file
+             */
+            file: string;
+            /**
+             * Resize
+             * @description Images: original, large, medium or small
+             */
+            resize?: string | null;
         };
         /** Body_upload_attachment_api_v1_tickets__key__attachments_post */
         Body_upload_attachment_api_v1_tickets__key__attachments_post: {
@@ -8536,6 +8614,35 @@ export interface operations {
             };
         };
     };
+    get_asset_api_v1_folio_assets__asset_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     health_api_v1_folio_health_get: {
         parameters: {
             query?: never;
@@ -8711,6 +8818,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["NodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_asset_api_v1_folio_nodes__node_id__assets_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_asset_api_v1_folio_nodes__node_id__assets_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssetOut"];
                 };
             };
             /** @description Validation Error */

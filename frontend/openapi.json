@@ -486,6 +486,70 @@
         "title": "AreaPatch",
         "type": "object"
       },
+      "AssetOut": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "height": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mime_type": {
+            "title": "Mime Type",
+            "type": "string"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "url": {
+            "description": "Where to show or download it",
+            "title": "Url",
+            "type": "string"
+          },
+          "width": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Width"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "filename",
+          "mime_type",
+          "size_bytes",
+          "width",
+          "height",
+          "created_at"
+        ],
+        "title": "AssetOut",
+        "type": "object"
+      },
       "AssistantSettingsIn": {
         "additionalProperties": false,
         "properties": {
@@ -1344,6 +1408,33 @@
           "category"
         ],
         "title": "BoardStatus",
+        "type": "object"
+      },
+      "Body_upload_asset_api_v1_folio_nodes__node_id__assets_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "description": "The file",
+            "title": "File",
+            "type": "string"
+          },
+          "resize": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Images: original, large, medium or small",
+            "title": "Resize"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_asset_api_v1_folio_nodes__node_id__assets_post",
         "type": "object"
       },
       "Body_upload_attachment_api_v1_tickets__key__attachments_post": {
@@ -14623,6 +14714,44 @@
         ]
       }
     },
+    "/api/v1/folio/assets/{asset_id}": {
+      "get": {
+        "description": "The bytes, shown inline for images, PDFs and video and downloaded otherwise.",
+        "operationId": "get_asset_api_v1_folio_assets__asset_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Asset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Asset",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/health": {
       "get": {
         "operationId": "health_api_v1_folio_health_get",
@@ -14858,6 +14987,61 @@
           }
         },
         "summary": "Patch Node",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/assets": {
+      "post": {
+        "description": "Upload an image, file or video to a page. Images lose EXIF and shrink to `resize`.",
+        "operationId": "upload_asset_api_v1_folio_nodes__node_id__assets_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_asset_api_v1_folio_nodes__node_id__assets_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Asset",
         "tags": [
           "folio",
           "folio"

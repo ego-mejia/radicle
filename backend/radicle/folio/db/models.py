@@ -175,3 +175,27 @@ class FolioDraft(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, server_default=func.now()
     )
+
+
+class FolioAsset(Base):
+    """An image, file or video uploaded to a page, kept in the shared storage."""
+
+    __tablename__ = "folio_assets"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    node_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("folio_nodes.id", ondelete="SET NULL"), index=True
+    )
+    uploader_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    filename: Mapped[str] = mapped_column(Text)
+    mime_type: Mapped[str] = mapped_column(Text)
+    size_bytes: Mapped[int] = mapped_column(BigInteger)
+    storage_key: Mapped[str] = mapped_column(Text)
+    width: Mapped[int | None] = mapped_column(BigInteger)
+    height: Mapped[int | None] = mapped_column(BigInteger)
+    variants: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, server_default="{}")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, server_default=func.now()
+    )
