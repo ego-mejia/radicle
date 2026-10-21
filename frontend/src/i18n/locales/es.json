@@ -2041,6 +2041,16 @@
       "restore": "Restaurar",
       "restoreTitle": "Restaurar {{title}}",
       "restored": "“{{title}}” regresó"
+    },
+    "shortcuts": {
+      "favorites": "Favoritos",
+      "recents": "Recientes"
+    },
+    "spaceSettings": {
+      "title": "Configuración del space",
+      "verifyDays": "Días que dura una verificación",
+      "verifyDaysHint": "Después de estos días una página Verified pasa a Outdated y su dueño recibe aviso (1 a 730).",
+      "saved": "Configuración guardada"
     }
   },
   "notifications": {

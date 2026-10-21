@@ -18,6 +18,8 @@ import { type NewKind, NewNodeDialog } from '../NewNodeDialog';
 import { SpaceTree } from '../SpaceTree';
 import { StatusBadge } from '../StatusBadge';
 import { ArchivedList } from '../ArchivedList';
+import { MyShortcuts } from '../MyShortcuts';
+import { SpaceSettings } from '../SpaceSettings';
 import * as S from './style';
 
 /** A space: its cover and description, the page tree and its blog posts. */
@@ -51,6 +53,7 @@ export function SpacePage({ spaceKey }: { spaceKey: string }) {
             <h1>{s.name}</h1>
             {s.description && <p>{s.description}</p>}
           </S.Heading>
+          {s.permissions.includes('admin') && <SpaceSettings space={s} />}
           {canCreate && (
             <S.Actions>
               <Button variant="primary" onClick={() => setCreating('page')}>
@@ -72,6 +75,7 @@ export function SpacePage({ spaceKey }: { spaceKey: string }) {
 
       <S.Body>
         <S.Side>
+          <MyShortcuts />
           <S.SideTitle>{t('folio.space.pages')}</S.SideTitle>
           {tree.data ? (
             <SpaceTree space={spaceKey} items={tree.data} canMove={canCreate} />
