@@ -28,6 +28,7 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.folio.services.share",
     "radicle.folio.services.actions",
     "radicle.folio.services.views",
+    "radicle.folio.services.import_run",
     "radicle.platform.services.events",
     "radicle.platform.services.email",
     "radicle.platform.services.webhooks",
