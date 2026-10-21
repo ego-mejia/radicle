@@ -310,6 +310,8 @@ EXEMPT = {
     "/api/v1/folio/databases/{node_id}",
     "/api/v1/folio/databases/{node_id}/rows",
     "/api/v1/folio/whiteboards/{node_id}",
+    "/api/v1/folio/analytics/pages/{node_id}",
+    "/api/v1/folio/analytics/site",
     "/api/v1/mcp/tools",
     "/api/v1/projects/{key}/member-candidates",
     "/api/v1/openapi.json",

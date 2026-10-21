@@ -7,6 +7,7 @@ from typing import Literal
 from fastapi import APIRouter, Query
 from pydantic import Field
 
+from radicle.folio.services import analytics
 from radicle.folio.services import search as search_service
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
@@ -33,6 +34,9 @@ class HitOut(Output):
 class SearchOut(Output):
     mode: Literal["hybrid", "text", "semantic"]
     items: list[HitOut]
+    search_id: uuid.UUID = Field(
+        description="Send it to /analytics/searches/{search_id}/click with the result opened"
+    )
 
 
 @router.get("/search", response_model=SearchOut)
@@ -71,8 +75,10 @@ async def search(
     hits = await search_service.search(
         db, principal.user, q, mode=mode, filters=filters, limit=limit
     )
+    logged = await analytics.log_search(db, principal.user, q, mode, len(hits))
     return SearchOut(
         mode=mode,
+        search_id=logged.id,
         items=[
             HitOut(
                 node_id=h.node_id,

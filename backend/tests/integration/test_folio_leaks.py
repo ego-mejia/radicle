@@ -105,6 +105,8 @@ def _urls(s: dict) -> dict[str, list[str]]:
         "/api/v1/folio/glossary": [f"{API}/glossary"],
         "/api/v1/folio/chat/availability": [f"{API}/chat/availability"],
         "/api/v1/folio/chat/sessions": [f"{API}/chat/sessions"],
+        "/api/v1/folio/analytics/pages/{node_id}": [f"{API}/analytics/pages/{p}"],
+        "/api/v1/folio/analytics/site": [f"{API}/analytics/site"],
     }
 
 

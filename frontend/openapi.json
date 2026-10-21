@@ -3965,6 +3965,31 @@
         "title": "DatabaseView",
         "type": "object"
       },
+      "DayOut": {
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "unique": {
+            "description": "Distinct readers that day",
+            "title": "Unique",
+            "type": "integer"
+          },
+          "views": {
+            "title": "Views",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "day",
+          "views",
+          "unique"
+        ],
+        "title": "DayOut",
+        "type": "object"
+      },
       "DbRowIn": {
         "additionalProperties": false,
         "properties": {
@@ -9619,6 +9644,58 @@
         "title": "OwnerIn",
         "type": "object"
       },
+      "PageAnalyticsOut": {
+        "properties": {
+          "daily": {
+            "description": "Every day of the range, oldest first",
+            "items": {
+              "$ref": "#/components/schemas/DayOut"
+            },
+            "title": "Daily",
+            "type": "array"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "readers": {
+            "items": {
+              "$ref": "#/components/schemas/ReaderOut"
+            },
+            "title": "Readers",
+            "type": "array"
+          },
+          "readers_visible": {
+            "description": "False when the space only counts its readers",
+            "title": "Readers Visible",
+            "type": "boolean"
+          },
+          "reading_minutes": {
+            "description": "Approximate, at 200 words a minute",
+            "title": "Reading Minutes",
+            "type": "integer"
+          },
+          "unique_readers": {
+            "title": "Unique Readers",
+            "type": "integer"
+          },
+          "views": {
+            "title": "Views",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "days",
+          "views",
+          "unique_readers",
+          "daily",
+          "reading_minutes",
+          "readers_visible",
+          "readers"
+        ],
+        "title": "PageAnalyticsOut",
+        "type": "object"
+      },
       "PageListOut": {
         "properties": {
           "items": {
@@ -11762,6 +11839,35 @@
         "title": "ReadOut",
         "type": "object"
       },
+      "ReaderOut": {
+        "properties": {
+          "handle": {
+            "title": "Handle",
+            "type": "string"
+          },
+          "last_day": {
+            "format": "date",
+            "title": "Last Day",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "views": {
+            "title": "Views",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "handle",
+          "name",
+          "views",
+          "last_day"
+        ],
+        "title": "ReaderOut",
+        "type": "object"
+      },
       "RemainingMode": {
         "enum": [
           "auto",
@@ -12320,6 +12426,22 @@
         "title": "ScreensPut",
         "type": "object"
       },
+      "SearchClickIn": {
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "description": "The result that was opened",
+            "format": "uuid",
+            "title": "Node Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_id"
+        ],
+        "title": "SearchClickIn",
+        "type": "object"
+      },
       "SearchFields": {
         "properties": {
           "fields": {
@@ -12371,6 +12493,29 @@
         "title": "SearchFields",
         "type": "object"
       },
+      "SearchGapOut": {
+        "properties": {
+          "last_at": {
+            "title": "Last At",
+            "type": "string"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "times": {
+            "title": "Times",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query",
+          "times",
+          "last_at"
+        ],
+        "title": "SearchGapOut",
+        "type": "object"
+      },
       "SearchOut": {
         "properties": {
           "items": {
@@ -12388,11 +12533,18 @@
             ],
             "title": "Mode",
             "type": "string"
+          },
+          "search_id": {
+            "description": "Send it to /analytics/searches/{search_id}/click with the result opened",
+            "format": "uuid",
+            "title": "Search Id",
+            "type": "string"
           }
         },
         "required": [
           "mode",
-          "items"
+          "items",
+          "search_id"
         ],
         "title": "SearchOut",
         "type": "object"
@@ -12698,6 +12850,77 @@
         "title": "ShareOut",
         "type": "object"
       },
+      "SiteAnalyticsOut": {
+        "properties": {
+          "active_users": {
+            "description": "People who read or searched in the range",
+            "title": "Active Users",
+            "type": "integer"
+          },
+          "daily": {
+            "items": {
+              "$ref": "#/components/schemas/DayOut"
+            },
+            "title": "Daily",
+            "type": "array"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "no_results": {
+            "description": "Searched without a result",
+            "items": {
+              "$ref": "#/components/schemas/SearchGapOut"
+            },
+            "title": "No Results",
+            "type": "array"
+          },
+          "searches": {
+            "title": "Searches",
+            "type": "integer"
+          },
+          "top_pages": {
+            "items": {
+              "$ref": "#/components/schemas/TopPageOut"
+            },
+            "title": "Top Pages",
+            "type": "array"
+          },
+          "top_spaces": {
+            "items": {
+              "$ref": "#/components/schemas/SpaceActivityOut"
+            },
+            "title": "Top Spaces",
+            "type": "array"
+          },
+          "unanswered": {
+            "description": "Chat questions the docs didn't answer",
+            "items": {
+              "$ref": "#/components/schemas/UnansweredQuestionOut"
+            },
+            "title": "Unanswered",
+            "type": "array"
+          },
+          "views": {
+            "title": "Views",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "days",
+          "views",
+          "active_users",
+          "daily",
+          "top_spaces",
+          "top_pages",
+          "searches",
+          "no_results",
+          "unanswered"
+        ],
+        "title": "SiteAnalyticsOut",
+        "type": "object"
+      },
       "SnapshotContentOut": {
         "properties": {
           "authors": {
@@ -12763,6 +12986,34 @@
           "authors"
         ],
         "title": "SnapshotOut",
+        "type": "object"
+      },
+      "SpaceActivityOut": {
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "readers": {
+            "title": "Readers",
+            "type": "integer"
+          },
+          "views": {
+            "title": "Views",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "views",
+          "readers"
+        ],
+        "title": "SpaceActivityOut",
         "type": "object"
       },
       "SpaceCountOut": {
@@ -12940,6 +13191,11 @@
             "title": "Permissions",
             "type": "array"
           },
+          "show_readers": {
+            "description": "Whether page analytics name readers or only count",
+            "title": "Show Readers",
+            "type": "boolean"
+          },
           "verify_days": {
             "description": "Days a Verified page stays verified",
             "title": "Verify Days",
@@ -12957,7 +13213,8 @@
           "created_at",
           "permissions",
           "verify_days",
-          "ai_enabled"
+          "ai_enabled",
+          "show_readers"
         ],
         "title": "SpaceOut",
         "type": "object"
@@ -13010,6 +13267,18 @@
               }
             ],
             "title": "Name"
+          },
+          "show_readers": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Let page analytics name readers, not only count them",
+            "title": "Show Readers"
           },
           "verify_days": {
             "anyOf": [
@@ -16322,6 +16591,40 @@
         "title": "TokenOut",
         "type": "object"
       },
+      "TopPageOut": {
+        "properties": {
+          "node_id": {
+            "format": "uuid",
+            "title": "Node Id",
+            "type": "string"
+          },
+          "readers": {
+            "title": "Readers",
+            "type": "integer"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "views": {
+            "title": "Views",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "node_id",
+          "title",
+          "space",
+          "views",
+          "readers"
+        ],
+        "title": "TopPageOut",
+        "type": "object"
+      },
       "TourStepOut": {
         "properties": {
           "action": {
@@ -16804,6 +17107,36 @@
         "title": "UnansweredOut",
         "type": "object"
       },
+      "UnansweredQuestionOut": {
+        "properties": {
+          "asked_at": {
+            "title": "Asked At",
+            "type": "string"
+          },
+          "feedback": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedback"
+          },
+          "question": {
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question",
+          "feedback",
+          "asked_at"
+        ],
+        "title": "UnansweredQuestionOut",
+        "type": "object"
+      },
       "UserCreate": {
         "additionalProperties": false,
         "properties": {
@@ -17231,6 +17564,21 @@
           "metadata"
         ],
         "title": "VersionOut",
+        "type": "object"
+      },
+      "ViewIn": {
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "format": "uuid",
+            "title": "Node Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_id"
+        ],
+        "title": "ViewIn",
         "type": "object"
       },
       "VisualCheckIn": {
@@ -21269,6 +21617,198 @@
           }
         },
         "summary": "Ai Summarize",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/analytics/pages/{node_id}": {
+      "get": {
+        "description": "Views per day, unique readers and reading time; names of readers only where the\nspace allows it. For the page owner and space admins.",
+        "operationId": "page_analytics_api_v1_folio_analytics_pages__node_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "How many days back",
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "description": "How many days back",
+              "maximum": 365,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageAnalyticsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Page Analytics",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/analytics/searches/{search_id}/click": {
+      "post": {
+        "description": "The result someone opened from a search (its `search_id`).",
+        "operationId": "record_click_api_v1_folio_analytics_searches__search_id__click_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "search_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Search Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchClickIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Record Click",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/analytics/site": {
+      "get": {
+        "description": "Folio admins: activity, the most read content, and what people don't find.",
+        "operationId": "site_analytics_api_v1_folio_analytics_site_get",
+        "parameters": [
+          {
+            "description": "How many days back",
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "description": "How many days back",
+              "maximum": 365,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SiteAnalyticsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Site Analytics",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/analytics/views": {
+      "post": {
+        "description": "The web app calls this when someone opens a page to read it.",
+        "operationId": "record_view_api_v1_folio_analytics_views_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ViewIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Record View",
         "tags": [
           "folio",
           "folio"

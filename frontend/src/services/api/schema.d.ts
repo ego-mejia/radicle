@@ -969,6 +969,87 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/analytics/pages/{node_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Page Analytics
+         * @description Views per day, unique readers and reading time; names of readers only where the
+         *     space allows it. For the page owner and space admins.
+         */
+        get: operations["page_analytics_api_v1_folio_analytics_pages__node_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/analytics/searches/{search_id}/click": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record Click
+         * @description The result someone opened from a search (its `search_id`).
+         */
+        post: operations["record_click_api_v1_folio_analytics_searches__search_id__click_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/analytics/site": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Site Analytics
+         * @description Folio admins: activity, the most read content, and what people don't find.
+         */
+        get: operations["site_analytics_api_v1_folio_analytics_site_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/analytics/views": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record View
+         * @description The web app calls this when someone opens a page to read it.
+         */
+        post: operations["record_view_api_v1_folio_analytics_views_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/assets/{asset_id}": {
         parameters: {
             query?: never;
@@ -6009,6 +6090,21 @@ export interface components {
             /** Visible Columns */
             visible_columns?: string[] | null;
         };
+        /** DayOut */
+        DayOut: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /**
+             * Unique
+             * @description Distinct readers that day
+             */
+            unique: number;
+            /** Views */
+            views: number;
+        };
         /** DbRowIn */
         DbRowIn: {
             /**
@@ -8144,6 +8240,32 @@ export interface components {
              */
             owner: string;
         };
+        /** PageAnalyticsOut */
+        PageAnalyticsOut: {
+            /**
+             * Daily
+             * @description Every day of the range, oldest first
+             */
+            daily: components["schemas"]["DayOut"][];
+            /** Days */
+            days: number;
+            /** Readers */
+            readers: components["schemas"]["ReaderOut"][];
+            /**
+             * Readers Visible
+             * @description False when the space only counts its readers
+             */
+            readers_visible: boolean;
+            /**
+             * Reading Minutes
+             * @description Approximate, at 200 words a minute
+             */
+            reading_minutes: number;
+            /** Unique Readers */
+            unique_readers: number;
+            /** Views */
+            views: number;
+        };
         /** PageListOut */
         PageListOut: {
             /** Items */
@@ -8806,6 +8928,20 @@ export interface components {
             /** Unread */
             unread: number;
         };
+        /** ReaderOut */
+        ReaderOut: {
+            /** Handle */
+            handle: string;
+            /**
+             * Last Day
+             * Format: date
+             */
+            last_day: string;
+            /** Name */
+            name: string;
+            /** Views */
+            views: number;
+        };
         /**
          * RemainingMode
          * @enum {string}
@@ -9045,6 +9181,15 @@ export interface components {
             /** Screens */
             screens: components["schemas"]["ScreenIn"][];
         };
+        /** SearchClickIn */
+        SearchClickIn: {
+            /**
+             * Node Id
+             * Format: uuid
+             * @description The result that was opened
+             */
+            node_id: string;
+        };
         /** SearchFields */
         SearchFields: {
             /** Fields */
@@ -9057,6 +9202,15 @@ export interface components {
             sort_fields: string[];
             values: components["schemas"]["ProjectValues"] | null;
         };
+        /** SearchGapOut */
+        SearchGapOut: {
+            /** Last At */
+            last_at: string;
+            /** Query */
+            query: string;
+            /** Times */
+            times: number;
+        };
         /** SearchOut */
         SearchOut: {
             /** Items */
@@ -9066,6 +9220,12 @@ export interface components {
              * @enum {string}
              */
             mode: "hybrid" | "text" | "semantic";
+            /**
+             * Search Id
+             * Format: uuid
+             * @description Send it to /analytics/searches/{search_id}/click with the result opened
+             */
+            search_id: string;
         };
         /** SearchPage */
         SearchPage: {
@@ -9197,6 +9357,36 @@ export interface components {
              */
             notified: string[];
         };
+        /** SiteAnalyticsOut */
+        SiteAnalyticsOut: {
+            /**
+             * Active Users
+             * @description People who read or searched in the range
+             */
+            active_users: number;
+            /** Daily */
+            daily: components["schemas"]["DayOut"][];
+            /** Days */
+            days: number;
+            /**
+             * No Results
+             * @description Searched without a result
+             */
+            no_results: components["schemas"]["SearchGapOut"][];
+            /** Searches */
+            searches: number;
+            /** Top Pages */
+            top_pages: components["schemas"]["TopPageOut"][];
+            /** Top Spaces */
+            top_spaces: components["schemas"]["SpaceActivityOut"][];
+            /**
+             * Unanswered
+             * @description Chat questions the docs didn't answer
+             */
+            unanswered: components["schemas"]["UnansweredQuestionOut"][];
+            /** Views */
+            views: number;
+        };
         /** SnapshotContentOut */
         SnapshotContentOut: {
             /**
@@ -9232,6 +9422,17 @@ export interface components {
              * Format: uuid
              */
             id: string;
+        };
+        /** SpaceActivityOut */
+        SpaceActivityOut: {
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            /** Readers */
+            readers: number;
+            /** Views */
+            views: number;
         };
         /** SpaceCountOut */
         SpaceCountOut: {
@@ -9320,6 +9521,11 @@ export interface components {
              */
             permissions: string[];
             /**
+             * Show Readers
+             * @description Whether page analytics name readers or only count
+             */
+            show_readers: boolean;
+            /**
              * Verify Days
              * @description Days a Verified page stays verified
              */
@@ -9341,6 +9547,11 @@ export interface components {
             icon?: string | null;
             /** Name */
             name?: string | null;
+            /**
+             * Show Readers
+             * @description Let page analytics name readers, not only count them
+             */
+            show_readers?: boolean | null;
             /**
              * Verify Days
              * @description Days a Verified page stays verified (1 to 730)
@@ -10386,6 +10597,22 @@ export interface components {
             /** Revoked At */
             revoked_at: string | null;
         };
+        /** TopPageOut */
+        TopPageOut: {
+            /**
+             * Node Id
+             * Format: uuid
+             */
+            node_id: string;
+            /** Readers */
+            readers: number;
+            /** Space */
+            space: string;
+            /** Title */
+            title: string;
+            /** Views */
+            views: number;
+        };
         /** TourStepOut */
         TourStepOut: {
             /**
@@ -10574,6 +10801,15 @@ export interface components {
             /** Question */
             question: string;
         };
+        /** UnansweredQuestionOut */
+        UnansweredQuestionOut: {
+            /** Asked At */
+            asked_at: string;
+            /** Feedback */
+            feedback: string | null;
+            /** Question */
+            question: string;
+        };
         /** UserCreate */
         UserCreate: {
             /** Display Name */
@@ -10732,6 +10968,14 @@ export interface components {
             restored_from: number | null;
             /** Title */
             title: string;
+        };
+        /** ViewIn */
+        ViewIn: {
+            /**
+             * Node Id
+             * Format: uuid
+             */
+            node_id: string;
         };
         /** VisualCheckIn */
         VisualCheckIn: {
@@ -13112,6 +13356,136 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SummaryOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    page_analytics_api_v1_folio_analytics_pages__node_id__get: {
+        parameters: {
+            query?: {
+                /** @description How many days back */
+                days?: number;
+            };
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageAnalyticsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_click_api_v1_folio_analytics_searches__search_id__click_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                search_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SearchClickIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    site_analytics_api_v1_folio_analytics_site_get: {
+        parameters: {
+            query?: {
+                /** @description How many days back */
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteAnalyticsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_view_api_v1_folio_analytics_views_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ViewIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
