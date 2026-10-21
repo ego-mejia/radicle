@@ -1711,7 +1711,16 @@
         "in_review": "En revisión",
         "verified": "Verificada",
         "outdated": "Desactualizada"
-      }
+      },
+      "unavailable": "Esta página no está disponible",
+      "notPublished": "Esta página todavía no está publicada",
+      "path": "Ruta",
+      "history": "Historial",
+      "edit": "Editar",
+      "draftNote": "Todavía no se publica: estás leyendo el borrador.",
+      "minutes_one": "{{count}} min de lectura",
+      "minutes_other": "{{count}} min de lectura",
+      "publishedBy": "publicó @{{handle}}"
     },
     "editor": {
       "title": "Editor",

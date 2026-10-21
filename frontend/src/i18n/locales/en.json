@@ -1711,7 +1711,16 @@
         "in_review": "In review",
         "verified": "Verified",
         "outdated": "Outdated"
-      }
+      },
+      "unavailable": "This page is not available",
+      "notPublished": "This page is not published yet",
+      "path": "Path",
+      "history": "History",
+      "edit": "Edit",
+      "draftNote": "Not published yet: you are reading the draft.",
+      "minutes_one": "{{count}} min read",
+      "minutes_other": "{{count}} min read",
+      "publishedBy": "published by @{{handle}}"
     },
     "editor": {
       "title": "Editor",

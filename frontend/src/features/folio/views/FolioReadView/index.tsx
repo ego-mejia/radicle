@@ -1,8 +1,9 @@
-import { useTranslation } from 'react-i18next';
-import { PageTitle } from '../../../../components/ui/PageTitle';
+import { useParams } from '@tanstack/react-router';
+import { nodeIdFrom } from '../../../../services/api/folio';
+import { ReadPage } from '../../components/ReadPage';
 
 /** Reading a page: magazine by default, focus mode on demand. */
 export function FolioReadView() {
-  const { t } = useTranslation();
-  return <PageTitle title={t('folio.reader.title')} />;
+  const { page } = useParams({ from: '/folio/folio/p/$page' });
+  return <ReadPage nodeId={nodeIdFrom(page)} />;
 }
