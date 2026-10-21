@@ -1693,7 +1693,24 @@
       "toc": "On this page",
       "details": "Details",
       "childPages": "Pages in here",
-      "file": "File"
+      "file": "File",
+      "meta": {
+        "title": "About this page",
+        "owner": "Owner",
+        "status": "Status",
+        "docType": "Type",
+        "language": "Language",
+        "version": "Version",
+        "audiences": "For",
+        "labels": "Labels"
+      },
+      "status": {
+        "draft": "Draft",
+        "published": "Published",
+        "in_review": "In review",
+        "verified": "Verified",
+        "outdated": "Outdated"
+      }
     },
     "editor": {
       "title": "Editor",
