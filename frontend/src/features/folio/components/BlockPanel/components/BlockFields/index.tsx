@@ -10,7 +10,8 @@ import * as S from './style';
 type Attrs = Record<string, unknown>;
 type Props = { type: string; attrs: Attrs; onChange: (next: Attrs) => void };
 
-/** The fields of a diagram, formula, chart, timeline or page list in the side panel. */
+/** The fields of a diagram, formula, chart, timeline, page list or ticket table in the side
+ * panel. */
 export function BlockFields({ type, attrs, onChange }: Props) {
   const { t } = useTranslation();
   const k = (key: string) => t(`folio.editor.panel.${key}`);
@@ -132,6 +133,34 @@ export function BlockFields({ type, attrs, onChange }: Props) {
               />
             </Field>
           </S.Row>
+        </>
+      );
+    case 'ticketTable':
+      return (
+        <>
+          <Field label={k('title')}>
+            <Input value={str('title')} onChange={set('title')} />
+          </Field>
+          <Field label={k('rql')} hint={k('rqlHint')}>
+            <S.Code
+              rows={3}
+              value={str('rql')}
+              onChange={(e) => onChange({ rql: e.target.value })}
+            />
+          </Field>
+          <Field label={k('limit')}>
+            <Input
+              type="number"
+              min={1}
+              max={100}
+              value={str('limit')}
+              onChange={(e) =>
+                onChange({
+                  limit: e.target.value ? Math.min(100, Math.max(1, +e.target.value)) : null,
+                })
+              }
+            />
+          </Field>
         </>
       );
     default:

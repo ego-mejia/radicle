@@ -157,6 +157,11 @@ export const BLOCKS: BlockItem[] = [
     keywords: 'pages label list lista paginas etiqueta',
     run: (c) => c.insertContent({ type: 'pageList', attrs: { label: '' } }),
   },
+  {
+    key: 'ticketTable',
+    keywords: 'tickets docket rql table tabla tareas',
+    run: (c) => c.insertContent({ type: 'ticketTable', attrs: { rql: '' } }),
+  },
   { key: 'divider', keywords: 'hr divider line separador', run: (c) => c.setHorizontalRule() },
 ];
 

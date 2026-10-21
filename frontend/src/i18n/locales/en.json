@@ -1871,7 +1871,8 @@
         "formula": "Formula",
         "inlineFormula": "Inline formula",
         "pageList": "Pages by label",
-        "whiteboard": "Whiteboard"
+        "whiteboard": "Whiteboard",
+        "ticketTable": "Ticket table"
       },
       "addCover": "Add cover",
       "changeCover": "Change cover",
@@ -1894,7 +1895,8 @@
         "latex": "Write the formula in LaTeX.",
         "data": "Give the chart a table of numbers.",
         "items": "Add at least one milestone.",
-        "label": "Choose the label whose pages it lists."
+        "label": "Choose the label whose pages it lists.",
+        "rql": "Write the Docket query (RQL) to show its tickets."
       },
       "panel": {
         "edit": "Edit",
@@ -1937,7 +1939,9 @@
         "newest": "Newest first",
         "byTitle": "By title",
         "limit": "How many",
-        "sideTitle": "Side heading"
+        "sideTitle": "Side heading",
+        "rql": "Docket query (RQL)",
+        "rqlHint": "For example: project = PA AND status != Done"
       }
     },
     "publish": {
@@ -2426,7 +2430,15 @@
     },
     "tickets": {
       "restricted": "Restricted ticket",
-      "unassigned": "Unassigned"
+      "unassigned": "Unassigned",
+      "table": "Docket tickets",
+      "tableEmpty": "No tickets you can see match this query.",
+      "tableFailed": "The tickets couldn't load.",
+      "key": "Key",
+      "title": "Title",
+      "status": "Status",
+      "assignee": "Assignee",
+      "showing": "Showing {{shown}} of {{total}}."
     }
   },
   "notifications": {

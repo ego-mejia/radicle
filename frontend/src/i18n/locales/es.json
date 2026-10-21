@@ -1871,7 +1871,8 @@
         "formula": "Fórmula",
         "inlineFormula": "Fórmula en línea",
         "pageList": "Páginas por label",
-        "whiteboard": "Whiteboard"
+        "whiteboard": "Whiteboard",
+        "ticketTable": "Tabla de tickets"
       },
       "addCover": "Agregar portada",
       "changeCover": "Cambiar portada",
@@ -1894,7 +1895,8 @@
         "latex": "Escribe la fórmula en LaTeX.",
         "data": "Dale a la gráfica una tabla de números.",
         "items": "Agrega al menos un hito.",
-        "label": "Elige el label cuyas páginas lista."
+        "label": "Elige el label cuyas páginas lista.",
+        "rql": "Escribe la consulta de Docket (RQL) para ver sus tickets."
       },
       "panel": {
         "edit": "Editar",
@@ -1937,7 +1939,9 @@
         "newest": "Más reciente primero",
         "byTitle": "Por título",
         "limit": "Cuántas",
-        "sideTitle": "Encabezado del lado"
+        "sideTitle": "Encabezado del lado",
+        "rql": "Consulta de Docket (RQL)",
+        "rqlHint": "Por ejemplo: project = PA AND status != Done"
       }
     },
     "publish": {
@@ -2426,7 +2430,15 @@
     },
     "tickets": {
       "restricted": "Ticket restringido",
-      "unassigned": "Sin asignar"
+      "unassigned": "Sin asignar",
+      "table": "Tickets de Docket",
+      "tableEmpty": "Ningún ticket que puedas ver cumple esta consulta.",
+      "tableFailed": "No se pudieron cargar los tickets.",
+      "key": "Clave",
+      "title": "Título",
+      "status": "Estado",
+      "assignee": "Responsable",
+      "showing": "Se muestran {{shown}} de {{total}}."
     }
   },
   "notifications": {

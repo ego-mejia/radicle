@@ -54,6 +54,7 @@ const NODE_ATTRS: Record<string, string[]> = {
   comparison: [],
   comparisonSide: ['title'],
   pageList: ['label', 'limit', 'space', 'order'],
+  ticketTable: ['rql', 'title', 'limit'],
   text: [],
   hardBreak: [],
   mention: ['handle'],
@@ -107,6 +108,8 @@ export function incomplete(node: JSONContent): string | null {
       return Array.isArray(a.items) && a.items.length ? null : 'items';
     case 'pageList':
       return blank(a.label) ? 'label' : null;
+    case 'ticketTable':
+      return blank(a.rql) ? 'rql' : null;
     default:
       return null;
   }

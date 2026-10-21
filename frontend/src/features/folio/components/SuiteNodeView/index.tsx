@@ -23,7 +23,9 @@ export function SuiteNodeView({ node, selected, editor, getPos, updateAttributes
   const missing = incomplete(node.toJSON());
   // A new visual or page list opens its panel: it can't be saved without what it asks.
   const [open, setOpen] = useState(
-    (type === 'visual' || type === 'pageList') && missing !== null && missing !== 'code',
+    (type === 'visual' || type === 'pageList' || type === 'ticketTable') &&
+      missing !== null &&
+      missing !== 'code',
   );
   const panel = open ? (
     <BlockPanel

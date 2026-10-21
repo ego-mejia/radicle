@@ -78,6 +78,12 @@ export const PageList = suiteAtom('pageList', {
   order: attr('order'),
 });
 
+export const TicketTable = suiteAtom('ticketTable', {
+  rql: attr('rql', 'text', ''),
+  title: attr('title'),
+  limit: attr('limit', 'number'),
+});
+
 export const InlineFormula = Node.create({
   name: 'inlineFormula',
   group: 'inline',
@@ -129,6 +135,7 @@ export const VISUAL_NODES = [
   Timeline,
   Formula,
   PageList,
+  TicketTable,
   InlineFormula,
   Comparison,
   ComparisonSide,
