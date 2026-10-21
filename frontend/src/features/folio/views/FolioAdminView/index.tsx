@@ -12,6 +12,7 @@ import { PageSpinner } from '../../../../components/ui/Spinner';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { useToast } from '../../../../hooks/useToast';
 import { Tabs } from '../../../../components/ui/Tabs';
+import { TemplatesAdmin } from '../../components/TemplatesAdmin';
 import {
   type FolioCatalog,
   type FolioGrant,
@@ -145,7 +146,7 @@ function AddGrant() {
   );
 }
 
-type Section = 'roles' | FolioCatalog;
+type Section = 'roles' | 'templates' | FolioCatalog;
 const CATALOGS: FolioCatalog[] = ['doc-types', 'audiences', 'languages'];
 
 /** Folio, Admin: global roles (Folio 0.5) and the metadata catalogs (Folio 1.3). */
@@ -165,11 +166,14 @@ export function FolioAdminView() {
         tabs={[
           { id: 'roles', label: t('folio.catalogs.roles') },
           ...CATALOGS.map((c) => ({ id: c, label: t(`folio.catalogs.names.${c}`) })),
+          { id: 'templates', label: t('folio.templates.title') },
         ]}
       />
       <F.Section>
         {section === 'roles' ? (
           <GlobalRoles enabled={isAdmin} />
+        ) : section === 'templates' ? (
+          <TemplatesAdmin />
         ) : (
           <CatalogEditor key={section} catalog={section} />
         )}
