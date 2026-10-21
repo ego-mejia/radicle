@@ -1945,6 +1945,13 @@
       "edit": "Edit {{name}}",
       "archive": "Archive {{name}}",
       "restore": "Restore {{name}}"
+    },
+    "templates": {
+      "title": "Templates",
+      "choose": "Start from",
+      "blank": "Blank page",
+      "blankHint": "Start with an empty page.",
+      "preview": "Preview of {{name}}"
     }
   },
   "notifications": {

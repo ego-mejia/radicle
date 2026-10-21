@@ -7,7 +7,13 @@ import { Button } from '../../../../../../components/ui/Button';
 import { Field, FormError } from '../../../../../../components/ui/Field';
 import { Input, Select } from '../../../../../../components/ui/Input';
 import { Modal } from '../../../../../../components/ui/Modal';
-import { createNode, fetchSpaces, folioKeys } from '../../../../../../services/api/folio';
+import {
+  createFromTemplate,
+  createNode,
+  fetchSpaces,
+  folioKeys,
+} from '../../../../../../services/api/folio';
+import { TemplatePicker } from '../../../../components/TemplatePicker';
 import * as S from './style';
 
 type Kind = 'page' | 'blog_post';
@@ -20,6 +26,7 @@ export function WriteButton() {
   const [space, setSpace] = useState('');
   const [kind, setKind] = useState<Kind>('blog_post');
   const [title, setTitle] = useState('');
+  const [template, setTemplate] = useState<string | null>(null);
   const { data: spaces = [] } = useQuery({
     queryKey: folioKeys.spaces,
     queryFn: fetchSpaces,
@@ -29,7 +36,10 @@ export function WriteButton() {
   const chosen = space || writable[0]?.key || '';
 
   const create = useMutation({
-    mutationFn: () => createNode({ space: chosen, kind, title: title.trim() }),
+    mutationFn: () =>
+      template
+        ? createFromTemplate({ template, space: chosen, kind, title: title.trim() })
+        : createNode({ space: chosen, kind, title: title.trim() }),
     onSuccess: (node) =>
       navigate({ to: '/folio/p/$page/edit', params: { page: `${node.id}-${node.slug}` } }),
   });
@@ -40,7 +50,7 @@ export function WriteButton() {
         <Plus aria-hidden />
         {t('folio.home.write')}
       </Button>
-      <Modal open={open} onOpenChange={setOpen} title={t('folio.home.writeTitle')}>
+      <Modal open={open} onOpenChange={setOpen} title={t('folio.home.writeTitle')} width={760}>
         <S.Form
           onSubmit={(event) => {
             event.preventDefault();
@@ -66,6 +76,7 @@ export function WriteButton() {
               <option value="page">{t('folio.home.kinds.page')}</option>
             </Select>
           </Field>
+          {chosen && <TemplatePicker space={chosen} value={template} onChange={setTemplate} />}
           <Field label={t('folio.home.docTitle')}>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
           </Field>
