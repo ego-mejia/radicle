@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from mcp.server.mcpserver import Context
 
 from radicle import __version__
-from radicle.folio.mcp import read, templates, write
+from radicle.folio.mcp import comments, read, templates, write
 from radicle.platform.mcp import http
 from radicle.platform.mcp.api import api
 from radicle.platform.mcp.server import LimitedMCPServer
@@ -39,6 +39,7 @@ async def whoami(ctx: Context) -> dict[str, Any]:
 read.register(server)
 write.register(server)
 templates.register(server)
+comments.register(server)
 
 
 def mount(app: FastAPI) -> None:
