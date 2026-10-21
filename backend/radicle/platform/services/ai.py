@@ -130,7 +130,9 @@ def _client() -> httpx.AsyncClient:
     return httpx.AsyncClient(timeout=TIMEOUT, transport=transport)
 
 
-def _embedding_request(cfg: AiConfig, text: str) -> tuple[str, dict[str, str], dict[str, Any]]:
+def _embedding_request(
+    cfg: AiConfig, inputs: str | list[str]
+) -> tuple[str, dict[str, str], dict[str, Any]]:
     if not cfg.enabled:
         raise AiUnavailable("No AI provider is configured. Choose one in Admin, AI provider.")
     if cfg.provider == AiProvider.anthropic:
@@ -142,26 +144,30 @@ def _embedding_request(cfg: AiConfig, text: str) -> tuple[str, dict[str, str], d
     if not cfg.embedding_model:
         raise AiUnavailable("Set an embedding model first, e.g. text-embedding-3-small.")
     if cfg.provider == AiProvider.ollama:
-        return f"{cfg.base_url}/api/embed", {}, {"model": cfg.embedding_model, "input": text}
+        return f"{cfg.base_url}/api/embed", {}, {"model": cfg.embedding_model, "input": inputs}
     headers = {"Authorization": f"Bearer {cfg.api_key}"} if cfg.api_key else {}
-    body: dict[str, Any] = {"model": cfg.embedding_model, "input": text}
+    body: dict[str, Any] = {"model": cfg.embedding_model, "input": inputs}
     if cfg.embedding_dimensions:
         body["dimensions"] = cfg.embedding_dimensions
     return f"{cfg.base_url}/embeddings", headers, body
 
 
-def _vector(cfg: AiConfig, data: dict[str, Any]) -> list[float]:
+def _vectors(cfg: AiConfig, data: dict[str, Any], count: int) -> list[list[float]]:
     try:
         if cfg.provider == AiProvider.ollama:
-            return [float(x) for x in data["embeddings"][0]]
-        return [float(x) for x in data["data"][0]["embedding"]]
+            raw = data["embeddings"]
+        else:
+            raw = [d["embedding"] for d in sorted(data["data"], key=lambda d: d.get("index", 0))]
+        vectors = [[float(x) for x in v] for v in raw]
     except (KeyError, IndexError, TypeError, ValueError):
         raise AiUnavailable("The provider answered, but not with an embedding.") from None
+    if len(vectors) != count or not all(vectors):
+        raise AiUnavailable("The provider answered, but not with an embedding.")
+    return vectors
 
 
-async def embed(cfg: AiConfig, text: str) -> Embedding:
-    """One embedding, or AiUnavailable saying what to fix."""
-    url, headers, body = _embedding_request(cfg, text)
+async def _post(cfg: AiConfig, inputs: str | list[str]) -> tuple[dict[str, Any], int]:
+    url, headers, body = _embedding_request(cfg, inputs)
     started = time.perf_counter()
     try:
         async with _client() as client:
@@ -173,4 +179,18 @@ async def embed(cfg: AiConfig, text: str) -> Embedding:
         raise AiUnavailable("The provider rejected the API key. Check it in Admin, AI provider.")
     if r.status_code >= 400:
         raise AiUnavailable(f"The provider answered {r.status_code}: {r.text[:200]}")
-    return Embedding(vector=_vector(cfg, r.json()), latency_ms=latency)
+    return r.json(), latency
+
+
+async def embed(cfg: AiConfig, text: str) -> Embedding:
+    """One embedding, or AiUnavailable saying what to fix."""
+    data, latency = await _post(cfg, text)
+    return Embedding(vector=_vectors(cfg, data, 1)[0], latency_ms=latency)
+
+
+async def embed_many(cfg: AiConfig, texts: list[str]) -> list[list[float]]:
+    """One embedding per text, in order, in a single request."""
+    if not texts:
+        return []
+    data, _ = await _post(cfg, texts)
+    return _vectors(cfg, data, len(texts))

@@ -12,7 +12,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioNode, FolioNodeEvent, FolioSpace, NodeKind
-from radicle.folio.services import access
+from radicle.folio.services import access, rag
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.errors import NotFound, ValidationFailed
 from radicle.platform.services import rank
@@ -254,6 +254,7 @@ async def move_node(
         new_parent=str(node.parent_id) if node.parent_id else None,
     )
     await db.flush()
+    await rag.schedule(db, await rag.subtree(db, node))  # restrictions may be inherited anew
     return node
 
 
@@ -263,3 +264,4 @@ async def delete_node(db: AsyncSession, user: User, node: FolioNode) -> None:
     node.deleted_at = utcnow()
     record(db, node, user, "deleted")
     await db.flush()
+    await rag.schedule(db, await rag.subtree(db, node))

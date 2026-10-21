@@ -39,6 +39,20 @@ def _backfill(command: str, start: str | None) -> None:
     asyncio.run(run())
 
 
+def _folio(command: str) -> None:
+    from radicle.folio.services import rag
+    from radicle.platform.db.session import dispose_engine, get_sessionmaker
+
+    async def run() -> None:
+        async with get_sessionmaker()() as db:
+            count = await rag.reembed_missing(db)
+            await db.commit()
+        print(f"{count} Folio chunks embedded")
+        await dispose_engine()
+
+    asyncio.run(run())
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="radicle")
     commands = parser.add_subparsers(dest="command", required=True)
@@ -49,10 +63,17 @@ def main(argv: list[str] | None = None) -> None:
         "backfill-snapshots", help="Recompute daily status counts from a date until today"
     )
     snapshots.add_argument("--from", dest="start", required=True, help="YYYY-MM-DD")
+    folio = commands.add_parser("folio", help="Folio maintenance")
+    folio_commands = folio.add_subparsers(dest="folio_command", required=True)
+    folio_commands.add_parser(
+        "reembed", help="Embed search chunks that have no vector yet (after setting a provider)"
+    )
     args = parser.parse_args(argv)
     logging.basicConfig(level=get_settings().log_level.upper())
     if args.command == "worker":
         _worker(args.concurrency)
+    elif args.command == "folio":
+        _folio(args.folio_command)
     else:
         _backfill(args.command, getattr(args, "start", None))
 
