@@ -20,6 +20,11 @@ export const Status = styled.p`
   font-size: ${({ theme }) => theme.fontSize.md};
 `;
 
+export const Modes = styled.div`
+  display: inline-flex;
+  gap: ${({ theme }) => theme.space.xs};
+`;
+
 export const Errors = styled.ul`
   margin: 0;
   padding: ${({ theme }) => theme.space.md} ${({ theme }) => theme.space.xl};
