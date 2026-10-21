@@ -1802,7 +1802,16 @@
       "chart": "Chart",
       "chartEmpty": "This chart has no data yet: put a table with numbers right before it.",
       "showTable": "Show table",
-      "showChart": "Show chart"
+      "showChart": "Show chart",
+      "timeline": "Timeline",
+      "milestone": {
+        "done": "Done",
+        "in_progress": "In progress",
+        "planned": "Planned"
+      },
+      "pageList": "Pages labeled {{label}}",
+      "pageListEmpty": "No published pages you can see have this label yet.",
+      "pageListFailed": "The list couldn't load."
     },
     "editor": {
       "title": "Editor",
