@@ -9,9 +9,12 @@ import { Modal } from '../../../../components/ui/Modal';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { useToast } from '../../../../hooks/useToast';
 import { folioKeys, type FolioSpace } from '../../../../services/api/folio';
+import { aiKeys } from '../../../../services/api/folioAi';
 import { patchSpace } from '../../../../services/api/folioSocial';
+import * as S from './style';
 
-/** Space settings for its admins: how many days a Verified page stays verified. */
+/** Space settings for its admins: how many days a Verified page stays verified, and whether
+ * the editor offers its AI here. */
 export function SpaceSettings({ space }: { space: FolioSpace }) {
   const { t } = useTranslation();
   const toast = useToast();
@@ -19,11 +22,17 @@ export function SpaceSettings({ space }: { space: FolioSpace }) {
   const client = useQueryClient();
   const [open, setOpen] = useState(false);
   const [days, setDays] = useState(String(space.verify_days));
+  const [ai, setAi] = useState(space.ai_enabled);
   const [error, setError] = useState<string | null>(null);
   const save = useMutation({
-    mutationFn: () => patchSpace(space.key, { verify_days: Number(days) }),
+    mutationFn: () =>
+      patchSpace(space.key, {
+        verify_days: Number(days),
+        ...(ai !== space.ai_enabled && { ai_enabled: ai }),
+      }),
     onSuccess: (updated) => {
       client.setQueryData(folioKeys.space(space.key), updated);
+      void client.invalidateQueries({ queryKey: aiKeys.availability(space.key) });
       setOpen(false);
       toast(t('folio.spaceSettings.saved'));
     },
@@ -68,6 +77,13 @@ export function SpaceSettings({ space }: { space: FolioSpace }) {
             onChange={(e) => setDays(e.target.value)}
           />
         </Field>
+        <S.Check>
+          <input type="checkbox" checked={ai} onChange={(e) => setAi(e.target.checked)} />
+          <span>
+            {t('folio.spaceSettings.ai')}
+            <small>{t('folio.spaceSettings.aiHint')}</small>
+          </span>
+        </S.Check>
       </Modal>
     </>
   );

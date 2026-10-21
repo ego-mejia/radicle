@@ -2212,7 +2212,9 @@
       "title": "Configuración del space",
       "verifyDays": "Días que dura una verificación",
       "verifyDaysHint": "Después de estos días una página Verified pasa a Outdated y su dueño recibe aviso (1 a 730).",
-      "saved": "Configuración guardada"
+      "saved": "Configuración guardada",
+      "ai": "IA en el editor",
+      "aiHint": "Resumir, reescribir y sugerir metadata al escribir en este space."
     },
     "tasks": {
       "title": "Mis tareas",
@@ -2411,6 +2413,16 @@
         "choose": "Elige un whiteboard",
         "none": "Todavía no hay whiteboards que puedas ver."
       }
+    },
+    "ai": {
+      "button": "IA",
+      "summarize": "Resumir la página",
+      "summaryTitle": "Resumen",
+      "summaryHeading": "Resumen",
+      "thinking": "Pensando…",
+      "proposalNote": "Es una propuesta: la página no cambia hasta que la insertes.",
+      "again": "Intentar de nuevo",
+      "insertSummary": "Insertar al inicio"
     }
   },
   "notifications": {
