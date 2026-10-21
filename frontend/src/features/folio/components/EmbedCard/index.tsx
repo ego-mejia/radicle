@@ -3,6 +3,7 @@ import { ExternalLink } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fetchLinkPreview, folioKeys, type FolioLinkPreview } from '../../../../services/api/folio';
+import { useDocEnv } from '../DocContent/env';
 import * as S from './style';
 
 type Props = {
@@ -17,11 +18,14 @@ type Props = {
  * gists, a card with the page's title, description and image for everything else. */
 export function EmbedCard({ url, title, onPreview }: Props) {
   const { t } = useTranslation();
+  // Previews are fetched with an account; a public page shows the plain card.
+  const { isPublic } = useDocEnv();
   const { data } = useQuery({
     queryKey: folioKeys.linkPreview(url),
     queryFn: () => fetchLinkPreview(url),
     staleTime: 60 * 60 * 1000,
     retry: false,
+    enabled: !isPublic,
   });
   useEffect(() => {
     if (data) onPreview?.(data);

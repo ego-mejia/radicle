@@ -119,3 +119,12 @@ export const Compare = styled.div<{ $sides: number }>`
     grid-template-columns: 1fr;
   }
 `;
+
+export const LiveOnly = styled.p`
+  margin: 0;
+  padding: ${({ theme }) => `${theme.space.md} ${theme.space.lg}`};
+  border: 1px dashed ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.lg};
+  color: ${({ theme }) => theme.color.textMuted};
+  font-size: ${({ theme }) => theme.fontSize.md};
+`;

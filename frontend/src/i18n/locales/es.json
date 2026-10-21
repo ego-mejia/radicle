@@ -2585,6 +2585,9 @@
       "noReaders": "Nadie la ha leído en este periodo.",
       "readerViews_one": "{{count}} vista",
       "readerViews_other": "{{count}} vistas"
+    },
+    "public": {
+      "liveOnly": "Contenido en vivo de Radicle; ábrelo en Radicle para verlo."
     }
   },
   "notifications": {
