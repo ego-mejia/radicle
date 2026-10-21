@@ -72,7 +72,9 @@ async def test_acceptance_only_the_docs_team_writes(
     assert entry is not None and entry.app.value == "folio"
 
 
-async def test_restrict_a_page_to_a_group(client: AsyncClient, team: Team, docs: dict) -> None:
+async def test_restrict_a_page_to_a_group(
+    client: AsyncClient, db: AsyncSession, team: Team, docs: dict
+) -> None:
     i = team.instance.headers
     url = f"{API}/nodes/{docs['id']}/restrictions"
     r = await client.put(
@@ -88,6 +90,12 @@ async def test_restrict_a_page_to_a_group(client: AsyncClient, team: Team, docs:
     )
     assert r.status_code == 200, r.text
     assert [g["grantee"] for g in r.json()["view"]] == ["equipo-docs", "fernando"]
+    entry = await db.scalar(
+        select(AuditEntry).where(AuditEntry.action == "folio.restrictions_change")
+    )
+    assert entry is not None and entry.app.value == "folio"
+    assert entry.details["before"] == {"view": [], "edit": []}
+    assert entry.details["after"]["edit"] == [{"grantee_type": "user", "grantee": "fernando"}]
     assert (
         await client.get(f"{API}/nodes/{docs['id']}", headers=team.member.headers)
     ).status_code == 200

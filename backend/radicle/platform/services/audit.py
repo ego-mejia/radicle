@@ -59,6 +59,11 @@ ACTIONS = (
     "folio.space_grants_change",
     "folio.submission_approve",
     "folio.submission_reject",
+    "folio.restrictions_change",
+    "folio.public_link_create",
+    "folio.public_link_revoke",
+    "folio.export_create",
+    "folio.import_run",
 )
 # Actions on what every app shares; the rest belong to the app that records them.
 PLATFORM_PREFIXES = ("user.", "token.", "agent.", "group.", "sso.", "settings.")
