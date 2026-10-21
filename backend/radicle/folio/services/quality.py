@@ -148,5 +148,6 @@ async def _outdated(db: AsyncSession, event: OutboxEvent) -> list[events.Notice]
             f"'{node.title}' is outdated",
             f"Its verification expired on {event.payload['until']}. Review it and verify it again.",
             f"/folio/p/{node.id}-{node.slug}",
+            {"page": node.title, "until": str(event.payload["until"])},
         )
     ]

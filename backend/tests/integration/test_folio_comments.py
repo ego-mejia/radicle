@@ -125,6 +125,16 @@ async def test_mentions_and_replies_notify_the_right_people(
         "@luis commented on 'Guía'",
         "@ana replied in a thread on 'Guía'",
     ]
+    # And what each title is built from, for the web app to write it in Spanish.
+    params = await db.scalars(
+        select(Notification.params)
+        .where(Notification.user_id == author.id)
+        .order_by(Notification.created_at)
+    )
+    assert list(params) == [
+        {"actor": "@luis", "page": "Guía", "variant": "comment"},
+        {"actor": "@ana", "page": "Guía", "variant": "reply"},
+    ]
 
 
 async def test_nobody_hears_about_a_page_they_cannot_see(

@@ -2595,6 +2595,22 @@
         "page_shared": "Alguien comparte una página contigo",
         "page_outdated": "Una página de la que eres dueño quedó desactualizada"
       }
+    },
+    "someone": "Alguien",
+    "titles": {
+      "folio": {
+        "comment": {
+          "comment": "{{actor}} comentó en «{{page}}»",
+          "reply": "{{actor}} respondió en un hilo de «{{page}}»"
+        },
+        "comment_mention": "{{actor}} te mencionó en un comentario de «{{page}}»",
+        "page_shared": "{{actor}} compartió «{{page}}» contigo",
+        "page_published": "{{actor}} publicó «{{page}}» (v{{version}})",
+        "page_mention": "{{actor}} te mencionó en «{{page}}»",
+        "submission_pending": "{{actor}} mandó «{{page}}» a aprobación",
+        "task_assigned": "{{actor}} te asignó una tarea en «{{page}}»",
+        "page_outdated": "«{{page}}» está desactualizada"
+      }
     }
   }
 }

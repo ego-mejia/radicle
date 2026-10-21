@@ -8095,9 +8095,19 @@ export interface components {
             id: string;
             /** Link */
             link: string | null;
+            /**
+             * Params
+             * @description What the title is built from: actor, page, version, variant, until
+             */
+            params: {
+                [key: string]: string;
+            };
             /** Read */
             read: boolean;
-            /** Title */
+            /**
+             * Title
+             * @description In English; params lets a client write it in its language
+             */
             title: string;
             /** Type */
             type: string;

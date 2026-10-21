@@ -9504,11 +9504,20 @@
             ],
             "title": "Link"
           },
+          "params": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "What the title is built from: actor, page, version, variant, until",
+            "title": "Params",
+            "type": "object"
+          },
           "read": {
             "title": "Read",
             "type": "boolean"
           },
           "title": {
+            "description": "In English; params lets a client write it in its language",
             "title": "Title",
             "type": "string"
           },
@@ -9522,6 +9531,7 @@
           "app",
           "type",
           "title",
+          "params",
           "body",
           "link",
           "actor_id",

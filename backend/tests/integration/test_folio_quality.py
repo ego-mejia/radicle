@@ -48,6 +48,7 @@ async def test_acceptance_verified_expires_and_the_owner_hears(
     assert owner is not None
     notes = list(await db.scalars(select(Notification).where(Notification.user_id == owner.id)))
     assert [n.title for n in notes] == ["'Deploy' is outdated"]
+    assert notes[0].params == {"page": "Deploy", "until": until}
     assert until in notes[0].body and notes[0].link and page in notes[0].link
     clock.advance(days=-91)
     r = await client.patch(f"{API}/nodes/{page}/status", headers=i, json={"status": "verified"})

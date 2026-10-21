@@ -134,11 +134,12 @@ async def _shared(db: AsyncSession, event: OutboxEvent) -> list[events.Notice]:
         return []
     actor = await db.get(User, event.actor_id) if event.actor_id else None
     title = f"{actor.display_name if actor else 'Someone'} shared '{node.title}' with you"
+    params = {"page": node.title} | ({"actor": actor.display_name} if actor else {})
     ids = [uuid.UUID(i) for i in event.payload["user_ids"]]
     people = await db.scalars(select(User).where(User.id.in_(ids)))
     message = str(event.payload.get("message", ""))
     return [
-        events.Notice(u.id, "shared", title, message, node_link(node))
+        events.Notice(u.id, "shared", title, message, node_link(node), params)
         for u in people
         if await access.can_view(db, u, node.id)
     ]

@@ -18,22 +18,31 @@ SNIPPET = 280
 
 async def _context(
     db: AsyncSession, event: OutboxEvent
-) -> tuple[FolioComment, FolioNode, str] | None:
+) -> tuple[FolioComment, FolioNode, str | None] | None:
     comment = await db.get(FolioComment, uuid.UUID(event.payload["comment_id"]))
     node = await db.get(FolioNode, uuid.UUID(event.payload["node_id"]))
     if comment is None or node is None or comment.deleted_at is not None:
         return None
     actor = await db.get(User, event.actor_id) if event.actor_id else None
-    return comment, node, f"@{actor.handle}" if actor else "Someone"
+    return comment, node, f"@{actor.handle}" if actor else None
 
 
 def _notice(
-    user_id: uuid.UUID, reason: str, title: str, comment: FolioComment, node: FolioNode
+    user_id: uuid.UUID,
+    reason: str,
+    title: str,
+    comment: FolioComment,
+    node: FolioNode,
+    params: dict[str, str],
 ) -> events.Notice:
     text = convert.to_text(comment.body_json)
     body = text if len(text) <= SNIPPET else text[: SNIPPET - 1] + "…"
     link = f"/folio/p/{node.id}-{node.slug}#comment-{comment.thread_id}"
-    return events.Notice(user_id, reason, title, body, link)
+    return events.Notice(user_id, reason, title, body, link, params)
+
+
+def _params(actor: str | None, node: FolioNode, **more: str) -> dict[str, str]:
+    return {"page": node.title, **({"actor": actor} if actor else {}), **more}
 
 
 async def _visible(db: AsyncSession, node: FolioNode, ids: set[uuid.UUID]) -> list[User]:
@@ -62,13 +71,15 @@ async def _comment(db: AsyncSession, event: OutboxEvent) -> list[events.Notice]:
     skip = {h.lower() for h in event.payload.get("skip", [])}
     reply = comment.id != comment.thread_id
     verb = "replied in a thread on" if reply else "commented on"
+    params = _params(actor, node, variant="reply" if reply else "comment")
     return [
         _notice(
             u.id,
             "participant" if u.id in participants else "watcher",
-            f"{actor} {verb} '{node.title}'",
+            f"{actor or 'Someone'} {verb} '{node.title}'",
             comment,
             node,
+            params,
         )
         for u in await _visible(db, node, ids)
         if u.handle.lower() not in skip
@@ -84,6 +95,13 @@ async def _mention(db: AsyncSession, event: OutboxEvent) -> list[events.Notice]:
     handles = [h.lower() for h in event.payload.get("handles", [])]
     ids = set(await db.scalars(select(User.id).where(User.handle.in_(handles))))
     return [
-        _notice(u.id, "mention", f"{actor} mentioned you on '{node.title}'", comment, node)
+        _notice(
+            u.id,
+            "mention",
+            f"{actor or 'Someone'} mentioned you on '{node.title}'",
+            comment,
+            node,
+            _params(actor, node),
+        )
         for u in await _visible(db, node, ids)
     ]
