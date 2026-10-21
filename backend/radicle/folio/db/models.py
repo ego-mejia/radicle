@@ -199,3 +199,25 @@ class FolioAsset(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, server_default=func.now()
     )
+
+
+class _CatalogEntry:
+    """Shape shared by the editable catalogs: document types, audiences and languages."""
+
+    key: Mapped[str] = mapped_column(Text, primary_key=True)
+    name: Mapped[str] = mapped_column(Text)
+    description: Mapped[str] = mapped_column(Text, default="", server_default="")
+    position: Mapped[int] = mapped_column(BigInteger, default=0, server_default="0")
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class FolioDocType(_CatalogEntry, Base):
+    __tablename__ = "folio_doc_types"
+
+
+class FolioAudience(_CatalogEntry, Base):
+    __tablename__ = "folio_audiences"
+
+
+class FolioLanguage(_CatalogEntry, Base):
+    __tablename__ = "folio_languages"

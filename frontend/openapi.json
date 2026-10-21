@@ -2961,6 +2961,116 @@
         "title": "DuplicateIn",
         "type": "object"
       },
+      "EntryIn": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "default": "",
+            "title": "Description",
+            "type": "string"
+          },
+          "key": {
+            "description": "Lowercase letters, digits and dashes, e.g. how-to",
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name"
+        ],
+        "title": "EntryIn",
+        "type": "object"
+      },
+      "EntryOut": {
+        "properties": {
+          "archived": {
+            "title": "Archived",
+            "type": "boolean"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "description",
+          "position",
+          "archived"
+        ],
+        "title": "EntryOut",
+        "type": "object"
+      },
+      "EntryPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "archived": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Archived entries can't be chosen",
+            "title": "Archived"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          }
+        },
+        "title": "EntryPatch",
+        "type": "object"
+      },
       "EventOut": {
         "properties": {
           "actor": {
@@ -3221,6 +3331,29 @@
           "color"
         ],
         "title": "FieldOptionOut",
+        "type": "object"
+      },
+      "FieldRule": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          },
+          "rule": {
+            "title": "Rule",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "required",
+          "rule"
+        ],
+        "title": "FieldRule",
         "type": "object"
       },
       "FilterIn": {
@@ -4656,6 +4789,46 @@
         "title": "MemberPut",
         "type": "object"
       },
+      "MetadataSchemaOut": {
+        "properties": {
+          "audiences": {
+            "items": {
+              "$ref": "#/components/schemas/EntryOut"
+            },
+            "title": "Audiences",
+            "type": "array"
+          },
+          "doc_types": {
+            "items": {
+              "$ref": "#/components/schemas/EntryOut"
+            },
+            "title": "Doc Types",
+            "type": "array"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/FieldRule"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "languages": {
+            "items": {
+              "$ref": "#/components/schemas/EntryOut"
+            },
+            "title": "Languages",
+            "type": "array"
+          }
+        },
+        "required": [
+          "fields",
+          "doc_types",
+          "audiences",
+          "languages"
+        ],
+        "title": "MetadataSchemaOut",
+        "type": "object"
+      },
       "MilestoneCreate": {
         "additionalProperties": false,
         "properties": {
@@ -5519,6 +5692,34 @@
           "next_cursor"
         ],
         "title": "Page[DashboardOut]",
+        "type": "object"
+      },
+      "Page_EntryOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EntryOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[EntryOut]",
         "type": "object"
       },
       "Page_EventOut_": {
@@ -14714,6 +14915,187 @@
         ]
       }
     },
+    "/api/v1/folio/admin/{catalog}": {
+      "get": {
+        "operationId": "list_entries_api_v1_folio_admin__catalog__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "catalog",
+            "required": true,
+            "schema": {
+              "enum": [
+                "doc-types",
+                "audiences",
+                "languages"
+              ],
+              "title": "Catalog",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_archived",
+            "required": false,
+            "schema": {
+              "default": true,
+              "title": "Include Archived",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_EntryOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Entries",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "operationId": "create_entry_api_v1_folio_admin__catalog__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "catalog",
+            "required": true,
+            "schema": {
+              "enum": [
+                "doc-types",
+                "audiences",
+                "languages"
+              ],
+              "title": "Catalog",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Entry",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/admin/{catalog}/{key}": {
+      "patch": {
+        "operationId": "update_entry_api_v1_folio_admin__catalog___key__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "catalog",
+            "required": true,
+            "schema": {
+              "enum": [
+                "doc-types",
+                "audiences",
+                "languages"
+              ],
+              "title": "Catalog",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EntryPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Entry",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/assets/{asset_id}": {
       "get": {
         "description": "The bytes, shown inline for images, PDFs and video and downloaded otherwise.",
@@ -14812,6 +15194,29 @@
           }
         },
         "summary": "My Space",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/metadata-schema": {
+      "get": {
+        "description": "What publishing needs: the fields with their rules and the catalogs' active entries.",
+        "operationId": "metadata_schema_api_v1_folio_metadata_schema_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetadataSchemaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Metadata Schema",
         "tags": [
           "folio",
           "folio"
