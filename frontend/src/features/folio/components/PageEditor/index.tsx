@@ -33,6 +33,11 @@ import { mediaBlocks } from './media';
 import * as S from './style';
 import { useAutosave } from '../../hooks/useAutosave';
 import { useComments } from '../../hooks/useComments';
+import { useCollab, type Collab, type Me } from '../../hooks/useCollab';
+import { collabExtensions } from '../../editor/collab';
+import { colorFor } from '../../editor/presence';
+import { useMe } from '../../../../hooks/useMe';
+import { Presence } from './components/Presence';
 
 type Props = {
   nodeId: string;
@@ -40,10 +45,12 @@ type Props = {
   onPublish?: (editor: Editor) => void;
   /** More editor extensions, like the slash menu or uploads. */
   extensions?: ReturnType<typeof folioExtensions>;
+  /** Edit together in real time (Folio 2.2) instead of saving the draft alone. */
+  collab?: boolean;
 };
 
 /** Writes a page's draft full screen: icon and title on top, the body below, saved as you go. */
-export function PageEditor({ nodeId, onPublish, extensions }: Props) {
+export function PageEditor({ nodeId, onPublish, extensions, collab = false }: Props) {
   const node = useQuery({ queryKey: folioKeys.node(nodeId), queryFn: () => fetchNode(nodeId) });
   const draft = useQuery({
     queryKey: folioKeys.draft(nodeId),
@@ -51,13 +58,9 @@ export function PageEditor({ nodeId, onPublish, extensions }: Props) {
     staleTime: Infinity, // the editor owns the draft while it is open
   });
   if (!node.data || !draft.data) return <PageSpinner />;
+  const Body = collab ? WithRoom : Loaded;
   return (
-    <Loaded
-      node={node.data}
-      draft={draft.data}
-      onPublish={onPublish}
-      extensions={extensions ?? []}
-    />
+    <Body node={node.data} draft={draft.data} onPublish={onPublish} extensions={extensions ?? []} />
   );
 }
 
@@ -66,9 +69,25 @@ type LoadedProps = {
   draft: FolioDraft;
   onPublish?: Props['onPublish'];
   extensions: ReturnType<typeof folioExtensions>;
+  room?: { collab: Collab; me: Me };
 };
 
-function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
+/** Joins the document's room, then edits it with everyone in it. */
+function WithRoom(props: Omit<LoadedProps, 'room'>) {
+  const user = useMe();
+  const [me] = useState<Me>(() => ({
+    name: user.display_name,
+    handle: user.handle,
+    color: colorFor(user.handle),
+  }));
+  const collab = useCollab(props.node.id, me);
+  // The editor waits for the room's content: built on an empty document, it would write
+  // that empty document into the room and mix it with what is there.
+  if (!collab.synced) return <PageSpinner />;
+  return <Loaded {...props} room={{ collab, me }} />;
+}
+
+function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [title, setTitle] = useState(node.title);
@@ -93,7 +112,8 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
 
   const allExtensions = useMemo(
     () => [
-      ...folioExtensions(),
+      ...folioExtensions({ shared: !!room }),
+      ...(room ? collabExtensions(room.collab, room.me) : []),
       Placeholder.configure({ placeholder: t('folio.editor.bodyPlaceholder') }),
       SlashCommand.configure({
         items: [...BLOCKS, ...mediaBlocks(() => editorRef.current, upload, failed)],
@@ -105,11 +125,16 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
-  const editor = useEditor({
-    extensions: allExtensions,
-    content: draft.content_json,
-    onUpdate: ({ editor: e }) => body.change(toFolioDoc(e.getJSON())),
-  });
+  const editor = useEditor(
+    {
+      extensions: allExtensions,
+      // Shared: the content comes from the room, and the room saves it.
+      content: room ? undefined : draft.content_json,
+      onUpdate: room ? undefined : ({ editor: e }) => body.change(toFolioDoc(e.getJSON())),
+    },
+    // Shared: built once. Who's in changes often, and rebuilding would lose the cursor.
+    room ? [] : undefined,
+  );
   editorRef.current = editor;
 
   const changeCover = async (assetId: string | null) => {
@@ -131,12 +156,14 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
     }
   };
 
-  const states = [body.state, header.state];
-  const state = states.includes('error')
-    ? 'error'
-    : states.includes('saving') || states.includes('unsaved')
-      ? 'saving'
-      : 'saved';
+  const states = [room ? roomState(room.collab) : body.state, header.state];
+  const state = states.includes('offline')
+    ? 'offline'
+    : states.includes('error')
+      ? 'error'
+      : states.includes('saving') || states.includes('unsaved')
+        ? 'saving'
+        : 'saved';
 
   return (
     <S.Screen>
@@ -146,10 +173,11 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
           {t('folio.editor.back')}
         </S.Back>
         <S.Crumb>{[node.space, ...node.breadcrumbs.map((b) => b.title)].join(' / ')}</S.Crumb>
-        <S.SaveState role="status" $error={state === 'error'}>
+        {room && <Presence peers={room.collab.peers} />}
+        <S.SaveState role="status" $error={state === 'error' || state === 'offline'}>
           {t(`folio.editor.state.${state}`)}
         </S.SaveState>
-        {onPublish && editor && (
+        {onPublish && editor && node.kind !== 'live_doc' && (
           <Button
             variant="primary"
             onClick={async () => {
@@ -216,4 +244,10 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
       </S.Scroll>
     </S.Screen>
   );
+}
+
+/** Saved once the room has the document; offline while it reconnects. */
+function roomState(collab: Collab): 'saved' | 'saving' | 'offline' {
+  if (collab.status === 'disconnected') return 'offline';
+  return collab.status === 'connected' && collab.synced ? 'saved' : 'saving';
 }
