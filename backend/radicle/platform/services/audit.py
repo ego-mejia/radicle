@@ -54,6 +54,8 @@ ACTIONS = (
     "ticket.restore",
     "ticket.move",
     "ticket.bulk_edit",
+    "folio.grant_set",
+    "folio.grant_remove",
 )
 # Actions on what every app shares; the rest belong to the app that records them.
 PLATFORM_PREFIXES = ("user.", "token.", "agent.", "group.", "sso.", "settings.")
