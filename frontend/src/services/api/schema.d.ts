@@ -978,8 +978,9 @@ export interface paths {
         put?: never;
         /**
          * Publish
-         * @description Publish the draft as the next version. 422 lists every missing metadata field; 409
-         *     when someone published after this draft started (send `confirm` to go ahead).
+         * @description Publish the draft as the next version (201). Agents send it for approval instead
+         *     (202, a submission). 422 lists every missing metadata field; 409 when someone published
+         *     after this draft started (send `confirm` to go ahead).
          */
         post: operations["publish_api_v1_folio_nodes__node_id__publish_post"];
         delete?: never;
@@ -1170,6 +1171,86 @@ export interface paths {
         get: operations["get_tree_api_v1_folio_spaces__key__tree_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Submissions
+         * @description The approval queue for admins; their own submissions for agents.
+         */
+        get: operations["list_submissions_api_v1_folio_submissions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/submissions/{submission_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Submission
+         * @description What it would publish, and how it differs from the published version.
+         */
+        get: operations["get_submission_api_v1_folio_submissions__submission_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/submissions/{submission_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Approve
+         * @description Publish it with the agent as author and you as approver.
+         */
+        post: operations["approve_api_v1_folio_submissions__submission_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/submissions/{submission_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Reject
+         * @description Send it back with a comment the agent reads over MCP.
+         */
+        post: operations["reject_api_v1_folio_submissions__submission_id__reject_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4018,6 +4099,14 @@ export interface components {
             project?: string | null;
             visibility?: components["schemas"]["FilterVisibility"] | null;
         };
+        /** DecisionIn */
+        DecisionIn: {
+            /**
+             * Comment
+             * @description Required to reject: what to fix
+             */
+            comment?: string | null;
+        };
         /** DependencyOut */
         DependencyOut: {
             /** Blocked */
@@ -5242,6 +5331,13 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** Page[SubmissionOut] */
+        Page_SubmissionOut_: {
+            /** Items */
+            items: components["schemas"]["SubmissionOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** Page[SyncRunOut] */
         Page_SyncRunOut_: {
             /** Items */
@@ -6223,6 +6319,115 @@ export interface components {
             category: components["schemas"]["StatusCategory"];
             /** Name */
             name: string;
+        };
+        /** SubmissionDetailOut */
+        SubmissionDetailOut: {
+            /**
+             * Blocks
+             * @description Against the published version
+             */
+            blocks: components["schemas"]["BlockChangeOut"][];
+            /** Change Note */
+            change_note: string | null;
+            /**
+             * Changes
+             * @description Title and metadata against it
+             */
+            changes: components["schemas"]["FieldChangeOut"][];
+            /** Content Json */
+            content_json: {
+                [key: string]: unknown;
+            };
+            /** Content Md */
+            content_md: string;
+            /** Created At */
+            created_at: string;
+            /**
+             * Current Version
+             * @description The published version it would replace
+             */
+            current_version: number | null;
+            /** Decided At */
+            decided_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Metadata */
+            metadata: {
+                [key: string]: unknown;
+            };
+            /**
+             * Node Id
+             * Format: uuid
+             */
+            node_id: string;
+            /**
+             * Review Comment
+             * @description Why it was rejected, for the agent
+             */
+            review_comment: string | null;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "approved" | "rejected" | "superseded";
+            /** Submitted By */
+            submitted_by: string;
+            /** Title */
+            title: string;
+            /**
+             * Version
+             * @description The version it became, once approved
+             */
+            version: number | null;
+        };
+        /** SubmissionOut */
+        SubmissionOut: {
+            /** Change Note */
+            change_note: string | null;
+            /** Created At */
+            created_at: string;
+            /** Decided At */
+            decided_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Metadata */
+            metadata: {
+                [key: string]: unknown;
+            };
+            /**
+             * Node Id
+             * Format: uuid
+             */
+            node_id: string;
+            /**
+             * Review Comment
+             * @description Why it was rejected, for the agent
+             */
+            review_comment: string | null;
+            /** Reviewed By */
+            reviewed_by: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "approved" | "rejected" | "superseded";
+            /** Submitted By */
+            submitted_by: string;
+            /** Title */
+            title: string;
+            /**
+             * Version
+             * @description The version it became, once approved
+             */
+            version: number | null;
         };
         /**
          * Swimlane
@@ -9605,7 +9810,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["VersionOut"];
+                    "application/json": components["schemas"]["VersionOut"] | components["schemas"]["SubmissionOut"];
+                };
+            };
+            /** @description An agent's submission */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubmissionOut"];
                 };
             };
             /** @description Validation Error */
@@ -10051,6 +10265,138 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TreeItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_submissions_api_v1_folio_submissions_get: {
+        parameters: {
+            query?: {
+                status?: ("pending" | "approved" | "rejected" | "superseded") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_SubmissionOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_submission_api_v1_folio_submissions__submission_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubmissionDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approve_api_v1_folio_submissions__submission_id__approve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reject_api_v1_folio_submissions__submission_id__reject_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubmissionOut"];
                 };
             };
             /** @description Validation Error */
