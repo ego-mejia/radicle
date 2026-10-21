@@ -12,6 +12,7 @@ from radicle.folio.db.models import (
     FolioNodeLabel,
     FolioVersion,
     NodeKind,
+    NodeStatus,
 )
 from radicle.folio.services import access, convert, nodes, rag, schema
 from radicle.folio.services.metadata import validate_metadata
@@ -65,6 +66,8 @@ async def create_version(
     node.slug = nodes.slugify(node.title)
     if node.published_at is None:
         node.published_at = utcnow()
+    if node.status == NodeStatus.draft:
+        node.status = NodeStatus.published
     node.updated_at = utcnow()
     await db.execute(delete(FolioNodeLabel).where(FolioNodeLabel.node_id == node.id))
     db.add_all(FolioNodeLabel(node_id=node.id, label=label) for label in metadata["labels"])

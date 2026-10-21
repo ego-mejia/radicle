@@ -2,13 +2,14 @@
 
 import enum
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     BigInteger,
     Computed,
+    Date,
     DateTime,
     ForeignKey,
     Index,
@@ -73,6 +74,18 @@ class NodeKind(enum.StrEnum):
     page = "page"
     folder = "folder"
     blog_post = "blog_post"
+    live_doc = "live_doc"  # always editable, never published (Folio 2.5)
+
+
+class NodeStatus(enum.StrEnum):
+    """A page's quality state (Folio 2.7): published once, then in review, verified or
+    outdated when its verification expires."""
+
+    draft = "draft"
+    published = "published"
+    in_review = "in_review"
+    verified = "verified"
+    outdated = "outdated"
 
 
 class FolioSpace(Base):
@@ -99,6 +112,8 @@ class FolioSpace(Base):
     )
     icon: Mapped[str | None] = mapped_column(Text)
     cover_asset_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    # Days a Verified page stays verified before it turns Outdated (Folio 2.7).
+    verify_days: Mapped[int] = mapped_column(BigInteger, default=90, server_default="90")
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
     )
@@ -149,6 +164,18 @@ class FolioNode(Base):
         DateTime(timezone=True), default=utcnow, server_default=func.now()
     )
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[NodeStatus] = mapped_column(
+        _enum(NodeStatus, "folio_node_status"), default=NodeStatus.draft, server_default="draft"
+    )
+    verified_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    verified_until: Mapped[date | None] = mapped_column(Date)
+    # Archived nodes leave the tree, search and the RAG index; restoring brings them back.
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    archived_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
+    )
 
 
 class FolioNodeEvent(Base):
