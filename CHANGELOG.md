@@ -4,6 +4,10 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Folio fase 2 (colaboración): avisos in-app y por email con preferencias, edición en tiempo real con carets y punteros con nombre, comentarios al pie e inline anclados al texto, menciones, reacciones, seguir, favoritos, compartir, action items con Mis tareas, live docs con snapshots, mover, copiar y archivar páginas, dueño y estados con vencimiento, recientes y el feed Para ti.
+
 ### Changed
 
 - El parser, la gramática y las fechas de RQL viven en `platform/query`, compartidos por Docket y Folio.
@@ -17,6 +21,8 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - Los datos de demo (`scripts/seed.py`) ahora son en inglés.
 
 ### Fixed
+
+- Folio: una tarea que te asignas tú mismo ya no te avisa (y los avisos de tareas dicen quién la asignó); los tipos de aviso en Perfil se traducen.
 
 - Folio: la barra superior tapaba la barra del editor; portada vacía en las páginas; preguntas sin todas sus palabras no encontraban nada; fragmentos de búsqueda con marcas de Markdown; Editar visible pese a una restricción de edición; el tag de tipo no se veía en modo oscuro.
 - E2E de etapas 1 y 3: el arrastre de tarjetas y el carril de área vuelven a pasar con los botones de área y milestone en las tarjetas.
