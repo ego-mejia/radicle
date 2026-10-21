@@ -81,6 +81,11 @@ export const BLOCKS: BlockItem[] = [
     keywords: 'status estado label etiqueta',
     run: (c) => c.insertContent({ type: 'status', attrs: { text: 'TODO', color: 'grey' } }),
   },
+  {
+    key: 'database',
+    keywords: 'database board base de datos tablero inventario',
+    run: (c) => c.insertContent({ type: 'databaseView' }),
+  },
   { key: 'divider', keywords: 'hr divider line separador', run: (c) => c.setHorizontalRule() },
 ];
 

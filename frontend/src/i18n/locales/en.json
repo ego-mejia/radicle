@@ -1847,7 +1847,8 @@
         "image": "Image",
         "file": "File",
         "video": "Video",
-        "actionItem": "Action item"
+        "actionItem": "Action item",
+        "database": "Database view"
       },
       "addCover": "Add cover",
       "changeCover": "Change cover",
@@ -2307,6 +2308,13 @@
         "yellow": "Yellow",
         "red": "Red",
         "purple": "Purple"
+      },
+      "block": {
+        "database": "Database",
+        "choose": "Choose a database",
+        "view": "View",
+        "firstView": "Its first view",
+        "none": "No databases you can see yet."
       }
     }
   },

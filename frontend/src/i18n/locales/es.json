@@ -1847,7 +1847,8 @@
         "image": "Imagen",
         "file": "Archivo",
         "video": "Video",
-        "actionItem": "Action item"
+        "actionItem": "Action item",
+        "database": "Vista de database"
       },
       "addCover": "Agregar portada",
       "changeCover": "Cambiar portada",
@@ -2307,6 +2308,13 @@
         "yellow": "Amarillo",
         "red": "Rojo",
         "purple": "Morado"
+      },
+      "block": {
+        "database": "Database",
+        "choose": "Elige una database",
+        "view": "Vista",
+        "firstView": "Su primera vista",
+        "none": "Aún no hay databases que puedas ver."
       }
     }
   },

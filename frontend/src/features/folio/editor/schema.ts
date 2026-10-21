@@ -43,6 +43,7 @@ const NODE_ATTRS: Record<string, string[]> = {
   file: ['assetId', 'name', 'mimeType', 'size'],
   video: ['assetId', 'src', 'caption'],
   embed: ['url', 'title', 'provider'],
+  databaseView: ['database', 'view'],
   text: [],
   hardBreak: [],
   mention: ['handle'],
@@ -79,6 +80,8 @@ function clean(node: JSONContent): JSONContent | null {
   const type = node.type ?? '';
   if (!(type in NODE_ATTRS)) return null;
   if (type === 'text' && !node.text) return null;
+  // A database block is saved once it names its database.
+  if (type === 'databaseView' && !node.attrs?.database) return null;
   const out: JSONContent = { type };
   const attrs = pick(type, node.attrs, NODE_ATTRS[type] ?? []);
   if (attrs) out.attrs = attrs;

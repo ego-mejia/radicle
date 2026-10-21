@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { assetUrl } from '../../../../../../services/api/folio';
 import type { DocNode, Heading } from '../../anchors';
 import { toneOf } from '../Inline/tone';
+import { DatabaseView } from '../../../DatabaseView';
 import { EmbedCard } from '../../../EmbedCard';
 import { Diagram } from '../../../Diagram';
 import { Formula } from '../../../Formula';
@@ -110,6 +111,14 @@ export function RichBlock({ node: n, headings, childPages, children }: Props) {
       );
     case 'formula':
       return <Formula latex={String(a.latex ?? '')} />;
+    case 'databaseView':
+      return (
+        <DatabaseView
+          nodeId={String(a.database)}
+          viewId={a.view ? String(a.view) : null}
+          embedded
+        />
+      );
     case 'embed':
       return <EmbedCard url={String(a.url)} title={a.title ? String(a.title) : null} />;
     case 'file':
