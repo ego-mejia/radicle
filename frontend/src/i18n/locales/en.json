@@ -2242,7 +2242,9 @@
       "verifyDaysHint": "After this many days a Verified page turns Outdated and its owner is told (1 to 730).",
       "saved": "Settings saved",
       "ai": "Editor AI",
-      "aiHint": "Summarize, rewrite and suggest metadata while writing in this space."
+      "aiHint": "Summarize, rewrite and suggest metadata while writing in this space.",
+      "readers": "Name readers in page analytics",
+      "readersHint": "Page owners and space admins see who read each page, not only how many."
     },
     "tasks": {
       "title": "My tasks",
@@ -2584,7 +2586,24 @@
       "readersHidden": "This space only counts its readers. A space admin can show their names in the space settings.",
       "noReaders": "Nobody has read it in this range.",
       "readerViews_one": "{{count}} view",
-      "readerViews_other": "{{count}} views"
+      "readerViews_other": "{{count}} views",
+      "site": {
+        "active": "Active people",
+        "searches": "Searches",
+        "notFound": "Searches without results",
+        "activity": "Reads per day",
+        "topPages": "Most read pages",
+        "topSpaces": "Most active spaces",
+        "noViews": "Nobody has read anything in this range.",
+        "viewsReaders": "{{views}} views · {{readers}} readers",
+        "gaps": "Searched without finding",
+        "gapsHelp": "What people looked for and Folio had no page for: a list of what to document next.",
+        "noGaps": "Every search found something.",
+        "times_one": "{{count}} time",
+        "times_other": "{{count}} times",
+        "unanswered": "Chat questions without an answer",
+        "tab": "Analytics"
+      }
     },
     "public": {
       "liveOnly": "Live content from Radicle; open it in Radicle to see it."

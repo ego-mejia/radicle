@@ -13,8 +13,8 @@ import { aiKeys } from '../../../../services/api/folioAi';
 import { patchSpace } from '../../../../services/api/folioSocial';
 import * as S from './style';
 
-/** Space settings for its admins: how many days a Verified page stays verified, and whether
- * the editor offers its AI here. */
+/** Space settings for its admins: how many days a Verified page stays verified, whether
+ * the editor offers its AI here, and whether page analytics name readers. */
 export function SpaceSettings({ space }: { space: FolioSpace }) {
   const { t } = useTranslation();
   const toast = useToast();
@@ -23,12 +23,14 @@ export function SpaceSettings({ space }: { space: FolioSpace }) {
   const [open, setOpen] = useState(false);
   const [days, setDays] = useState(String(space.verify_days));
   const [ai, setAi] = useState(space.ai_enabled);
+  const [readers, setReaders] = useState(space.show_readers);
   const [error, setError] = useState<string | null>(null);
   const save = useMutation({
     mutationFn: () =>
       patchSpace(space.key, {
         verify_days: Number(days),
         ...(ai !== space.ai_enabled && { ai_enabled: ai }),
+        ...(readers !== space.show_readers && { show_readers: readers }),
       }),
     onSuccess: (updated) => {
       client.setQueryData(folioKeys.space(space.key), updated);
@@ -82,6 +84,13 @@ export function SpaceSettings({ space }: { space: FolioSpace }) {
           <span>
             {t('folio.spaceSettings.ai')}
             <small>{t('folio.spaceSettings.aiHint')}</small>
+          </span>
+        </S.Check>
+        <S.Check>
+          <input type="checkbox" checked={readers} onChange={(e) => setReaders(e.target.checked)} />
+          <span>
+            {t('folio.spaceSettings.readers')}
+            <small>{t('folio.spaceSettings.readersHint')}</small>
           </span>
         </S.Check>
       </Modal>

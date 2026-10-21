@@ -16,6 +16,7 @@ const SPACE = {
   permissions: ['view', 'admin'],
   verify_days: 90,
   ai_enabled: true,
+  show_readers: false,
 } as FolioSpace;
 
 describe('SpaceSettings', () => {
@@ -53,5 +54,17 @@ describe('SpaceSettings', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(await screen.findByText('Settings saved')).toBeInTheDocument();
     expect(calls.at(-1)?.body).toEqual({ verify_days: 90, ai_enabled: false });
+  });
+
+  it('lets page analytics name readers', async () => {
+    const calls = mockFetch({
+      'PATCH /api/v1/folio/spaces/docs': { status: 200, body: { ...SPACE, show_readers: true } },
+    });
+    renderWithProviders(<SpaceSettings space={SPACE} />);
+    await userEvent.click(await screen.findByRole('button', { name: 'Space settings' }));
+    await userEvent.click(screen.getByRole('checkbox', { name: /Name readers/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+    expect(await screen.findByText('Settings saved')).toBeInTheDocument();
+    expect(calls.at(-1)?.body).toEqual({ verify_days: 90, show_readers: true });
   });
 });

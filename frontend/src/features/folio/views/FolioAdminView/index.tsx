@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Globe, Trash2, User, Users } from 'lucide-react';
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, IconButton } from '../../../../components/ui/Button';
 import { EmptyState } from '../../../../components/ui/EmptyState';
@@ -16,6 +16,11 @@ import { GlossaryAdmin } from '../../components/GlossaryAdmin';
 import { HomeEditor } from '../../components/HomeEditor';
 import { TemplatesAdmin } from '../../components/TemplatesAdmin';
 import { UnansweredQuestions } from '../../components/UnansweredQuestions';
+
+// Charts load only when the Analytics tab opens.
+const SiteAnalytics = lazy(() =>
+  import('../../components/SiteAnalytics').then((m) => ({ default: m.SiteAnalytics })),
+);
 import {
   type FolioCatalog,
   type FolioGrant,
@@ -149,11 +154,11 @@ function AddGrant() {
   );
 }
 
-type Section = 'roles' | 'templates' | 'home' | 'glossary' | 'chat' | FolioCatalog;
+type Section = 'roles' | 'templates' | 'home' | 'glossary' | 'chat' | 'analytics' | FolioCatalog;
 const CATALOGS: FolioCatalog[] = ['doc-types', 'audiences', 'languages'];
 
 /** Folio, Admin: global roles (Folio 0.5), the metadata catalogs (Folio 1.3), templates
- * (Folio 3.1), the home (Folio 3.2) and the glossary (Folio 4.6). */
+ * (Folio 3.1), the home (Folio 3.2), the glossary (Folio 4.6) and analytics (Folio 5.9). */
 export function FolioAdminView() {
   const { t } = useTranslation();
   const { data: me } = useQuery({ queryKey: folioKeys.me, queryFn: fetchFolioMe });
@@ -174,6 +179,7 @@ export function FolioAdminView() {
           { id: 'home', label: t('folio.homeEditor.title') },
           { id: 'glossary', label: t('folio.glossary.title') },
           { id: 'chat', label: t('folio.chat.unanswered.tab') },
+          { id: 'analytics', label: t('folio.analytics.site.tab') },
         ]}
       />
       <F.Section>
@@ -187,6 +193,10 @@ export function FolioAdminView() {
           <GlossaryAdmin />
         ) : section === 'chat' ? (
           <UnansweredQuestions />
+        ) : section === 'analytics' ? (
+          <Suspense fallback={<PageSpinner />}>
+            <SiteAnalytics />
+          </Suspense>
         ) : (
           <CatalogEditor key={section} catalog={section} />
         )}
