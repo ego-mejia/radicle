@@ -6175,6 +6175,84 @@
         "title": "LinkOut",
         "type": "object"
       },
+      "LinkPreviewOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "embed_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "An iframe URL, only for those providers",
+            "title": "Embed Url"
+          },
+          "icon_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon Url"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "youtube, figma, loom, google_docs or github",
+            "title": "Provider"
+          },
+          "site_name": {
+            "title": "Site Name",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "title",
+          "description",
+          "site_name",
+          "icon_url",
+          "image_url",
+          "provider",
+          "embed_url"
+        ],
+        "title": "LinkPreviewOut",
+        "type": "object"
+      },
       "LinkedProjectOut": {
         "properties": {
           "in_sync": {
@@ -18678,6 +18756,54 @@
           }
         },
         "summary": "Get Home",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/link-preview": {
+      "get": {
+        "description": "A card for a pasted link, cached 24 hours. Private and internal addresses are\nrefused.",
+        "operationId": "get_link_preview_api_v1_folio_link_preview_get",
+        "parameters": [
+          {
+            "description": "An http or https link",
+            "in": "query",
+            "name": "url",
+            "required": true,
+            "schema": {
+              "description": "An http or https link",
+              "maxLength": 2000,
+              "minLength": 8,
+              "title": "Url",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkPreviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Link Preview",
         "tags": [
           "folio",
           "folio"

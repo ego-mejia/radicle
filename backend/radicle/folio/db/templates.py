@@ -1,4 +1,4 @@
-"""Folio's templates (phase 3.1): page templates (a document with variables and default
+"""Folio phase 3 tables. Templates (3.1): page templates (a document with variables and default
 metadata) and space templates (a tree of pages, grants and a cover), global or per space."""
 
 import enum
@@ -52,3 +52,22 @@ class FolioTemplate(Base):
         DateTime(timezone=True), default=utcnow, server_default=func.now()
     )
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class FolioLinkPreview(Base):
+    """A pasted link's preview, cached 24 hours (Folio 3.7)."""
+
+    __tablename__ = "folio_link_previews"
+
+    url_hash: Mapped[str] = mapped_column(Text, primary_key=True)
+    url: Mapped[str] = mapped_column(Text)
+    title: Mapped[str] = mapped_column(Text, default="", server_default="")
+    description: Mapped[str] = mapped_column(Text, default="", server_default="")
+    site_name: Mapped[str] = mapped_column(Text, default="", server_default="")
+    icon_url: Mapped[str | None] = mapped_column(Text)
+    image_url: Mapped[str | None] = mapped_column(Text)
+    provider: Mapped[str | None] = mapped_column(Text)
+    embed_html_allowed: Mapped[bool] = mapped_column(default=False, server_default="false")
+    fetched_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, server_default=func.now()
+    )

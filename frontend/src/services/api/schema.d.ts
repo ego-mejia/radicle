@@ -903,6 +903,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/link-preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Link Preview
+         * @description A card for a pasted link, cached 24 hours. Private and internal addresses are
+         *     refused.
+         */
+        get: operations["get_link_preview_api_v1_folio_link_preview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/me": {
         parameters: {
             query?: never;
@@ -6079,6 +6100,31 @@ export interface components {
             ticket: components["schemas"]["TicketRef"];
             /** Type */
             type: string;
+        };
+        /** LinkPreviewOut */
+        LinkPreviewOut: {
+            /** Description */
+            description: string;
+            /**
+             * Embed Url
+             * @description An iframe URL, only for those providers
+             */
+            embed_url: string | null;
+            /** Icon Url */
+            icon_url: string | null;
+            /** Image Url */
+            image_url: string | null;
+            /**
+             * Provider
+             * @description youtube, figma, loom, google_docs or github
+             */
+            provider: string | null;
+            /** Site Name */
+            site_name: string;
+            /** Title */
+            title: string;
+            /** Url */
+            url: string;
         };
         /** LinkedProjectOut */
         LinkedProjectOut: {
@@ -11320,6 +11366,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HomeOut"];
+                };
+            };
+        };
+    };
+    get_link_preview_api_v1_folio_link_preview_get: {
+        parameters: {
+            query: {
+                /** @description An http or https link */
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LinkPreviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
