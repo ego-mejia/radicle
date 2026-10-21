@@ -6,7 +6,7 @@ from httpx import AsyncClient
 from PIL import Image
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.config import get_settings
+from radicle.platform.config import get_settings
 from radicle.services import attachments as service
 from tests.conftest import Team, new_ticket, run_jobs
 

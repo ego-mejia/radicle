@@ -6,21 +6,21 @@ from typing import Any
 
 import procrastinate
 
-from radicle.core.config import get_settings
-from radicle.db.session import get_sessionmaker
-from radicle.services import queue
+from radicle.platform.config import get_settings
+from radicle.platform.db.session import get_sessionmaker
+from radicle.platform.services import queue
 
 log = logging.getLogger("radicle.worker")
 
 # Modules that register job handlers with @queue.handler.
 JOB_MODULES: tuple[str, ...] = (
-    "radicle.services.jobs",
+    "radicle.platform.services.jobs",
     "radicle.services.templates",
     "radicle.services.attachments",
     "radicle.services.bulk",
     "radicle.services.ranking",
     "radicle.services.periods",
-    "radicle.services.audit",
+    "radicle.platform.services.audit",
 )
 # Jobs the worker defers on a schedule (cron in UTC).
 PERIODIC: dict[str, str] = {"daily_snapshot": "5 * * * *", "audit_retention": "30 3 * * *"}

@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from radicle.api.deps import CurrentPrincipal, Db
 from radicle.api.schemas.common import Output, UtcDatetime
 from radicle.db.models import Job, JobStatus
-from radicle.services import jobs
+from radicle.platform.services import jobs
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 

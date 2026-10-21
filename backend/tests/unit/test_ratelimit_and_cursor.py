@@ -4,7 +4,7 @@ import pytest
 
 from radicle.api.pagination import decode_cursor, encode_cursor
 from radicle.api.ratelimit import SlidingWindowLimiter
-from radicle.core.errors import RateLimited, ValidationFailed
+from radicle.platform.errors import RateLimited, ValidationFailed
 
 
 def test_limiter_blocks_after_limit_and_is_per_key() -> None:

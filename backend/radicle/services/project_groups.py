@@ -3,8 +3,8 @@
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import Group, Project, ProjectGroupRole, ProjectRole
+from radicle.platform.errors import ValidationFailed
 from radicle.services.access import ProjectAccess
 
 

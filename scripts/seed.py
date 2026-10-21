@@ -8,7 +8,7 @@ import argparse
 import asyncio
 import sys
 
-from radicle.db.session import dispose_engine, get_sessionmaker
+from radicle.platform.db.session import dispose_engine, get_sessionmaker
 from radicle.seed import seed
 
 

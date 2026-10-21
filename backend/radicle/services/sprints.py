@@ -9,7 +9,6 @@ from typing import Any
 from sqlalchemy import ColumnElement, and_, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, NotFound, ValidationFailed
 from radicle.db.models import (
     Board,
     BoardKind,
@@ -26,6 +25,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
+from radicle.platform.errors import Conflict, NotFound, ValidationFailed
 from radicle.services import history, search, tickets
 from radicle.services.boards import BoardAccess, load_board
 

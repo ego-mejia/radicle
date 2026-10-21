@@ -9,7 +9,6 @@ from typing import Any
 from sqlalchemy import ColumnElement, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from radicle.db.models import (
     Dashboard,
     DashboardWidget,
@@ -24,6 +23,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
+from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from radicle.query.errors import RQLError
 from radicle.query.parser import parse
 from radicle.services import boards, filters, search, sprints

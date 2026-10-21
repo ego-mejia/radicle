@@ -8,8 +8,8 @@ from datetime import date
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, NotFound, ValidationFailed
 from radicle.db.models import Area, Milestone, MilestoneStatus, Project, utcnow
+from radicle.platform.errors import Conflict, NotFound, ValidationFailed
 from radicle.services.projects import check_description, normalize_name
 
 COLOR_RE = re.compile(r"^#[0-9A-Fa-f]{6}$")

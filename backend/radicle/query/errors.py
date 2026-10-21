@@ -1,4 +1,4 @@
-from radicle.core.errors import ValidationFailed
+from radicle.platform.errors import ValidationFailed
 
 
 class RQLError(ValidationFailed):

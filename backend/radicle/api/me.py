@@ -14,10 +14,11 @@ from radicle.api.schemas.users import (
     TokenOut,
     UserOut,
 )
-from radicle.core.errors import ValidationFailed
 from radicle.core.permissions import permissions_for
 from radicle.db.models import User
-from radicle.services import audit, auth, projects, users
+from radicle.platform.errors import ValidationFailed
+from radicle.platform.services import audit, auth, users
+from radicle.services import projects
 
 router = APIRouter(prefix="/me", tags=["me"])
 

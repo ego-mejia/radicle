@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, NotFound, ValidationFailed
 from radicle.db.models import (
     EventType,
     Group,
@@ -17,6 +16,7 @@ from radicle.db.models import (
     Ticket,
     User,
 )
+from radicle.platform.errors import Conflict, NotFound, ValidationFailed
 from radicle.services import history
 from radicle.services.access import ProjectAccess, project_access
 

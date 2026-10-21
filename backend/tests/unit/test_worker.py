@@ -1,5 +1,5 @@
 from radicle import cli
-from radicle.services import queue
+from radicle.platform.services import queue
 from radicle.worker import app as worker_app
 
 

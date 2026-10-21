@@ -16,7 +16,6 @@ from urllib.parse import urlparse
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, NotFound, ValidationFailed
 from radicle.db.models import (
     Area,
     CustomFieldDefinition,
@@ -27,6 +26,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
+from radicle.platform.errors import Conflict, NotFound, ValidationFailed
 from radicle.services.projects import normalize_name
 
 KEY_RE = re.compile(r"^[a-z][a-z0-9_]{1,39}$")

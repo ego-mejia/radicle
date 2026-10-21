@@ -5,8 +5,8 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import NotFound
-from radicle.db.models import Job, JobStatus, User, utcnow
+from radicle.platform.db.models import Job, JobStatus, User, utcnow
+from radicle.platform.errors import NotFound
 
 
 async def create_job(

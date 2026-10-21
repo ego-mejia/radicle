@@ -9,7 +9,6 @@ from typing import Any
 from sqlalchemy import ColumnElement, Select, and_, false, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from radicle.core.permissions import visible_tickets_clause
 from radicle.db.models import (
     PRIORITY_ORDER,
@@ -32,6 +31,7 @@ from radicle.db.models import (
     WipMode,
     utcnow,
 )
+from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from radicle.query.errors import RQLError
 from radicle.query.parser import parse
 from radicle.services import ranking, search, tickets, transitions

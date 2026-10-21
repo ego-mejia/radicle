@@ -8,10 +8,10 @@ from typing import Literal
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core import security
-from radicle.core.errors import Conflict, Forbidden, NotFound, Unauthorized, ValidationFailed
-from radicle.db.models import ApiToken, Session, User, UserKind, utcnow
-from radicle.services.validation import normalize_token_name
+from radicle.platform import security
+from radicle.platform.db.models import ApiToken, Session, User, UserKind, utcnow
+from radicle.platform.errors import Conflict, Forbidden, NotFound, Unauthorized, ValidationFailed
+from radicle.platform.services.validation import normalize_token_name
 
 SESSION_REFRESH_AFTER = timedelta(hours=1)
 TOKEN_TOUCH_AFTER = timedelta(minutes=1)

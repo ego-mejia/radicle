@@ -9,7 +9,6 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import (
     BlockedPolicy,
     CustomFieldType,
@@ -17,6 +16,7 @@ from radicle.db.models import (
     StatusCategory,
     TicketType,
 )
+from radicle.platform.errors import ValidationFailed
 from radicle.services.rule_catalog import check_rule
 from radicle.services.screens import check_fields
 from radicle.services.workflows import DEFAULT_WORKFLOWS

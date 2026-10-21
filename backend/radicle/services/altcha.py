@@ -18,8 +18,8 @@ from sqlalchemy import delete
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.config import get_settings
 from radicle.db.models import UsedChallenge, utcnow
+from radicle.platform.config import get_settings
 
 ALGORITHM = "SHA-256"
 MAX_NUMBER = 50_000

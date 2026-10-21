@@ -16,10 +16,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
 from radicle.api.ratelimit import login_limiter
-from radicle.core import security
-from radicle.core.config import get_settings
-from radicle.db.session import get_db
-from radicle.services import queue
+from radicle.platform import security
+from radicle.platform.config import get_settings
+from radicle.platform.db.session import get_db
+from radicle.platform.services import queue
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 ADMIN_PASSWORD = "admin-password-1"
@@ -50,7 +50,7 @@ def postgres() -> Iterator[PostgresContainer]:
 
 @pytest.fixture(scope="session")
 def database_url(postgres: PostgresContainer, tmp_path_factory: pytest.TempPathFactory) -> str:
-    from radicle.storage import get_storage
+    from radicle.platform.storage import get_storage
 
     url = postgres.get_connection_url()
     run_alembic(url, "upgrade", "head")
@@ -298,7 +298,7 @@ class Clock:
 
 @pytest.fixture
 def clock(monkeypatch: pytest.MonkeyPatch) -> Clock:
-    from radicle.db.models import base
+    from radicle.platform.db.models import base
 
     c = Clock(base._system_clock())
     monkeypatch.setattr(base, "clock", lambda: c.now)

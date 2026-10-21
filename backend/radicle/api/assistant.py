@@ -6,8 +6,8 @@ from pydantic import Field
 from radicle.api.deps import CurrentPrincipal, Db, InstanceAdmin
 from radicle.api.ratelimit import SlidingWindowLimiter
 from radicle.api.schemas.common import Input, Output
-from radicle.core.errors import ValidationFailed
-from radicle.services import audit
+from radicle.platform.errors import ValidationFailed
+from radicle.platform.services import audit
 from radicle.services.assistant import chat, config, llm
 
 router = APIRouter(tags=["assistant"])

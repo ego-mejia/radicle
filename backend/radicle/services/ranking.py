@@ -6,7 +6,6 @@ import uuid
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, NotFound, ValidationFailed
 from radicle.core.permissions import effective_role, permissions_for
 from radicle.db.models import (
     EventType,
@@ -16,9 +15,11 @@ from radicle.db.models import (
     User,
     utcnow,
 )
+from radicle.platform.errors import Conflict, NotFound, ValidationFailed
+from radicle.platform.services import queue
 from radicle.query.compiler import Context, compile_query
 from radicle.query.parser import parse
-from radicle.services import history, queue, rank, search, tickets, transitions
+from radicle.services import history, rank, search, tickets, transitions
 from radicle.services.access import ProjectAccess, project_access
 
 REBALANCE_JOB = "rebalance_ranks"

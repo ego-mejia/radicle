@@ -6,7 +6,7 @@ from sqlalchemy import BigInteger, DateTime, ForeignKey, Index, Text, func
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from radicle.db.models.base import Base, utcnow
+from radicle.platform.db.models.base import Base, utcnow
 
 
 class AuditEntry(Base):

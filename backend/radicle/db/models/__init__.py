@@ -5,8 +5,6 @@ from radicle.db.models.access import (
     SecurityLevelGrant,
 )
 from radicle.db.models.attachments import Attachment
-from radicle.db.models.audit import AuditEntry
-from radicle.db.models.base import Base, utcnow
 from radicle.db.models.boards import Board, BoardKind, BoardQuickFilter, Swimlane, WipMode
 from radicle.db.models.dashboards import Dashboard, DashboardWidget
 from radicle.db.models.discussion import (
@@ -18,9 +16,7 @@ from radicle.db.models.discussion import (
 )
 from radicle.db.models.fields import CustomFieldDefinition, CustomFieldType
 from radicle.db.models.filters import FilterVisibility, SavedFilter, UserPreferences
-from radicle.db.models.groups import Group, GroupMember
 from radicle.db.models.inbox import Captcha, InboxSettings, InboxSubmission, UsedChallenge
-from radicle.db.models.jobs import Job, JobStatus
 from radicle.db.models.metrics import DailyStatusCount, TicketStatusPeriod
 from radicle.db.models.projects import (
     Area,
@@ -42,7 +38,6 @@ from radicle.db.models.projects import (
     TransitionRule,
 )
 from radicle.db.models.sprints import Sprint, SprintCommitment, SprintState, SprintTicket
-from radicle.db.models.sso import AuthSource, InstanceSetting, SsoProvider
 from radicle.db.models.templates import SyncStatus, Template, TemplateSyncRun
 from radicle.db.models.tickets import (
     PRIORITY_ORDER,
@@ -59,7 +54,12 @@ from radicle.db.models.tickets import (
     TicketVote,
     Worklog,
 )
-from radicle.db.models.users import ApiToken, Session, User, UserKind
+from radicle.platform.db.models.audit import AuditEntry
+from radicle.platform.db.models.base import Base, utcnow
+from radicle.platform.db.models.groups import Group, GroupMember
+from radicle.platform.db.models.jobs import Job, JobStatus
+from radicle.platform.db.models.sso import AuthSource, InstanceSetting, SsoProvider
+from radicle.platform.db.models.users import ApiToken, Session, User, UserKind
 
 __all__ = [
     "LINK_LABELS",

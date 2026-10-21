@@ -12,7 +12,6 @@ from typing import Any
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import (
     PRIORITY_ORDER,
     Area,
@@ -31,6 +30,7 @@ from radicle.db.models import (
     Transition,
     User,
 )
+from radicle.platform.errors import ValidationFailed
 from radicle.services import custom_fields
 
 SCREEN_FIELDS: dict[str, str] = {

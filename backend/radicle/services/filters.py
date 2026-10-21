@@ -5,8 +5,8 @@ import uuid
 from sqlalchemy import ColumnElement, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from radicle.db.models import FilterVisibility, Project, SavedFilter, User, utcnow
+from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from radicle.query import ast
 from radicle.query.errors import RQLError
 from radicle.query.parser import parse

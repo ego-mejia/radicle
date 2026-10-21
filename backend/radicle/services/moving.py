@@ -6,7 +6,6 @@ import uuid
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import (
     Area,
     Attachment,
@@ -28,11 +27,12 @@ from radicle.db.models import (
     User,
     utcnow,
 )
+from radicle.platform.errors import ValidationFailed
+from radicle.platform.storage import get_storage
 from radicle.services import history, periods, rank
 from radicle.services.access import ProjectAccess, project_access
 from radicle.services.tickets import NewTicket, bump, create_ticket
 from radicle.services.workflows import load_workflows
-from radicle.storage import get_storage
 
 CLONE_INCLUDES = (
     "description",

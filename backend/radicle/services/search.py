@@ -11,7 +11,6 @@ from sqlalchemy import Select, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.core import permissions
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import (
     Area,
     Board,
@@ -23,6 +22,7 @@ from radicle.db.models import (
     User,
     utcnow,
 )
+from radicle.platform.errors import ValidationFailed
 from radicle.query.compiler import Compiled, Context, compile_query
 from radicle.query.parser import parse
 from radicle.services import custom_fields

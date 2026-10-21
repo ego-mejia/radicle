@@ -6,8 +6,8 @@ from radicle import __version__
 from radicle.api.deps import AppSettings, Db, set_session_cookies
 from radicle.api.schemas.common import Output
 from radicle.api.schemas.users import Health, SetupIn, SetupStatus, UserOut, Version
-from radicle.core.errors import ProblemError
-from radicle.services import audit, auth, images, users
+from radicle.platform.errors import ProblemError
+from radicle.platform.services import audit, auth, images, users
 
 router = APIRouter(tags=["system"])
 

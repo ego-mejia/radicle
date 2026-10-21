@@ -21,7 +21,6 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, JSONB, TSVECTOR, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from radicle.db.models.base import Base, _enum, utcnow
 from radicle.db.models.projects import (
     Resolution,
     Status,
@@ -29,7 +28,8 @@ from radicle.db.models.projects import (
     resolution_enum,
     ticket_type_enum,
 )
-from radicle.db.models.users import User
+from radicle.platform.db.models.base import Base, _enum, utcnow
+from radicle.platform.db.models.users import User
 
 
 class RemainingMode(enum.StrEnum):

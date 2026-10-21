@@ -14,9 +14,6 @@ import httpx
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core import crypto
-from radicle.core.config import get_settings
-from radicle.core.errors import Conflict, NotFound, ProblemError, ValidationFailed
 from radicle.core.permissions import ProjectAccess
 from radicle.db.models import (
     Captcha,
@@ -33,7 +30,11 @@ from radicle.db.models import (
     User,
     utcnow,
 )
-from radicle.services import altcha, attachments, images, tickets
+from radicle.platform import crypto
+from radicle.platform.config import get_settings
+from radicle.platform.errors import Conflict, NotFound, ProblemError, ValidationFailed
+from radicle.platform.services import images
+from radicle.services import altcha, attachments, tickets
 from radicle.services import ticket_fields as fields
 
 INBOX_USER_ID = uuid.UUID("00000000-0000-0000-0000-000000000003")

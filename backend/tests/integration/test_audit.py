@@ -7,7 +7,7 @@ from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.db.models import AuditEntry, utcnow
-from radicle.services import audit
+from radicle.platform.services import audit
 from tests.conftest import ADMIN_PASSWORD, Team, make_project, new_ticket, patch_ticket
 
 API = "/api/v1"

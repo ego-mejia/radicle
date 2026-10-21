@@ -5,8 +5,8 @@ from alembic import context
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from radicle.core.config import get_settings
 from radicle.db.models import Base
+from radicle.platform.config import get_settings
 
 config = context.config
 if config.config_file_name is not None and config.attributes.get("configure_logger", True):

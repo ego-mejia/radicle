@@ -7,7 +7,7 @@ from sqlalchemy import Boolean, DateTime, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from radicle.db.models.base import Base, utcnow
+from radicle.platform.db.models.base import Base, utcnow
 
 
 class AuthSource(enum.StrEnum):

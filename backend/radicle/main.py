@@ -37,14 +37,15 @@ from radicle.api import (
     users,
     work,
 )
-from radicle.core import mcp_catalog, mcp_tools
-from radicle.core.config import get_settings
-from radicle.core.crypto import require_key
-from radicle.core.errors import NotFound, install_error_handlers
-from radicle.db.session import dispose_engine
+from radicle.core import mcp_catalog
 from radicle.mcp import server as mcp_server
+from radicle.platform import mcp_tools
+from radicle.platform.config import get_settings
+from radicle.platform.crypto import require_key
+from radicle.platform.db.session import dispose_engine
+from radicle.platform.errors import NotFound, install_error_handlers
+from radicle.platform.services.audit import RequestInfoMiddleware
 from radicle.public.router import router as public_router
-from radicle.services.audit import RequestInfoMiddleware
 
 API_PREFIX = "/api/v1"
 
