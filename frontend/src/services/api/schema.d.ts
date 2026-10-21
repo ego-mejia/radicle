@@ -4,6 +4,47 @@
  */
 
 export interface paths {
+    "/api/v1/admin/ai": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Ai */
+        get: operations["get_ai_api_v1_admin_ai_get"];
+        /**
+         * Put Ai
+         * @description Only the fields sent change. Without a provider, the rest of Radicle still works.
+         */
+        put: operations["put_ai_api_v1_admin_ai_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/ai/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Test Ai
+         * @description Embed a short text with the configured model and report dimensions and latency.
+         */
+        post: operations["test_ai_api_v1_admin_ai_test_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/assistant": {
         parameters: {
             query?: never;
@@ -2503,6 +2544,73 @@ export interface components {
             /** Mcp Url */
             mcp_url: string;
             token: components["schemas"]["TokenCreated"];
+        };
+        /** AiSettingsIn */
+        AiSettingsIn: {
+            /**
+             * Api Key
+             * @description '' removes it; omit to keep it
+             */
+            api_key?: string | null;
+            /**
+             * Base Url
+             * @description Empty uses the provider's default
+             */
+            base_url?: string | null;
+            /** Chat Model */
+            chat_model?: string | null;
+            /**
+             * Embedding Dimensions
+             * @description null uses the model's
+             */
+            embedding_dimensions?: number | null;
+            /** Embedding Model */
+            embedding_model?: string | null;
+            /**
+             * Features
+             * @description Which AI features are on, by name
+             */
+            features?: {
+                [key: string]: boolean;
+            } | null;
+            /** Provider */
+            provider?: ("none" | "anthropic" | "openai" | "openai_compatible" | "ollama") | null;
+        };
+        /** AiSettingsOut */
+        AiSettingsOut: {
+            /** Base Url */
+            base_url: string;
+            /** Chat Model */
+            chat_model: string;
+            /** Embedding Dimensions */
+            embedding_dimensions: number | null;
+            /** Embedding Model */
+            embedding_model: string;
+            /** Features */
+            features: {
+                [key: string]: boolean;
+            };
+            /**
+             * Has Key
+             * @description The key itself is never returned
+             */
+            has_key: boolean;
+            /**
+             * Provider
+             * @enum {string}
+             */
+            provider: "none" | "anthropic" | "openai" | "openai_compatible" | "ollama";
+        };
+        /** AiTestOut */
+        AiTestOut: {
+            /** Dimensions */
+            dimensions: number | null;
+            /** Latency Ms */
+            latency_ms: number | null;
+            /** Message */
+            message: string;
+            /** Ok */
+            ok: boolean;
         };
         /** ApproveIn */
         ApproveIn: {
@@ -6205,6 +6313,79 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    get_ai_api_v1_admin_ai_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AiSettingsOut"];
+                };
+            };
+        };
+    };
+    put_ai_api_v1_admin_ai_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AiSettingsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AiSettingsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    test_ai_api_v1_admin_ai_test_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AiTestOut"];
+                };
+            };
+        };
+    };
     get_assistant_api_v1_admin_assistant_get: {
         parameters: {
             query?: never;

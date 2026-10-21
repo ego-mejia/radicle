@@ -61,6 +61,207 @@
         "title": "AgentCreated",
         "type": "object"
       },
+      "AiSettingsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "api_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "'' removes it; omit to keep it",
+            "title": "Api Key"
+          },
+          "base_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Empty uses the provider's default",
+            "title": "Base Url"
+          },
+          "chat_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chat Model"
+          },
+          "embedding_dimensions": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null uses the model's",
+            "title": "Embedding Dimensions"
+          },
+          "embedding_model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embedding Model"
+          },
+          "features": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "boolean"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Which AI features are on, by name",
+            "title": "Features"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "enum": [
+                  "none",
+                  "anthropic",
+                  "openai",
+                  "openai_compatible",
+                  "ollama"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          }
+        },
+        "title": "AiSettingsIn",
+        "type": "object"
+      },
+      "AiSettingsOut": {
+        "properties": {
+          "base_url": {
+            "title": "Base Url",
+            "type": "string"
+          },
+          "chat_model": {
+            "title": "Chat Model",
+            "type": "string"
+          },
+          "embedding_dimensions": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embedding Dimensions"
+          },
+          "embedding_model": {
+            "title": "Embedding Model",
+            "type": "string"
+          },
+          "features": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "title": "Features",
+            "type": "object"
+          },
+          "has_key": {
+            "description": "The key itself is never returned",
+            "title": "Has Key",
+            "type": "boolean"
+          },
+          "provider": {
+            "enum": [
+              "none",
+              "anthropic",
+              "openai",
+              "openai_compatible",
+              "ollama"
+            ],
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "chat_model",
+          "embedding_model",
+          "embedding_dimensions",
+          "base_url",
+          "has_key",
+          "features"
+        ],
+        "title": "AiSettingsOut",
+        "type": "object"
+      },
+      "AiTestOut": {
+        "properties": {
+          "dimensions": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dimensions"
+          },
+          "latency_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency Ms"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "ok": {
+            "title": "Ok",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ok",
+          "message",
+          "dimensions",
+          "latency_ms"
+        ],
+        "title": "AiTestOut",
+        "type": "object"
+      },
       "ApproveIn": {
         "additionalProperties": false,
         "properties": {
@@ -11105,6 +11306,89 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/admin/ai": {
+      "get": {
+        "operationId": "get_ai_api_v1_admin_ai_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Ai",
+        "tags": [
+          "ai"
+        ]
+      },
+      "put": {
+        "description": "Only the fields sent change. Without a provider, the rest of Radicle still works.",
+        "operationId": "put_ai_api_v1_admin_ai_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AiSettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Ai",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
+    "/api/v1/admin/ai/test": {
+      "post": {
+        "description": "Embed a short text with the configured model and report dimensions and latency.",
+        "operationId": "test_ai_api_v1_admin_ai_test_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiTestOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Test Ai",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
     "/api/v1/admin/assistant": {
       "get": {
         "operationId": "get_assistant_api_v1_admin_assistant_get",

@@ -42,6 +42,7 @@ from radicle.docket.core.authz import DocketAuthz
 from radicle.docket.mcp import server as mcp_server
 from radicle.docket.public.router import router as public_router
 from radicle.platform import authz, mcp_tools
+from radicle.platform.api import ai as ai_api
 from radicle.platform.config import get_settings
 from radicle.platform.crypto import require_key
 from radicle.platform.db.session import dispose_engine
@@ -107,6 +108,7 @@ def create_app() -> FastAPI:
         sso,
         assistant,
         audit,
+        ai_api,
     ):
         api.include_router(module.router)
     app.include_router(api)
