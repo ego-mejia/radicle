@@ -97,6 +97,8 @@ def _urls(s: dict) -> dict[str, list[str]]:
         "/api/v1/folio/databases/{node_id}": [f"{API}/databases/{p}"],
         "/api/v1/folio/databases/{node_id}/rows": [f"{API}/databases/{p}/rows"],
         "/api/v1/folio/whiteboards/{node_id}": [f"{API}/whiteboards/{p}"],
+        "/api/v1/folio/nodes/{node_id}/ticket-links": [f"{API}/nodes/{p}/ticket-links"],
+        "/api/v1/folio/links": [f"{API}/links?ticket=PA-1"],
         "/api/v1/folio/ai/availability": [f"{API}/ai/availability?space=docs"],
     }
 
@@ -117,6 +119,9 @@ EXEMPT = {
     "/api/v1/folio/admin/home/history",
     # Names and handles of people who read Folio, for @mentions; no page data.
     "/api/v1/folio/people",
+    # Docket tickets, read with Docket's access: test_restricted.py covers them.
+    "/api/v1/folio/tickets/preview",
+    "/api/v1/folio/tickets/query",
 }
 
 
