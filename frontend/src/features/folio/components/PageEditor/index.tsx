@@ -30,6 +30,7 @@ import { AiMenu } from '../AiMenu';
 import { EditorProse } from '../EditorProse';
 import { SelectionAi } from '../SelectionAi';
 import { SelectionComment } from '../SelectionComment';
+import { headingsOf, type DocNode } from '../DocContent/anchors';
 import { PageHeader } from './components/PageHeader';
 import { mediaBlocks } from './media';
 import * as S from './style';
@@ -140,6 +141,15 @@ function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
     room ? [] : undefined,
   );
   editorRef.current = editor;
+  // A ticket from a selection links to its section, by the anchors the reader will give it.
+  const ticketNode = useMemo(
+    () => ({
+      id: node.id,
+      anchors: () =>
+        headingsOf(editorRef.current?.getJSON() as DocNode | undefined).map((h) => h.anchor),
+    }),
+    [node.id],
+  );
 
   const changeCover = async (assetId: string | null) => {
     try {
@@ -249,16 +259,19 @@ function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
             </div>
           </EditorProse>
           {editor && <SelectionAi editor={editor} nodeId={node.id} space={node.space} />}
-          {node.version != null && (
-            <SelectionComment
-              container={bodyEl}
-              mentions={discussion.mentions}
-              onComment={async (anchor, text) => {
-                await Promise.all([body.flush(), header.flush()]);
-                await discussion.add.mutateAsync({ body: text, anchor });
-              }}
-            />
-          )}
+          <SelectionComment
+            container={bodyEl}
+            mentions={discussion.mentions}
+            onComment={
+              node.version != null
+                ? async (anchor, text) => {
+                    await Promise.all([body.flush(), header.flush()]);
+                    await discussion.add.mutateAsync({ body: text, anchor });
+                  }
+                : undefined
+            }
+            ticketNode={ticketNode}
+          />
         </S.Page>
       </S.Scroll>
     </S.Screen>

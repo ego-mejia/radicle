@@ -6,7 +6,12 @@ export const Float = styled.div`
   z-index: 50; /* above the full-screen editor (40) */
 `;
 
-export const Trigger = styled.button`
+export const Triggers = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.space.xs};
+`;
+
+export const Trigger = styled.button<{ $secondary?: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: ${({ theme }) => theme.space.xs};
@@ -14,8 +19,10 @@ export const Trigger = styled.button`
   padding: ${({ theme }) => `0 ${theme.space.md}`};
   border: 0;
   border-radius: ${({ theme }) => theme.radius.full};
-  background: ${({ theme }) => theme.color.accentFill};
-  color: ${({ theme }) => theme.color.onAccent};
+  background: ${({ theme, $secondary }) =>
+    $secondary ? theme.color.surface : theme.color.accentFill};
+  color: ${({ theme, $secondary }) => ($secondary ? theme.color.text : theme.color.onAccent)};
+  outline: ${({ theme, $secondary }) => ($secondary ? `1px solid ${theme.color.border}` : 'none')};
   font: inherit;
   font-size: ${({ theme }) => theme.fontSize.md};
   font-weight: 600;

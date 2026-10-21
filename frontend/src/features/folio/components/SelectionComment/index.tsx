@@ -1,38 +1,45 @@
-import { MessageSquarePlus } from 'lucide-react';
+import { MessageSquarePlus, SquareCheckBig } from 'lucide-react';
 import { type RefObject, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MarkdownEditor, type MentionOption } from '../../../../components/Markdown/MarkdownEditor';
 import { Button } from '../../../../components/ui/Button';
 import type { FolioAnchor } from '../../../../services/api/folioComments';
-import { anchorFromSelection } from '../../hooks/textAnchor';
+import { anchorFromSelection, sectionOf } from '../../hooks/textAnchor';
+import { CreateTicketDialog } from '../CreateTicketDialog';
 import * as S from './style';
 
 type Props = {
   container: RefObject<HTMLElement | null>;
   mentions: MentionOption[];
-  onComment: (anchor: FolioAnchor, body: string) => Promise<unknown>;
+  /** Without it (no comment permission) only "Create ticket" shows. */
+  onComment?: (anchor: FolioAnchor, body: string) => Promise<unknown>;
+  /** The page, to create Docket tickets from the selection (Folio 4.2). */
+  ticketNode?: { id: string; anchors?: () => string[] };
 };
 
-type Picked = { anchor: FolioAnchor; top: number; left: number };
+type Picked = { anchor: FolioAnchor; section: string | null; top: number; left: number };
 
-/** Select text in the page and a "Comment" button appears next to it; it opens a small
- * box that posts an inline comment anchored to that text. */
-export function SelectionComment({ container, mentions, onComment }: Props) {
+/** Select text in the page and "Comment" and "Create ticket" appear next to it: one posts
+ * an inline comment anchored to that text, the other makes a Docket ticket linked to its
+ * section. */
+export function SelectionComment({ container, mentions, onComment, ticketNode }: Props) {
   const { t } = useTranslation();
   const [picked, setPicked] = useState<Picked | null>(null);
   const [writing, setWriting] = useState(false);
   const [body, setBody] = useState('');
+  const [ticket, setTicket] = useState<Picked | null>(null);
 
   useEffect(() => {
     const root = container.current;
     if (!root) return;
     const pick = () => {
-      if (writing) return;
+      if (writing || ticket) return;
       const selection = window.getSelection();
       const anchor = anchorFromSelection(root, selection);
       if (!anchor || !selection) return setPicked(null);
       const rect = selection.getRangeAt(0).getBoundingClientRect();
-      setPicked({ anchor, top: rect.bottom + 6, left: rect.left });
+      const section = sectionOf(root, selection, ticketNode?.anchors?.());
+      setPicked({ anchor, section, top: rect.bottom + 6, left: rect.left });
     };
     root.addEventListener('mouseup', pick);
     root.addEventListener('keyup', pick);
@@ -40,16 +47,26 @@ export function SelectionComment({ container, mentions, onComment }: Props) {
       root.removeEventListener('mouseup', pick);
       root.removeEventListener('keyup', pick);
     };
-  }, [container, writing]);
+  }, [container, writing, ticket, ticketNode]);
 
-  if (!picked) return null;
+  if (ticket && ticketNode) {
+    return (
+      <CreateTicketDialog
+        nodeId={ticketNode.id}
+        text={ticket.anchor.quote}
+        anchor={ticket.section}
+        onClose={() => setTicket(null)}
+      />
+    );
+  }
+  if (!picked || (!onComment && !ticketNode)) return null;
   const close = () => {
     setPicked(null);
     setWriting(false);
     setBody('');
   };
   const send = async () => {
-    if (!body.trim()) return;
+    if (!body.trim() || !onComment) return;
     await onComment(picked.anchor, body);
     close();
   };
@@ -78,15 +95,33 @@ export function SelectionComment({ container, mentions, onComment }: Props) {
           </S.Row>
         </S.Box>
       ) : (
-        <S.Trigger
-          type="button"
-          aria-label={t('folio.comments.commentOn')}
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => setWriting(true)}
-        >
-          <MessageSquarePlus aria-hidden />
-          {t('folio.comments.comment')}
-        </S.Trigger>
+        <S.Triggers>
+          {onComment ? (
+            <S.Trigger
+              type="button"
+              aria-label={t('folio.comments.commentOn')}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setWriting(true)}
+            >
+              <MessageSquarePlus aria-hidden />
+              {t('folio.comments.comment')}
+            </S.Trigger>
+          ) : null}
+          {ticketNode ? (
+            <S.Trigger
+              type="button"
+              $secondary
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => {
+                setTicket(picked);
+                setPicked(null);
+              }}
+            >
+              <SquareCheckBig aria-hidden />
+              {t('folio.tickets.create')}
+            </S.Trigger>
+          ) : null}
+        </S.Triggers>
       )}
     </S.Float>
   );
