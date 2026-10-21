@@ -108,6 +108,7 @@ def _urls(s: dict) -> dict[str, list[str]]:
         "/api/v1/folio/analytics/pages/{node_id}": [f"{API}/analytics/pages/{p}"],
         "/api/v1/folio/analytics/site": [f"{API}/analytics/site"],
         "/api/v1/folio/calendars": [f"{API}/calendars?space=docs"],
+        "/api/v1/folio/exports": [f"{API}/exports"],
         "/api/v1/folio/public-links": [
             f"{API}/public-links?node={p}",
             f"{API}/public-links?space=docs",
@@ -151,6 +152,10 @@ EXEMPT = {
     # uploaded export's titles, not Folio pages. test_folio_imports_api.py checks it.
     "/api/v1/folio/imports",
     "/api/v1/folio/imports/{import_id}",
+    # Only an export's author sees it; test_folio_exports.py checks an export leaves out
+    # the pages its author can't see, and test_folio_exports_api.py someone else's export.
+    "/api/v1/folio/exports/{export_id}",
+    "/api/v1/folio/exports/{export_id}/download",
 }
 
 

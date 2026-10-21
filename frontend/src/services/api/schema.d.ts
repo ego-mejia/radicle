@@ -1513,6 +1513,71 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Exports
+         * @description Your latest exports, newest first.
+         */
+        get: operations["list_exports_api_v1_folio_exports_get"];
+        put?: never;
+        /**
+         * Create Export
+         * @description Queue an export of a page or a space; poll it until it is done, then download it.
+         *     Needs the space's export permission.
+         */
+        post: operations["create_export_api_v1_folio_exports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/exports/{export_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Export
+         * @description Its progress. Only its author sees it.
+         */
+        get: operations["get_export_api_v1_folio_exports__export_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/exports/{export_id}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Download Export
+         * @description The file, once the export is done.
+         */
+        get: operations["download_export_api_v1_folio_exports__export_id__download_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/favorites/{target_type}/{target_id}": {
         parameters: {
             query?: never;
@@ -7330,6 +7395,72 @@ export interface components {
             new_value: unknown;
             /** Old Value */
             old_value: unknown;
+        };
+        /** ExportIn */
+        ExportIn: {
+            /**
+             * Format
+             * @enum {string}
+             */
+            format: "pdf" | "docx" | "html" | "markdown";
+            /**
+             * Node
+             * @description A published page or post
+             */
+            node?: string | null;
+            /**
+             * Space
+             * @description Space key, for the whole space
+             */
+            space?: string | null;
+        };
+        /** ExportOut */
+        ExportOut: {
+            /** Created At */
+            created_at: string;
+            /**
+             * Download Url
+             * @description Once it is done
+             */
+            download_url: string | null;
+            /** Filename */
+            filename: string | null;
+            /** Finished At */
+            finished_at: string | null;
+            /**
+             * Format
+             * @enum {string}
+             */
+            format: "pdf" | "docx" | "html" | "markdown";
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Node Id */
+            node_id: string | null;
+            /**
+             * Scope
+             * @enum {string}
+             */
+            scope: "node" | "space";
+            /**
+             * Stats
+             * @description pages and bytes when done; error when it failed
+             */
+            stats: {
+                [key: string]: unknown;
+            };
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "done" | "failed";
+        };
+        /** ExportsOut */
+        ExportsOut: {
+            /** Items */
+            items: components["schemas"]["ExportOut"][];
         };
         /** FavoritesOut */
         FavoritesOut: {
@@ -15931,6 +16062,119 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["DbRowsAdded"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_exports_api_v1_folio_exports_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExportsOut"];
+                };
+            };
+        };
+    };
+    create_export_api_v1_folio_exports_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExportIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_export_api_v1_folio_exports__export_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                export_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_export_api_v1_folio_exports__export_id__download_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                export_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

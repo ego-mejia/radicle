@@ -334,10 +334,18 @@ EXEMPT = {
     "/api/v1/folio/calendars",
     "/api/v1/folio/calendars/{calendar_id}",
     "/api/v1/folio/calendars/{calendar_id}/events",
+    # Folio pages hold no Docket tickets beyond a key (ticket chips aren't resolved there).
     "/api/v1/folio/public-links",
+    # Without an account, by token: no Docket data at all; test_folio_public_links_api.py
+    # checks a restricted Folio page never shows in a link.
     "/api/v1/folio/pub/{token}",
     "/api/v1/folio/pub/{token}/pages/{node_id}",
     "/api/v1/folio/pub/{token}/assets/{asset_id}",
+    # Only an export's author sees it; it holds Folio pages, never Docket tickets:
+    # test_folio_exports_api.py.
+    "/api/v1/folio/exports",
+    "/api/v1/folio/exports/{export_id}",
+    "/api/v1/folio/exports/{export_id}/download",
     "/api/v1/mcp/tools",
     "/api/v1/projects/{key}/member-candidates",
     "/api/v1/openapi.json",

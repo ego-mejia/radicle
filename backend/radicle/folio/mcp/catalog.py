@@ -23,6 +23,7 @@ READ = (
     "get_page_analytics",
     "get_search_gaps",
     "list_calendar_events",
+    "export_page",
 )
 
 WRITE = (
