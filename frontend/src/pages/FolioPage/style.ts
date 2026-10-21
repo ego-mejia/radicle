@@ -57,6 +57,17 @@ export const AdminLink = styled.a`
   }
 `;
 
+export const Count = styled.span`
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: ${({ theme }) => theme.radius.full};
+  background: ${({ theme }) => theme.color.accentFill};
+  color: ${({ theme }) => theme.color.onAccent};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 600;
+  text-align: center;
+`;
+
 export const Profile = styled.button`
   display: inline-flex;
   padding: 0;

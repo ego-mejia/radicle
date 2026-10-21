@@ -1,8 +1,6 @@
-import { useTranslation } from 'react-i18next';
-import { PageTitle } from '../../../../components/ui/PageTitle';
+import { ApprovalQueue } from '../../components/ApprovalQueue';
 
-/** The approval queue: what agents sent to publish. */
+/** /folio/approvals: what agents sent to publish. */
 export function FolioApprovalsView() {
-  const { t } = useTranslation();
-  return <PageTitle title={t('folio.approvals.title')} />;
+  return <ApprovalQueue />;
 }
