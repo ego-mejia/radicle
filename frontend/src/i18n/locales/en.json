@@ -2612,6 +2612,29 @@
       "empty": "Nothing has been published here yet.",
       "notFound": "This link doesn't work",
       "notFoundText": "It may have been revoked. Ask whoever shared it for a new one."
+    },
+    "calendar": {
+      "today": "Today",
+      "previous": {
+        "month": "Previous month",
+        "week": "Previous week"
+      },
+      "next": {
+        "month": "Next month",
+        "week": "Next week"
+      },
+      "show": {
+        "month": "Month",
+        "week": "Week"
+      },
+      "category": {
+        "release": "Release",
+        "event": "Event",
+        "vacation": "Vacation",
+        "oncall": "On call",
+        "other": "Other"
+      },
+      "milestone": "Docket milestone"
     }
   },
   "notifications": {
