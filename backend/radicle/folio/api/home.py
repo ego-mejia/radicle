@@ -30,6 +30,7 @@ class CardOut(Output):
     author_name: str | None
     published_at: UtcDatetime | None
     reading_minutes: int
+    status: Literal["draft", "published", "in_review", "verified", "outdated"]
 
 
 class SpaceCountOut(Output):
@@ -47,7 +48,7 @@ class HomeOut(Output):
     ai_tools: list[CardOut] = Field(description="Latest docs of the ai-tools space")
     latest_posts: list[CardOut]
     spaces: list[SpaceCountOut]
-    most_read: list[CardOut] = Field(description="For now, the most recently published")
+    most_read: list[CardOut] = Field(description="By reads in the last 7 days")
 
 
 def _card(c: home_service.Card) -> CardOut:

@@ -27,6 +27,7 @@ class HitOut(Output):
     doc_type: str | None
     score: float
     matched_by: list[str] = Field(description="text, semantic or both")
+    status: Literal["draft", "published", "in_review", "verified", "outdated"]
 
 
 class SearchOut(Output):
@@ -85,6 +86,7 @@ async def search(
                 doc_type=h.doc_type,
                 score=h.score,
                 matched_by=h.matched_by,
+                status=h.status,
             )
             for h in hits
         ],

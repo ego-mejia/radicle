@@ -53,6 +53,7 @@ class NodeRef(Output):
     title: str
     slug: str
     icon: str | None
+    status: Literal["draft", "published", "in_review", "verified", "outdated"]
 
 
 class TreeItem(NodeRef):
@@ -70,7 +71,6 @@ class NodeOut(NodeRef):
     version: int | None = Field(description="Published version; null until first published")
     metadata: dict[str, Any] | None = Field(description="Of the published version")
     content_json: dict[str, Any] | None = Field(description="Published content (TipTap)")
-    status: Literal["draft", "published", "in_review", "verified", "outdated"]
     verified_until: date | None
     archived_at: UtcDatetime | None
     can_edit: bool = Field(description="You may edit its draft (space and page restrictions)")
@@ -113,7 +113,9 @@ async def _space(db: Db, user: User, s: FolioSpace) -> SpaceOut:
 
 
 def _ref(n: FolioNode) -> NodeRef:
-    return NodeRef(id=n.id, kind=n.kind.value, title=n.title, slug=n.slug, icon=n.icon)
+    return NodeRef(
+        id=n.id, kind=n.kind.value, title=n.title, slug=n.slug, icon=n.icon, status=n.status.value
+    )
 
 
 def _tree(level: list[nodes.TreeNode]) -> list[TreeItem]:
@@ -135,7 +137,6 @@ async def _node(db: Db, user: User, node: FolioNode) -> NodeOut:
         version=current.number if current else None,
         metadata=current.metadata_ if current else None,
         content_json=current.content_json if current else None,
-        status=node.status.value,
         verified_until=node.verified_until,
         archived_at=node.archived_at,
         can_edit=await access.may_edit(db, user, node),

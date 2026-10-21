@@ -3681,6 +3681,11 @@ export interface components {
             kind: "page" | "folder" | "blog_post";
             /** Slug */
             slug: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "published" | "in_review" | "verified" | "outdated";
             /** Title */
             title: string;
         };
@@ -4268,6 +4273,11 @@ export interface components {
             space: string;
             /** Space Name */
             space_name: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "published" | "in_review" | "verified" | "outdated";
             /** Title */
             title: string;
         };
@@ -5315,6 +5325,11 @@ export interface components {
             snippet: string;
             /** Space */
             space: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "published" | "in_review" | "verified" | "outdated";
             /** Title */
             title: string;
             /**
@@ -5342,7 +5357,7 @@ export interface components {
             latest_posts: components["schemas"]["CardOut"][];
             /**
              * Most Read
-             * @description For now, the most recently published
+             * @description By reads in the last 7 days
              */
             most_read: components["schemas"]["CardOut"][];
             /** Spaces */
@@ -5969,6 +5984,11 @@ export interface components {
             kind: "page" | "folder" | "blog_post";
             /** Slug */
             slug: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "published" | "in_review" | "verified" | "outdated";
             /** Title */
             title: string;
         };
@@ -8170,6 +8190,11 @@ export interface components {
             kind: "page" | "folder" | "blog_post";
             /** Slug */
             slug: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "published" | "in_review" | "verified" | "outdated";
             /** Title */
             title: string;
         };
