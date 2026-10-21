@@ -147,3 +147,17 @@ async def test_readers_cannot_and_agents_send_for_approval(
     await db.flush()
     r = await client.post(f"{API}/nodes/{page['id']}/publish", headers=team.agent.headers, json={})
     assert r.status_code == 202 and r.json()["status"] == "pending"  # sent for approval
+
+
+async def test_the_first_publish_sets_the_status(
+    client: AsyncClient, db: AsyncSession, team: Team, page: dict
+) -> None:
+    node = await db.get(FolioNode, uuid.UUID(page["id"]))
+    assert node is not None and node.status == "draft"
+    await _draft(client, team, page, content_md="Hola", metadata=METADATA)
+    r = await client.post(
+        f"{API}/nodes/{page['id']}/publish", headers=team.instance.headers, json={}
+    )
+    assert r.status_code == 201, r.text
+    await db.refresh(node)
+    assert node.status == "published"
