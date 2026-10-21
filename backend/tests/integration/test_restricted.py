@@ -312,6 +312,10 @@ EXEMPT = {
     "/api/v1/folio/whiteboards/{node_id}",
     "/api/v1/folio/analytics/pages/{node_id}",
     "/api/v1/folio/analytics/site",
+    # Milestones only (no tickets), with Docket's project access: test_folio_calendars.py.
+    "/api/v1/folio/calendars",
+    "/api/v1/folio/calendars/{calendar_id}",
+    "/api/v1/folio/calendars/{calendar_id}/events",
     "/api/v1/folio/public-links",
     "/api/v1/folio/pub/{token}",
     "/api/v1/folio/pub/{token}/pages/{node_id}",

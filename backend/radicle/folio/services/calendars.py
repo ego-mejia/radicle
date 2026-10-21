@@ -140,6 +140,7 @@ async def delete_calendar(db: AsyncSession, user: User, calendar: FolioCalendar)
 
 @dataclass(frozen=True)
 class Milestone:
+    id: uuid.UUID
     project: str
     name: str
     status: str
@@ -186,7 +187,7 @@ async def _agenda(
                 db, key, user, start=start.date(), end=(end - timedelta(microseconds=1)).date()
             )
             milestones += [
-                Milestone(m.project, m.name, m.status, m.target_date)
+                Milestone(m.id, m.project, m.name, m.status, m.target_date)
                 for m in found
                 if m.target_date is not None
             ]
