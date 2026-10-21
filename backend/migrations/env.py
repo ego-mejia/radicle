@@ -6,6 +6,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 # Importing the modules registers their tables on the shared metadata.
+import radicle.folio.db.chat
 import radicle.folio.db.collab
 import radicle.folio.db.databases
 import radicle.folio.db.docket_links
