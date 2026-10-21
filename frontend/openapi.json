@@ -3126,6 +3126,394 @@
         "title": "DashboardPatch",
         "type": "object"
       },
+      "DatabaseColumn": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Leave out for a new column",
+            "title": "Key"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": true,
+            "description": "Selects: {\"choices\": [{\"value\", \"color\"}]}",
+            "title": "Options",
+            "type": "object"
+          },
+          "type": {
+            "enum": [
+              "text",
+              "number",
+              "date",
+              "select",
+              "multi_select",
+              "person",
+              "checkbox",
+              "url",
+              "page"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "title": "DatabaseColumn",
+        "type": "object"
+      },
+      "DatabaseFilter": {
+        "additionalProperties": false,
+        "properties": {
+          "column": {
+            "title": "Column",
+            "type": "string"
+          },
+          "op": {
+            "enum": [
+              "eq",
+              "neq",
+              "contains",
+              "gt",
+              "gte",
+              "lt",
+              "lte",
+              "empty",
+              "not_empty"
+            ],
+            "title": "Op",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "required": [
+          "column",
+          "op"
+        ],
+        "title": "DatabaseFilter",
+        "type": "object"
+      },
+      "DatabaseOut": {
+        "properties": {
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "cleared": {
+            "default": 0,
+            "description": "Values a column's new type could not keep",
+            "title": "Cleared",
+            "type": "integer"
+          },
+          "columns": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "node_id": {
+            "format": "uuid",
+            "title": "Node Id",
+            "type": "string"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "views": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Views",
+            "type": "array"
+          }
+        },
+        "required": [
+          "node_id",
+          "title",
+          "space",
+          "can_edit",
+          "columns",
+          "views",
+          "cleared"
+        ],
+        "title": "DatabaseOut",
+        "type": "object"
+      },
+      "DatabasePatch": {
+        "additionalProperties": false,
+        "properties": {
+          "columns": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DatabaseColumn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Columns"
+          },
+          "views": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DatabaseView"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Views"
+          }
+        },
+        "title": "DatabasePatch",
+        "type": "object"
+      },
+      "DatabaseSort": {
+        "additionalProperties": false,
+        "properties": {
+          "column": {
+            "title": "Column",
+            "type": "string"
+          },
+          "direction": {
+            "default": "asc",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "title": "Direction",
+            "type": "string"
+          }
+        },
+        "required": [
+          "column"
+        ],
+        "title": "DatabaseSort",
+        "type": "object"
+      },
+      "DatabaseView": {
+        "additionalProperties": false,
+        "properties": {
+          "filters": {
+            "items": {
+              "$ref": "#/components/schemas/DatabaseFilter"
+            },
+            "title": "Filters",
+            "type": "array"
+          },
+          "group_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Boards: a select column's key",
+            "title": "Group By"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Leave out for a new view",
+            "title": "Id"
+          },
+          "kind": {
+            "default": "table",
+            "enum": [
+              "table",
+              "cards",
+              "board"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "sort": {
+            "items": {
+              "$ref": "#/components/schemas/DatabaseSort"
+            },
+            "title": "Sort",
+            "type": "array"
+          },
+          "visible_columns": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visible Columns"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "DatabaseView",
+        "type": "object"
+      },
+      "DbRowIn": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Place it after this row",
+            "title": "After"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "By column key",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "title": "DbRowIn",
+        "type": "object"
+      },
+      "DbRowOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "values",
+          "updated_at"
+        ],
+        "title": "DbRowOut",
+        "type": "object"
+      },
+      "DbRowPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After"
+          },
+          "to_top": {
+            "default": false,
+            "title": "To Top",
+            "type": "boolean"
+          },
+          "values": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only these; null clears",
+            "title": "Values"
+          }
+        },
+        "title": "DbRowPatch",
+        "type": "object"
+      },
+      "DbRowsOut": {
+        "properties": {
+          "columns": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DbRowOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "view": {
+            "additionalProperties": true,
+            "title": "View",
+            "type": "object"
+          }
+        },
+        "required": [
+          "view",
+          "columns",
+          "items"
+        ],
+        "title": "DbRowsOut",
+        "type": "object"
+      },
       "DecisionIn": {
         "additionalProperties": false,
         "properties": {
@@ -19206,6 +19594,219 @@
         ]
       }
     },
+    "/api/v1/folio/databases/{node_id}": {
+      "get": {
+        "description": "Its columns and views, and whether you may change them.",
+        "operationId": "get_database_api_v1_folio_databases__node_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Database",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "patch": {
+        "description": "Replace the columns and/or the views. A column's new type keeps what fits; `cleared`\nsays how many values it couldn't.",
+        "operationId": "patch_database_api_v1_folio_databases__node_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DatabasePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Database",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/databases/{node_id}/rows": {
+      "get": {
+        "description": "The rows the view shows, its filters and sort applied.",
+        "operationId": "list_rows_api_v1_folio_databases__node_id__rows_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "A view's id; default the first",
+            "in": "query",
+            "name": "view",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A view's id; default the first",
+              "title": "View"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DbRowsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Rows",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "operationId": "add_row_api_v1_folio_databases__node_id__rows_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DbRowIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DbRowOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Row",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/favorites/{target_type}/{target_id}": {
       "delete": {
         "operationId": "unfavorite_api_v1_folio_favorites__target_type___target_id__delete",
@@ -21450,6 +22051,96 @@
           }
         },
         "summary": "React",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/rows/{row_id}": {
+      "delete": {
+        "operationId": "delete_row_api_v1_folio_rows__row_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Row",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "patch": {
+        "description": "Change some values, or move it after another row (or to the top).",
+        "operationId": "patch_row_api_v1_folio_rows__row_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Row Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DbRowPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DbRowOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Row",
         "tags": [
           "folio",
           "folio"

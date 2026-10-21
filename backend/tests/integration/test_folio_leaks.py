@@ -92,6 +92,10 @@ def _urls(s: dict) -> dict[str, list[str]]:
             f"{API}/search?q=legal&space=docs",
         ],
         "/api/v1/folio/submissions/{submission_id}": [f"{API}/submissions/{p}"],
+        # A hidden node is a 404 before its kind is looked at; test_folio_databases_api.py
+        # checks a restricted database.
+        "/api/v1/folio/databases/{node_id}": [f"{API}/databases/{p}"],
+        "/api/v1/folio/databases/{node_id}/rows": [f"{API}/databases/{p}/rows"],
     }
 
 
