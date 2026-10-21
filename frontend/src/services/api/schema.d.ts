@@ -951,6 +951,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/copy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Copy Node
+         * @description A new, unpublished node whose draft holds the published content and metadata; with
+         *     `include_children` the visible subtree comes along.
+         */
+        post: operations["copy_node_api_v1_folio_nodes__node_id__copy_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}/diff": {
         parameters: {
             query?: never;
@@ -1003,7 +1024,9 @@ export interface paths {
         put?: never;
         /**
          * Move Node
-         * @description Move within its space; `before` and `after` place it among its new siblings.
+         * @description Move within its space (`before` and `after` place it among its new siblings), or to
+         *     another `space`, which takes delete here and create there; id, URL, history and
+         *     restrictions stay.
          */
         post: operations["move_node_api_v1_folio_nodes__node_id__move_post"];
         delete?: never;
@@ -4193,6 +4216,24 @@ export interface components {
             reactions: components["schemas"]["ReactionOut"][];
             /** Ticket */
             ticket: string;
+        };
+        /** CopyIn */
+        CopyIn: {
+            /**
+             * Include Children
+             * @default false
+             */
+            include_children?: boolean;
+            /**
+             * Parent
+             * @description Where to put the copy
+             */
+            parent?: string | null;
+            /**
+             * Space
+             * @description Target space; default the same
+             */
+            space?: string | null;
         };
         /** CustomFieldCreate */
         CustomFieldCreate: {
@@ -8121,6 +8162,11 @@ export interface components {
              * @description null moves it to the root
              */
             parent?: string | null;
+            /**
+             * Space
+             * @description Another space's key to move it there
+             */
+            space?: string | null;
         };
     };
     responses: never;
@@ -10224,6 +10270,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AssetOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    copy_node_api_v1_folio_nodes__node_id__copy_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CopyIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NodeOut"];
                 };
             };
             /** @description Validation Error */

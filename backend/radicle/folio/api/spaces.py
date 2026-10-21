@@ -8,7 +8,7 @@ from fastapi import APIRouter, Query, Response
 from pydantic import Field
 
 from radicle.folio.db.models import FolioNode, FolioSpace, NodeKind, SpacePermission
-from radicle.folio.services import access, nodes, publishing, spaces
+from radicle.folio.services import access, copying, nodes, publishing, spaces
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Input, Output, Page, UtcDatetime
@@ -85,6 +85,7 @@ class NodePatch(Input):
 
 
 class MoveIn(Input):
+    space: str | None = Field(default=None, description="Another space's key to move it there")
     parent: uuid.UUID | None = Field(default=None, description="null moves it to the root")
     before: uuid.UUID | None = Field(default=None, description="Sibling to place it before")
     after: uuid.UUID | None = Field(default=None, description="Sibling to place it after")
@@ -265,9 +266,18 @@ async def patch_node(
 async def move_node(
     node_id: uuid.UUID, body: MoveIn, principal: CurrentPrincipal, db: Db
 ) -> NodeOut:
-    """Move within its space; `before` and `after` place it among its new siblings."""
+    """Move within its space (`before` and `after` place it among its new siblings), or to
+    another `space`, which takes delete here and create there; id, URL, history and
+    restrictions stay."""
     await _reader(db, principal)
     node = await nodes.get_node(db, principal.user, node_id)
+    if body.space is not None:
+        target = await spaces.get_space(db, principal.user, body.space)
+        if target.id != node.space_id:
+            moved = await copying.move_to_space(
+                db, principal.user, node, target, parent_id=body.parent
+            )
+            return await _node(db, moved)
     moved = await nodes.move_node(
         db, principal.user, node, parent_id=body.parent, before_id=body.before, after_id=body.after
     )
