@@ -1657,7 +1657,43 @@
       "title": "Publicar"
     },
     "history": {
-      "title": "Historial"
+      "title": "Historial",
+      "back": "Volver a la página",
+      "none": "Todavía no hay nada publicado: el historial empieza con la primera versión.",
+      "versions": "Versiones",
+      "live": "Publicada",
+      "by": "{{author}} · {{date}}",
+      "approvedBy": "aprobada por {{who}}",
+      "restoredFrom": "restaura la v{{number}}",
+      "compareFrom": "Desde",
+      "compareTo": "Hasta",
+      "comparing": "v{{from}} → v{{to}}",
+      "pickTwo": "Elige dos versiones distintas para compararlas.",
+      "restore": "Restaurar v{{number}}",
+      "restoreTitle": "¿Restaurar la versión {{number}}?",
+      "restoreText": "La versión {{number}} se publica otra vez como una versión nueva. No se borra nada: la actual sigue en el historial.",
+      "restoreConfirm": "Restaurar",
+      "restored": "Publicada otra vez como v{{number}}",
+      "metadata": "Metadata",
+      "field": "Campo",
+      "before": "Antes",
+      "after": "Después",
+      "sameMetadata": "El título y la metadata no cambiaron.",
+      "content": "Contenido",
+      "sameContent": "El contenido no cambió.",
+      "ops": {
+        "added": "Agregado",
+        "removed": "Quitado"
+      },
+      "fields": {
+        "title": "Título",
+        "description": "Descripción",
+        "doc_type": "Tipo de documento",
+        "labels": "Labels",
+        "owner": "Dueño",
+        "audiences": "Audiencias",
+        "language": "Idioma"
+      }
     },
     "searchPage": {
       "title": "Búsqueda"

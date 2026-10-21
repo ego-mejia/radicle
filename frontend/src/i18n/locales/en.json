@@ -1657,7 +1657,43 @@
       "title": "Publish"
     },
     "history": {
-      "title": "History"
+      "title": "History",
+      "back": "Back to the page",
+      "none": "Nothing published yet: the history starts with the first version.",
+      "versions": "Versions",
+      "live": "Published",
+      "by": "{{author}} · {{date}}",
+      "approvedBy": "approved by {{who}}",
+      "restoredFrom": "restores v{{number}}",
+      "compareFrom": "From",
+      "compareTo": "To",
+      "comparing": "v{{from}} → v{{to}}",
+      "pickTwo": "Pick two different versions to compare.",
+      "restore": "Restore v{{number}}",
+      "restoreTitle": "Restore version {{number}}?",
+      "restoreText": "Version {{number}} is published again as a new version. Nothing is deleted: the current one stays in the history.",
+      "restoreConfirm": "Restore it",
+      "restored": "Published again as v{{number}}",
+      "metadata": "Metadata",
+      "field": "Field",
+      "before": "Before",
+      "after": "After",
+      "sameMetadata": "The title and metadata did not change.",
+      "content": "Content",
+      "sameContent": "The content did not change.",
+      "ops": {
+        "added": "Added",
+        "removed": "Removed"
+      },
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "doc_type": "Document type",
+        "labels": "Labels",
+        "owner": "Owner",
+        "audiences": "Audiences",
+        "language": "Language"
+      }
     },
     "searchPage": {
       "title": "Search"
