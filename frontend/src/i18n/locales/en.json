@@ -2250,7 +2250,28 @@
         "board": "Board"
       },
       "groupBy": "Group by",
-      "shownColumns": "Columns shown"
+      "shownColumns": "Columns shown",
+      "filters": "Filters",
+      "addFilter": "Add filter",
+      "sort": "Sort",
+      "addSort": "Add sort",
+      "column": "Column",
+      "operator": "Operator",
+      "value": "Value",
+      "direction": "Direction",
+      "asc": "Ascending",
+      "desc": "Descending",
+      "op": {
+        "eq": "is",
+        "neq": "is not",
+        "contains": "contains",
+        "gt": "greater than",
+        "gte": "at least",
+        "lt": "less than",
+        "lte": "at most",
+        "empty": "is empty",
+        "not_empty": "is not empty"
+      }
     }
   },
   "notifications": {

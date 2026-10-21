@@ -2250,7 +2250,28 @@
         "board": "Tablero"
       },
       "groupBy": "Agrupar por",
-      "shownColumns": "Columnas visibles"
+      "shownColumns": "Columnas visibles",
+      "filters": "Filtros",
+      "addFilter": "Agregar filtro",
+      "sort": "Orden",
+      "addSort": "Agregar orden",
+      "column": "Columna",
+      "operator": "Operador",
+      "value": "Valor",
+      "direction": "Dirección",
+      "asc": "Ascendente",
+      "desc": "Descendente",
+      "op": {
+        "eq": "es",
+        "neq": "no es",
+        "contains": "contiene",
+        "gt": "mayor que",
+        "gte": "al menos",
+        "lt": "menor que",
+        "lte": "como mucho",
+        "empty": "está vacío",
+        "not_empty": "no está vacío"
+      }
     }
   },
   "notifications": {
