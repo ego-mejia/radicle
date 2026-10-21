@@ -15,6 +15,13 @@ from radicle.platform.api.schemas import Output, Page
 router = APIRouter(tags=["folio"])
 
 Followable = Literal["node", "space"]
+Reactable = Literal["node", "comment"]
+
+
+class ReactionOut(Output):
+    emoji: str
+    count: int
+    mine: bool
 
 
 class FavoritesOut(Output):
@@ -75,6 +82,48 @@ async def unfavorite(
     await _reader(db, principal)
     await social.unfavorite(db, principal.user, TargetType(target_type), target_id)
     return Response(status_code=204)
+
+
+@router.get("/reactions/{target_type}/{target_id}", response_model=list[ReactionOut])
+async def list_reactions(
+    target_type: Reactable, target_id: uuid.UUID, principal: CurrentPrincipal, db: Db
+) -> list[ReactionOut]:
+    await _reader(db, principal)
+    kind = TargetType(target_type)
+    await social.target(db, principal.user, kind, target_id)
+    found = await social.reactions(db, principal.user, kind, target_id)
+    return [ReactionOut(emoji=r.emoji, count=r.count, mine=r.mine) for r in found]
+
+
+@router.put("/reactions/{target_type}/{target_id}/{emoji}", response_model=list[ReactionOut])
+async def react(
+    target_type: Reactable,
+    target_id: uuid.UUID,
+    emoji: str,
+    principal: CurrentPrincipal,
+    db: Db,
+) -> list[ReactionOut]:
+    """React with one of 👍 ❤️ 🎉 👀 🚀 ✅; returns the counts."""
+    await _reader(db, principal)
+    kind = TargetType(target_type)
+    await social.react(db, principal.user, kind, target_id, emoji)
+    found = await social.reactions(db, principal.user, kind, target_id)
+    return [ReactionOut(emoji=r.emoji, count=r.count, mine=r.mine) for r in found]
+
+
+@router.delete("/reactions/{target_type}/{target_id}/{emoji}", response_model=list[ReactionOut])
+async def unreact(
+    target_type: Reactable,
+    target_id: uuid.UUID,
+    emoji: str,
+    principal: CurrentPrincipal,
+    db: Db,
+) -> list[ReactionOut]:
+    await _reader(db, principal)
+    kind = TargetType(target_type)
+    await social.unreact(db, principal.user, kind, target_id, emoji)
+    found = await social.reactions(db, principal.user, kind, target_id)
+    return [ReactionOut(emoji=r.emoji, count=r.count, mine=r.mine) for r in found]
 
 
 @router.get("/me/recents", response_model=Page[NodeRef])

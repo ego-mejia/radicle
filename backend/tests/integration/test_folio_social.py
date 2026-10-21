@@ -43,6 +43,20 @@ async def test_watch_and_auto_watch(client: AsyncClient, team: Team, pages: dict
     assert (await client.get(url, headers=m)).json() == {"watching": False}
 
 
+async def test_reactions(client: AsyncClient, team: Team, pages: dict) -> None:
+    i, m = team.instance.headers, team.member.headers
+    base = f"{API}/reactions/node/{pages['Guía']}"
+    await client.put(f"{base}/👍", headers=i)
+    got = (await client.put(f"{base}/👍", headers=m)).json()
+    assert got == [{"emoji": "👍", "count": 2, "mine": True}]
+    got = (await client.put(f"{base}/🎉", headers=m)).json()
+    assert [r["emoji"] for r in got] == ["👍", "🎉"]
+    got = (await client.delete(f"{base}/👍", headers=m)).json()
+    assert got[0] == {"emoji": "👍", "count": 1, "mine": False}
+    r = await client.put(f"{base}/💩", headers=m)
+    assert r.status_code == 422 and "👍" in r.json()["detail"]
+
+
 async def test_favorites_and_recents(
     client: AsyncClient, db: AsyncSession, team: Team, pages: dict
 ) -> None:
@@ -71,6 +85,7 @@ async def test_errors(client: AsyncClient, team: Team, pages: dict) -> None:
     for url in (
         f"{API}/watch/node/{pages['Secreta']}",
         f"{API}/favorites/node/{pages['Secreta']}",
+        f"{API}/reactions/node/{pages['Secreta']}/👍",
     ):
         assert (await client.put(url, headers=m)).status_code == 404, url
     r = await client.put(f"{API}/watch/comment/{pages['Guía']}", headers=m)

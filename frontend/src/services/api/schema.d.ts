@@ -1253,6 +1253,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/reactions/{target_type}/{target_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Reactions */
+        get: operations["list_reactions_api_v1_folio_reactions__target_type___target_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/reactions/{target_type}/{target_id}/{emoji}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * React
+         * @description React with one of 👍 ❤️ 🎉 👀 🚀 ✅; returns the counts.
+         */
+        put: operations["react_api_v1_folio_reactions__target_type___target_id___emoji__put"];
+        post?: never;
+        /** Unreact */
+        delete: operations["unreact_api_v1_folio_reactions__target_type___target_id___emoji__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/search": {
         parameters: {
             query?: never;
@@ -4333,7 +4371,7 @@ export interface components {
             /** Id */
             id: string;
             /** Reactions */
-            reactions: components["schemas"]["ReactionOut"][];
+            reactions: components["schemas"]["radicle__docket__api__schemas__tickets__ReactionOut"][];
             /** Ticket */
             ticket: string;
         };
@@ -6338,15 +6376,6 @@ export interface components {
              */
             before?: string | null;
         };
-        /** ReactionOut */
-        ReactionOut: {
-            /** Count */
-            count: number;
-            /** Emoji */
-            emoji: string;
-            /** Users */
-            users: string[];
-        };
         /** ReadIn */
         ReadIn: {
             /**
@@ -8293,6 +8322,24 @@ export interface components {
             };
             /** Target Project */
             target_project: string;
+        };
+        /** ReactionOut */
+        radicle__docket__api__schemas__tickets__ReactionOut: {
+            /** Count */
+            count: number;
+            /** Emoji */
+            emoji: string;
+            /** Users */
+            users: string[];
+        };
+        /** ReactionOut */
+        radicle__folio__api__social__ReactionOut: {
+            /** Count */
+            count: number;
+            /** Emoji */
+            emoji: string;
+            /** Mine */
+            mine: boolean;
         };
         /** MoveIn */
         radicle__folio__api__spaces__MoveIn: {
@@ -10999,6 +11046,104 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["VersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_reactions_api_v1_folio_reactions__target_type___target_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_type: "node" | "comment";
+                target_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["radicle__folio__api__social__ReactionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    react_api_v1_folio_reactions__target_type___target_id___emoji__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_type: "node" | "comment";
+                target_id: string;
+                emoji: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["radicle__folio__api__social__ReactionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unreact_api_v1_folio_reactions__target_type___target_id___emoji__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                target_type: "node" | "comment";
+                target_id: string;
+                emoji: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["radicle__folio__api__social__ReactionOut"][];
                 };
             };
             /** @description Validation Error */

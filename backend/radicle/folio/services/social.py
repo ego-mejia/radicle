@@ -5,6 +5,7 @@ you can see the target, and lists only show what you can still see.
 """
 
 import uuid
+from dataclasses import dataclass
 from datetime import timedelta
 
 from sqlalchemy import delete, func, select
@@ -14,6 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from radicle.folio.db.collab import (
     FolioComment,
     FolioFavorite,
+    FolioReaction,
     FolioView,
     FolioWatch,
     TargetType,
@@ -24,6 +26,7 @@ from radicle.folio.services import access
 from radicle.platform.db.models import User, UserKind, utcnow
 from radicle.platform.errors import NotFound, ValidationFailed
 
+REACTIONS = ("👍", "❤️", "🎉", "👀", "🚀", "✅")
 VIEW_DEDUP = timedelta(minutes=30)
 
 
@@ -123,6 +126,67 @@ async def unfavorite(db: AsyncSession, user: User, kind: TargetType, target_id: 
             FolioFavorite.target_id == target_id,
         )
     )
+
+
+def _emoji(emoji: str) -> str:
+    if emoji not in REACTIONS:
+        raise ValidationFailed(
+            f"Pick one of {' '.join(REACTIONS)}.",
+            errors=[{"field": "emoji", "message": "not a reaction"}],
+        )
+    return emoji
+
+
+async def react(
+    db: AsyncSession, user: User, kind: TargetType, target_id: uuid.UUID, emoji: str
+) -> None:
+    if kind == TargetType.space:
+        raise ValidationFailed(
+            "React to a page or a comment.",
+            errors=[{"field": "target_type", "message": "node or comment"}],
+        )
+    await target(db, user, kind, target_id)
+    await db.execute(
+        insert(FolioReaction)
+        .values(target_type=kind, target_id=target_id, user_id=user.id, emoji=_emoji(emoji))
+        .on_conflict_do_nothing()
+    )
+
+
+async def unreact(
+    db: AsyncSession, user: User, kind: TargetType, target_id: uuid.UUID, emoji: str
+) -> None:
+    await db.execute(
+        delete(FolioReaction).where(
+            FolioReaction.target_type == kind,
+            FolioReaction.target_id == target_id,
+            FolioReaction.user_id == user.id,
+            FolioReaction.emoji == emoji,
+        )
+    )
+
+
+@dataclass(frozen=True)
+class Reaction:
+    emoji: str
+    count: int
+    mine: bool
+
+
+async def reactions(
+    db: AsyncSession, user: User, kind: TargetType, target_id: uuid.UUID
+) -> list[Reaction]:
+    rows = await db.execute(
+        select(
+            FolioReaction.emoji,
+            func.count(),
+            func.bool_or(FolioReaction.user_id == user.id),
+        )
+        .where(FolioReaction.target_type == kind, FolioReaction.target_id == target_id)
+        .group_by(FolioReaction.emoji)
+    )
+    found = {e: Reaction(e, int(n), bool(m)) for e, n, m in rows.all()}
+    return [found[e] for e in REACTIONS if e in found]
 
 
 async def record_view(db: AsyncSession, user: User, node: FolioNode) -> None:
