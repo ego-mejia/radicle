@@ -13,7 +13,7 @@
 <p align="center">
   <a href="LICENSE"><img alt="License: AGPL v3" src="https://img.shields.io/badge/license-AGPLv3-4D7C0F?style=flat-square"></a>
   <a href="CONTRIBUTING.md"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-C6F432?style=flat-square&labelColor=1A2E05"></a>
-  <img alt="MCP tools" src="https://img.shields.io/badge/MCP-48%20tools-C6F432?style=flat-square&labelColor=1A2E05">
+  <img alt="MCP tools" src="https://img.shields.io/badge/MCP-52%20tools-C6F432?style=flat-square&labelColor=1A2E05">
   <a href="README.es.md"><img alt="Leer en español" src="https://img.shields.io/badge/lee%20en-espa%C3%B1ol-F1F2F4?style=flat-square"></a>
 </p>
 
@@ -358,7 +358,7 @@ claude mcp add --transport http radicle http://localhost:8000/mcp \
 Clients that only speak stdio can use [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) as a bridge: `npx -y mcp-remote http://localhost:8000/mcp --header "Authorization: Bearer rdc_xxxxxxxx"`.
 
 <details>
-<summary><b>All 48 tools</b></summary>
+<summary><b>All 52 tools</b></summary>
 
 | Group | Tools |
 | --- | --- |
@@ -367,7 +367,7 @@ Clients that only speak stdio can use [`mcp-remote`](https://www.npmjs.com/packa
 | Tickets | `get_ticket`, `create_ticket`, `update_ticket`, `get_transitions`, `transition_ticket`, `change_ticket_type`, `set_checklist_item`, `clone_ticket`, `move_ticket`, `bulk_update`, `rank_ticket`, `get_history` |
 | Collaboration | `add_comment`, `list_comments`, `link_tickets`, `unlink_tickets`, `add_collaborator`, `remove_collaborator` |
 | Files and time | `upload_attachment`, `list_attachments`, `read_attachment`, `log_work`, `list_worklogs` |
-| Planning | `list_boards`, `get_board`, `list_sprints`, `get_sprint`, `add_to_sprint`, `remove_from_sprint`, `start_sprint`, `complete_sprint`, `get_milestone_progress`, `get_report` |
+| Planning | `create_area`, `update_area`, `create_milestone`, `update_milestone`, `list_boards`, `get_board`, `list_sprints`, `get_sprint`, `add_to_sprint`, `remove_from_sprint`, `start_sprint`, `complete_sprint`, `get_milestone_progress`, `get_report` |
 | Inbox | `list_inbox`, `score_inbox_item`, `approve_inbox_item`, `discard_inbox_item`, `mark_inbox_duplicate` |
 
 Resources: `radicle://guide/rql` and `radicle://projects/{key}/schema`. Agents follow the same permission matrix and security levels as people, and can be limited to some of these tools. `GET /api/v1/mcp/tools` lists them with their group and whether they only read.

@@ -30,6 +30,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 - Áreas con icono: se elige de un set de iconos SVG y se pinta con el color del área; se ve en tarjetas, carriles y timeline.
 - Tarjetas del board con área, milestone y número de subtickets (campos de tarjeta `area`, `milestone` y `children`, prendidos en todos los boards); el área y el milestone se cambian desde la tarjeta.
 - Crear ticket: pegar o soltar imágenes y archivos en la descripción; se suben al crear el ticket.
+- MCP: tools `create_area`, `update_area`, `create_milestone` y `update_milestone` para que un agente cree, edite, archive y cierre áreas y milestones (solo admins del proyecto).
 - Agentes: crear un agente (LLM o worker) desde Users y elegir con checks qué tools del MCP puede usar; el servidor MCP esconde y rechaza las demás. `GET /api/v1/mcp/tools` describe el catálogo.
 - Radi, el asistente: bolita verde que sigue el cursor, chat con la guía de uso o con un LLM (Anthropic, OpenAI o compatible) configurable en la app o por `RADICLE_ASSISTANT_*`, y recorridos en pantalla que abren páginas, iluminan campos y los explican.
 - Celebración de milestone: al cerrar el último ticket salen confeti, Radi y las métricas, con imagen para compartir en LinkedIn; endpoint `GET /projects/{key}/milestones/{name}/recap`.
