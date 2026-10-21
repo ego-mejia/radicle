@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import radicle.docket.public as docket
 from radicle.folio.db.docket_links import FolioTicketLink, TicketLinkKind
-from radicle.folio.db.models import FolioNode, FolioSpace
+from radicle.folio.db.models import FolioDraft, FolioNode, FolioSpace, FolioVersion
 from radicle.folio.services import access
 from radicle.platform.config import get_settings
 from radicle.platform.db.models import User
@@ -191,6 +191,18 @@ def _title(data: FromText) -> str:
     return title if len(title) <= TITLE_MAX else title[: TITLE_MAX - 1].rstrip() + "…"
 
 
+async def doc_language(db: AsyncSession, node: FolioNode) -> str | None:
+    """The doc's language (published version, else draft), so the tickets Folio writes
+    read in it."""
+    if node.published_version_id is not None:
+        version = await db.get(FolioVersion, node.published_version_id)
+        if version is not None and version.metadata_.get("language"):
+            return str(version.metadata_["language"]).lower()
+    draft = await db.get(FolioDraft, node.id)
+    language = draft.metadata_.get("language") if draft is not None else None
+    return str(language).lower() if language else None
+
+
 async def create_from_text(db: AsyncSession, user: User, node: FolioNode, data: FromText) -> Link:
     """A ticket made from a selection or an action item, linked to that section. Whoever
     can read the doc may do it if Docket lets them create tickets in the project."""
@@ -202,12 +214,13 @@ async def create_from_text(db: AsyncSession, user: User, node: FolioNode, data: 
     anchor = _check_anchor(data.anchor)
     url = get_settings().base_url.rstrip("/") + page_path(node, anchor)
     quote = "\n".join(f"> {line}" for line in data.text.strip().splitlines())
+    source = "Del documento" if (await doc_language(db, node) or "").startswith("es") else "From"
     ticket = await docket.create_ticket(
         db,
         docket.NewTicket(
             project=data.project,
             title=_title(data),
-            description_md=f"{quote}\n\nFrom [{node.title}]({url}).",
+            description_md=f"{quote}\n\n{source} [{node.title}]({url}).",
             type=data.type,
             area=data.area,
             milestone=data.milestone,
