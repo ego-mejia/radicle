@@ -94,7 +94,7 @@ test('a Review column with In Review and QA Verified turns red past WIP 3', asyn
   await page.getByRole('button', { name: 'Only bugs' }).click();
   await expect(review).not.toContainText('Revisar 0');
   await page.getByLabel('Swimlanes').selectOption('area');
-  await expect(page.getByRole('button', { name: /Backend/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Backend \d+ tickets?$/ })).toBeVisible();
 });
 
 test('run a whole sprint: plan, start, add mid-way and close to #backlog', async () => {
