@@ -28,6 +28,7 @@ import { TemplateEditorView } from './features/templates/views/TemplateEditorVie
 import { TicketPageView } from './features/tickets/views/TicketPageView';
 import { FolioAdminView } from './features/folio/views/FolioAdminView';
 import { FolioApprovalsView } from './features/folio/views/FolioApprovalsView';
+import { FolioTemplateView } from './features/folio/views/FolioTemplateView';
 import { FolioEditView } from './features/folio/views/FolioEditView';
 import { FolioHistoryView } from './features/folio/views/FolioHistoryView';
 import { FolioReadView } from './features/folio/views/FolioReadView';
@@ -142,6 +143,12 @@ const folioAdminRoute = createRoute({
   getParentRoute: () => folioLayout,
   path: '/folio/admin',
   component: FolioAdminView,
+});
+
+const folioTemplateRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/admin/templates/$id',
+  component: FolioTemplateView,
 });
 
 const folioSpaceRoute = createRoute({
@@ -410,6 +417,7 @@ const routeTree = rootRoute.addChildren([
   folioLayout.addChildren([
     folioHomeRoute,
     folioAdminRoute,
+    folioTemplateRoute,
     folioSpaceRoute,
     folioReadRoute,
     folioEditRoute,

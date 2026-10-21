@@ -1951,7 +1951,43 @@
       "choose": "Empezar desde",
       "blank": "Página en blanco",
       "blankHint": "Empieza con una página vacía.",
-      "preview": "Vista previa de {{name}}"
+      "preview": "Vista previa de {{name}}",
+      "untitled": "Template sin nombre",
+      "builtin": "Incluido",
+      "none": "Todavía no hay templates.",
+      "edit": "Editar {{name}}",
+      "archive": "Archivar {{name}}",
+      "archived": "Template archivado",
+      "archiveTitle": "¿Archivar {{name}}?",
+      "archiveText": "Ya nadie podrá empezar desde él. Las páginas que se crearon con él conservan su contenido.",
+      "archiveConfirm": "Archivar",
+      "kinds": {
+        "page": "Templates de página",
+        "space": "Templates de space"
+      },
+      "help": {
+        "page": "Un documento con secciones y metadata default. Usa {{date}}, {{author}}, {{space}} y {{title}} en su texto.",
+        "space": "Los folders y páginas de un space (cada una de un template de página o en blanco) y sus permisos, creados de una vez."
+      },
+      "new": {
+        "page": "Nuevo template de página",
+        "space": "Nuevo template de space"
+      },
+      "missing": "Este template no está disponible",
+      "back": "Templates",
+      "icon": "Ícono",
+      "name": "Nombre",
+      "description": "Descripción",
+      "docType": "Tipo de documento",
+      "noDocType": "Ninguno",
+      "labels": "Labels default",
+      "content": "Contenido del template",
+      "variables": "Variables: {{date}}, {{author}}, {{space}}, {{title}}. Se llenan cuando alguien crea una página.",
+      "structure": "Estructura",
+      "structureHint": "JSON: {\"pages\": [{\"title\", \"kind\": \"page\" | \"folder\", \"template\": el id de un template de página o build-spec, \"children\": [...]}], \"grants\": [...]}",
+      "badJson": "Eso no es JSON válido.",
+      "save": "Guardar",
+      "saved": "Template guardado"
     },
     "social": {
       "label": "Reacciones y seguir",

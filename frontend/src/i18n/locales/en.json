@@ -1951,7 +1951,43 @@
       "choose": "Start from",
       "blank": "Blank page",
       "blankHint": "Start with an empty page.",
-      "preview": "Preview of {{name}}"
+      "preview": "Preview of {{name}}",
+      "untitled": "Untitled template",
+      "builtin": "Included",
+      "none": "No templates yet.",
+      "edit": "Edit {{name}}",
+      "archive": "Archive {{name}}",
+      "archived": "Template archived",
+      "archiveTitle": "Archive {{name}}?",
+      "archiveText": "Nobody can start from it anymore. Pages made from it keep their content.",
+      "archiveConfirm": "Archive",
+      "kinds": {
+        "page": "Page templates",
+        "space": "Space templates"
+      },
+      "help": {
+        "page": "A document with sections and default metadata. Use {{date}}, {{author}}, {{space}} and {{title}} in its text.",
+        "space": "A space's folders and pages (each from a page template or blank) and its permissions, created in one go."
+      },
+      "new": {
+        "page": "New page template",
+        "space": "New space template"
+      },
+      "missing": "This template is not available",
+      "back": "Templates",
+      "icon": "Icon",
+      "name": "Name",
+      "description": "Description",
+      "docType": "Document type",
+      "noDocType": "None",
+      "labels": "Default labels",
+      "content": "Template content",
+      "variables": "Variables: {{date}}, {{author}}, {{space}}, {{title}}. They are filled in when someone creates a page.",
+      "structure": "Structure",
+      "structureHint": "JSON: {\"pages\": [{\"title\", \"kind\": \"page\" | \"folder\", \"template\": a page template's id or build-spec, \"children\": [...]}], \"grants\": [...]}",
+      "badJson": "That is not valid JSON.",
+      "save": "Save",
+      "saved": "Template saved"
     },
     "social": {
       "label": "Reactions and follow",
