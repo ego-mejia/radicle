@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Outlet, useNavigate } from '@tanstack/react-router';
-import { Inbox, LogOut, Shield, UserRound } from 'lucide-react';
+import { Inbox, ListChecks, LogOut, Shield, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SuiteSwitch } from '../../components/layout/SuiteSwitch';
 import { Avatar } from '../../components/ui/Avatar';
@@ -11,6 +11,7 @@ import { useMe } from '../../hooks/useMe';
 import { useSuiteShortcuts } from '../../hooks/useSuiteShortcuts';
 import { logout } from '../../services/api/auth';
 import { fetchFolioMe, fetchSubmissions, folioKeys } from '../../services/api/folio';
+import { fetchMyTasks, taskKeys } from '../../services/api/folioWork';
 import * as S from './style';
 
 /** Folio's shell (Folio 0.5): the suite switch, search (from phase 1) and your avatar. */
@@ -20,6 +21,14 @@ export function FolioPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: folio } = useQuery({ queryKey: folioKeys.me, queryFn: fetchFolioMe });
+  const { data: tasks } = useQuery({
+    queryKey: taskKeys.list('open'),
+    queryFn: () => fetchMyTasks('open'),
+    refetchInterval: 60_000,
+  });
+  const dueSoon = (tasks ?? []).filter(
+    (t) => t.bucket === 'overdue' || t.bucket === 'today',
+  ).length;
   const { data: pending } = useQuery({
     queryKey: folioKeys.submissions('pending'),
     queryFn: () => fetchSubmissions('pending'),
@@ -61,6 +70,13 @@ export function FolioPage() {
                 {t('folio.admin.link')}
               </S.AdminLink>
             )}
+            <S.AdminLink as={Link} to="/folio/tasks">
+              <ListChecks aria-hidden />
+              {t('folio.tasks.link')}
+              {!!dueSoon && (
+                <S.Count title={t('folio.tasks.dueCount', { count: dueSoon })}>{dueSoon}</S.Count>
+              )}
+            </S.AdminLink>
             <NotificationBell />
             <Menu
               align="end"

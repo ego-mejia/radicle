@@ -28,6 +28,7 @@ import { TemplateEditorView } from './features/templates/views/TemplateEditorVie
 import { TicketPageView } from './features/tickets/views/TicketPageView';
 import { FolioAdminView } from './features/folio/views/FolioAdminView';
 import { FolioApprovalsView } from './features/folio/views/FolioApprovalsView';
+import { FolioTasksView } from './features/folio/views/FolioTasksView';
 import { FolioTemplateView } from './features/folio/views/FolioTemplateView';
 import { FolioEditView } from './features/folio/views/FolioEditView';
 import { FolioHistoryView } from './features/folio/views/FolioHistoryView';
@@ -200,6 +201,12 @@ const folioApprovalsRoute = createRoute({
   getParentRoute: () => folioLayout,
   path: '/folio/approvals',
   component: FolioApprovalsView,
+});
+
+const folioTasksRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/tasks',
+  component: FolioTasksView,
 });
 
 const boardSearch = (search: Record<string, unknown>): BoardSearch => ({
@@ -424,6 +431,7 @@ const routeTree = rootRoute.addChildren([
     folioHistoryRoute,
     folioSearchRoute,
     folioApprovalsRoute,
+    folioTasksRoute,
   ]),
 ]);
 
