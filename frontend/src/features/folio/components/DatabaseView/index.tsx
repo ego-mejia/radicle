@@ -21,6 +21,7 @@ import { ViewSettings } from '../ViewSettings';
 import { BoardView } from './components/BoardView';
 import { CardsView } from './components/CardsView';
 import { TableView } from './components/TableView';
+import { viewName } from './labels';
 import { shown } from './shown';
 import * as S from './style';
 
@@ -65,6 +66,7 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
   if (!database.data) return <PageSpinner />;
   const views = database.data.views;
   const active = rows.data?.view.id ?? current ?? views[0]?.id ?? '';
+  const activeView = views.find((v) => v.id === active);
   // Rows are edited on the database's page; inside another page they're only read.
   const canEdit = database.data.can_edit && !embedded;
 
@@ -73,12 +75,12 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
       {embedded ? (
         <S.Caption>
           {database.data.title}
-          {views.length > 1 && <span> · {views.find((v) => v.id === active)?.name}</span>}
+          {views.length > 1 && activeView && <span> · {viewName(activeView, t)}</span>}
         </S.Caption>
       ) : (
         <Tabs
           label={t('folio.db.views')}
-          tabs={views.map((v) => ({ id: v.id, label: v.name }))}
+          tabs={views.map((v) => ({ id: v.id, label: viewName(v, t) }))}
           value={active}
           onChange={setCurrent}
         />
@@ -89,11 +91,7 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
             <Plus aria-hidden />
             {t('folio.db.addRow')}
           </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setSettings(views.find((v) => v.id === active) ?? null)}
-          >
+          <Button size="sm" variant="ghost" onClick={() => setSettings(activeView ?? null)}>
             <SlidersHorizontal aria-hidden />
             {t('folio.db.editView')}
           </Button>

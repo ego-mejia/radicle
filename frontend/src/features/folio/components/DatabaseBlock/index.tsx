@@ -8,6 +8,7 @@ import { folioKeys, queryDocs } from '../../../../services/api/folio';
 import { dbKeys, fetchDatabase } from '../../../../services/api/folioDatabases';
 import { DatabaseView } from '../DatabaseView';
 import * as S from './style';
+import { viewName } from '../DatabaseView/labels';
 
 const DATABASES = 'kind = database ORDER BY title ASC';
 
@@ -55,7 +56,7 @@ export function DatabaseBlock({ node, updateAttributes, selected }: NodeViewProp
               <option value="">{t('folio.db.block.firstView')}</option>
               {chosen.data.views.map((v) => (
                 <option key={v.id} value={v.id}>
-                  {v.name}
+                  {viewName(v, t)}
                 </option>
               ))}
             </Select>
