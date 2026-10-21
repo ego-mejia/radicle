@@ -2751,7 +2751,26 @@
       },
       "checkAgain": "Check again",
       "run_one": "Import {{count}} page",
-      "run_other": "Import {{count}} pages"
+      "run_other": "Import {{count}} pages",
+      "running": "Importing…",
+      "runningHelp": "This runs in the background; you can leave and come back.",
+      "failed": "The import stopped",
+      "done": "Imported",
+      "doneHelp": "Importing the same export again updates these pages instead of duplicating them.",
+      "outcome": {
+        "created": "created",
+        "updated": "updated",
+        "published": "published",
+        "drafts": "drafts",
+        "failed": "failed"
+      },
+      "results": {
+        "created": "Created",
+        "updated": "Updated",
+        "failed": "Failed"
+      },
+      "published": "published",
+      "missing": "draft: missing {{fields}}"
     }
   },
   "notifications": {
