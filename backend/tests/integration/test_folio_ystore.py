@@ -80,3 +80,26 @@ async def test_the_draft_follows_the_ydoc(db: AsyncSession, node: FolioNode) -> 
     assert not await ystore.save_json(db, node, doc)
     await db.refresh(draft)
     assert draft.content_json["content"] == [p(t("Acuerdos"))]
+
+
+async def test_a_block_being_set_up_doesnt_hold_back_the_rest(
+    db: AsyncSession, node: FolioNode
+) -> None:
+    doc = await ystore.load(db, node)
+    # Inserted from "/" but no whiteboard picked yet; the writer keeps typing below it.
+    ydoc.fragment(doc).children.append(pycrdt.XmlElement("whiteboard", {}))
+    ydoc.append(ydoc.fragment(doc), [p(t("Sigue el texto"))])
+    assert await ystore.save_json(db, node, doc)
+    draft = await db.get(FolioDraft, node.id)
+    assert draft is not None and draft.content_json["content"] == [p(t("Sigue el texto"))]
+    # Once it names its whiteboard, it is kept.
+    board = str(uuid.uuid4())
+    for child in ydoc.fragment(doc).children:
+        if isinstance(child, pycrdt.XmlElement) and child.tag == "whiteboard":
+            child.attributes["whiteboard"] = board
+    assert await ystore.save_json(db, node, doc)
+    await db.refresh(draft)
+    assert draft.content_json["content"][0] == {
+        "type": "whiteboard",
+        "attrs": {"whiteboard": board},
+    }

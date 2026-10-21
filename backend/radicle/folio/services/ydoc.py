@@ -131,6 +131,10 @@ def _clean(node: dict[str, Any]) -> dict[str, Any] | None:
         return out
     attrs = {k: v for k, v in (node.get("attrs") or {}).items() if k in spec.attrs}
     attrs = {k: v for k, v in attrs.items() if v is not None}
+    # A block still being set up (a whiteboard or database not picked yet) stays in the
+    # room but out of the draft, as the editor does; otherwise nothing else would save.
+    if not schema.attrs_valid(node["type"], attrs):
+        return None
     if attrs:
         out["attrs"] = attrs
     children = [c for c in (_clean(c) for c in node.get("content") or []) if c is not None]
@@ -141,7 +145,7 @@ def _clean(node: dict[str, Any]) -> dict[str, Any] | None:
 
 def clean(doc: dict[str, Any]) -> dict[str, Any]:
     """Drop what the browser editor may add but Folio does not keep: unknown node types,
-    marks and attributes, and empty values."""
+    marks and attributes, empty values, and blocks whose attributes aren't complete yet."""
     blocks = [c for c in (_clean(c) for c in doc.get("content") or []) if c is not None]
     return {"type": "doc", "content": blocks}
 
