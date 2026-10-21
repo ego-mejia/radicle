@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { FilePlus, FolderPlus, PenLine, Radio, Shapes, Table2 } from 'lucide-react';
+import { CalendarDays, FilePlus, FolderPlus, PenLine, Radio, Shapes, Table2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
@@ -88,6 +88,12 @@ export function SpacePage({ spaceKey }: { spaceKey: string }) {
       <S.Body>
         <S.Side>
           <MyShortcuts />
+          <S.SideLink>
+            <Link to="/folio/s/$key/calendar" params={{ key: spaceKey }}>
+              <CalendarDays aria-hidden />
+              {t('folio.calendar.title')}
+            </Link>
+          </S.SideLink>
           <S.SideTitle>{t('folio.space.pages')}</S.SideTitle>
           {tree.data ? (
             <SpaceTree space={spaceKey} items={tree.data} canMove={canCreate} />

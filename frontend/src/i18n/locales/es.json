@@ -2694,7 +2694,11 @@
         "rotate": "Link nuevo",
         "copy": "Suscribirse",
         "copied": "Link del feed copiado. Pégalo en Google Calendar u Outlook."
-      }
+      },
+      "title": "Calendario",
+      "empty": "Todavía no hay calendarios",
+      "emptyAdmin": "Crea el primero con Nuevo calendario: vacaciones, releases, guardias.",
+      "emptyReader": "Un admin del space puede crear calendarios aquí."
     },
     "imports": {
       "title": "Importar",

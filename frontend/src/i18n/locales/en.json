@@ -2694,7 +2694,11 @@
         "rotate": "New link",
         "copy": "Subscribe",
         "copied": "Feed link copied. Paste it in Google Calendar or Outlook."
-      }
+      },
+      "title": "Calendar",
+      "empty": "No calendars yet",
+      "emptyAdmin": "Create the first one with New calendar: vacations, releases, on-call.",
+      "emptyReader": "A space admin can create calendars here."
     },
     "imports": {
       "title": "Import",

@@ -169,3 +169,25 @@ export const Posts = styled.ul`
     color: ${({ theme }) => theme.color.accent};
   }
 `;
+
+export const SideLink = styled.div`
+  margin-bottom: ${({ theme }) => theme.space.md};
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: ${({ theme }) => theme.space.sm};
+    color: ${({ theme }) => theme.color.text};
+    font-size: ${({ theme }) => theme.fontSize.md};
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: ${({ theme }) => theme.color.accent};
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
