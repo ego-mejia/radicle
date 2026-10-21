@@ -53,6 +53,7 @@ async def test_publishing_indexes_sections_with_metadata(
     assert meta["space"] == "docs" and meta["doc_type"] == "how-to" and meta["version"] == 1
     assert meta["labels"] == ["mcp", "agentes"] and meta["restricted"] is False
     assert meta["url"].endswith("#crea-el-agente") and meta["author"] == "fernando"
+    assert meta["section"] == "Conecta un agente > Crea el agente"
     assert "| handle | bot |" in rows[2].text
     assert all(c.embedding is None for c in rows)  # no provider configured
 

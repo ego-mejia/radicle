@@ -373,6 +373,8 @@ class FolioSubmission(Base):
 CHUNK_SEARCH_SQL = (
     "setweight(to_tsvector('english'::regconfig, coalesce(metadata->>'title', '')), 'A') || "
     "setweight(to_tsvector('spanish'::regconfig, coalesce(metadata->>'title', '')), 'A') || "
+    "setweight(to_tsvector('english'::regconfig, coalesce(metadata->>'section', '')), 'A') || "
+    "setweight(to_tsvector('spanish'::regconfig, coalesce(metadata->>'section', '')), 'A') || "
     "setweight(to_tsvector('english'::regconfig, coalesce(metadata->>'description', '')), 'B') || "
     "setweight(to_tsvector('spanish'::regconfig, coalesce(metadata->>'description', '')), 'B') || "
     "setweight(to_tsvector('english'::regconfig, coalesce(text, '')), 'C') || "
