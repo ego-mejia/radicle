@@ -1928,6 +1928,141 @@
         "title": "Card",
         "type": "object"
       },
+      "CardOut": {
+        "properties": {
+          "author": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Handle of who published it",
+            "title": "Author"
+          },
+          "author_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Name"
+          },
+          "cover_asset_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Asset Id"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "doc_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doc Type"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "page",
+              "blog_post"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "labels": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "array"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "reading_minutes": {
+            "title": "Reading Minutes",
+            "type": "integer"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          },
+          "space_name": {
+            "title": "Space Name",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "slug",
+          "icon",
+          "cover_asset_id",
+          "space",
+          "space_name",
+          "description",
+          "doc_type",
+          "labels",
+          "author",
+          "author_name",
+          "published_at",
+          "reading_minutes"
+        ],
+        "title": "CardOut",
+        "type": "object"
+      },
       "CategoryCounts": {
         "properties": {
           "done": {
@@ -4303,6 +4438,77 @@
           "matched_by"
         ],
         "title": "HitOut",
+        "type": "object"
+      },
+      "HomeOut": {
+        "properties": {
+          "ai_tools": {
+            "description": "Latest docs of the ai-tools space",
+            "items": {
+              "$ref": "#/components/schemas/CardOut"
+            },
+            "title": "Ai Tools",
+            "type": "array"
+          },
+          "announcement": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CardOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Latest post labelled anuncio"
+          },
+          "can_write": {
+            "description": "Creators and admins see the Write button",
+            "title": "Can Write",
+            "type": "boolean"
+          },
+          "featured": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CardOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "latest_posts": {
+            "items": {
+              "$ref": "#/components/schemas/CardOut"
+            },
+            "title": "Latest Posts",
+            "type": "array"
+          },
+          "most_read": {
+            "description": "For now, the most recently published",
+            "items": {
+              "$ref": "#/components/schemas/CardOut"
+            },
+            "title": "Most Read",
+            "type": "array"
+          },
+          "spaces": {
+            "items": {
+              "$ref": "#/components/schemas/SpaceCountOut"
+            },
+            "title": "Spaces",
+            "type": "array"
+          }
+        },
+        "required": [
+          "can_write",
+          "featured",
+          "announcement",
+          "ai_tools",
+          "latest_posts",
+          "spaces",
+          "most_read"
+        ],
+        "title": "HomeOut",
         "type": "object"
       },
       "InboxOut": {
@@ -8568,6 +8774,51 @@
           "needs_setup"
         ],
         "title": "SetupStatus",
+        "type": "object"
+      },
+      "SpaceCountOut": {
+        "properties": {
+          "docs": {
+            "description": "Published pages and posts you can see",
+            "title": "Docs",
+            "type": "integer"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "team",
+              "personal"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "kind",
+          "icon",
+          "docs"
+        ],
+        "title": "SpaceCountOut",
         "type": "object"
       },
       "SpaceIn": {
@@ -16228,6 +16479,29 @@
         },
         "summary": "Health",
         "tags": [
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/home": {
+      "get": {
+        "description": "The default bento with every block already resolved for you.",
+        "operationId": "get_home_api_v1_folio_home_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Home",
+        "tags": [
+          "folio",
           "folio"
         ]
       }
