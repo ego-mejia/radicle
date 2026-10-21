@@ -37,6 +37,7 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.platform.services.chat_commands",
     "radicle.platform.services.chat_previews",
     "radicle.platform.services.automation",
+    "radicle.folio.services.automation_actions",
     "radicle.folio.services.chat_commands",
     "radicle.folio.services.public_events",
 )

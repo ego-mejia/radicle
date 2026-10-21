@@ -1,7 +1,8 @@
 """Automation rules (Folio 5.6, shared with Docket; ADR 0042): when a public event happens,
 or on a schedule, run actions with the permissions of the admin who made the rule.
 
-Apps register actions (`folio.add_label`) and schedule selectors (`folio.pages`). What
+Apps register actions (`folio.add_label`) and schedule selectors (`folio.pages`);
+platform brings `notify_person` and `notify_channel`. What
 a rule's actions cause carries the chain of rules behind it, so a rule never runs twice
 in one chain and a chain stops after MAX_CHAIN rules.
 """
@@ -20,12 +21,13 @@ from radicle.platform.db.models import (
     AutomationRule,
     AutomationRun,
     DeliveryStatus,
+    Integration,
     OutboxEvent,
     User,
     utcnow,
 )
 from radicle.platform.errors import NotFound, ValidationFailed
-from radicle.platform.services import events, queue, safe_fetch
+from radicle.platform.services import chat_notices, events, integrations, queue, safe_fetch
 
 RUN_JOB = "platform_run_automation"
 SCHEDULE_JOB = "platform_automation_schedule"
@@ -79,6 +81,10 @@ def selector(name: str) -> Callable[[Select], Select]:
         return fn
 
     return register
+
+
+def actions() -> dict[str, str]:
+    return {a.name: a.label for a in _actions.values()}
 
 
 def _invalid(field_name: str, message: str) -> ValidationFailed:
@@ -235,3 +241,57 @@ async def schedule(db: AsyncSession, **_: Any) -> None:
             target = f"{data.get('target', '')}@{stamp}"
             await _start(db, rule, data, event_id=None, target=target, chain=[])
     await db.flush()
+
+
+# --- platform's own actions -------------------------------------------------------------
+
+
+def _check_channel(step: dict[str, Any]) -> None:
+    if not step.get("integration") or not str(step.get("route", "")).isdigit():
+        raise _invalid("actions", "notify_channel needs an integration id and its route number.")
+
+
+@action("notify_channel", "Post on a Slack or Teams channel", check=_check_channel)
+async def notify_channel(db: AsyncSession, ctx: Context, step: dict[str, Any]) -> str:
+    integration = await db.get(Integration, uuid.UUID(str(step["integration"])))
+    if integration is None:
+        raise NotFound("The integration was removed.")
+    routes = integrations.routes(integration)
+    route = int(step["route"])
+    if route >= len(routes):
+        raise NotFound(f"The integration has no route {route}.")
+    text = str(step.get("message") or ctx.data.get("summary") or ctx.rule.name)
+    link = (ctx.data.get("page") or {}).get("url")
+    event = events.PublicEvent(str(ctx.data.get("event", "")), {}, {}, text, link)
+    await chat_notices.send(
+        integration, routes[route].channel, chat_notices.text_for(integration.kind, event)
+    )
+    return f"notify_channel: posted on {integration.name}"
+
+
+def _check_person(step: dict[str, Any]) -> None:
+    if not str(step.get("handle", "")).strip():
+        raise _invalid("actions", "notify_person needs the person's handle.")
+
+
+@action("notify_person", "Notify a person in Radicle", check=_check_person)
+async def notify_person(db: AsyncSession, ctx: Context, step: dict[str, Any]) -> str:
+    handle = str(step["handle"]).lstrip("@")
+    person = await db.scalar(select(User).where(User.handle == handle, User.is_active.is_(True)))
+    if person is None:
+        raise NotFound(f"Nobody is called @{handle}.")
+    text = str(step.get("message") or ctx.data.get("summary") or ctx.rule.name)
+    link = (ctx.data.get("page") or {}).get("url")
+    payload = {"to": str(person.id), "title": text, "link": link, "rule": ctx.rule.name}
+    await events.emit(db, "platform", "automation_notice", actor=None, payload=payload)
+    return f"notify_person: told @{handle}"
+
+
+@events.resolver("platform", "automation_notice", label="Automation rules that notify you")
+async def _notice(db: AsyncSession, event: OutboxEvent) -> list[events.Notice]:
+    p = event.payload
+    return [
+        events.Notice(
+            uuid.UUID(p["to"]), "automation", p["title"], p.get("rule", ""), p.get("link")
+        )
+    ]

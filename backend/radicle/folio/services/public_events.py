@@ -33,14 +33,11 @@ def register() -> None:
         events.public_event(name, label)
 
 
-async def _page(
-    db: AsyncSession, event: OutboxEvent
-) -> tuple[dict[str, Any], dict[str, str]] | None:
-    node = await db.get(FolioNode, uuid.UUID(event.payload["node_id"]))
-    if node is None or node.deleted_at is not None:
-        return None
+async def page_data(
+    db: AsyncSession, node: FolioNode, actor: User | None = None
+) -> tuple[dict[str, Any], dict[str, str]]:
+    """What leaves Radicle about a page, and its scope (also for automation targets)."""
     space = await db.get(FolioSpace, node.space_id)
-    actor = await db.get(User, event.actor_id) if event.actor_id else None
     data = {
         "page": {
             "id": str(node.id),
@@ -53,6 +50,16 @@ async def _page(
         "actor": actor.handle if actor else None,
     }
     return data, {"app": APP, "space": space.key if space else ""}
+
+
+async def _page(
+    db: AsyncSession, event: OutboxEvent
+) -> tuple[dict[str, Any], dict[str, str]] | None:
+    node = await db.get(FolioNode, uuid.UUID(event.payload["node_id"]))
+    if node is None or node.deleted_at is not None:
+        return None
+    actor = await db.get(User, event.actor_id) if event.actor_id else None
+    return await page_data(db, node, actor)
 
 
 SUMMARIES = {
