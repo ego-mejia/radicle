@@ -43,6 +43,7 @@ from radicle.docket.mcp import server as mcp_server
 from radicle.docket.public.router import router as public_router
 from radicle.folio.api.router import router as folio_router
 from radicle.folio.authz import FolioAuthz
+from radicle.folio.mcp import catalog as folio_catalog
 from radicle.folio.mcp import server as folio_mcp
 from radicle.platform import authz, mcp_tools
 from radicle.platform.api import ai as ai_api
@@ -68,7 +69,8 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 def create_app() -> FastAPI:
     settings = get_settings()
     require_key()  # no secret key, no app: secrets in the database depend on it
-    mcp_tools.register(mcp_catalog.TOOLS)
+    mcp_tools.register(mcp_catalog.CATALOG, mcp_server.server)
+    mcp_tools.register(folio_catalog.CATALOG, folio_mcp.server)
     authz.register(DocketAuthz())
     authz.register(FolioAuthz())
     app = FastAPI(

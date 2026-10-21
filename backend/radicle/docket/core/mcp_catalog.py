@@ -1,5 +1,7 @@
 """The MCP tools by group, and which ones only read. Agents can be limited to a subset."""
 
+from radicle.platform.mcp_tools import Tool
+
 GROUPS: dict[str, tuple[str, ...]] = {
     "context": ("whoami", "list_projects", "get_project", "get_ticket_schema"),
     "find_work": (
@@ -94,3 +96,5 @@ READ_ONLY: frozenset[str] = frozenset(
         "list_inbox",
     }
 )
+
+CATALOG: tuple[Tool, ...] = tuple(Tool(n, GROUP_OF[n], n in READ_ONLY) for n in TOOLS)
