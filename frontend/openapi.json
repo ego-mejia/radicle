@@ -15901,6 +15901,49 @@
         "title": "WatchOut",
         "type": "object"
       },
+      "WhiteboardOut": {
+        "properties": {
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "elements": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Elements",
+            "type": "array"
+          },
+          "node_id": {
+            "format": "uuid",
+            "title": "Node Id",
+            "type": "string"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_id",
+          "title",
+          "space",
+          "can_edit",
+          "elements",
+          "updated_at"
+        ],
+        "title": "WhiteboardOut",
+        "type": "object"
+      },
       "WidgetCreate": {
         "additionalProperties": false,
         "properties": {
@@ -23821,6 +23864,51 @@
           }
         },
         "summary": "Watch",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/whiteboards/{node_id}": {
+      "get": {
+        "description": "The scene's elements as they are now, and whether you may draw on it.",
+        "operationId": "get_whiteboard_api_v1_folio_whiteboards__node_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WhiteboardOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Whiteboard",
         "tags": [
           "folio",
           "folio"

@@ -2167,6 +2167,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/whiteboards/{node_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Whiteboard
+         * @description The scene's elements as they are now, and whether you may draw on it.
+         */
+        get: operations["get_whiteboard_api_v1_folio_whiteboards__node_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/groups": {
         parameters: {
             query?: never;
@@ -9749,6 +9769,26 @@ export interface components {
             /** Watching */
             watching: boolean;
         };
+        /** WhiteboardOut */
+        WhiteboardOut: {
+            /** Can Edit */
+            can_edit: boolean;
+            /** Elements */
+            elements: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Node Id
+             * Format: uuid
+             */
+            node_id: string;
+            /** Space */
+            space: string;
+            /** Title */
+            title: string;
+            /** Updated At */
+            updated_at: string;
+        };
         /** WidgetCreate */
         WidgetCreate: {
             /** Config */
@@ -14557,6 +14597,37 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_whiteboard_api_v1_folio_whiteboards__node_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WhiteboardOut"];
+                };
             };
             /** @description Validation Error */
             422: {

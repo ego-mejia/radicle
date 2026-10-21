@@ -96,6 +96,7 @@ def _urls(s: dict) -> dict[str, list[str]]:
         # checks a restricted database.
         "/api/v1/folio/databases/{node_id}": [f"{API}/databases/{p}"],
         "/api/v1/folio/databases/{node_id}/rows": [f"{API}/databases/{p}/rows"],
+        "/api/v1/folio/whiteboards/{node_id}": [f"{API}/whiteboards/{p}"],
     }
 
 
