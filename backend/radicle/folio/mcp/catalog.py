@@ -20,6 +20,8 @@ READ = (
     "get_docs_for_ticket",
     "get_build_spec_items",
     "ask_docs",
+    "get_page_analytics",
+    "get_search_gaps",
 )
 
 WRITE = (
