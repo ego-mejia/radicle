@@ -18,6 +18,7 @@ import {
 } from '../../../../services/api/folio';
 import { folioExtensions } from '../../editor/extensions';
 import { toFolioDoc } from '../../editor/schema';
+import { SlashCommand } from '../../editor/slash';
 import { EditorProse } from '../EditorProse';
 import { PageHeader } from './components/PageHeader';
 import * as S from './style';
@@ -76,6 +77,7 @@ function Loaded({ node, draft, onPublish, extensions }: LoadedProps) {
     () => [
       ...folioExtensions(),
       Placeholder.configure({ placeholder: t('folio.editor.bodyPlaceholder') }),
+      SlashCommand,
       ...extensions,
     ],
     // The editor is built once; the language does not change while writing.
