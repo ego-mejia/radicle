@@ -604,3 +604,15 @@ Fuera del spec de etapas, pedidas al probar la app (ADRs 0032 y 0033 para el boa
 - El CI de GitHub Actions queda en pausa; los checks se corren local antes de cada push.
 - Tarjetas con área, milestone y subtickets (editables desde la tarjeta), áreas con icono SVG en su color, pegar imágenes al crear un ticket y Done sin modal de resolución.
 - MCP: `create_area`, `update_area`, `create_milestone` y `update_milestone` (paridad con la API; piden `project.settings`). El MCP queda con 52 tools (`tests/mcp/test_area_milestone_tools.py`).
+
+## Folio fase 0: Plataforma compartida
+
+Folio es la suite de documentación de Radicle; sus specs están en `docs/folio/`. Tickets en el proyecto RAD (área Folio, milestones Folio Fase 0 a 5).
+
+| # | Entregable | Estado |
+| --- | --- | --- |
+| 0.1 | Reorganizar el backend | En curso ([0034](decisions/0034-folio-fase-0-1-reorganizar-backend.md)) |
+| 0.2 | Autorización genérica | Pendiente |
+| 0.3 | Servicios compartidos | Pendiente |
+| 0.4 | Frontend compartido y switch | Pendiente |
+| 0.5 | Esqueleto de Folio | Pendiente |
