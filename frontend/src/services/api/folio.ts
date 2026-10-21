@@ -369,6 +369,46 @@ export async function fetchHome(): Promise<FolioHome> {
   return unwrap(await api.GET('/api/v1/folio/home'));
 }
 
+// --- home editor (Folio 3.2) ---------------------------------------------------------
+
+export type HomeLayoutBlock = S['HomeBlock'];
+export type HomeLayout = S['HomeLayoutIn'];
+export type HomeDraft = S['HomeDraftOut'];
+export type HomeLayoutVersion = S['HomeLayoutVersionOut'];
+export const homeEditorKeys = {
+  draft: ['folio', 'home', 'draft'] as const,
+  history: ['folio', 'home', 'history'] as const,
+};
+
+export async function fetchHomeDraft(): Promise<HomeDraft> {
+  return unwrap(await api.GET('/api/v1/folio/admin/home/draft'));
+}
+
+/** 422 names the wrong block's field (`blocks[2].config.rql`) and the RQL position. */
+export async function saveHomeDraft(body: HomeLayout): Promise<HomeDraft> {
+  return unwrap(await api.PUT('/api/v1/folio/admin/home/draft', { body }));
+}
+
+export async function publishHome(): Promise<HomeLayoutVersion> {
+  return unwrap(await api.POST('/api/v1/folio/admin/home/publish'));
+}
+
+export async function previewHome(body: HomeLayout): Promise<FolioHomeBlock[]> {
+  return unwrap(await api.POST('/api/v1/folio/admin/home/preview', { body })).blocks;
+}
+
+export async function fetchHomeHistory(): Promise<HomeLayoutVersion[]> {
+  return unwrap(await api.GET('/api/v1/folio/admin/home/history')).items;
+}
+
+export async function restoreHome(id: string): Promise<HomeLayoutVersion> {
+  return unwrap(
+    await api.POST('/api/v1/folio/admin/home/history/{layout_id}/restore', {
+      params: { path: { layout_id: id } },
+    }),
+  );
+}
+
 // --- templates (Folio 3.1) -----------------------------------------------------------
 
 export async function fetchTemplates(
