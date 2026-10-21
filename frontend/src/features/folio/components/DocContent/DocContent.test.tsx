@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { renderWithProviders } from '../../../../test/renderWithProviders';
-import { anchorFor, headingsOf } from './anchors';
+import { anchorFor, headingsOf, readingMinutes } from './anchors';
 import { b, doc, p, t } from './testDoc';
 import { DocContent } from '.';
 
@@ -56,6 +56,11 @@ describe('anchors', () => {
       'antes-de-empezar',
       'antes-de-empezar-2',
     ]);
+  });
+
+  it('estimate the reading time at 220 words a minute', () => {
+    expect(readingMinutes(TEXT_BLOCKS)).toBe(1);
+    expect(readingMinutes(doc(p(t(Array(660).fill('palabra').join(' ')))))).toBe(3);
   });
 });
 
