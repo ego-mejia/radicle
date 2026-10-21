@@ -3101,6 +3101,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/hooks/chat/{integration_id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Chat Events
+         * @description Slack's Events API (Request URL): Radicle previews its own links (`link_shared`).
+         */
+        post: operations["chat_events_api_v1_hooks_chat__integration_id__events_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/integrations": {
         parameters: {
             query?: never;
@@ -8368,6 +8388,11 @@ export interface components {
              * @description Where Slack or Teams sends /radicle commands
              */
             command_url: string;
+            /**
+             * Events Url
+             * @description Slack's Events API URL, for link previews
+             */
+            events_url: string | null;
             /**
              * Id
              * Format: uuid
@@ -18866,6 +18891,39 @@ export interface operations {
         };
     };
     chat_command_api_v1_hooks_chat__integration_id__command_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                integration_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    chat_events_api_v1_hooks_chat__integration_id__events_post: {
         parameters: {
             query?: never;
             header?: never;

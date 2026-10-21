@@ -39,6 +39,7 @@ async def test_set_up_test_and_remove(
     made = r.json()
     assert made["notices"][0]["channel"] == "93.184.216.34/…"
     assert made["command_url"].endswith(f"/api/v1/hooks/chat/{made['id']}/command")
+    assert made["events_url"] is None  # only Slack previews links
     assert "shared" not in r.text and "webhookb2" not in r.text
     r = await client.post(f"{URL}/{made['id']}/test", headers=i, json={"route": 0})
     assert r.json() == {"ok": True, "message": "Posted a test message."}

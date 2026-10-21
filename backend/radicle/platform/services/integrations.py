@@ -115,6 +115,13 @@ def command_url(integration: Integration) -> str:
     return f"{base}/api/v1/hooks/chat/{integration.id}/command"
 
 
+def events_url(integration: Integration) -> str | None:
+    """Slack's Events API Request URL, for link previews; Teams has none."""
+    if integration.kind != IntegrationKind.slack:
+        return None
+    return command_url(integration).removesuffix("/command") + "/events"
+
+
 def view(integration: Integration) -> dict[str, Any]:
     """For admins and the audit log: never a secret, and Teams URLs only by their host."""
     shown = []

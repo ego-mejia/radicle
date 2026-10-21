@@ -36,6 +36,7 @@ class IntegrationOut(Output):
     active: bool
     notices: list[NoticeRouteOut]
     command_url: str = Field(description="Where Slack or Teams sends /radicle commands")
+    events_url: str | None = Field(description="Slack's Events API URL, for link previews")
 
 
 class IntegrationIn(Input):
@@ -67,6 +68,7 @@ def _out(integration: integrations.Integration) -> IntegrationOut:
         active=view["active"],
         notices=[NoticeRouteOut(**r) for r in view["notices"]],
         command_url=integrations.command_url(integration),
+        events_url=integrations.events_url(integration),
     )
 
 

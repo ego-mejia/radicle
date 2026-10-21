@@ -1,6 +1,7 @@
 """Where Slack and Teams call Radicle (Folio 5.4, ADR 0042). No session or token: each
 request is checked against the integration's signing secret."""
 
+import json
 import uuid
 from typing import Any
 
@@ -9,7 +10,9 @@ from pydantic import Field
 
 from radicle.platform.api.deps import Db, HumanUser
 from radicle.platform.api.schemas import Input, Output
-from radicle.platform.services import chat_commands
+from radicle.platform.db.models import IntegrationKind
+from radicle.platform.errors import NotFound
+from radicle.platform.services import chat_commands, chat_previews, integrations
 
 router = APIRouter(tags=["integrations"])
 
@@ -20,6 +23,19 @@ async def chat_command(integration_id: uuid.UUID, request: Request, db: Db) -> d
     webhooks. The answer uses the permissions of the Radicle user behind the sender."""
     headers = {k.lower(): v for k, v in request.headers.items()}
     return await chat_commands.handle(db, integration_id, headers, await request.body())
+
+
+@router.post("/hooks/chat/{integration_id}/events")
+async def chat_events(integration_id: uuid.UUID, request: Request, db: Db) -> dict[str, Any]:
+    """Slack's Events API (Request URL): Radicle previews its own links (`link_shared`)."""
+    integration = await chat_commands.active(db, integration_id)
+    if integration.kind != IntegrationKind.slack:
+        raise NotFound("Events come only from Slack. Teams uses the command URL.")
+    headers = {k.lower(): v for k, v in request.headers.items()}
+    body = await request.body()
+    secret = integrations.credentials(integration)["signing_secret"]
+    chat_commands.check_slack(secret, headers, body)
+    return await chat_previews.slack_event(db, integration, json.loads(body))
 
 
 class ChatLinkIn(Input):
