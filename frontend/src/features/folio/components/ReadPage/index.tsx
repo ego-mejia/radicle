@@ -12,6 +12,7 @@ import { useFocusMode } from '../../hooks/useFocusMode';
 import { DocContent } from '../DocContent';
 import { headingsOf, readingMinutes } from '../DocContent/anchors';
 import { FocusReader } from '../FocusReader';
+import { NodeMenu } from '../NodeMenu';
 import { PageMeta } from '../PageMeta';
 import { PageQuality } from '../PageQuality';
 import { PageSocial } from '../PageSocial';
@@ -89,6 +90,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
               {t('folio.reader.edit')}
             </Link>
           )}
+          {n.can_edit && <NodeMenu node={n} />}
         </S.Actions>
       </S.Bar>
 

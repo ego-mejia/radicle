@@ -1980,6 +1980,31 @@
         "in_review": "Marked in review",
         "published": "Published"
       }
+    },
+    "organize": {
+      "menu": "Actions for {{title}}",
+      "move": "Move",
+      "copy": "Copy",
+      "moveEllipsis": "Move…",
+      "copyEllipsis": "Copy…",
+      "moveTitle": "Move “{{title}}”",
+      "copyTitle": "Copy “{{title}}”",
+      "space": "Space",
+      "parent": "Inside",
+      "topLevel": "At the top level",
+      "includeChildren": "With the pages inside it",
+      "moved": "Moved to {{space}}",
+      "copied": "Copied as a draft",
+      "archive": "Archive",
+      "archiveTitle": "Archive “{{title}}”?",
+      "archiveMessage": "It and the pages inside it leave the tree, search and the AI index. You can restore them from the space's Archived section.",
+      "archived": "Archived",
+      "archivedSection_one": "Archived ({{count}})",
+      "archivedSection_other": "Archived ({{count}})",
+      "archivedBy": "By @{{who}} on {{date}}",
+      "restore": "Restore",
+      "restoreTitle": "Restore {{title}}",
+      "restored": "“{{title}}” is back"
     }
   },
   "notifications": {

@@ -1980,6 +1980,31 @@
         "in_review": "Marcada en revisión",
         "published": "Publicada"
       }
+    },
+    "organize": {
+      "menu": "Acciones de {{title}}",
+      "move": "Mover",
+      "copy": "Copiar",
+      "moveEllipsis": "Mover…",
+      "copyEllipsis": "Copiar…",
+      "moveTitle": "Mover “{{title}}”",
+      "copyTitle": "Copiar “{{title}}”",
+      "space": "Space",
+      "parent": "Dentro de",
+      "topLevel": "En el primer nivel",
+      "includeChildren": "Con las páginas que tiene adentro",
+      "moved": "Movida a {{space}}",
+      "copied": "Copiada como borrador",
+      "archive": "Archivar",
+      "archiveTitle": "¿Archivar “{{title}}”?",
+      "archiveMessage": "Ella y las páginas que tiene adentro salen del árbol, la búsqueda y el índice de IA. Puedes restaurarlas desde la sección Archivados del space.",
+      "archived": "Archivada",
+      "archivedSection_one": "Archivados ({{count}})",
+      "archivedSection_other": "Archivados ({{count}})",
+      "archivedBy": "Por @{{who}} el {{date}}",
+      "restore": "Restaurar",
+      "restoreTitle": "Restaurar {{title}}",
+      "restored": "“{{title}}” regresó"
     }
   },
   "notifications": {
