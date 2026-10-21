@@ -4,6 +4,7 @@
 import { DatabaseViewNode } from './databaseView';
 import { WhiteboardNode } from './whiteboard';
 import { Embed } from './embed';
+import { TicketLink } from './ticket';
 import { VISUAL_NODES } from './visualNodes';
 import type { AnyExtension } from '@tiptap/core';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
@@ -76,6 +77,7 @@ export function folioExtensions({ shared = false } = {}): AnyExtension[] {
     WhiteboardNode,
     Mention,
     Status,
+    TicketLink,
     ActionItem,
   ];
 }

@@ -29,6 +29,8 @@ export const EVERY_BLOCK: JSONContent = {
       { type: 'mention', attrs: { handle: 'fernando' } },
       t(' '),
       { type: 'status', attrs: { text: 'Listo', color: 'green' } },
+      t(' '),
+      { type: 'ticket', attrs: { key: 'PA-4' } },
     ),
     node('heading', { level: 2 }, t('Antes de empezar')),
     node(

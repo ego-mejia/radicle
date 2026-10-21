@@ -58,6 +58,7 @@ const NODE_ATTRS: Record<string, string[]> = {
   hardBreak: [],
   mention: ['handle'],
   status: ['text', 'color'],
+  ticket: ['key'],
 };
 
 // Links keep only their target: the reader adds rel and target when it renders them.

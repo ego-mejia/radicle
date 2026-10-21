@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { DocMark, DocNode } from '../../anchors';
 import { Formula } from '../../../Formula';
+import { TicketChip } from '../../../TicketChip';
 import * as S from './style';
 import { toneOf } from './tone';
 
@@ -34,7 +35,7 @@ function wrap(mark: DocMark, child: ReactNode, key: number): ReactNode {
   }
 }
 
-/** Text with its marks, mentions, statuses and line breaks. */
+/** Text with its marks, mentions, statuses, ticket smart links and line breaks. */
 export function Inline({ nodes }: { nodes?: DocNode[] }) {
   return (
     <>
@@ -48,6 +49,8 @@ export function Inline({ nodes }: { nodes?: DocNode[] }) {
               {String(n.attrs?.text ?? '')}
             </S.Status>
           );
+        if (n.type === 'ticket')
+          return <TicketChip key={i} ticketKey={String(n.attrs?.key ?? '')} />;
         if (n.type === 'inlineFormula')
           return <Formula key={i} latex={String(n.attrs?.latex ?? '')} inline />;
         if (n.type !== 'text') return null;

@@ -2423,6 +2423,10 @@
       "proposalNote": "A proposal: nothing changes in the page until you insert it.",
       "again": "Try again",
       "insertSummary": "Insert at the top"
+    },
+    "tickets": {
+      "restricted": "Restricted ticket",
+      "unassigned": "Unassigned"
     }
   },
   "notifications": {
