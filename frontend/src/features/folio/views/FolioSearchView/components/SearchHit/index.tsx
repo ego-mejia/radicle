@@ -4,6 +4,7 @@ import { Badge } from '../../../../../../components/ui/Badge';
 import type { FolioHit } from '../../../../../../services/api/folio';
 import { Snippet } from '../../../../components/Snippet';
 import { hitTarget } from '../../../../components/Snippet/hitTarget';
+import { StatusBadge } from '../../../../components/StatusBadge';
 import * as S from './style';
 
 const TitleLink = createLink(S.Title);
@@ -22,6 +23,7 @@ export function SearchHit({ hit }: { hit: FolioHit }) {
         <Snippet text={hit.snippet || hit.description} />
       </S.Snippet>
       <S.Tags>
+        <StatusBadge status={hit.status} />
         {hit.doc_type && <Badge mono>{hit.doc_type}</Badge>}
         {hit.matched_by.map((m) => (
           <Badge key={m} tone="accent">

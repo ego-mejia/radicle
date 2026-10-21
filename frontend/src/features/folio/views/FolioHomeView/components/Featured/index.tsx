@@ -4,6 +4,7 @@ import { Avatar } from '../../../../../../components/ui/Avatar';
 import { assetUrl, type FolioCard } from '../../../../../../services/api/folio';
 import { cardMeta, kindLabel, pageParams } from '../../meta';
 import { RootsArt } from '../../../../components/RootsArt';
+import { StatusBadge } from '../../../../components/StatusBadge';
 import * as S from './style';
 
 const CardLink = createLink(S.Card);
@@ -17,7 +18,10 @@ export function Featured({ doc }: { doc: FolioCard }) {
         {doc.cover_asset_id ? <img src={assetUrl(doc.cover_asset_id)} alt="" /> : <RootsArt />}
       </S.Cover>
       <S.Body>
-        <S.Tag>{kindLabel(t, doc)}</S.Tag>
+        <S.Tags>
+          <S.Tag>{kindLabel(t, doc)}</S.Tag>
+          <StatusBadge status={doc.status} />
+        </S.Tags>
         <S.Title>{doc.title}</S.Title>
         {doc.description && <S.Description>{doc.description}</S.Description>}
         <S.Meta>

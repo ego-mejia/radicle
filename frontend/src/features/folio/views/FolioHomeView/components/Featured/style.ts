@@ -73,3 +73,10 @@ export const Meta = styled.div`
   font-size: ${({ theme }) => theme.fontSize.md};
   color: ${({ theme }) => theme.color.textMuted};
 `;
+
+export const Tags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: ${({ theme }) => theme.space.sm};
+`;
