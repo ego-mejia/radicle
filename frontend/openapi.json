@@ -8654,6 +8654,14 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "permissions": {
+            "description": "What you may do here: view, create, ...",
+            "items": {
+              "type": "string"
+            },
+            "title": "Permissions",
+            "type": "array"
           }
         },
         "required": [
@@ -8663,7 +8671,8 @@
           "kind",
           "icon",
           "cover_asset_id",
-          "created_at"
+          "created_at",
+          "permissions"
         ],
         "title": "SpaceOut",
         "type": "object"

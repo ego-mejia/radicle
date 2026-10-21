@@ -7,11 +7,12 @@ from typing import Any, Literal
 from fastapi import APIRouter, Query, Response
 from pydantic import Field
 
-from radicle.folio.db.models import FolioNode, FolioSpace, NodeKind
-from radicle.folio.services import nodes, publishing, spaces
+from radicle.folio.db.models import FolioNode, FolioSpace, NodeKind, SpacePermission
+from radicle.folio.services import access, nodes, publishing, spaces
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Input, Output, Page, UtcDatetime
+from radicle.platform.db.models import User
 
 router = APIRouter(tags=["folio"])
 
@@ -26,6 +27,7 @@ class SpaceOut(Output):
     icon: str | None
     cover_asset_id: uuid.UUID | None
     created_at: UtcDatetime
+    permissions: list[str] = Field(description="What you may do here: view, create, ...")
 
 
 class SpaceIn(Input):
@@ -85,8 +87,10 @@ class MoveIn(Input):
     after: uuid.UUID | None = Field(default=None, description="Sibling to place it after")
 
 
-def _space(s: FolioSpace) -> SpaceOut:
+async def _space(db: Db, user: User, s: FolioSpace) -> SpaceOut:
+    granted = await access.space_permissions(db, user, s)
     return SpaceOut(
+        permissions=[p.value for p in SpacePermission if p.value in granted],
         key=s.key,
         name=s.name,
         description=s.description,
@@ -131,7 +135,12 @@ async def _reader(db: Db, principal: CurrentPrincipal) -> None:
 async def list_spaces(principal: CurrentPrincipal, db: Db) -> Page[SpaceOut]:
     """Team spaces you can see, then your personal space."""
     await _reader(db, principal)
-    return Page(items=[_space(s) for s in await spaces.list_spaces(db, principal.user)])
+    return Page(
+        items=[
+            await _space(db, principal.user, s)
+            for s in await spaces.list_spaces(db, principal.user)
+        ]
+    )
 
 
 @router.post("/spaces", response_model=SpaceOut, status_code=201)
@@ -145,20 +154,20 @@ async def create_space(body: SpaceIn, principal: CurrentPrincipal, db: Db) -> Sp
         description=body.description,
         icon=body.icon,
     )
-    return _space(space)
+    return await _space(db, principal.user, space)
 
 
 @router.get("/me/personal-space", response_model=SpaceOut)
 async def my_space(principal: CurrentPrincipal, db: Db) -> SpaceOut:
     """Your personal space, created the first time you ask for it."""
     await _reader(db, principal)
-    return _space(await spaces.personal_space(db, principal.user))
+    return await _space(db, principal.user, await spaces.personal_space(db, principal.user))
 
 
 @router.get("/spaces/{key}", response_model=SpaceOut)
 async def get_space(key: str, principal: CurrentPrincipal, db: Db) -> SpaceOut:
     await _reader(db, principal)
-    return _space(await spaces.get_space(db, principal.user, key))
+    return await _space(db, principal.user, await spaces.get_space(db, principal.user, key))
 
 
 @router.patch("/spaces/{key}", response_model=SpaceOut)
@@ -171,7 +180,9 @@ async def patch_space(key: str, body: SpacePatch, principal: CurrentPrincipal, d
         icon=body.icon,
         clear_icon="icon" in body.model_fields_set and body.icon is None,
     )
-    return _space(await spaces.update_space(db, principal.user, space, changes))
+    return await _space(
+        db, principal.user, await spaces.update_space(db, principal.user, space, changes)
+    )
 
 
 @router.delete("/spaces/{key}", status_code=204)

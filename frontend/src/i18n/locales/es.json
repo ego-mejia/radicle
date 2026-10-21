@@ -499,6 +499,7 @@
       "groups": {
         "context": "Contexto",
         "find_work": "Encontrar trabajo",
+        "folio_read": "Folio: leer docs",
         "tickets": "Tickets",
         "collaboration": "Colaboración",
         "files_and_time": "Archivos y tiempo",

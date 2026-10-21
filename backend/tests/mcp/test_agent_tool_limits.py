@@ -3,8 +3,9 @@
 from httpx import AsyncClient
 
 from radicle.docket.core import mcp_catalog
+from radicle.folio.mcp import catalog as folio_catalog
 from tests.conftest import Team
-from tests.mcp.conftest import McpFor, error_text, payload
+from tests.mcp.conftest import McpFor, error_text, folio_mcp, payload
 
 API = "/api/v1"
 READER = ["whoami", "search_tickets", "get_ticket"]
@@ -18,8 +19,12 @@ async def test_catalog_lists_every_registered_tool(
     catalog = r.json()
     async with mcp_for(board.agent) as mcp:
         registered = {t.name for t in (await mcp.list_tools()).tools}
-    assert [t["name"] for t in catalog] == list(mcp_catalog.TOOLS)
+    async with folio_mcp(client, board.agent) as folio:
+        on_folio = {t.name for t in (await folio.list_tools()).tools}
+    assert [t["name"] for t in catalog] == [*mcp_catalog.TOOLS, *folio_catalog.READ]
     assert set(mcp_catalog.TOOLS) == registered
+    assert {t.name for t in folio_catalog.CATALOG} == on_folio
+    assert next(t for t in catalog if t["name"] == "get_page")["group"] == "folio_read"
     whoami = next(t for t in catalog if t["name"] == "whoami")
     assert whoami["group"] == "context" and whoami["read_only"] and whoami["description"]
     assert not next(t for t in catalog if t["name"] == "create_ticket")["read_only"]
