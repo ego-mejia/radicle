@@ -1764,7 +1764,38 @@
       "removeCover": "Remove cover"
     },
     "publish": {
-      "title": "Publish"
+      "title": "Publish",
+      "description": "Description",
+      "descriptionHint": "1 to 3 sentences that say what the page is for (40 to 400 characters).",
+      "docType": "Document type",
+      "language": "Language",
+      "choose": "Choose…",
+      "labels": "Labels",
+      "labelsHint": "Separated by commas, e.g. onboarding, mcp",
+      "owner": "Owner",
+      "ownerHint": "The person who keeps it up to date",
+      "audiences": "Audiences",
+      "note": "Change note",
+      "noteHint": "What changed, for the history",
+      "cancel": "Cancel",
+      "publish": "Publish",
+      "sendForApproval": "Send for approval",
+      "approvalNote": "A Folio admin reviews it before it goes live.",
+      "anyway": "Publish anyway",
+      "conflict": "Someone published this page after you started this draft. Publishing replaces their version; it stays in the history.",
+      "sent": "Sent for approval: it goes live once a Folio admin approves it.",
+      "done": "Published as version {{version}}",
+      "rules": {
+        "title": "The title needs 1 to 200 characters.",
+        "descriptionLength": "40 to 400 characters.",
+        "descriptionSentences": "At most 3 sentences.",
+        "docType": "Choose a document type.",
+        "labelsCount": "Add 1 to 15 labels.",
+        "labelsFormat": "Labels use lowercase letters, digits, - and _.",
+        "owner": "Write the owner's handle.",
+        "audiences": "Choose at least one audience.",
+        "language": "Choose a language."
+      }
     },
     "history": {
       "title": "History",

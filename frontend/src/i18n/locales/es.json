@@ -1764,7 +1764,38 @@
       "removeCover": "Quitar portada"
     },
     "publish": {
-      "title": "Publicar"
+      "title": "Publicar",
+      "description": "Descripción",
+      "descriptionHint": "1 a 3 oraciones que digan para qué es la página (40 a 400 caracteres).",
+      "docType": "Tipo de documento",
+      "language": "Idioma",
+      "choose": "Elige…",
+      "labels": "Labels",
+      "labelsHint": "Separados por comas, p. ej. onboarding, mcp",
+      "owner": "Dueño",
+      "ownerHint": "La persona que la mantiene al día",
+      "audiences": "Audiencias",
+      "note": "Nota de cambio",
+      "noteHint": "Qué cambió, para el historial",
+      "cancel": "Cancelar",
+      "publish": "Publicar",
+      "sendForApproval": "Mandar a aprobación",
+      "approvalNote": "Un admin de Folio la revisa antes de publicarse.",
+      "anyway": "Publicar de todos modos",
+      "conflict": "Alguien publicó esta página después de que empezaste este borrador. Publicar reemplaza su versión; queda en el historial.",
+      "sent": "Mandada a aprobación: se publica cuando un admin de Folio la apruebe.",
+      "done": "Publicada como versión {{version}}",
+      "rules": {
+        "title": "El título necesita de 1 a 200 caracteres.",
+        "descriptionLength": "De 40 a 400 caracteres.",
+        "descriptionSentences": "Máximo 3 oraciones.",
+        "docType": "Elige un tipo de documento.",
+        "labelsCount": "Agrega de 1 a 15 labels.",
+        "labelsFormat": "Los labels usan minúsculas, dígitos, - y _.",
+        "owner": "Escribe el handle del dueño.",
+        "audiences": "Elige al menos una audiencia.",
+        "language": "Elige un idioma."
+      }
     },
     "history": {
       "title": "Historial",
