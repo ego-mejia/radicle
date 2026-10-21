@@ -3,6 +3,8 @@ from radicle.platform.db.models.audit import AuditApp, AuditEntry
 from radicle.platform.db.models.base import Base, utcnow
 from radicle.platform.db.models.groups import Group, GroupMember
 from radicle.platform.db.models.integrations import (
+    AutomationRule,
+    AutomationRun,
     Integration,
     IntegrationIdentity,
     IntegrationKind,
@@ -30,6 +32,8 @@ __all__ = [
     "AuditApp",
     "AuditEntry",
     "AuthSource",
+    "AutomationRule",
+    "AutomationRun",
     "Base",
     "Channel",
     "DeliveryStatus",

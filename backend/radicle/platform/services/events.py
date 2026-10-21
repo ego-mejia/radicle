@@ -14,6 +14,7 @@ publisher turns its internal event into public ones with stable names such as
 import logging
 import uuid
 from collections.abc import Awaitable, Callable
+from contextvars import ContextVar
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -39,6 +40,9 @@ log = logging.getLogger("radicle.events")
 DISPATCH_JOB = "platform_dispatch_events"
 EMAIL_JOB = "platform_send_email"
 CHANNEL = "radicle_notifications"  # Postgres NOTIFY channel for the SSE stream
+# Rules whose actions run now (ADR 0042); events they cause carry it, against loops.
+automation_chain: ContextVar[tuple[str, ...]] = ContextVar("automation_chain", default=())
+CHAIN_KEY = "_automation"
 BATCH = 100
 MAX_ATTEMPTS = 5
 
@@ -163,6 +167,9 @@ async def emit(
     payload: dict[str, Any],
 ) -> OutboxEvent:
     """Record an event in the caller's transaction and wake the dispatcher."""
+    chain = automation_chain.get()
+    if chain:
+        payload = payload | {CHAIN_KEY: list(chain)}
     event = OutboxEvent(app=app, type=type, actor_id=actor.id if actor else None, payload=payload)
     db.add(event)
     await db.flush()

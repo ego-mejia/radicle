@@ -143,3 +143,47 @@ class IntegrationNotice(Base):
     last_error: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class AutomationRule(Base):
+    """On a public event or a schedule, run these actions (services/automation.py)."""
+
+    __tablename__ = "automation_rules"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name: Mapped[str] = mapped_column(Text)
+    trigger: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    filter: Mapped[dict[str, Any]] = mapped_column(
+        JSONB, default=dict, server_default=text("'{}'::jsonb")
+    )
+    actions: Mapped[list[dict[str, Any]]] = mapped_column(JSONB)
+    active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    # The actions run with this person's permissions.
+    created_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_run_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class AutomationRun(Base):
+    """One rule run for one event or target, with what each action did."""
+
+    __tablename__ = "automation_runs"
+    __table_args__ = (UniqueConstraint("rule_id", "event_id", "target"),)
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    rule_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("automation_rules.id", ondelete="CASCADE")
+    )
+    event_id: Mapped[int | None] = mapped_column(
+        BigInteger, ForeignKey("events_outbox.id", ondelete="SET NULL")
+    )
+    target: Mapped[str] = mapped_column(Text, default="", server_default="")
+    data: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    chain: Mapped[list[str]] = mapped_column(ARRAY(Text), default=list, server_default=text("'{}'"))
+    status: Mapped[DeliveryStatus] = mapped_column(
+        _enum(DeliveryStatus, "delivery_status"), default=DeliveryStatus.pending
+    )
+    log: Mapped[list[str]] = mapped_column(ARRAY(Text), default=list, server_default=text("'{}'"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

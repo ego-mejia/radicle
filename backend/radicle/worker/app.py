@@ -36,6 +36,7 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.platform.services.chat_notices",
     "radicle.platform.services.chat_commands",
     "radicle.platform.services.chat_previews",
+    "radicle.platform.services.automation",
     "radicle.folio.services.chat_commands",
     "radicle.folio.services.public_events",
 )
@@ -49,6 +50,8 @@ PERIODIC: dict[str, str] = {
     "folio_outdate": "15 4 * * *",
     # Reads per page and day for "Most read" (Folio 2.7).
     "folio_view_counts": "25 * * * *",
+    # Scheduled automation rules that are due (Folio 5.6).
+    "platform_automation_schedule": "35 * * * *",
 }
 
 
