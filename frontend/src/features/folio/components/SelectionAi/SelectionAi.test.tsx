@@ -10,7 +10,7 @@ const ID = '9f3c0000-0000-4000-8000-000000000001';
 let editor: Editor | null = null;
 afterEach(() => editor?.destroy());
 
-function setup(available = true) {
+function setup(available = true, onBusy?: (busy: boolean) => void) {
   const calls = mockFetch({
     'GET /api/v1/folio/ai/availability': {
       status: 200,
@@ -29,7 +29,9 @@ function setup(available = true) {
   });
   // jsdom has no layout: place the selection anywhere.
   editor.view.coordsAtPos = () => ({ top: 100, bottom: 120, left: 10, right: 10 });
-  renderWithProviders(<SelectionAi editor={editor as never} nodeId={ID} space="docs" />);
+  renderWithProviders(
+    <SelectionAi editor={editor as never} nodeId={ID} space="docs" onBusy={onBusy} />,
+  );
   const select = () =>
     act(() => {
       editor!.commands.setTextSelection({ from: 1, to: 43 });
@@ -55,6 +57,19 @@ describe('SelectionAi', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Replace the selection' }));
     expect(editor!.getText({ blockSeparator: '|' })).toBe('Crea el agente.|Luego conéctalo.');
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+
+  it('says when its proposal is open, so the comment buttons step aside', async () => {
+    const busy: boolean[] = [];
+    const { select } = setup(true, (b) => busy.push(b));
+    await new Promise((r) => setTimeout(r, 0));
+    select();
+    await userEvent.click(await screen.findByRole('button', { name: 'Rewrite with AI' }));
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Shorter' }));
+    await screen.findByText('Crea el agente.');
+    expect(busy.at(-1)).toBe(true);
+    await userEvent.click(screen.getByRole('button', { name: 'Discard' }));
+    expect(busy.at(-1)).toBe(false);
   });
 
   it('translates to the language you type, and discarding keeps the text', async () => {

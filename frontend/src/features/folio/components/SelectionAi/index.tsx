@@ -13,13 +13,19 @@ import { fromText } from '../../editor/fromText';
 import { useEditorAi } from '../../hooks/useEditorAi';
 import * as S from './style';
 
-type Props = { editor: Editor; nodeId: string; space: string };
+type Props = {
+  editor: Editor;
+  nodeId: string;
+  space: string;
+  /** True while a proposal or the language form is open, so other selection menus step aside. */
+  onBusy?: (busy: boolean) => void;
+};
 type Picked = { from: number; to: number; text: string; top: number; left: number };
 const MODES: Exclude<RewriteMode, 'translate'>[] = ['clearer', 'shorter', 'formal'];
 
 /** Select text while writing and an AI button offers to rewrite it (Folio 4.6). The
  * proposal replaces the selection only when you accept it. */
-export function SelectionAi({ editor, nodeId, space }: Props) {
+export function SelectionAi({ editor, nodeId, space, onBusy }: Props) {
   const { t } = useTranslation();
   const errorMessage = useErrorMessage();
   const available = useEditorAi(space);
@@ -31,6 +37,10 @@ export function SelectionAi({ editor, nodeId, space }: Props) {
       rewriteText(nodeId, picked?.text ?? '', mode, lang),
   });
   const busy = rewrite.isPending || !!rewrite.data || rewrite.isError || translating;
+
+  useEffect(() => {
+    onBusy?.(busy);
+  }, [busy, onBusy]);
 
   useEffect(() => {
     if (busy) return;

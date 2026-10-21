@@ -87,7 +87,16 @@ export const Prose = styled.div`
   }
   ul[data-type='taskList'] li {
     display: flex;
+    align-items: baseline;
     gap: ${({ theme }) => theme.space.sm};
+  }
+  /* The item's paragraph keeps its own margin otherwise, and the text drops below its box. */
+  ul[data-type='taskList'] li > div {
+    flex: 1;
+    min-width: 0;
+  }
+  ul[data-type='taskList'] li > div > p {
+    margin: 0;
   }
   div[data-folio='actionItem'] {
     display: flex;
