@@ -26,4 +26,4 @@ def test_periodic_jobs_are_scheduled() -> None:
     app = worker_app.build_app()
     assert "daily_snapshot" in app.tasks
     periodic = [t.task.name for t in app.periodic_registry.periodic_tasks.values()]
-    assert sorted(periodic) == ["audit_retention", "daily_snapshot"]
+    assert sorted(periodic) == ["audit_retention", "daily_snapshot", "platform_dispatch_events"]

@@ -22,9 +22,15 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.docket.services.periods",
     "radicle.platform.services.audit",
     "radicle.folio.services.rag",
+    "radicle.platform.services.events",
 )
 # Jobs the worker defers on a schedule (cron in UTC).
-PERIODIC: dict[str, str] = {"daily_snapshot": "5 * * * *", "audit_retention": "30 3 * * *"}
+PERIODIC: dict[str, str] = {
+    "daily_snapshot": "5 * * * *",
+    "audit_retention": "30 3 * * *",
+    # Picks up events whose wake-up job was lost (a crash between commit and dispatch).
+    "platform_dispatch_events": "* * * * *",
+}
 
 
 def conninfo(database_url: str) -> str:
