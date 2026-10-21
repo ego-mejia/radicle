@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from mcp.server.mcpserver import Context
 
 from radicle import __version__
-from radicle.folio.mcp import comments, databases, livedocs, read, templates, work, write
+from radicle.folio.mcp import comments, databases, livedocs, read, templates, visuals, work, write
 from radicle.platform.mcp import http
 from radicle.platform.mcp.api import api
 from radicle.platform.mcp.server import LimitedMCPServer
@@ -18,6 +18,7 @@ To find docs use search_docs (words or a question) or query_docs (RQL), then get
 the Markdown. Before writing, search whether the doc already exists and read
 get_metadata_schema; then create_page or update_draft in Markdown, submit_for_publication
 (agents wait for a Folio admin's approval) and check list_my_submissions for the outcome.
+For visuals, diagrams and charts read folio://guide/visuals first.
 Errors explain what is valid instead."""
 
 server = LimitedMCPServer(
@@ -43,6 +44,7 @@ comments.register(server)
 work.register(server)
 livedocs.register(server)
 databases.register(server)
+visuals.register(server)
 
 
 def mount(app: FastAPI) -> None:
