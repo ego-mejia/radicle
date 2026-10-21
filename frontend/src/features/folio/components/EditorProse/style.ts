@@ -155,6 +155,39 @@ export const Prose = styled.div`
     color: ${({ theme }) => theme.color.textMuted};
     font-size: ${({ theme }) => theme.fontSize.md};
   }
+  [data-folio='image'],
+  [data-folio='video'] {
+    background: none;
+    padding: 0;
+    text-align: center;
+  }
+  [data-folio='image'] img,
+  [data-folio='video'] video {
+    max-width: 100%;
+    border-radius: ${({ theme }) => theme.radius.lg};
+  }
+  [data-folio='image'][data-size='small'] img {
+    max-width: 40%;
+  }
+  [data-folio='image'][data-size='medium'] img {
+    max-width: 65%;
+  }
+  [data-folio='image'][data-align='left'] {
+    text-align: left;
+  }
+  [data-folio='image'][data-align='right'] {
+    text-align: right;
+  }
+  .caption {
+    display: block;
+    margin-top: ${({ theme }) => theme.space.xs};
+    font-size: ${({ theme }) => theme.fontSize.md};
+    color: ${({ theme }) => theme.color.textMuted};
+  }
+  [data-folio='file'] a {
+    color: ${({ theme }) => theme.color.accent};
+    font-weight: 500;
+  }
   [data-folio='mention'] {
     color: ${({ theme }) => theme.color.accent};
     font-weight: 500;

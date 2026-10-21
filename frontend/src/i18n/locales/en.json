@@ -1741,7 +1741,10 @@
         "image": "Image",
         "file": "File",
         "video": "Video"
-      }
+      },
+      "addCover": "Add cover",
+      "changeCover": "Change cover",
+      "removeCover": "Remove cover"
     },
     "publish": {
       "title": "Publish"

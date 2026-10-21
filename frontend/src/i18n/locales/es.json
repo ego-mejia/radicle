@@ -1741,7 +1741,10 @@
         "image": "Imagen",
         "file": "Archivo",
         "video": "Video"
-      }
+      },
+      "addCover": "Agregar portada",
+      "changeCover": "Cambiar portada",
+      "removeCover": "Quitar portada"
     },
     "publish": {
       "title": "Publicar"

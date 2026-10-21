@@ -52,6 +52,26 @@ export const Scroll = styled.main`
   overflow-y: auto;
 `;
 
+export const Cover = styled.div`
+  position: relative;
+  height: 240px;
+  background: ${({ theme }) => theme.color.surface2};
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+`;
+
+export const CoverTools = styled.div`
+  position: absolute;
+  right: ${({ theme }) => theme.space.xl};
+  bottom: ${({ theme }) => theme.space.md};
+  display: flex;
+  gap: ${({ theme }) => theme.space.sm};
+`;
+
 export const Page = styled.div`
   max-width: 760px;
   margin: 0 auto;
