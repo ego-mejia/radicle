@@ -1649,7 +1649,11 @@
     },
     "reader": {
       "title": "Page",
-      "task": "Task"
+      "task": "Task",
+      "toc": "On this page",
+      "details": "Details",
+      "childPages": "Pages in here",
+      "file": "File"
     },
     "editor": {
       "title": "Editor"

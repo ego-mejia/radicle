@@ -2,15 +2,18 @@ import { Fragment, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { type DocNode, headingsOf } from './anchors';
 import { Inline } from './components/Inline';
+import { type ChildPage, RichBlock } from './components/RichBlock';
 import * as S from './style';
 
 type Props = {
   doc: DocNode | null | undefined;
+  /** Pages under this one, for the child pages block. */
+  childPages?: ChildPage[];
   size?: 'regular' | 'large';
 };
 
 /** A published or draft Folio document (TipTap JSON), read-only. */
-export function DocContent({ doc, size = 'regular' }: Props) {
+export function DocContent({ doc, childPages = [], size = 'regular' }: Props) {
   const { t } = useTranslation();
   const headings = headingsOf(doc);
   let next = 0;
@@ -104,7 +107,11 @@ export function DocContent({ doc, size = 'regular' }: Props) {
           </S.TableWrap>
         );
       default:
-        return null;
+        return (
+          <RichBlock node={n} headings={headings} childPages={childPages}>
+            {stack}
+          </RichBlock>
+        );
     }
   };
 
