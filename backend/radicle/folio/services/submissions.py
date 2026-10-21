@@ -30,7 +30,10 @@ async def submit(
 ) -> FolioSubmission:
     """The agent's draft as a pending submission; an earlier pending one is superseded."""
     await access.require_edit(db, agent, node)
-    draft = await db.get(FolioDraft, node.id)
+    from radicle.folio.services import collab  # collab needs publishing, which needs us
+
+    await collab.flush(node)  # send what is on screen right now
+    draft = await db.get(FolioDraft, node.id, populate_existing=True)
     if draft is None:
         raise _invalid("draft", "There is no draft to send. Write the page first.")
     metadata = await validate_metadata(db, node, draft.metadata_)

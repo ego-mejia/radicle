@@ -17,7 +17,7 @@ from radicle.folio.services import collab, ydoc
 from radicle.platform.db.models import User
 from tests.conftest import Team
 from tests.integration.collab_ws import Rejected, YClient, connected, settle
-from tests.integration.folio_helpers import API, publish
+from tests.integration.folio_helpers import API, METADATA, publish
 from tests.unit.folio_docs import p, t
 
 
@@ -198,3 +198,37 @@ async def test_a_full_room_says_so(
             async with connected(client, page, team.agent.headers):
                 pass
     assert rejected.value.code == 4429 and "editing this page" in rejected.value.reason
+
+
+async def test_an_agent_draft_over_rest_shows_up_live(
+    client: AsyncClient, team: Team, page: str
+) -> None:
+    async with connected(client, page, team.member.headers) as a:
+        r = await client.put(
+            f"{API}/nodes/{page}/draft",
+            headers=team.agent.headers,
+            json={"content_md": "# Resumen\n\nLo escribió el agente."},
+        )
+        assert r.status_code == 200, r.text
+        await settle(lambda: [n["type"] for n in a.json()["content"]] == ["heading", "paragraph"])
+        await settle(
+            lambda: any(
+                (s.get("user") or {}).get("agent") for s in a.peer_awareness.states.values()
+            )
+        )
+
+
+async def test_publishing_takes_what_is_on_screen(
+    client: AsyncClient, team: Team, page: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(collab, "SAVE_EVERY", 60)  # no autosave: only the flush counts
+    i = team.instance.headers
+    r = await client.put(f"{API}/nodes/{page}/draft", headers=i, json={"metadata": METADATA})
+    assert r.status_code == 200, r.text
+    async with connected(client, page, team.member.headers) as a:
+        _say(a, "recién escrito")
+        await settle(lambda: bool((room := collab.rooms.get(uuid.UUID(page))) and room.authors))
+        r = await client.post(f"{API}/nodes/{page}/publish", headers=i, json={})
+        assert r.status_code == 201, r.text
+    version = (await client.get(f"{API}/nodes/{page}/versions/1", headers=i)).json()
+    assert "recién escrito" in version["content_md"]

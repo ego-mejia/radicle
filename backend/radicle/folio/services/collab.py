@@ -281,6 +281,14 @@ class Rooms:
 rooms = Rooms()
 
 
+async def flush(node: FolioNode) -> None:
+    """Make the draft's JSON match the live document now, e.g. right before publishing."""
+    room = rooms.get(node.id)
+    if room is not None:
+        room._dirty = True
+        await room.save()
+
+
 async def apply_change(
     db: AsyncSession,
     node: FolioNode,

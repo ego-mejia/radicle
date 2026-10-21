@@ -114,7 +114,10 @@ async def publish(
             "Folders aren't published; publish their pages.",
             errors=[{"field": "node", "message": "folder"}],
         )
-    draft = await db.get(FolioDraft, node.id)
+    from radicle.folio.services import collab  # collab needs this module first
+
+    await collab.flush(node)  # publish what is on screen right now
+    draft = await db.get(FolioDraft, node.id, populate_existing=True)
     if draft is None:
         raise ValidationFailed(
             "There is no draft to publish. Write the page first (PUT /nodes/{id}/draft).",
