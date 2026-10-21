@@ -2612,6 +2612,29 @@
       "empty": "Todavía no hay nada publicado aquí.",
       "notFound": "Este link no funciona",
       "notFoundText": "Quizá lo revocaron. Pide uno nuevo a quien lo compartió."
+    },
+    "calendar": {
+      "today": "Hoy",
+      "previous": {
+        "month": "Mes anterior",
+        "week": "Semana anterior"
+      },
+      "next": {
+        "month": "Mes siguiente",
+        "week": "Semana siguiente"
+      },
+      "show": {
+        "month": "Mes",
+        "week": "Semana"
+      },
+      "category": {
+        "release": "Release",
+        "event": "Evento",
+        "vacation": "Vacaciones",
+        "oncall": "Guardia",
+        "other": "Otro"
+      },
+      "milestone": "Milestone de Docket"
     }
   },
   "notifications": {
