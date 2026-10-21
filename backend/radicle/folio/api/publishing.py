@@ -3,15 +3,15 @@
 import uuid
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Response
 from pydantic import Field
 
-from radicle.folio.db.models import FolioVersion
-from radicle.folio.services import nodes, publishing, versions
+from radicle.folio.db.models import FolioSubmission, FolioVersion
+from radicle.folio.services import nodes, publishing, submissions, versions
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Input, Output, Page, UtcDatetime
-from radicle.platform.db.models import User
+from radicle.platform.db.models import User, UserKind
 
 router = APIRouter(tags=["folio"])
 
@@ -50,14 +50,61 @@ async def version_out(db: Db, v: FolioVersion) -> VersionOut:
     )
 
 
-@router.post("/nodes/{node_id}/publish", response_model=VersionOut, status_code=201)
+class SubmissionOut(Output):
+    id: uuid.UUID
+    node_id: uuid.UUID
+    title: str
+    status: Literal["pending", "approved", "rejected", "superseded"]
+    change_note: str | None
+    submitted_by: str
+    reviewed_by: str | None
+    review_comment: str | None = Field(description="Why it was rejected, for the agent")
+    version: int | None = Field(description="The version it became, once approved")
+    created_at: UtcDatetime
+    decided_at: UtcDatetime | None
+    metadata: dict[str, Any]
+
+
+async def submission_out(db: Db, s: FolioSubmission) -> SubmissionOut:
+    agent = await db.get(User, s.submitted_by)
+    reviewer = await db.get(User, s.reviewed_by) if s.reviewed_by else None
+    version = await db.get(FolioVersion, s.version_id) if s.version_id else None
+    return SubmissionOut(
+        id=s.id,
+        node_id=s.node_id,
+        title=s.title,
+        status=s.status.value,
+        change_note=s.change_note,
+        submitted_by=agent.handle if agent else "",
+        reviewed_by=reviewer.handle if reviewer else None,
+        review_comment=s.review_comment,
+        version=version.number if version else None,
+        created_at=s.created_at,
+        decided_at=s.decided_at,
+        metadata=s.metadata_,
+    )
+
+
+@router.post(
+    "/nodes/{node_id}/publish",
+    response_model=VersionOut | SubmissionOut,
+    status_code=201,
+    responses={202: {"model": SubmissionOut, "description": "An agent's submission"}},
+)
 async def publish(
-    node_id: uuid.UUID, body: PublishIn, principal: CurrentPrincipal, db: Db
-) -> VersionOut:
-    """Publish the draft as the next version. 422 lists every missing metadata field; 409
-    when someone published after this draft started (send `confirm` to go ahead)."""
+    node_id: uuid.UUID, body: PublishIn, principal: CurrentPrincipal, db: Db, response: Response
+) -> VersionOut | SubmissionOut:
+    """Publish the draft as the next version (201). Agents send it for approval instead
+    (202, a submission). 422 lists every missing metadata field; 409 when someone published
+    after this draft started (send `confirm` to go ahead)."""
     (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
     node = await nodes.get_node(db, principal.user, node_id)
+    if principal.user.kind != UserKind.human:
+        submission = await submissions.submit(
+            db, principal.user, node, change_note=body.change_note
+        )
+        response.status_code = 202
+        return await submission_out(db, submission)
     version = await publishing.publish(
         db, principal.user, node, change_note=body.change_note, confirm=body.confirm
     )

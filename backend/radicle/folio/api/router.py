@@ -12,6 +12,7 @@ from radicle.folio.api import drafts as drafts_api
 from radicle.folio.api import publishing as publishing_api
 from radicle.folio.api import sharing as sharing_api
 from radicle.folio.api import spaces as spaces_api
+from radicle.folio.api import submissions as submissions_api
 from radicle.folio.db.models import FolioRole, GranteeType
 from radicle.folio.services import roles
 from radicle.platform import authz
@@ -125,3 +126,4 @@ router.include_router(assets_api.router)
 router.include_router(catalogs_api.router)
 router.include_router(publishing_api.router)
 router.include_router(sharing_api.router)
+router.include_router(submissions_api.router)

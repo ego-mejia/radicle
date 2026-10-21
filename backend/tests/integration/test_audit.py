@@ -10,6 +10,7 @@ from radicle.docket.db.models import AuditEntry, utcnow
 from radicle.platform.db.models import AuditApp
 from radicle.platform.services import audit
 from tests.conftest import ADMIN_PASSWORD, Team, make_project, new_ticket, patch_ticket
+from tests.integration.folio_helpers import agent_can_write, agent_submits
 
 API = "/api/v1"
 
@@ -72,6 +73,13 @@ async def every_action(client: AsyncClient, team: Team) -> None:
         json={
             "grants": [{"grantee_type": "user", "grantee": "fernando", "permissions": ["admin"]}]
         },
+    )
+    await agent_can_write(client, team, "audit")
+    good = await agent_submits(client, team, "audit", "Bueno")
+    bad = await agent_submits(client, team, "audit", "Malo")
+    await client.post(f"{API}/folio/submissions/{good['id']}/approve", headers=i, json={})
+    await client.post(
+        f"{API}/folio/submissions/{bad['id']}/reject", headers=i, json={"comment": "No"}
     )
     await client.put(
         f"{API}/projects/PA/permissions", headers=a, json={"member": {"ticket.delete": True}}
