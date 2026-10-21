@@ -74,6 +74,7 @@ export const CoverTools = styled.div`
 `;
 
 export const Page = styled.div`
+  position: relative;
   max-width: 760px;
   margin: 0 auto;
   padding: 48px ${({ theme }) => theme.space.xl} 160px;

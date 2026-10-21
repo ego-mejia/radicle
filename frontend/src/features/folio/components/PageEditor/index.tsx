@@ -38,6 +38,7 @@ import { collabExtensions } from '../../editor/collab';
 import { colorFor } from '../../editor/presence';
 import { useMe } from '../../../../hooks/useMe';
 import { Presence } from './components/Presence';
+import { Pointers } from './components/Pointers';
 
 type Props = {
   nodeId: string;
@@ -99,6 +100,7 @@ function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
   const upload = (file: File) => uploadAsset(node.id, file);
   const editorRef = useRef<Editor | null>(null);
   const bodyEl = useRef<HTMLDivElement>(null);
+  const pageEl = useRef<HTMLDivElement>(null);
   const discussion = useComments(node.id);
 
   const body = useAutosave(async (doc: Record<string, unknown>) => {
@@ -203,7 +205,14 @@ function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
             </S.CoverTools>
           </S.Cover>
         )}
-        <S.Page>
+        <S.Page ref={pageEl}>
+          {room && (
+            <Pointers
+              container={pageEl}
+              awareness={room.collab.provider.awareness}
+              peers={room.collab.peers}
+            />
+          )}
           <PageHeader
             tools={
               !cover && (
