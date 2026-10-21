@@ -2765,6 +2765,96 @@
         "title": "DiscardIn",
         "type": "object"
       },
+      "DraftIn": {
+        "additionalProperties": false,
+        "properties": {
+          "content_json": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "TipTap document",
+            "title": "Content Json"
+          },
+          "content_md": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Markdown (docs/folio/markdown.md)",
+            "title": "Content Md"
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metadata"
+          }
+        },
+        "title": "DraftIn",
+        "type": "object"
+      },
+      "DraftOut": {
+        "properties": {
+          "content_json": {
+            "additionalProperties": true,
+            "description": "TipTap document",
+            "title": "Content Json",
+            "type": "object"
+          },
+          "content_md": {
+            "description": "The same content as Markdown",
+            "title": "Content Md",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "description": "May be incomplete until publishing",
+            "title": "Metadata",
+            "type": "object"
+          },
+          "saved": {
+            "description": "False until someone writes",
+            "title": "Saved",
+            "type": "boolean"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          }
+        },
+        "required": [
+          "content_json",
+          "content_md",
+          "metadata",
+          "saved",
+          "updated_at"
+        ],
+        "title": "DraftOut",
+        "type": "object"
+      },
       "DuplicateIn": {
         "additionalProperties": false,
         "properties": {
@@ -14768,6 +14858,103 @@
           }
         },
         "summary": "Patch Node",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/draft": {
+      "get": {
+        "operationId": "get_draft_api_v1_folio_nodes__node_id__draft_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Draft",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "put": {
+        "description": "Save the draft: content as JSON or Markdown (one of them), and/or metadata.",
+        "operationId": "put_draft_api_v1_folio_nodes__node_id__draft_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DraftOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Draft",
         "tags": [
           "folio",
           "folio"

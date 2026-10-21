@@ -152,3 +152,26 @@ class FolioNodeEvent(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, server_default=func.now()
     )
+
+
+class FolioDraft(Base):
+    """The live draft of a page or blog post: one per node, saved as you type."""
+
+    __tablename__ = "folio_drafts"
+
+    node_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("folio_nodes.id", ondelete="CASCADE"), primary_key=True
+    )
+    content_json: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    # May be incomplete; publishing validates it.
+    metadata_: Mapped[dict[str, Any]] = mapped_column(
+        "metadata", JSONB, default=dict, server_default="{}"
+    )
+    # The published version this draft started from (set by publishing, Folio 1.3).
+    base_version_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    updated_by: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, server_default=func.now()
+    )
