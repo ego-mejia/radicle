@@ -14,6 +14,7 @@ export type FolioNodeIn = S['NodeIn'];
 export type FolioMoveIn = S['NodeMoveIn'];
 export type FolioTemplate = S['FolioTemplateOut'];
 export type FolioLinkPreview = S['LinkPreviewOut'];
+export type FolioListedPage = S['ListedPageOut'];
 export type FolioTemplateIn = S['FolioTemplateIn'];
 export type FolioTemplatePatch = S['FolioTemplatePatch'];
 export type NodeFromTemplateIn = S['NodeFromTemplateIn'];
@@ -56,6 +57,7 @@ export const folioKeys = {
   schema: ['folio', 'metadata-schema'] as const,
   template: (id: string) => ['folio', 'template', id] as const,
   linkPreview: (url: string) => ['folio', 'link-preview', url] as const,
+  pageList: (q: PageListQuery) => ['folio', 'page-list', q] as const,
   templates: (kind: 'page' | 'space', space?: string) =>
     ['folio', 'templates', kind, space ?? 'all'] as const,
   catalog: (name: FolioCatalog) => ['folio', 'catalog', name] as const,
@@ -456,4 +458,22 @@ export async function createFromTemplate(body: NodeFromTemplateIn): Promise<Foli
 /** A pasted link's card, and an iframe URL for the providers that embed (Folio 3.7). */
 export async function fetchLinkPreview(url: string): Promise<FolioLinkPreview> {
   return unwrap(await api.GET('/api/v1/folio/link-preview', { params: { query: { url } } }));
+}
+
+export type PageListQuery = {
+  label: string;
+  space?: string | null;
+  limit?: number | null;
+  order?: 'newest' | 'title' | null;
+};
+
+/** The "list by label" block: published pages with the label that the reader can see. */
+export async function fetchPageList(q: PageListQuery): Promise<FolioListedPage[]> {
+  const query = {
+    label: q.label,
+    space: q.space ?? undefined,
+    limit: q.limit ?? undefined,
+    order: q.order ?? undefined,
+  };
+  return unwrap(await api.GET('/api/v1/folio/page-list', { params: { query } })).items;
 }

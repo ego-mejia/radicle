@@ -1802,7 +1802,16 @@
       "chart": "Gráfica",
       "chartEmpty": "Esta gráfica aún no tiene datos: pon una tabla con números justo antes.",
       "showTable": "Ver tabla",
-      "showChart": "Ver gráfica"
+      "showChart": "Ver gráfica",
+      "timeline": "Línea de tiempo",
+      "milestone": {
+        "done": "Hecho",
+        "in_progress": "En curso",
+        "planned": "Planeado"
+      },
+      "pageList": "Páginas con el label {{label}}",
+      "pageListEmpty": "Aún no hay páginas publicadas que puedas ver con este label.",
+      "pageListFailed": "No se pudo cargar la lista."
     },
     "editor": {
       "title": "Editor",

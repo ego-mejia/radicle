@@ -12,6 +12,8 @@ import { VisualFrame } from '../../../VisualFrame';
 import { ChartBlock } from '../../../ChartBlock';
 import type { ChartKind } from '../../../ChartBlock/components/ChartView';
 import { type ChartData, tableData } from '../../../ChartBlock/tableData';
+import { PageList } from '../../../PageList';
+import { Timeline, type TimelineItem } from '../../../Timeline';
 import * as S from './style';
 
 export type ChildPage = { id: string; title: string; slug: string };
@@ -130,6 +132,17 @@ export function RichBlock({ node: n, previous, headings, childPages, children }:
           kind={String(a.kind ?? 'bar') as ChartKind}
           title={a.title ? String(a.title) : null}
           data={a.source === 'table' ? tableData(previous) : ((a.data as ChartData) ?? null)}
+        />
+      );
+    case 'timeline':
+      return <Timeline items={(a.items as TimelineItem[]) ?? []} />;
+    case 'pageList':
+      return (
+        <PageList
+          label={String(a.label ?? '')}
+          space={a.space ? String(a.space) : null}
+          limit={a.limit ? Number(a.limit) : null}
+          order={a.order === 'title' ? 'title' : null}
         />
       );
     case 'comparison':
