@@ -19,6 +19,7 @@ import {
   type FolioSubmission,
   type FolioVersion,
 } from '../../../../services/api/folio';
+import { AiSuggestions } from './components/AiSuggestions';
 import { MetadataForm } from './components/MetadataForm';
 import { fromDraft, validate, type Field as Name, type Metadata } from './validate';
 import * as S from './style';
@@ -28,6 +29,8 @@ export type Published = FolioVersion | FolioSubmission;
 type Props = {
   nodeId: string;
   title: string;
+  /** The page's space: with the editor AI on there, empty fields get suggestions. */
+  space?: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onPublished: (result: Published) => void;
@@ -62,6 +65,7 @@ export function PublishDialog(props: Props) {
 function Form({
   nodeId,
   title,
+  space,
   schema,
   initial,
   onPublished,
@@ -126,6 +130,19 @@ function Form({
   return (
     <S.Body>
       {problems.title && <FormError>{t(`folio.publish.${problems.title}`)}</FormError>}
+      {space && (
+        <AiSuggestions
+          nodeId={nodeId}
+          space={space}
+          value={value}
+          schema={schema}
+          onUse={(patch) => {
+            setValue((v) => ({ ...v, ...patch }));
+            if (patch.labels) setLabelsText(patch.labels.join(', '));
+            setServer({});
+          }}
+        />
+      )}
       <MetadataForm
         value={value}
         labelsText={labelsText}

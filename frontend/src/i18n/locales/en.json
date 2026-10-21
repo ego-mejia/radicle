@@ -2438,7 +2438,11 @@
       "languagePlaceholder": "e.g. English",
       "proposal": "AI proposal",
       "accept": "Replace the selection",
-      "discard": "Discard"
+      "discard": "Discard",
+      "suggesting": "The AI is suggesting metadata…",
+      "suggestions": "AI suggestions",
+      "use": "Use the suggested {{field}}",
+      "useShort": "Use"
     },
     "tickets": {
       "restricted": "Restricted ticket",

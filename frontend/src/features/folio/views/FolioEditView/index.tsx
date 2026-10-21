@@ -36,6 +36,7 @@ export function FolioEditView() {
       <PublishDialog
         nodeId={nodeId}
         title={node()?.title ?? ''}
+        space={node()?.space}
         open={publishing}
         onOpenChange={setPublishing}
         onPublished={published}
