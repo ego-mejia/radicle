@@ -445,7 +445,10 @@
       "done": "Terminado",
       "no_forecast": "Sin pronóstico",
       "none": "Sin pronóstico todavía"
-    }
+    },
+    "docs": "Docs de {{name}}",
+    "docsTitle_one": "{{count}} doc",
+    "docsTitle_other": "{{count}} docs"
   },
   "myTickets": {
     "subtitle": "Tickets abiertos asignados a ti en todos los proyectos, lo más urgente primero.",

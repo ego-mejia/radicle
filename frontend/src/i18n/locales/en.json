@@ -445,7 +445,10 @@
       "done": "Done",
       "no_forecast": "No forecast",
       "none": "No forecast yet"
-    }
+    },
+    "docs": "Docs of {{name}}",
+    "docsTitle_one": "{{count}} doc",
+    "docsTitle_other": "{{count}} docs"
   },
   "myTickets": {
     "subtitle": "Open tickets assigned to you in every project, most urgent first.",
