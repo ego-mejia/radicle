@@ -3,9 +3,10 @@
 import uuid
 from typing import Literal
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from pydantic import Field
 
+from radicle.folio.services import feed as feed_service
 from radicle.folio.services import home as home_service
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
@@ -68,4 +69,27 @@ async def get_home(principal: CurrentPrincipal, db: Db) -> HomeOut:
         latest_posts=[_card(c) for c in h.latest_posts],
         spaces=[SpaceCountOut.model_validate(s, from_attributes=True) for s in h.spaces],
         most_read=[_card(c) for c in h.most_read],
+    )
+
+
+class FeedItemOut(CardOut):
+    reason: Literal["following", "popular"] = Field(
+        description="following: a page or space you follow; popular: read a lot this week"
+    )
+
+
+class FeedOut(Output):
+    items: list[FeedItemOut]
+
+
+@router.get("/me/feed", response_model=FeedOut)
+async def get_feed(
+    principal: CurrentPrincipal, db: Db, limit: int = Query(default=20, ge=1, le=50)
+) -> FeedOut:
+    """Para ti: what the pages and spaces you follow published, newest first, then the
+    week's most read in the spaces you can see."""
+    (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
+    items = await feed_service.feed(db, principal.user, limit)
+    return FeedOut(
+        items=[FeedItemOut(**_card(i.card).model_dump(), reason=i.reason) for i in items]
     )

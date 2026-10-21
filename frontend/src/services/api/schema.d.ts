@@ -943,6 +943,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/me/feed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Feed
+         * @description Para ti: what the pages and spaces you follow published, newest first, then the
+         *     week's most read in the spaces you can see.
+         */
+        get: operations["get_feed_api_v1_folio_me_feed_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/me/personal-space": {
         parameters: {
             query?: never;
@@ -5017,6 +5038,64 @@ export interface components {
             nodes: components["schemas"]["NodeRef"][];
             /** Spaces */
             spaces: components["schemas"]["SpaceOut"][];
+        };
+        /** FeedItemOut */
+        FeedItemOut: {
+            /**
+             * Author
+             * @description Handle of who published it
+             */
+            author: string | null;
+            /** Author Name */
+            author_name: string | null;
+            /** Cover Asset Id */
+            cover_asset_id: string | null;
+            /** Description */
+            description: string;
+            /** Doc Type */
+            doc_type: string | null;
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "page" | "blog_post";
+            /** Labels */
+            labels: string[];
+            /** Published At */
+            published_at: string | null;
+            /** Reading Minutes */
+            reading_minutes: number;
+            /**
+             * Reason
+             * @description following: a page or space you follow; popular: read a lot this week
+             * @enum {string}
+             */
+            reason: "following" | "popular";
+            /** Slug */
+            slug: string;
+            /** Space */
+            space: string;
+            /** Space Name */
+            space_name: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "published" | "in_review" | "verified" | "outdated";
+            /** Title */
+            title: string;
+        };
+        /** FeedOut */
+        FeedOut: {
+            /** Items */
+            items: components["schemas"]["FeedItemOut"][];
         };
         /** FieldChangeOut */
         FieldChangeOut: {
@@ -11145,6 +11224,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FavoritesOut"];
+                };
+            };
+        };
+    };
+    get_feed_api_v1_folio_me_feed_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeedOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

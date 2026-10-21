@@ -280,6 +280,7 @@ EXEMPT = {
     "/api/v1/folio/reactions/{target_type}/{target_id}",
     "/api/v1/folio/me/recents",
     "/api/v1/folio/me/tasks",
+    "/api/v1/folio/me/feed",
     "/api/v1/folio/me/favorites",
     "/api/v1/folio/submissions/{submission_id}",
     "/api/v1/folio/admin/{catalog}",

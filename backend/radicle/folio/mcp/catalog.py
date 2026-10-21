@@ -12,6 +12,9 @@ READ = (
     "get_versions",
     "list_templates",
     "list_comments",
+    "list_my_tasks",
+    "get_feed",
+    "list_notifications",
 )
 
 WRITE = (
@@ -22,6 +25,8 @@ WRITE = (
     "create_from_template",
     "add_comment",
     "resolve_comment",
+    "set_task_done",
+    "watch",
 )
 
 CATALOG: tuple[Tool, ...] = (
