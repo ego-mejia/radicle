@@ -310,6 +310,15 @@ async def chat(
     return reply
 
 
+@dataclass
+class Usage:
+    """What a streamed call cost, filled in when the stream ends."""
+
+    input_tokens: int = 0
+    output_tokens: int = 0
+    latency_ms: int = 0
+
+
 def _stream_body(cfg: AiConfig, body: dict[str, Any]) -> dict[str, Any]:
     body = {**body, "stream": True}
     if cfg.provider not in (AiProvider.anthropic, AiProvider.ollama):
@@ -362,6 +371,7 @@ async def stream(
     feature: str,
     user: User | None,
     max_tokens: int = CHAT_MAX_TOKENS,
+    usage: Usage | None = None,
 ) -> AsyncIterator[str]:
     """Like `chat`, but the answer arrives piece by piece as the model writes it. The call
     is recorded in ai_calls when the stream ends, failed or not."""
@@ -402,4 +412,8 @@ async def stream(
         ) from None
     finally:
         call.latency_ms = int((time.perf_counter() - started) * 1000)
+        if usage is not None:
+            usage.input_tokens = call.input_tokens or 0
+            usage.output_tokens = call.output_tokens or 0
+            usage.latency_ms = call.latency_ms
         await db.flush()
