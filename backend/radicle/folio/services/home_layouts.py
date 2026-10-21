@@ -228,6 +228,12 @@ async def get_draft(db: AsyncSession, user: User) -> Draft:
     return Draft(await active(db), False, None)
 
 
+async def checked(db: AsyncSession, user: User, raw: Any) -> dict[str, Any]:
+    """A layout validated for the preview, without saving it."""
+    await _require_admin(db, user)
+    return await validate(db, raw)
+
+
 async def save_draft(db: AsyncSession, user: User, raw: Any) -> Draft:
     await _require_admin(db, user)
     layout = await validate(db, raw)

@@ -7,7 +7,8 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import Field
 
-from radicle.folio.services import home_layouts
+from radicle.folio.api.home import HomeBlockOut, block_out
+from radicle.folio.services import home_blocks, home_layouts
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Input, Output, Page, UtcDatetime
 from radicle.platform.db.models import User
@@ -75,6 +76,20 @@ async def put_draft(body: HomeLayoutIn, principal: CurrentPrincipal, db: Db) -> 
     """Save the draft; 422 lists every block that's wrong (an RQL error says where)."""
     raw = body.model_dump()
     return _draft(await home_layouts.save_draft(db, principal.user, raw))
+
+
+class HomePreviewOut(Output):
+    blocks: list[HomeBlockOut]
+
+
+@router.post("/preview", response_model=HomePreviewOut)
+async def preview(body: HomeLayoutIn, principal: CurrentPrincipal, db: Db) -> HomePreviewOut:
+    """The layout resolved as the home would show it to you, without saving it; empty
+    blocks are left out, as readers would never see them."""
+    layout = await home_layouts.checked(db, principal.user, body.model_dump())
+    return HomePreviewOut(
+        blocks=[block_out(b) for b in await home_blocks.resolve(db, principal.user, layout)]
+    )
 
 
 @router.post("/publish", response_model=HomeLayoutVersionOut, status_code=201)

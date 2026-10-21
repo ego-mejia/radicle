@@ -76,7 +76,7 @@ def _card(c: home_service.Card) -> CardOut:
     return CardOut.model_validate(c, from_attributes=True)
 
 
-def _block(b: home_blocks.Block) -> HomeBlockOut:
+def block_out(b: home_blocks.Block) -> HomeBlockOut:
     return HomeBlockOut(
         id=b.id,
         type=b.type,
@@ -104,7 +104,7 @@ async def get_home(principal: CurrentPrincipal, db: Db) -> HomeOut:
         latest_posts=[_card(c) for c in h.latest_posts],
         spaces=[SpaceCountOut.model_validate(s, from_attributes=True) for s in h.spaces],
         most_read=[_card(c) for c in h.most_read],
-        blocks=[_block(b) for b in await home_blocks.resolve(db, principal.user)],
+        blocks=[block_out(b) for b in await home_blocks.resolve(db, principal.user)],
     )
 
 
