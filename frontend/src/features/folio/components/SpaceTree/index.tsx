@@ -17,6 +17,7 @@ import {
   Folder,
   GripVertical,
   Radio,
+  Shapes,
   Table2,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -66,7 +67,9 @@ function Row({ space, item, depth, current, canMove, closed, toggle }: RowProps)
         ? Radio
         : item.kind === 'database'
           ? Table2
-          : FileText;
+          : item.kind === 'whiteboard'
+            ? Shapes
+            : FileText;
   return (
     <li>
       <S.Row

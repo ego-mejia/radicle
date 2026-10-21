@@ -11,7 +11,7 @@ import { createFromTemplate, createNode, folioKeys } from '../../../../services/
 import { TemplatePicker } from '../TemplatePicker';
 import * as S from './style';
 
-export type NewKind = 'page' | 'folder' | 'blog_post' | 'live_doc' | 'database';
+export type NewKind = 'page' | 'folder' | 'blog_post' | 'live_doc' | 'database' | 'whiteboard';
 
 type Props = {
   space: string;
@@ -42,7 +42,7 @@ export function NewNodeDialog({ space, kind, parent = null, open, onOpenChange }
       setTitle('');
       onOpenChange(false);
       const page = `${node.id}-${node.slug}`;
-      if (kind === 'database') {
+      if (kind === 'database' || kind === 'whiteboard') {
         await navigate({ to: '/folio/p/$page', params: { page } });
       } else if (kind !== 'folder') {
         await navigate({ to: '/folio/p/$page/edit', params: { page } });

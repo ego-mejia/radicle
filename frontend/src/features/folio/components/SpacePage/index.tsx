@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { FilePlus, FolderPlus, PenLine, Radio, Table2 } from 'lucide-react';
+import { FilePlus, FolderPlus, PenLine, Radio, Shapes, Table2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
@@ -75,6 +75,10 @@ export function SpacePage({ spaceKey }: { spaceKey: string }) {
               <Button onClick={() => setCreating('database')}>
                 <Table2 aria-hidden />
                 {t('folio.space.new.database')}
+              </Button>
+              <Button onClick={() => setCreating('whiteboard')}>
+                <Shapes aria-hidden />
+                {t('folio.space.new.whiteboard')}
               </Button>
             </S.Actions>
           )}
