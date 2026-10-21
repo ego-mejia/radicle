@@ -2237,7 +2237,20 @@
       "actions": "Actions",
       "edit": "Edit {{column}}",
       "done": "Done",
-      "personHint": "handle"
+      "personHint": "handle",
+      "editView": "Edit view",
+      "newView": "New view",
+      "newViewName": "View {{n}}",
+      "deleteView": "Delete view",
+      "viewName": "Name",
+      "viewKind": "Shown as",
+      "kind": {
+        "table": "Table",
+        "cards": "Cards",
+        "board": "Board"
+      },
+      "groupBy": "Group by",
+      "shownColumns": "Columns shown"
     }
   },
   "notifications": {
