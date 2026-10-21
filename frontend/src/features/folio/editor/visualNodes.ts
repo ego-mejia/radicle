@@ -4,6 +4,7 @@
 
 import { mergeAttributes, Node } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
+import { ComparisonSideView } from '../components/ComparisonSideView';
 import { SuiteNodeView } from '../components/SuiteNodeView';
 
 const htmlName = (key: string) => `data-${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`;
@@ -118,6 +119,7 @@ export const ComparisonSide = Node.create({
     mergeAttributes(HTMLAttributes, { 'data-folio': 'comparisonSide' }),
     0,
   ],
+  addNodeView: () => ReactNodeViewRenderer(ComparisonSideView),
 });
 
 export const VISUAL_NODES = [

@@ -176,6 +176,16 @@ export const Prose = styled.div`
   [data-folio='columns'][data-layout='sidebar_right'] {
     grid-template-columns: 2fr 1fr;
   }
+  [data-folio='comparison'] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: ${({ theme }) => theme.space.md};
+  }
+  [data-folio='comparisonSide'] {
+    border: 1px solid ${({ theme }) => theme.color.border};
+    border-radius: ${({ theme }) => theme.radius.md};
+    padding: ${({ theme }) => theme.space.md};
+  }
   [data-folio='column'] {
     border: 1px dashed ${({ theme }) => theme.color.border};
     border-radius: ${({ theme }) => theme.radius.md};
