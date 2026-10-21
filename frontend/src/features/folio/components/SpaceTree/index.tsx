@@ -10,7 +10,15 @@ import {
 } from '@dnd-kit/core';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { ChevronDown, ChevronRight, FileText, Folder, GripVertical, Radio } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronRight,
+  FileText,
+  Folder,
+  GripVertical,
+  Radio,
+  Table2,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
@@ -51,7 +59,14 @@ function Row({ space, item, depth, current, canMove, closed, toggle }: RowProps)
   const into = useDroppable({ id: `into:${item.id}`, disabled: !canMove });
   const open = !closed.has(item.id);
   const hasChildren = item.children.length > 0;
-  const Icon = item.kind === 'folder' ? Folder : item.kind === 'live_doc' ? Radio : FileText;
+  const Icon =
+    item.kind === 'folder'
+      ? Folder
+      : item.kind === 'live_doc'
+        ? Radio
+        : item.kind === 'database'
+          ? Table2
+          : FileText;
   return (
     <li>
       <S.Row

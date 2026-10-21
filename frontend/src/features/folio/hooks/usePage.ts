@@ -26,7 +26,7 @@ export function usePage(id: string) {
   const key = node.data?.space ?? '';
   const published = node.data?.version != null;
   // A live doc is never published: everyone reads what is written now.
-  const live = node.data?.kind === 'live_doc';
+  const live = node.data?.kind === 'live_doc' || node.data?.kind === 'database';
   const space = useQuery({
     queryKey: folioKeys.space(key),
     queryFn: () => fetchSpace(key),
