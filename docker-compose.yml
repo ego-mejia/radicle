@@ -26,6 +26,7 @@ services:
       RADICLE_SMTP_PASSWORD: ${RADICLE_SMTP_PASSWORD:-}
       RADICLE_SMTP_FROM: ${RADICLE_SMTP_FROM:-Radicle <radicle@localhost>}
       RADICLE_SMTP_TLS: ${RADICLE_SMTP_TLS:-true}
+      RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE: ${RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE:-10}
     volumes:
       - attachments:/data/attachments
     depends_on:

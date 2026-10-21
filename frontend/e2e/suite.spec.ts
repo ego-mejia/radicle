@@ -52,7 +52,7 @@ test('switch to Folio from the logo and back without signing in again', async ()
   await page.getByRole('button', { name: /Switch app, now Radicle Docket/ }).click();
   await page.getByRole('menuitem', { name: /Radicle Folio/ }).click();
   await expect(page).toHaveURL(/\/folio$/);
-  await expect(page.getByRole('heading', { name: 'Folio', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /Switch app, now Radicle Folio/ })).toBeVisible();
 
   // g d goes back to where Docket was left; g f returns to Folio.
@@ -62,7 +62,7 @@ test('switch to Folio from the logo and back without signing in again', async ()
   await page.keyboard.press('g');
   await page.keyboard.press('f');
   await expect(page).toHaveURL(/\/folio$/);
-  await expect(page.getByRole('heading', { name: 'Folio', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
 });
 
 test('a Folio admin gives a group the creator role', async () => {
