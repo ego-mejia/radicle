@@ -38,7 +38,8 @@ class ImportOut(Output):
 
 class ImportOptionsIn(Input):
     authors: dict[str, str | None] | None = Field(
-        None, description="Each source author (as the plan lists them) → a user id, or null"
+        None,
+        description="Each source author (as the plan lists them) → a user id or handle, or null",
     )
     default_metadata: dict[str, Any] | None = Field(
         None, description="Metadata for every page; a page that's then complete is published"

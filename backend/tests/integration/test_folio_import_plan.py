@@ -43,7 +43,7 @@ async def test_a_confluence_dry_run(db: AsyncSession, team: Team, space: FolioSp
         data=zipped("confluence"),
     )
     assert item.status == ImportStatus.uploaded
-    report = await import_plan.dry_run(db, fernando, item, {"authors": {"Ana López": str(ana.id)}})
+    report = await import_plan.dry_run(db, fernando, item, {"authors": {"Ana López": "@ana"}})
     assert item.status == ImportStatus.checked and item.options["authors"]
     assert [(p["title"], p["action"]) for p in report["pages"]] == [
         ("Home", "create"),
@@ -106,7 +106,7 @@ async def test_wrong_uploads_options_and_people(
     assert report["errors"] == ["No Markdown files (.md) were found in the upload."]
     with pytest.raises(ValidationFailed, match="Unknown options: color"):
         await import_plan.dry_run(db, fernando, item, {"color": "red"})
-    with pytest.raises(ValidationFailed, match="not an id"):
+    with pytest.raises(ValidationFailed, match="doesn't exist"):
         await import_plan.dry_run(db, fernando, item, {"authors": {"Ana": "nope"}})
     with pytest.raises(ValidationFailed, match="doesn't exist"):
         await import_plan.dry_run(db, fernando, item, {"authors": {"Ana": str(uuid.uuid4())}})

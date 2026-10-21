@@ -63,7 +63,7 @@ async def test_errors(client: AsyncClient, team: Team) -> None:
     r = await client.post(
         f"{API}/imports/{made['id']}/dry-run", headers=i, json={"authors": {"Ana": "nope"}}
     )
-    assert r.status_code == 422 and "not an id" in r.json()["detail"]
+    assert r.status_code == 422 and "doesn't exist" in r.json()["detail"]
     r = await client.get(f"{API}/imports/{team.instance.handle}", headers=i)
     assert r.status_code == 422
     r = await client.get(f"{API}/imports/00000000-0000-0000-0000-000000000000", headers=i)
