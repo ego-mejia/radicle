@@ -7,6 +7,7 @@ from fastapi import APIRouter, Response
 from pydantic import Field
 
 from radicle.folio.api import assets as assets_api
+from radicle.folio.api import catalogs as catalogs_api
 from radicle.folio.api import drafts as drafts_api
 from radicle.folio.api import spaces as spaces_api
 from radicle.folio.db.models import FolioRole, GranteeType
@@ -119,3 +120,4 @@ async def delete_grant(grant_id: uuid.UUID, principal: CurrentPrincipal, db: Db)
 router.include_router(spaces_api.router)
 router.include_router(drafts_api.router)
 router.include_router(assets_api.router)
+router.include_router(catalogs_api.router)

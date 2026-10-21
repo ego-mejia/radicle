@@ -712,6 +712,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/admin/{catalog}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Entries */
+        get: operations["list_entries_api_v1_folio_admin__catalog__get"];
+        put?: never;
+        /** Create Entry */
+        post: operations["create_entry_api_v1_folio_admin__catalog__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/admin/{catalog}/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Entry */
+        patch: operations["update_entry_api_v1_folio_admin__catalog___key__patch"];
+        trace?: never;
+    };
     "/api/v1/folio/assets/{asset_id}": {
         parameters: {
             query?: never;
@@ -781,6 +816,26 @@ export interface paths {
          * @description Your personal space, created the first time you ask for it.
          */
         get: operations["my_space_api_v1_folio_me_personal_space_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/metadata-schema": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Metadata Schema
+         * @description What publishing needs: the fields with their rules and the catalogs' active entries.
+         */
+        get: operations["metadata_schema_api_v1_folio_metadata_schema_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3887,6 +3942,48 @@ export interface components {
              */
             original: string;
         };
+        /** EntryIn */
+        EntryIn: {
+            /**
+             * Description
+             * @default
+             */
+            description?: string;
+            /**
+             * Key
+             * @description Lowercase letters, digits and dashes, e.g. how-to
+             */
+            key: string;
+            /** Name */
+            name: string;
+        };
+        /** EntryOut */
+        EntryOut: {
+            /** Archived */
+            archived: boolean;
+            /** Description */
+            description: string;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            /** Position */
+            position: number;
+        };
+        /** EntryPatch */
+        EntryPatch: {
+            /**
+             * Archived
+             * @description Archived entries can't be chosen
+             */
+            archived?: boolean | null;
+            /** Description */
+            description?: string | null;
+            /** Name */
+            name?: string | null;
+            /** Position */
+            position?: number | null;
+        };
         /** EventOut */
         EventOut: {
             actor: components["schemas"]["UserRef"];
@@ -3965,6 +4062,15 @@ export interface components {
             label: string;
             /** Value */
             value: string;
+        };
+        /** FieldRule */
+        FieldRule: {
+            /** Name */
+            name: string;
+            /** Required */
+            required: boolean;
+            /** Rule */
+            rule: string;
         };
         /** FilterIn */
         FilterIn: {
@@ -4494,6 +4600,17 @@ export interface components {
         MemberPut: {
             role: components["schemas"]["ProjectRole"];
         };
+        /** MetadataSchemaOut */
+        MetadataSchemaOut: {
+            /** Audiences */
+            audiences: components["schemas"]["EntryOut"][];
+            /** Doc Types */
+            doc_types: components["schemas"]["EntryOut"][];
+            /** Fields */
+            fields: components["schemas"]["FieldRule"][];
+            /** Languages */
+            languages: components["schemas"]["EntryOut"][];
+        };
         /** MilestoneCreate */
         MilestoneCreate: {
             /**
@@ -4774,6 +4891,13 @@ export interface components {
         Page_DashboardOut_: {
             /** Items */
             items: components["schemas"]["DashboardOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[EntryOut] */
+        Page_EntryOut_: {
+            /** Items */
+            items: components["schemas"]["EntryOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -8614,6 +8738,110 @@ export interface operations {
             };
         };
     };
+    list_entries_api_v1_folio_admin__catalog__get: {
+        parameters: {
+            query?: {
+                include_archived?: boolean;
+            };
+            header?: never;
+            path: {
+                catalog: "doc-types" | "audiences" | "languages";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_EntryOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_entry_api_v1_folio_admin__catalog__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                catalog: "doc-types" | "audiences" | "languages";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EntryIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_entry_api_v1_folio_admin__catalog___key__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                catalog: "doc-types" | "audiences" | "languages";
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EntryPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EntryOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_asset_api_v1_folio_assets__asset_id__get: {
         parameters: {
             query?: never;
@@ -8699,6 +8927,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SpaceOut"];
+                };
+            };
+        };
+    };
+    metadata_schema_api_v1_folio_metadata_schema_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MetadataSchemaOut"];
                 };
             };
         };
