@@ -8058,7 +8058,7 @@ export interface components {
         ImportOptionsIn: {
             /**
              * Authors
-             * @description Each source author (as the plan lists them) → a user id, or null
+             * @description Each source author (as the plan lists them) → a user id or handle, or null
              */
             authors?: {
                 [key: string]: string | null;

@@ -2,6 +2,7 @@
 updated, who each source author becomes, its labels, files and problems. It creates
 nothing; the plan is saved on the import for the admin to review before running it."""
 
+import re
 import uuid
 from dataclasses import dataclass
 from typing import Any
@@ -66,13 +67,22 @@ async def match_author(db: AsyncSession, name: str) -> Person | None:
     return Person(user.id, user.handle, user.display_name) if user else None
 
 
+async def _person(db: AsyncSession, pick: str) -> User | None:
+    """A user id, or a handle (with or without @), as the import wizard picks people."""
+    handle = pick.strip().lstrip("@")
+    if re.fullmatch(r"[0-9a-fA-F-]{36}", handle):
+        return await db.get(User, _uuid("options.authors", handle))
+    return await db.scalar(select(User).where(User.handle == handle))
+
+
 async def resolve_authors(
     db: AsyncSession, names: set[str], chosen: dict[str, str | None]
 ) -> dict[str, Person | None]:
-    """Who each source author becomes: the admin's choice, else the automatic match."""
+    """Who each source author becomes: the admin's choice (a user id or handle), else the
+    automatic match."""
     picked: dict[str, Person | None] = {}
     for name, pick in chosen.items():
-        user = await db.get(User, _uuid("options.authors", pick)) if pick else None
+        user = await _person(db, pick) if pick else None
         if pick and (user is None or not user.is_active or user.kind != UserKind.human):
             raise _invalid("options.authors", f"The person chosen for {name} doesn't exist.")
         picked[name] = Person(user.id, user.handle, user.display_name) if user else None

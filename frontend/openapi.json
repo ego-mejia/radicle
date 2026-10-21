@@ -7903,7 +7903,7 @@
                 "type": "null"
               }
             ],
-            "description": "Each source author (as the plan lists them) \u2192 a user id, or null",
+            "description": "Each source author (as the plan lists them) \u2192 a user id or handle, or null",
             "title": "Authors"
           },
           "default_metadata": {
