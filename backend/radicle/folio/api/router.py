@@ -20,6 +20,7 @@ from radicle.folio.api import drafts as drafts_api
 from radicle.folio.api import glossary as glossary_api
 from radicle.folio.api import home as home_api
 from radicle.folio.api import home_layouts as home_layouts_api
+from radicle.folio.api import imports as imports_api
 from radicle.folio.api import links as links_api
 from radicle.folio.api import livedocs as livedocs_api
 from radicle.folio.api import organize as organize_api
@@ -177,3 +178,4 @@ router.include_router(glossary_api.router)
 router.include_router(calendars_api.router)
 router.include_router(chat_api.router)
 router.include_router(public_links_api.router)
+router.include_router(imports_api.router)

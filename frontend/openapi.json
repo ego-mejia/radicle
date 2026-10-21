@@ -1650,6 +1650,39 @@
         "title": "BoardStatus",
         "type": "object"
       },
+      "Body_create_import_api_v1_folio_imports_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "description": "The export: a zip, a .docx or a .md",
+            "title": "File",
+            "type": "string"
+          },
+          "source": {
+            "description": "Where the export comes from",
+            "enum": [
+              "confluence",
+              "notion",
+              "word",
+              "markdown"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "space": {
+            "description": "Key of the space to import into",
+            "title": "Space",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file",
+          "source",
+          "space"
+        ],
+        "title": "Body_create_import_api_v1_folio_imports_post",
+        "type": "object"
+      },
       "Body_upload_asset_api_v1_folio_nodes__node_id__assets_post": {
         "properties": {
           "file": {
@@ -7848,6 +7881,145 @@
         "title": "HomePreviewOut",
         "type": "object"
       },
+      "ImportOptionsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "authors": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Each source author (as the plan lists them) \u2192 a user id, or null",
+            "title": "Authors"
+          },
+          "default_metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Metadata for every page; a page that's then complete is published",
+            "title": "Default Metadata"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Import under this page or folder",
+            "title": "Parent Id"
+          }
+        },
+        "title": "ImportOptionsIn",
+        "type": "object"
+      },
+      "ImportOut": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "options": {
+            "additionalProperties": true,
+            "title": "Options",
+            "type": "object"
+          },
+          "report": {
+            "additionalProperties": true,
+            "description": "The dry run's plan (pages, authors, errors, totals), and `run` with each page's outcome once it ran",
+            "title": "Report",
+            "type": "object"
+          },
+          "source": {
+            "enum": [
+              "confluence",
+              "notion",
+              "word",
+              "markdown"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "space": {
+            "description": "Key of the space it imports into",
+            "title": "Space",
+            "type": "string"
+          },
+          "stats": {
+            "additionalProperties": true,
+            "title": "Stats",
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "uploaded",
+              "checked",
+              "running",
+              "done",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "source",
+          "space",
+          "filename",
+          "status",
+          "options",
+          "report",
+          "stats",
+          "created_at",
+          "finished_at"
+        ],
+        "title": "ImportOut",
+        "type": "object"
+      },
       "InboxOut": {
         "properties": {
           "counts": {
@@ -10731,6 +10903,34 @@
           "next_cursor"
         ],
         "title": "Page[HomeLayoutVersionOut]",
+        "type": "object"
+      },
+      "Page_ImportOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ImportOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[ImportOut]",
         "type": "object"
       },
       "Page_MemberOut_": {
@@ -24444,6 +24644,214 @@
           }
         },
         "summary": "Get Home",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/imports": {
+      "get": {
+        "description": "Imports into the spaces you administer, newest first.",
+        "operationId": "list_imports_api_v1_folio_imports_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_ImportOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Imports",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "description": "Upload an export. Nothing is created until it's dry-run and run.",
+        "operationId": "create_import_api_v1_folio_imports_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_import_api_v1_folio_imports_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Import",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/imports/{import_id}": {
+      "get": {
+        "operationId": "get_import_api_v1_folio_imports__import_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Import",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/imports/{import_id}/dry-run": {
+      "post": {
+        "description": "The plan: each page created or updated, who each author becomes, files and problems.\nSend it again with other options as often as needed; it creates nothing.",
+        "operationId": "dry_run_api_v1_folio_imports__import_id__dry_run_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportOptionsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Dry Run",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/imports/{import_id}/run": {
+      "post": {
+        "description": "Run the checked import in the background; GET it to follow its status.",
+        "operationId": "run_api_v1_folio_imports__import_id__run_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "import_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Import Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run",
         "tags": [
           "folio",
           "folio"

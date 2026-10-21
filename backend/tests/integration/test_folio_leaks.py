@@ -147,6 +147,10 @@ EXEMPT = {
     "/api/v1/folio/pub/{token}",
     "/api/v1/folio/pub/{token}/pages/{node_id}",
     "/api/v1/folio/pub/{token}/assets/{asset_id}",
+    # Imports, for the target space's admins only (403 for the rest); they hold the
+    # uploaded export's titles, not Folio pages. test_folio_imports_api.py checks it.
+    "/api/v1/folio/imports",
+    "/api/v1/folio/imports/{import_id}",
 }
 
 
