@@ -2652,7 +2652,23 @@
         "oncall": "Guardia",
         "other": "Otro"
       },
-      "milestone": "Milestone de Docket"
+      "milestone": "Milestone de Docket",
+      "event": {
+        "new": "Nuevo evento",
+        "edit": "Evento",
+        "title": "Título",
+        "allDay": "Todo el día",
+        "start": "Empieza",
+        "end": "Termina",
+        "lastDay": "Último día",
+        "category": "Categoría",
+        "people": "Personas",
+        "peopleHint": "Handles, separados por comas",
+        "description": "Descripción",
+        "addedBy": "Lo agregó @{{handle}}",
+        "deleteTitle": "¿Borrar este evento?",
+        "deleteMessage": "“{{title}}” se quitará del calendario."
+      }
     },
     "imports": {
       "title": "Importar",
