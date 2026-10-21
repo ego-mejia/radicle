@@ -135,6 +135,10 @@ class SpaceChanges:
     description: str | None = None
     icon: str | None = None
     clear_icon: bool = False
+    verify_days: int | None = None
+
+
+MAX_VERIFY_DAYS = 730
 
 
 async def can_manage(db: AsyncSession, user: User, space: FolioSpace) -> bool:
@@ -153,6 +157,14 @@ async def update_space(
         space.icon = None
     elif ch.icon is not None:
         space.icon = ch.icon.strip() or None
+    if ch.verify_days is not None:
+        if not 1 <= ch.verify_days <= MAX_VERIFY_DAYS:
+            raise _invalid(
+                "verify_days",
+                f"A verification lasts 1 to {MAX_VERIFY_DAYS} days; {ch.verify_days} is out "
+                "of range.",
+            )
+        space.verify_days = ch.verify_days
     space.updated_at = utcnow()
     await db.flush()
     return space

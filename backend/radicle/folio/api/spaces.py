@@ -28,6 +28,7 @@ class SpaceOut(Output):
     cover_asset_id: uuid.UUID | None
     created_at: UtcDatetime
     permissions: list[str] = Field(description="What you may do here: view, create, ...")
+    verify_days: int = Field(description="Days a Verified page stays verified")
 
 
 class SpaceIn(Input):
@@ -41,6 +42,9 @@ class SpacePatch(Input):
     name: str | None = None
     description: str | None = None
     icon: str | None = Field(default=None, description="null removes it")
+    verify_days: int | None = Field(
+        default=None, description="Days a Verified page stays verified (1 to 730)"
+    )
 
 
 class NodeRef(Output):
@@ -104,6 +108,7 @@ async def _space(db: Db, user: User, s: FolioSpace) -> SpaceOut:
         icon=s.icon,
         cover_asset_id=s.cover_asset_id,
         created_at=s.created_at,
+        verify_days=s.verify_days,
     )
 
 
@@ -190,6 +195,7 @@ async def patch_space(key: str, body: SpacePatch, principal: CurrentPrincipal, d
         description=body.description,
         icon=body.icon,
         clear_icon="icon" in body.model_fields_set and body.icon is None,
+        verify_days=body.verify_days,
     )
     return await _space(
         db, principal.user, await spaces.update_space(db, principal.user, space, changes)

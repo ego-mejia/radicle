@@ -152,3 +152,19 @@ async def test_a_node_says_what_you_may_do_with_it(client: AsyncClient, team: Te
     assert r.status_code == 200, r.text
     seen = (await client.get(f"{API}/nodes/{page['id']}", headers=team.member.headers)).json()
     assert seen["can_edit"] is False and seen["can_delete"] is False
+
+
+async def test_space_admins_set_how_long_verification_lasts(
+    client: AsyncClient, team: Team
+) -> None:
+    i = team.instance.headers
+    r = await client.post(f"{API}/spaces", headers=i, json={"key": "ver", "name": "Ver"})
+    assert r.json()["verify_days"] == 90
+    r = await client.patch(f"{API}/spaces/ver", headers=i, json={"verify_days": 30})
+    assert r.status_code == 200 and r.json()["verify_days"] == 30
+    r = await client.patch(f"{API}/spaces/ver", headers=i, json={"verify_days": 0})
+    assert r.status_code == 422 and "1 to 730" in r.json()["detail"]
+    r = await client.patch(
+        f"{API}/spaces/ver", headers=team.member.headers, json={"verify_days": 10}
+    )
+    assert r.status_code == 403
