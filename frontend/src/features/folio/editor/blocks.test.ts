@@ -31,7 +31,11 @@ describe('the / menu blocks', () => {
 
   it('finds blocks by label or keyword, in any language', () => {
     expect(findBlocks(BLOCKS, 'warn', labels(en)).map((b) => b.key)).toEqual(['panel_warning']);
-    expect(findBlocks(BLOCKS, 'tabla', labels(es)).map((b) => b.key)).toEqual(['table', 'toc']);
+    expect(findBlocks(BLOCKS, 'tabla', labels(es)).map((b) => b.key)).toEqual([
+      'table',
+      'toc',
+      'ticketTable',
+    ]);
     expect(findBlocks(BLOCKS, 'col tres', labels(es)).map((b) => b.key)).toEqual(['columns3']);
     expect(findBlocks(BLOCKS, '', labels(en))).toHaveLength(BLOCKS.length);
   });
