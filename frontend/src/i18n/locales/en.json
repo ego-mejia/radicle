@@ -2484,6 +2484,21 @@
       },
       "createFromItem": "Create a ticket from this action item"
     },
+    "buildSpec": {
+      "button": "Create tickets",
+      "title": "Create tickets from the deliverables",
+      "intro": "One Docket task per deliverable, with a link to its section and its acceptance criteria as a checklist. Deliverables that already have a ticket are skipped.",
+      "items": "Deliverables",
+      "empty": "No deliverables found. Add a deliverables table (# | Deliverable | Includes | Accepted when) or numbered level-3 headings.",
+      "criteria_one": "{{count}} criterion",
+      "criteria_other": "{{count}} criteria",
+      "already": "Already {{key}}",
+      "create_one": "Create {{count}} ticket",
+      "create_other": "Create {{count}} tickets",
+      "created_one": "{{count}} ticket created and linked.",
+      "created_other": "{{count}} tickets created and linked.",
+      "failed": "The deliverables couldn't load."
+    },
     "chat": {
       "title": "Ask the docs",
       "open": "Ask",
