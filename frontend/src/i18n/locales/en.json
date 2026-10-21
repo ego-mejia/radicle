@@ -1679,7 +1679,23 @@
       "file": "File"
     },
     "editor": {
-      "title": "Editor"
+      "title": "Editor",
+      "back": "Back",
+      "publish": "Publish",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Untitled",
+      "bodyPlaceholder": "Write, or type / for blocks",
+      "icon": "Icon",
+      "iconHint": "An emoji or two letters",
+      "addIcon": "Add icon",
+      "changeIcon": "Change icon",
+      "removeIcon": "Remove icon",
+      "save": "Save",
+      "state": {
+        "saved": "Saved",
+        "saving": "Saving…",
+        "error": "Not saved: retrying"
+      }
     },
     "publish": {
       "title": "Publish"
