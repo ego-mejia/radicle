@@ -10,7 +10,6 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import (
     EventType,
     StatusCategory,
@@ -18,6 +17,7 @@ from radicle.db.models import (
     TicketEvent,
     TicketStatusPeriod,
 )
+from radicle.platform.errors import ValidationFailed
 from radicle.services.periods import day_end
 
 WEEKDAYS = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")

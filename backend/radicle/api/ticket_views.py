@@ -32,7 +32,8 @@ from radicle.db.models import (
     TicketEvent,
     User,
 )
-from radicle.services import attachments, custom_fields, images, markdown, relations, timetracking
+from radicle.platform.services import images, markdown
+from radicle.services import attachments, custom_fields, relations, timetracking
 from radicle.services.remaining import spent_hours
 from radicle.services.tickets import list_collaborators
 

@@ -5,8 +5,8 @@ from httpx import AsyncClient
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.config import get_settings
 from radicle.db.models import DailyStatusCount, Ticket, TicketEvent, TicketStatusPeriod
+from radicle.platform.config import get_settings
 from radicle.services import period_builder, periods
 from tests.conftest import Team, make_project, new_ticket, run_jobs
 
@@ -152,7 +152,7 @@ async def test_snapshot_job_runs_from_the_queue(
     db: AsyncSession, board: Team, client: AsyncClient
 ) -> None:
     await new_ticket(client, board.member)
-    from radicle.services import queue
+    from radicle.platform.services import queue
 
     await queue.enqueue(db, periods.SNAPSHOT_JOB)
     assert await run_jobs(db) == ["daily_snapshot"]

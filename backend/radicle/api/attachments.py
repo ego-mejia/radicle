@@ -9,10 +9,11 @@ from radicle.api.deps import AppSettings, CurrentPrincipal, Db, get_principal
 from radicle.api.schemas.attachments import AttachmentOut, ResizeIn
 from radicle.api.schemas.common import Page
 from radicle.api.ticket_views import attachment_out
-from radicle.core.errors import NotFound, Unauthorized
 from radicle.db.models import Attachment, ProjectRole
-from radicle.services import attachments, images, tickets
-from radicle.storage import get_storage
+from radicle.platform.errors import NotFound, Unauthorized
+from radicle.platform.services import images
+from radicle.platform.storage import get_storage
+from radicle.services import attachments, tickets
 
 router = APIRouter(tags=["attachments"])
 MEMBER = ProjectRole.member

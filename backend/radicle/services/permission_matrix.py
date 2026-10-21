@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import ValidationFailed
 from radicle.core.permissions import (
     CATALOG,
     DESCRIPTIONS,
@@ -15,6 +14,7 @@ from radicle.core.permissions import (
     matrix,
 )
 from radicle.db.models import Project, ProjectRole, ProjectRolePermission
+from radicle.platform.errors import ValidationFailed
 
 
 @dataclass(frozen=True)

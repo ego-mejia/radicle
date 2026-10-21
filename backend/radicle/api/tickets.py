@@ -19,9 +19,10 @@ from radicle.api.schemas.tickets import (
     WarningOut,
 )
 from radicle.api.ticket_views import event_out, summaries_out, ticket_out
-from radicle.core.errors import ValidationFailed
 from radicle.db.models import ProjectRole
-from radicle.services import audit, history, security, tickets, transitions
+from radicle.platform.errors import ValidationFailed
+from radicle.platform.services import audit
+from radicle.services import history, security, tickets, transitions
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["tickets"])

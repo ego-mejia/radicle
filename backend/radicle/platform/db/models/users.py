@@ -6,7 +6,7 @@ from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Index, String, Text,
 from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from radicle.db.models.base import Base, utcnow
+from radicle.platform.db.models.base import Base, utcnow
 
 
 class UserKind(enum.StrEnum):

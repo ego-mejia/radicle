@@ -9,8 +9,8 @@ import pytest
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.wait_strategies import LogMessageWaitStrategy
 
-from radicle.core.config import Settings
-from radicle.storage import LocalStorage, S3Storage, get_storage
+from radicle.platform.config import Settings
+from radicle.platform.storage import LocalStorage, S3Storage, get_storage
 
 
 @pytest.fixture(scope="module")
@@ -59,14 +59,14 @@ async def test_local_storage_rejects_escaping_keys(tmp_path) -> None:  # type: i
 
 
 def test_storage_choice(monkeypatch: pytest.MonkeyPatch) -> None:
-    from radicle.core import config
+    from radicle.platform import config
 
     get_storage.cache_clear()
     monkeypatch.setattr(config, "get_settings", lambda: Settings(storage="ftp"))
-    monkeypatch.setattr("radicle.storage.get_settings", lambda: Settings(storage="ftp"))
+    monkeypatch.setattr("radicle.platform.storage.get_settings", lambda: Settings(storage="ftp"))
     with pytest.raises(ValueError, match="local or s3"):
         get_storage()
-    monkeypatch.setattr("radicle.storage.get_settings", lambda: Settings(storage="s3"))
+    monkeypatch.setattr("radicle.platform.storage.get_settings", lambda: Settings(storage="s3"))
     get_storage.cache_clear()
     assert isinstance(get_storage(), S3Storage)
     get_storage.cache_clear()

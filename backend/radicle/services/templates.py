@@ -7,7 +7,6 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from radicle.db.models import (
     Area,
     CustomFieldDefinition,
@@ -23,7 +22,9 @@ from radicle.db.models import (
     UserKind,
     utcnow,
 )
-from radicle.services import queue, screens
+from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from radicle.platform.services import queue
+from radicle.services import screens
 from radicle.services.access import ProjectAccess
 from radicle.services.projects import check_description, normalize_name
 from radicle.services.template_config import (

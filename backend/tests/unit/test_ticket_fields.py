@@ -2,8 +2,8 @@ from decimal import Decimal
 
 import pytest
 
-from radicle.core.errors import NotFound, ValidationFailed
 from radicle.db.models import TicketType
+from radicle.platform.errors import NotFound, ValidationFailed
 from radicle.services import ticket_fields as f
 
 

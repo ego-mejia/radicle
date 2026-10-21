@@ -2,8 +2,8 @@ import uuid
 
 import pytest
 
-from radicle.core.errors import Conflict, ValidationFailed
 from radicle.db.models import Resolution, Status, TicketType, Transition
+from radicle.platform.errors import Conflict, ValidationFailed
 from radicle.services.workflow_engine import available, decide
 from radicle.services.workflows import DEFAULT_WORKFLOWS, Workflow
 

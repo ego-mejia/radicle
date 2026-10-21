@@ -8,7 +8,6 @@ from datetime import date, datetime, timedelta
 from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core import security
 from radicle.db.models import (
     Area,
     Classification,
@@ -30,6 +29,7 @@ from radicle.db.models import (
     UserKind,
     utcnow,
 )
+from radicle.platform import security
 from radicle.services import periods, rank
 from radicle.services.templates import instantiate
 

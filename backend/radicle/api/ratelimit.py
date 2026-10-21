@@ -4,7 +4,7 @@ import math
 import time
 from collections import defaultdict, deque
 
-from radicle.core.errors import RateLimited
+from radicle.platform.errors import RateLimited
 
 
 class SlidingWindowLimiter:

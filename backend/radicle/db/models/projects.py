@@ -16,8 +16,8 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from radicle.db.models.base import Base, _enum, utcnow
-from radicle.db.models.users import User
+from radicle.platform.db.models.base import Base, _enum, utcnow
+from radicle.platform.db.models.users import User
 
 
 class ProjectRole(enum.StrEnum):

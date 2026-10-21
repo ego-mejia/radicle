@@ -12,9 +12,10 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import ProblemError, ValidationFailed
 from radicle.db.models import Job, Project, Resolution, Ticket, User
-from radicle.services import jobs, queue, search, tickets, transitions
+from radicle.platform.errors import ProblemError, ValidationFailed
+from radicle.platform.services import jobs, queue
+from radicle.services import search, tickets, transitions
 from radicle.services.access import ProjectAccess
 
 MAX_TICKETS = 500

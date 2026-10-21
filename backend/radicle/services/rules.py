@@ -20,7 +20,7 @@ from radicle.db.models import (
     TransitionRule,
     UserKind,
 )
-from radicle.services import markdown
+from radicle.platform.services import markdown
 from radicle.services.access import ProjectAccess
 from radicle.services.screens import ticket_has
 

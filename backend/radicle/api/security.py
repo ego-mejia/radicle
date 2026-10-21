@@ -11,7 +11,8 @@ from radicle.api.schemas.security import (
     SecurityLevelPatch,
 )
 from radicle.db.models import ProjectRole, SecurityLevel
-from radicle.services import audit, security
+from radicle.platform.services import audit
+from radicle.services import security
 from radicle.services.access import project_access
 
 router = APIRouter(tags=["security levels"])

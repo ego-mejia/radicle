@@ -6,8 +6,8 @@ from sqlalchemy import Date, DateTime, ForeignKey, Index, Integer, Numeric, Prim
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from radicle.db.models.base import Base
 from radicle.db.models.projects import StatusCategory, status_category_enum
+from radicle.platform.db.models.base import Base
 
 
 class TicketStatusPeriod(Base):

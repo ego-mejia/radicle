@@ -13,7 +13,6 @@ from typing import Any
 from sqlalchemy import ColumnElement, and_, exists, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, Forbidden, NotFound
 from radicle.db.models import (
     GroupMember,
     Project,
@@ -27,6 +26,7 @@ from radicle.db.models import (
     TicketCollaborator,
     User,
 )
+from radicle.platform.errors import Conflict, Forbidden, NotFound
 
 ROLE_RANK = {ProjectRole.viewer: 0, ProjectRole.member: 1, ProjectRole.admin: 2}
 

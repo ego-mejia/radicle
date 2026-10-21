@@ -10,8 +10,8 @@ from radicle.api.deps import (
 from radicle.api.me import me_out
 from radicle.api.ratelimit import login_limiter
 from radicle.api.schemas.users import LoginIn, MeOut
-from radicle.core.errors import ProblemError, ValidationFailed
-from radicle.services import audit, auth, sso
+from radicle.platform.errors import ProblemError, ValidationFailed
+from radicle.platform.services import audit, auth, sso
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

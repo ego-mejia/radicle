@@ -6,8 +6,8 @@ from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Text, func, text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from radicle.db.models.base import Base, utcnow
 from radicle.db.models.filters import FilterVisibility, filter_visibility_enum
+from radicle.platform.db.models.base import Base, utcnow
 
 
 class Dashboard(Base):

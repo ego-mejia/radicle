@@ -14,8 +14,8 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
-from radicle.core.config import get_settings
-from radicle.db import session as db_session
+from radicle.platform.config import get_settings
+from radicle.platform.db import session as db_session
 from tests.conftest import run_alembic
 
 # The budgets are for a real server. Shared CI runners are several times slower, so CI

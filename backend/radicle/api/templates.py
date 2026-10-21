@@ -14,7 +14,8 @@ from radicle.api.schemas.templates import (
     config_dict,
 )
 from radicle.db.models import Project, Template, TemplateSyncRun
-from radicle.services import audit, templates
+from radicle.platform.services import audit
+from radicle.services import templates
 from radicle.services.template_config import parse
 
 router = APIRouter(prefix="/templates", tags=["templates"])

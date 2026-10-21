@@ -1,6 +1,6 @@
 import pytest
 
-from radicle.core import security
+from radicle.platform import security
 
 
 def test_api_token_format() -> None:

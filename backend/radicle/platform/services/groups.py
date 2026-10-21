@@ -5,9 +5,9 @@ import uuid
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.core.errors import Conflict, NotFound, ValidationFailed
-from radicle.db.models import Group, GroupMember, User
-from radicle.services import users as users_service
+from radicle.platform.db.models import Group, GroupMember, User
+from radicle.platform.errors import Conflict, NotFound, ValidationFailed
+from radicle.platform.services import users as users_service
 
 NAME_MAX = 80
 
