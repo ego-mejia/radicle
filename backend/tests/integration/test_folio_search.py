@@ -91,6 +91,23 @@ async def test_a_question_finds_pages_with_some_of_its_words(
     assert r.json()["items"] == []
 
 
+async def test_snippets_hide_markdown(client: AsyncClient, db: AsyncSession, team: Team) -> None:
+    await client.post(
+        f"{API}/spaces", headers=team.instance.headers, json={"key": "docs", "name": "Docs"}
+    )
+    md = (
+        "# Agentes\n\nVe a **Admin → Agentes** y usa `agente-docs`.\n\n"
+        "| Campo | Valor |\n|---|---|\n| handle | bot |\n"
+    )
+    await _page(client, team, "Agentes", md)
+    await run_jobs(db)
+    params = {"q": "agentes", "mode": "text"}
+    r = await client.get(f"{API}/search", params=params, headers=team.member.headers)
+    snippet = r.json()["items"][0]["snippet"]
+    assert "**Agentes**" in snippet and "`" not in snippet and "|" not in snippet
+    assert snippet.count("**") % 2 == 0 and "***" not in snippet
+
+
 async def test_filters(client: AsyncClient, team: Team, docs: dict) -> None:
     async def ids(**params: str) -> list[str]:
         r = await client.get(

@@ -28,6 +28,7 @@ CANDIDATES = 50
 SEMANTIC_TOP = 20
 # Verified docs rise a little and outdated ones sink (Folio 2.7).
 BOOST = {"verified": 1.15, "outdated": 0.85}
+MARKUP = r"[*`|#>~_]+|-{3,}|:{3,}\S*"
 SNIPPET = "StartSel=**,StopSel=**,MaxWords=30,MinWords=12,MaxFragments=1"
 
 
@@ -156,7 +157,10 @@ async def _matching(
     # Cover density scores only the best cover, so the page's sections tie on its title;
     # counting every match breaks the tie in favor of the section that is about it.
     frequency = func.ts_rank(FolioChunk.search_vector, query)
-    snippet = func.ts_headline(_config("spanish"), FolioChunk.text, query, SNIPPET)
+    # Chunks are Markdown: its marks would clash with the ** around matches, and table
+    # pipes, code ticks and rules read as noise in a snippet.
+    readable = func.regexp_replace(FolioChunk.text, MARKUP, " ", "g")
+    snippet = func.ts_headline(_config("spanish"), readable, query, SNIPPET)
     rows = await db.execute(
         select(FolioChunk, snippet, rank)
         .join(FolioNode, FolioNode.id == FolioChunk.node_id)
