@@ -2,7 +2,7 @@ import { Editor } from '@tiptap/core';
 import { afterEach, describe, expect, it } from 'vitest';
 import { EVERY_BLOCK } from './everyBlock';
 import { folioExtensions } from './extensions';
-import { toFolioDoc } from './schema';
+import { incomplete, toFolioDoc } from './schema';
 
 let editor: Editor | null = null;
 
@@ -91,5 +91,15 @@ describe('the action item block', () => {
     expect(items.map((i) => i.type)).toEqual(['actionItem', 'actionItem', 'paragraph']);
     expect(items[1]?.attrs?.id).toMatch(/^ai-[0-9a-f]{12}$/);
     expect(items[1]?.attrs?.id).not.toBe('ai-1');
+  });
+
+  it('keeps a visual block out of the saved doc until it has what the server needs', () => {
+    const visual = { type: 'visual', attrs: { format: 'svg', code: '<svg/>', description: ' ' } };
+    expect(incomplete(visual)).toBe('description');
+    expect(incomplete({ type: 'chart', attrs: { kind: 'bar' } })).toBe('data');
+    expect(incomplete({ type: 'chart', attrs: { kind: 'bar', source: 'table' } })).toBeNull();
+    expect(incomplete({ type: 'pageList', attrs: { label: '' } })).toBe('label');
+    const doc = toFolioDoc({ type: 'doc', content: [visual, { type: 'paragraph' }] });
+    expect(doc.content).toEqual([{ type: 'paragraph' }]);
   });
 });

@@ -1861,7 +1861,15 @@
         "file": "File",
         "video": "Video",
         "actionItem": "Action item",
-        "database": "Database view"
+        "database": "Database view",
+        "visual": "Visual (SVG or HTML)",
+        "diagram": "Diagram (Mermaid)",
+        "chart": "Chart",
+        "timeline": "Timeline",
+        "comparison": "Comparison",
+        "formula": "Formula",
+        "inlineFormula": "Inline formula",
+        "pageList": "Pages by label"
       },
       "addCover": "Add cover",
       "changeCover": "Change cover",
@@ -1876,7 +1884,16 @@
         "label_other": "{{count}} people in this document",
         "agentWriting": "{{name}} is writing"
       },
-      "history": "Snapshots"
+      "history": "Snapshots",
+      "needs": {
+        "code": "This visual has no code yet.",
+        "description": "Describe what this visual shows: without a description it isn't saved.",
+        "source": "Write the diagram's Mermaid source.",
+        "latex": "Write the formula in LaTeX.",
+        "data": "Give the chart a table of numbers.",
+        "items": "Add at least one milestone.",
+        "label": "Choose the label whose pages it lists."
+      }
     },
     "publish": {
       "title": "Publish",

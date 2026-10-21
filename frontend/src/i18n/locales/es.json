@@ -1861,7 +1861,15 @@
         "file": "Archivo",
         "video": "Video",
         "actionItem": "Action item",
-        "database": "Vista de database"
+        "database": "Vista de database",
+        "visual": "Visual (SVG o HTML)",
+        "diagram": "Diagrama (Mermaid)",
+        "chart": "Gráfica",
+        "timeline": "Línea de tiempo",
+        "comparison": "Comparación",
+        "formula": "Fórmula",
+        "inlineFormula": "Fórmula en línea",
+        "pageList": "Páginas por label"
       },
       "addCover": "Agregar portada",
       "changeCover": "Cambiar portada",
@@ -1876,7 +1884,16 @@
         "label_other": "{{count}} personas en este documento",
         "agentWriting": "{{name}} está escribiendo"
       },
-      "history": "Snapshots"
+      "history": "Snapshots",
+      "needs": {
+        "code": "Este visual aún no tiene código.",
+        "description": "Describe qué muestra este visual: sin descripción no se guarda.",
+        "source": "Escribe la fuente Mermaid del diagrama.",
+        "latex": "Escribe la fórmula en LaTeX.",
+        "data": "Dale a la gráfica una tabla de números.",
+        "items": "Agrega al menos un hito.",
+        "label": "Elige el label cuyas páginas lista."
+      }
     },
     "publish": {
       "title": "Publicar",
