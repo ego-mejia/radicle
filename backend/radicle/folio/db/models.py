@@ -332,3 +332,37 @@ class FolioPageRestriction(Base):
     # user or group; never everyone (that would be no restriction at all)
     grantee_type: Mapped[GranteeType] = mapped_column(_enum(GranteeType, "folio_grantee_type"))
     grantee_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True))
+
+
+class SubmissionStatus(enum.StrEnum):
+    pending = "pending"
+    approved = "approved"
+    rejected = "rejected"
+    superseded = "superseded"
+
+
+class FolioSubmission(Base):
+    """An agent's proposed version, waiting for a Folio or space admin to approve it."""
+
+    __tablename__ = "folio_submissions"
+    __table_args__ = (Index("ix_folio_submissions_status", "status", "created_at"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    node_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("folio_nodes.id", ondelete="CASCADE"), index=True
+    )
+    title: Mapped[str] = mapped_column(Text)
+    content_json: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    metadata_: Mapped[dict[str, Any]] = mapped_column("metadata", JSONB)
+    change_note: Mapped[str | None] = mapped_column(Text)
+    submitted_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    status: Mapped[SubmissionStatus] = mapped_column(
+        _enum(SubmissionStatus, "folio_submission_status"), default=SubmissionStatus.pending
+    )
+    reviewed_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"))
+    review_comment: Mapped[str | None] = mapped_column(Text)
+    version_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("folio_versions.id"))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, server_default=func.now()
+    )
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
