@@ -7,7 +7,7 @@ from fastapi import APIRouter
 from pydantic import Field
 
 from radicle.folio.db.models import GranteeType
-from radicle.folio.services import access, nodes, sharing, spaces
+from radicle.folio.services import access, audit_log, nodes, sharing, spaces
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Input, Output
@@ -112,6 +112,7 @@ async def put_restrictions(
     """Replace who may view (with its children) and edit (this page) it; empty lifts them."""
     (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
     node = await nodes.get_node(db, principal.user, node_id)
+    before = _restrictions(await sharing.restrictions(db, node)).model_dump()
     result = await sharing.set_restrictions(
         db,
         principal.user,
@@ -119,4 +120,14 @@ async def put_restrictions(
         view=[_grantee(g) for g in body.view],
         edit=[_grantee(g) for g in body.edit],
     )
-    return _restrictions(result)
+    out = _restrictions(result)
+    audit_log.record(
+        db,
+        principal.user,
+        "restrictions_change",
+        target_type="folio_node",
+        target_id=node.id,
+        before=before,
+        after=out.model_dump(),
+    )
+    return out

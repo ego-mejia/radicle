@@ -5,16 +5,17 @@ names only where the space allows it. The site dashboard is for Folio admins."""
 import math
 import uuid
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import Any
 
-from sqlalchemy import distinct, func, select
+from sqlalchemy import Select, distinct, func, select, union
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.analytics import FolioPageView, FolioSearchLog
-from radicle.folio.db.models import FolioNode
-from radicle.folio.services import access, publishing, quality
+from radicle.folio.db.models import FolioNode, FolioSpace
+from radicle.folio.services import access, chat, publishing, quality
+from radicle.platform import authz
 from radicle.platform.db.models import User
 from radicle.platform.errors import NotFound, ValidationFailed
 
@@ -160,4 +161,137 @@ async def page_stats(db: AsyncSession, user: User, node: FolioNode, days: int = 
         reading_minutes=await _reading_minutes(db, node),
         readers_visible=space.show_readers,
         readers=readers,
+    )
+
+
+@dataclass(frozen=True)
+class SpaceActivity:
+    key: str
+    name: str
+    views: int
+    readers: int
+
+
+@dataclass(frozen=True)
+class TopPage:
+    node_id: uuid.UUID
+    title: str
+    space: str
+    views: int
+    readers: int
+
+
+@dataclass(frozen=True)
+class SearchGap:
+    query: str
+    times: int
+    last_at: datetime
+
+
+@dataclass(frozen=True)
+class SiteStats:
+    days: int
+    views: int
+    active_users: int
+    daily: list[Day]
+    top_spaces: list[SpaceActivity]
+    top_pages: list[TopPage]
+    searches: int
+    no_results: list[SearchGap]
+    unanswered: list[chat.Unanswered]
+
+
+async def _require_admin(db: AsyncSession, user: User) -> None:
+    (await authz.authorize(db, user, "folio", "folio.admin")).raise_if_denied()
+
+
+def _gaps_query(since: date, limit: int) -> Select[Any]:
+    normalized = func.lower(func.btrim(FolioSearchLog.query))
+    return (
+        select(normalized, func.count(), func.max(FolioSearchLog.created_at))
+        .where(FolioSearchLog.results_count == 0, FolioSearchLog.created_at >= since)
+        .group_by(normalized)
+        .order_by(func.count().desc(), func.max(FolioSearchLog.created_at).desc())
+        .limit(limit)
+    )
+
+
+async def search_gaps(
+    db: AsyncSession, user: User, days: int = 30, limit: int = 20
+) -> tuple[list[SearchGap], list[chat.Unanswered]]:
+    """What people searched without a result, most often first, and the chat questions the
+    docs didn't answer: the list of what to document next."""
+    await _require_admin(db, user)
+    since = _since(_days(days))
+    rows = await db.execute(_gaps_query(since, limit))
+    gaps = [SearchGap(q, int(n), at) for q, n, at in rows.all()]
+    return gaps, await chat.unanswered(db, user, limit=limit)
+
+
+async def site_stats(db: AsyncSession, user: User, days: int = 30) -> SiteStats:
+    await _require_admin(db, user)
+    days = _days(days)
+    since = _since(days)
+    in_range = FolioPageView.day >= since
+    visible = await access.node_filter(db, user)
+    daily = await db.execute(
+        select(
+            FolioPageView.day,
+            func.sum(FolioPageView.views).label("views"),
+            func.count(distinct(FolioPageView.user_id)).label("unique"),
+        )
+        .where(in_range)
+        .group_by(FolioPageView.day)
+    )
+    views = await db.scalar(select(func.coalesce(func.sum(FolioPageView.views), 0)).where(in_range))
+    people = union(
+        select(FolioPageView.user_id).where(in_range),
+        select(FolioSearchLog.user_id).where(
+            FolioSearchLog.created_at >= since, FolioSearchLog.user_id.is_not(None)
+        ),
+    ).subquery()
+    active = await db.scalar(select(func.count()).select_from(people))
+    spaces = await db.execute(
+        select(
+            FolioSpace.key,
+            FolioSpace.name,
+            func.sum(FolioPageView.views),
+            func.count(distinct(FolioPageView.user_id)),
+        )
+        .join(FolioNode, FolioNode.id == FolioPageView.node_id)
+        .join(FolioSpace, FolioSpace.id == FolioNode.space_id)
+        .where(in_range, visible)
+        .group_by(FolioSpace.id)
+        .order_by(func.sum(FolioPageView.views).desc(), FolioSpace.key)
+        .limit(10)
+    )
+    pages = await db.execute(
+        select(
+            FolioNode.id,
+            FolioNode.title,
+            FolioSpace.key,
+            func.sum(FolioPageView.views),
+            func.count(distinct(FolioPageView.user_id)),
+        )
+        .join(FolioNode, FolioNode.id == FolioPageView.node_id)
+        .join(FolioSpace, FolioSpace.id == FolioNode.space_id)
+        .where(in_range, visible)
+        .group_by(FolioNode.id, FolioSpace.key)
+        .order_by(func.sum(FolioPageView.views).desc(), FolioNode.title)
+        .limit(10)
+    )
+    searches = await db.scalar(
+        select(func.count()).select_from(FolioSearchLog).where(FolioSearchLog.created_at >= since)
+    )
+    gaps, unanswered = await search_gaps(db, user, days)
+    return SiteStats(
+        days=days,
+        views=int(views or 0),
+        active_users=int(active or 0),
+        daily=_daily(list(daily.all()), days),
+        top_spaces=[SpaceActivity(k, n, int(v), int(r)) for k, n, v, r in spaces.all()],
+        top_pages=[TopPage(i, t, k, int(v), int(r)) for i, t, k, v, r in pages.all()],
+        searches=int(searches or 0),
+        no_results=gaps,
+        unanswered=unanswered,
     )

@@ -103,9 +103,7 @@ async def test_projects_and_milestones_in_a_range(db: AsyncSession, board: Team)
     assert await docket.get_project(db, "NOPE", luis) is None
     december = {"start": date(2026, 12, 1), "end": date(2026, 12, 15)}
     found = await docket.list_milestones(db, "pa", luis, **december)
-    assert [(m.project, m.name, m.target_date) for m in found] == [
-        ("PA", "V1", date(2026, 12, 15))
-    ]
+    assert [(m.project, m.name, m.target_date) for m in found] == [("PA", "V1", date(2026, 12, 15))]
     november = {"start": date(2026, 11, 1), "end": date(2026, 11, 30)}
     assert await docket.list_milestones(db, "PA", luis, **november) == []
     assert await docket.list_milestones(db, "PA", olga, **december) == []
