@@ -40,6 +40,10 @@ GROUPS: dict[str, tuple[str, ...]] = {
         "list_worklogs",
     ),
     "planning": (
+        "create_area",
+        "update_area",
+        "create_milestone",
+        "update_milestone",
         "list_boards",
         "get_board",
         "list_sprints",
