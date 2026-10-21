@@ -77,7 +77,8 @@ export type ImagePreset = 'original' | 'large' | 'medium' | 'small';
 export type Worklog = S['WorklogOut'];
 
 export type SavedFilter = S['FilterOut'];
-export type Preferences = S['PreferencesOut'];
+// Two schemas are named PreferencesOut (Docket's and notifications'), so OpenAPI qualifies them.
+export type Preferences = S['radicle__docket__api__work__PreferencesOut'];
 
 export type Board = S['BoardOut'];
 export type BoardData = S['BoardDataOut'];
