@@ -8,6 +8,7 @@ from typing import Any
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     Computed,
     Date,
     DateTime,
@@ -116,6 +117,8 @@ class FolioSpace(Base):
     cover_asset_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
     # Days a Verified page stays verified before it turns Outdated (Folio 2.7).
     verify_days: Mapped[int] = mapped_column(BigInteger, default=90, server_default="90")
+    # The space admin can turn the editor AI off here (Folio 4.6).
+    ai_enabled: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
     )

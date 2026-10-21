@@ -136,6 +136,7 @@ class SpaceChanges:
     icon: str | None = None
     clear_icon: bool = False
     verify_days: int | None = None
+    ai_enabled: bool | None = None
 
 
 MAX_VERIFY_DAYS = 730
@@ -165,6 +166,8 @@ async def update_space(
                 "of range.",
             )
         space.verify_days = ch.verify_days
+    if ch.ai_enabled is not None:
+        space.ai_enabled = ch.ai_enabled
     space.updated_at = utcnow()
     await db.flush()
     return space

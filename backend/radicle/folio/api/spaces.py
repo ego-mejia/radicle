@@ -30,6 +30,7 @@ class SpaceOut(Output):
     created_at: UtcDatetime
     permissions: list[str] = Field(description="What you may do here: view, create, ...")
     verify_days: int = Field(description="Days a Verified page stays verified")
+    ai_enabled: bool = Field(description="False when the space admin turned the editor AI off")
 
 
 class SpaceIn(Input):
@@ -46,6 +47,7 @@ class SpacePatch(Input):
     verify_days: int | None = Field(
         default=None, description="Days a Verified page stays verified (1 to 730)"
     )
+    ai_enabled: bool | None = Field(default=None, description="Turn the editor AI on or off")
 
 
 class NodeRef(Output):
@@ -114,6 +116,7 @@ async def _space(db: Db, user: User, s: FolioSpace) -> SpaceOut:
         cover_asset_id=s.cover_asset_id,
         created_at=s.created_at,
         verify_days=s.verify_days,
+        ai_enabled=s.ai_enabled,
     )
 
 
@@ -223,6 +226,7 @@ async def patch_space(key: str, body: SpacePatch, principal: CurrentPrincipal, d
         icon=body.icon,
         clear_icon="icon" in body.model_fields_set and body.icon is None,
         verify_days=body.verify_days,
+        ai_enabled=body.ai_enabled,
     )
     return await _space(
         db, principal.user, await spaces.update_space(db, principal.user, space, changes)
