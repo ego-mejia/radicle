@@ -1712,7 +1712,8 @@
         "folder": "New folder",
         "blog_post": "New blog post",
         "title": "Title",
-        "live_doc": "New live doc"
+        "live_doc": "New live doc",
+        "database": "New database"
       }
     },
     "reader": {
@@ -2184,6 +2185,15 @@
       "restoreText": "The doc goes back to this snapshot for everyone writing in it. Nothing is lost: the current text stays as a snapshot.",
       "restoreConfirm": "Restore it",
       "restored": "The doc is back to that snapshot"
+    },
+    "db": {
+      "views": "Views",
+      "noAccess": "You can't see this database.",
+      "empty": "No rows here yet.",
+      "noValue": "No value",
+      "board": "Board by {{column}}",
+      "checked": "Yes",
+      "openPage": "Open page"
     }
   },
   "notifications": {
