@@ -29,9 +29,10 @@ from radicle.docket.db.models import (
     UserKind,
     utcnow,
 )
-from radicle.docket.services import periods, rank
+from radicle.docket.services import periods
 from radicle.docket.services.templates import instantiate
 from radicle.platform import security
+from radicle.platform.services import rank
 
 AREAS = ["Legal", "Marketing", "Backend", "Frontend", "Mobile", "Data", "Infra", "Design"]
 THINGS = [

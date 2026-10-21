@@ -27,11 +27,12 @@ from radicle.docket.db.models import (
     User,
     utcnow,
 )
-from radicle.docket.services import history, periods, rank
+from radicle.docket.services import history, periods
 from radicle.docket.services.access import ProjectAccess, project_access
 from radicle.docket.services.tickets import NewTicket, bump, create_ticket
 from radicle.docket.services.workflows import load_workflows
 from radicle.platform.errors import ValidationFailed
+from radicle.platform.services import rank
 from radicle.platform.storage import get_storage
 
 CLONE_INCLUDES = (
