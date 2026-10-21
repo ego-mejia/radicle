@@ -1543,5 +1543,42 @@
     "copied": "Imagen copiada: pégala en tu post de LinkedIn.",
     "downloaded": "Imagen descargada: adjúntala a tu post de LinkedIn.",
     "post": "🎉 ¡Completamos {{milestone}} en {{project}}! {{done}} tickets entregados, {{bugs}} bugs aplastados y {{hours}} horas invertidas por {{team}}. Hecho con Radicle."
+  },
+  "aiProvider": {
+    "title": "Proveedor de IA",
+    "help": "Un solo proveedor para chat y embeddings, compartido por Docket y Folio. Sin uno, todo lo demás sigue funcionando.",
+    "provider": "Proveedor",
+    "providers": {
+      "none": "Ninguno",
+      "openai": "OpenAI",
+      "openai_compatible": "Compatible con OpenAI",
+      "ollama": "Ollama",
+      "anthropic": "Anthropic"
+    },
+    "providerHints": {
+      "none": "Sin funciones de IA.",
+      "openai": "Chat y embeddings.",
+      "openai_compatible": "Voyage, vLLM, LM Studio y otros.",
+      "ollama": "Modelos locales en tu servidor.",
+      "anthropic": "Claude para chat; no tiene API de embeddings."
+    },
+    "chatModel": "Modelo de chat",
+    "embeddingModel": "Modelo de embeddings",
+    "embeddingHint": "Para la búsqueda y el índice RAG, por ejemplo text-embedding-3-small o nomic-embed-text.",
+    "dimensions": "Dimensiones del embedding",
+    "dimensionsHint": "Vacío usa las del modelo.",
+    "baseUrl": "URL base",
+    "baseUrlHint": {
+      "openai": "Vacío usa https://api.openai.com/v1.",
+      "openai_compatible": "Obligatoria, por ejemplo https://api.voyageai.com/v1.",
+      "ollama": "Vacío usa http://localhost:11434.",
+      "anthropic": "Vacío usa https://api.anthropic.com."
+    },
+    "apiKey": "Llave de API",
+    "keyHint": "Se guarda cifrada y no se vuelve a mostrar. Ollama no la necesita.",
+    "keySaved": "Hay una llave guardada. Escribe otra para reemplazarla.",
+    "removeKey": "Quitar llave",
+    "test": "Probar conexión",
+    "saved": "Proveedor de IA guardado"
   }
 }
