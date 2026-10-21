@@ -4,13 +4,14 @@ import uuid
 from typing import Literal
 
 from fastapi import APIRouter, Response
+from pydantic import Field
 
 from radicle.folio.api.spaces import NodeRef, SpaceOut, _ref, _space
 from radicle.folio.db.collab import TargetType
-from radicle.folio.services import social
+from radicle.folio.services import nodes, share, social
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
-from radicle.platform.api.schemas import Output, Page
+from radicle.platform.api.schemas import Input, Output, Page
 
 router = APIRouter(tags=["folio"])
 
@@ -27,6 +28,41 @@ class FolioReactionOut(Output):
 class FavoritesOut(Output):
     nodes: list[NodeRef]
     spaces: list[SpaceOut]
+
+
+class ShareIn(Input):
+    users: list[str] = Field(default_factory=list, description="Handles, e.g. @ana")
+    groups: list[str] = Field(default_factory=list, description="Group names")
+    message: str = ""
+    grant_view: bool = Field(
+        default=False, description="Add those a page restriction keeps out to it"
+    )
+
+
+class ShareOut(Output):
+    notified: list[str] = Field(description="Handles who will hear about it")
+    cannot_see: list[str] = Field(description="Handles the page stays hidden from")
+    granted: list[str] = Field(description="Added to the page's view restriction")
+
+
+@router.post("/nodes/{node_id}/share", response_model=ShareOut)
+async def share_node(
+    node_id: uuid.UUID, body: ShareIn, principal: CurrentPrincipal, db: Db
+) -> ShareOut:
+    """Send a page to people or groups with a message. Those who can't see it are left
+    out, unless `grant_view` adds them to the page's own view restriction."""
+    await _reader(db, principal)
+    node = await nodes.get_node(db, principal.user, node_id)
+    done = await share.share(
+        db,
+        principal.user,
+        node,
+        handles=body.users,
+        group_names=body.groups,
+        message=body.message,
+        grant_view=body.grant_view,
+    )
+    return ShareOut(notified=done.notified, cannot_see=done.cannot_see, granted=done.granted)
 
 
 class WatchOut(Output):

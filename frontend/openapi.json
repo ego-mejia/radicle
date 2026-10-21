@@ -9792,6 +9792,75 @@
         "title": "SetupStatus",
         "type": "object"
       },
+      "ShareIn": {
+        "additionalProperties": false,
+        "properties": {
+          "grant_view": {
+            "default": false,
+            "description": "Add those a page restriction keeps out to it",
+            "title": "Grant View",
+            "type": "boolean"
+          },
+          "groups": {
+            "description": "Group names",
+            "items": {
+              "type": "string"
+            },
+            "title": "Groups",
+            "type": "array"
+          },
+          "message": {
+            "default": "",
+            "title": "Message",
+            "type": "string"
+          },
+          "users": {
+            "description": "Handles, e.g. @ana",
+            "items": {
+              "type": "string"
+            },
+            "title": "Users",
+            "type": "array"
+          }
+        },
+        "title": "ShareIn",
+        "type": "object"
+      },
+      "ShareOut": {
+        "properties": {
+          "cannot_see": {
+            "description": "Handles the page stays hidden from",
+            "items": {
+              "type": "string"
+            },
+            "title": "Cannot See",
+            "type": "array"
+          },
+          "granted": {
+            "description": "Added to the page's view restriction",
+            "items": {
+              "type": "string"
+            },
+            "title": "Granted",
+            "type": "array"
+          },
+          "notified": {
+            "description": "Handles who will hear about it",
+            "items": {
+              "type": "string"
+            },
+            "title": "Notified",
+            "type": "array"
+          }
+        },
+        "required": [
+          "notified",
+          "cannot_see",
+          "granted"
+        ],
+        "title": "ShareOut",
+        "type": "object"
+      },
       "SpaceCountOut": {
         "properties": {
           "docs": {
@@ -18622,6 +18691,61 @@
           }
         },
         "summary": "Put Restrictions",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/share": {
+      "post": {
+        "description": "Send a page to people or groups with a message. Those who can't see it are left\nout, unless `grant_view` adds them to the page's own view restriction.",
+        "operationId": "share_node_api_v1_folio_nodes__node_id__share_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShareOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Share Node",
         "tags": [
           "folio",
           "folio"

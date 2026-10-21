@@ -1176,6 +1176,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/share": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Share Node
+         * @description Send a page to people or groups with a message. Those who can't see it are left
+         *     out, unless `grant_view` adds them to the page's own view restriction.
+         */
+        post: operations["share_node_api_v1_folio_nodes__node_id__share_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}/status": {
         parameters: {
             query?: never;
@@ -7036,6 +7057,48 @@ export interface components {
             /** Needs Setup */
             needs_setup: boolean;
         };
+        /** ShareIn */
+        ShareIn: {
+            /**
+             * Grant View
+             * @description Add those a page restriction keeps out to it
+             * @default false
+             */
+            grant_view?: boolean;
+            /**
+             * Groups
+             * @description Group names
+             */
+            groups?: string[];
+            /**
+             * Message
+             * @default
+             */
+            message?: string;
+            /**
+             * Users
+             * @description Handles, e.g. @ana
+             */
+            users?: string[];
+        };
+        /** ShareOut */
+        ShareOut: {
+            /**
+             * Cannot See
+             * @description Handles the page stays hidden from
+             */
+            cannot_see: string[];
+            /**
+             * Granted
+             * @description Added to the page's view restriction
+             */
+            granted: string[];
+            /**
+             * Notified
+             * @description Handles who will hear about it
+             */
+            notified: string[];
+        };
         /** SpaceCountOut */
         SpaceCountOut: {
             /**
@@ -11213,6 +11276,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RestrictionsIO"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    share_node_api_v1_folio_nodes__node_id__share_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ShareIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShareOut"];
                 };
             };
             /** @description Validation Error */
