@@ -33,6 +33,17 @@ export const NoAccess = styled.div`
   }
 `;
 
+export const Toolbar = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.space.sm};
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+`;
+
 export const Error = styled.p`
   color: ${({ theme }) => theme.color.danger};
 `;

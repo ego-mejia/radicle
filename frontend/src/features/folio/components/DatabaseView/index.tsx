@@ -1,11 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Lock } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Lock, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '../../../../components/ui/Button';
 import { PageSpinner } from '../../../../components/ui/Spinner';
 import { Tabs } from '../../../../components/ui/Tabs';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
-import { useToast } from '../../../../hooks/useToast';
 import { isApiError } from '../../../../services/api/client';
 import {
   type DbRow,
@@ -13,8 +13,8 @@ import {
   dbKeys,
   fetchDatabase,
   fetchRows,
-  patchRow,
 } from '../../../../services/api/folioDatabases';
+import { useRowEdits } from '../../hooks/useRowEdits';
 import { BoardView } from './components/BoardView';
 import { CardsView } from './components/CardsView';
 import { TableView } from './components/TableView';
@@ -44,14 +44,7 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
     queryFn: () => fetchRows(nodeId, current),
     enabled: database.isSuccess,
   });
-  const queryClient = useQueryClient();
-  const toast = useToast();
-  const move = useMutation({
-    mutationFn: ({ row, key, value }: { row: DbRow; key: string; value: unknown }) =>
-      patchRow(row.id, { values: { [key]: value } }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: dbKeys.database(nodeId) }),
-    onError: (e) => toast(errorMessage(e), 'error'),
-  });
+  const edits = useRowEdits(nodeId);
 
   if (database.isError) {
     if (isApiError(database.error, 404))
@@ -66,6 +59,8 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
   if (!database.data) return <PageSpinner />;
   const views = database.data.views;
   const active = rows.data?.view.id ?? current ?? views[0]?.id ?? '';
+  // Rows are edited on the database's page; inside another page they're only read.
+  const canEdit = database.data.can_edit && !embedded;
 
   return (
     <S.Wrap $embedded={embedded}>
@@ -82,15 +77,20 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
           onChange={setCurrent}
         />
       )}
+      {canEdit && (
+        <S.Toolbar>
+          <Button size="sm" onClick={() => edits.add.mutate()} disabled={edits.add.isPending}>
+            <Plus aria-hidden />
+            {t('folio.db.addRow')}
+          </Button>
+        </S.Toolbar>
+      )}
       {rows.isError && <S.Error role="alert">{errorMessage(rows.error)}</S.Error>}
       {rows.data ? (
         <Shown
           rows={rows.data}
-          onMove={
-            database.data.can_edit
-              ? (row, key, value) => move.mutate({ row, key, value })
-              : undefined
-          }
+          onChange={canEdit ? edits.change : undefined}
+          onDelete={canEdit ? edits.remove : undefined}
         />
       ) : (
         !rows.isError && <PageSpinner />
@@ -101,10 +101,11 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
 
 type ShownProps = {
   rows: DbRows;
-  onMove?: (row: DbRow, key: string, value: unknown) => void;
+  onChange?: (row: DbRow, key: string, value: unknown) => void;
+  onDelete?: (row: DbRow) => void;
 };
 
-function Shown({ rows, onMove }: ShownProps) {
+function Shown({ rows, onChange, onDelete }: ShownProps) {
   const { t } = useTranslation();
   const columns = shown(rows);
   if (rows.view.kind === 'board') {
@@ -115,11 +116,11 @@ function Shown({ rows, onMove }: ShownProps) {
           group={group}
           columns={columns}
           rows={rows.items}
-          onMove={onMove && ((row, value) => onMove(row, group.key, value))}
+          onMove={onChange && ((row, value) => onChange(row, group.key, value))}
         />
       );
   }
   if (rows.items.length === 0) return <S.Empty>{t('folio.db.empty')}</S.Empty>;
   if (rows.view.kind === 'cards') return <CardsView columns={columns} rows={rows.items} />;
-  return <TableView columns={columns} rows={rows.items} />;
+  return <TableView columns={columns} rows={rows.items} onChange={onChange} onDelete={onDelete} />;
 }

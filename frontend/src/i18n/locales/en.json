@@ -2217,7 +2217,13 @@
       "noValue": "No value",
       "board": "Board by {{column}}",
       "checked": "Yes",
-      "openPage": "Open page"
+      "openPage": "Open page",
+      "addRow": "Add row",
+      "deleteRow": "Delete row",
+      "actions": "Actions",
+      "edit": "Edit {{column}}",
+      "done": "Done",
+      "personHint": "handle"
     }
   },
   "notifications": {

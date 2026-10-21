@@ -35,3 +35,8 @@ export const Table = styled.table`
     height: 14px;
   }
 `;
+
+export const Actions = styled.td`
+  width: 1%;
+  text-align: right;
+`;
