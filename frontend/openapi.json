@@ -2562,7 +2562,7 @@
           },
           "reactions": {
             "items": {
-              "$ref": "#/components/schemas/ReactionOut"
+              "$ref": "#/components/schemas/radicle__docket__api__schemas__tickets__ReactionOut"
             },
             "title": "Reactions",
             "type": "array"
@@ -8336,32 +8336,6 @@
         "title": "RankIn",
         "type": "object"
       },
-      "ReactionOut": {
-        "properties": {
-          "count": {
-            "title": "Count",
-            "type": "integer"
-          },
-          "emoji": {
-            "title": "Emoji",
-            "type": "string"
-          },
-          "users": {
-            "items": {
-              "type": "string"
-            },
-            "title": "Users",
-            "type": "array"
-          }
-        },
-        "required": [
-          "emoji",
-          "count",
-          "users"
-        ],
-        "title": "ReactionOut",
-        "type": "object"
-      },
       "ReadIn": {
         "additionalProperties": false,
         "properties": {
@@ -14129,6 +14103,55 @@
         "title": "MoveIn",
         "type": "object"
       },
+      "radicle__docket__api__schemas__tickets__ReactionOut": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "emoji": {
+            "title": "Emoji",
+            "type": "string"
+          },
+          "users": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Users",
+            "type": "array"
+          }
+        },
+        "required": [
+          "emoji",
+          "count",
+          "users"
+        ],
+        "title": "ReactionOut",
+        "type": "object"
+      },
+      "radicle__folio__api__social__ReactionOut": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "emoji": {
+            "title": "Emoji",
+            "type": "string"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "emoji",
+          "count",
+          "mine"
+        ],
+        "title": "ReactionOut",
+        "type": "object"
+      },
       "radicle__folio__api__spaces__MoveIn": {
         "additionalProperties": false,
         "properties": {
@@ -18301,6 +18324,206 @@
           }
         },
         "summary": "Restore",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/reactions/{target_type}/{target_id}": {
+      "get": {
+        "operationId": "list_reactions_api_v1_folio_reactions__target_type___target_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "target_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "node",
+                "comment"
+              ],
+              "title": "Target Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/radicle__folio__api__social__ReactionOut"
+                  },
+                  "title": "Response List Reactions Api V1 Folio Reactions  Target Type   Target Id  Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Reactions",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/reactions/{target_type}/{target_id}/{emoji}": {
+      "delete": {
+        "operationId": "unreact_api_v1_folio_reactions__target_type___target_id___emoji__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "target_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "node",
+                "comment"
+              ],
+              "title": "Target Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "emoji",
+            "required": true,
+            "schema": {
+              "title": "Emoji",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/radicle__folio__api__social__ReactionOut"
+                  },
+                  "title": "Response Unreact Api V1 Folio Reactions  Target Type   Target Id   Emoji  Delete",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unreact",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "put": {
+        "description": "React with one of \ud83d\udc4d \u2764\ufe0f \ud83c\udf89 \ud83d\udc40 \ud83d\ude80 \u2705; returns the counts.",
+        "operationId": "react_api_v1_folio_reactions__target_type___target_id___emoji__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "target_type",
+            "required": true,
+            "schema": {
+              "enum": [
+                "node",
+                "comment"
+              ],
+              "title": "Target Type",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "target_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Target Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "emoji",
+            "required": true,
+            "schema": {
+              "title": "Emoji",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/radicle__folio__api__social__ReactionOut"
+                  },
+                  "title": "Response React Api V1 Folio Reactions  Target Type   Target Id   Emoji  Put",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "React",
         "tags": [
           "folio",
           "folio"
