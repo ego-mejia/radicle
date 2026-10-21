@@ -28,6 +28,7 @@ dependencies = [
     "authlib>=1.4",
     "markdown-it-py>=3.0",
     "pgvector>=0.3",
+    "pycrdt==0.14.8",
 ]
 
 [project.scripts]
