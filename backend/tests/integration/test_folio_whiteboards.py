@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.whiteboards import FolioWhiteboard
 from radicle.folio.services import collab, whiteboards
-from tests.conftest import Team
+from tests.conftest import Team, run_jobs
 from tests.integration.collab_ws import Rejected, YClient, connected, settle
 from tests.integration.folio_helpers import API
 
@@ -74,6 +74,30 @@ async def test_two_people_draw_together_and_the_scene_is_kept(
     # Back later: the room starts from what was kept.
     async with connected(client, board, team.instance.headers) as c:
         await settle(lambda: _ids(c) == ["note"])
+
+
+async def test_its_text_is_found_by_search(
+    client: AsyncClient, db: AsyncSession, team: Team, board: str
+) -> None:
+    async with connected(client, board, team.instance.headers) as a:
+        _draw(a, _element("note", "a1", type="text", text="Cola de facturación"))
+        await settle(lambda: collab.rooms.get(uuid.UUID(board)) is not None)
+    await run_jobs(db)
+    r = await client.get(
+        f"{API}/search", params={"q": "facturación", "mode": "text"}, headers=team.member.headers
+    )
+    assert r.status_code == 200, r.text
+    hits = r.json()["items"]
+    assert [h["node_id"] for h in hits] == [board] and "facturación" in hits[0]["snippet"]
+    # Erasing the text takes it out of the index.
+    async with connected(client, board, team.instance.headers) as b:
+        _draw(b, _element("note", "a1", type="text", text="", version=2, isDeleted=True))
+        await settle(lambda: whiteboards.read(b.doc) == [])
+    await run_jobs(db)
+    r = await client.get(
+        f"{API}/search", params={"q": "facturación", "mode": "text"}, headers=team.member.headers
+    )
+    assert r.json()["items"] == []
 
 
 async def test_readers_get_the_scene_over_rest(client: AsyncClient, team: Team, board: str) -> None:
