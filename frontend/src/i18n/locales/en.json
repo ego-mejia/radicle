@@ -1720,7 +1720,14 @@
       "draftNote": "Not published yet: you are reading the draft.",
       "minutes_one": "{{count}} min read",
       "minutes_other": "{{count}} min read",
-      "publishedBy": "published by @{{handle}}"
+      "publishedBy": "published by @{{handle}}",
+      "focus": {
+        "enter": "Focus mode",
+        "exit": "Exit focus",
+        "progress": "Reading progress",
+        "left_one": "{{count}} min left",
+        "left_other": "{{count}} min left"
+      }
     },
     "editor": {
       "title": "Editor",

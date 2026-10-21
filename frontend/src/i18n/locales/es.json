@@ -1720,7 +1720,14 @@
       "draftNote": "Todavía no se publica: estás leyendo el borrador.",
       "minutes_one": "{{count}} min de lectura",
       "minutes_other": "{{count}} min de lectura",
-      "publishedBy": "publicó @{{handle}}"
+      "publishedBy": "publicó @{{handle}}",
+      "focus": {
+        "enter": "Modo enfoque",
+        "exit": "Salir de enfoque",
+        "progress": "Progreso de lectura",
+        "left_one": "{{count}} min restante",
+        "left_other": "{{count}} min restantes"
+      }
     },
     "editor": {
       "title": "Editor",

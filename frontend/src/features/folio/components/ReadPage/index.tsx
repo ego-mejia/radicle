@@ -1,14 +1,17 @@
 import { Link } from '@tanstack/react-router';
-import { History, PenLine } from 'lucide-react';
+import { Glasses, History, PenLine } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Avatar } from '../../../../components/ui/Avatar';
 import { EmptyState } from '../../../../components/ui/EmptyState';
 import { PageSpinner } from '../../../../components/ui/Spinner';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
+import { useMe } from '../../../../hooks/useMe';
 import { formatDate } from '../../../../lib/format';
 import { assetUrl } from '../../../../services/api/folio';
+import { useFocusMode } from '../../hooks/useFocusMode';
 import { DocContent } from '../DocContent';
 import { headingsOf, readingMinutes } from '../DocContent/anchors';
+import { FocusReader } from '../FocusReader';
 import { PageMeta } from '../PageMeta';
 import { PageToc } from '../PageToc';
 import * as S from './style';
@@ -19,6 +22,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   const { t } = useTranslation();
   const errorMessage = useErrorMessage();
   const page = usePage(nodeId);
+  const [focus, setFocus] = useFocusMode(useMe().handle);
   const { node } = page;
 
   if (node.isPending) return <PageSpinner />;
@@ -36,6 +40,18 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
   const description = meta.description ? String(meta.description) : '';
   const params = { page: `${n.id}-${n.slug}` };
 
+  if (focus)
+    return (
+      <FocusReader
+        title={n.title}
+        kicker={[meta.doc_type, page.space?.name].filter(Boolean).join(' · ')}
+        description={description}
+        content={page.content}
+        childPages={page.children}
+        onExit={() => setFocus(false)}
+      />
+    );
+
   return (
     <S.Page>
       <S.Bar>
@@ -52,20 +68,24 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
             </span>
           ))}
         </S.Crumbs>
-        {page.canEdit && (
-          <S.Actions>
-            {n.version != null && (
-              <Link to="/folio/p/$page/history" params={params}>
-                <History aria-hidden />
-                {t('folio.reader.history')}
-              </Link>
-            )}
+        <S.Actions>
+          <button type="button" onClick={() => setFocus(true)}>
+            <Glasses aria-hidden />
+            {t('folio.reader.focus.enter')}
+          </button>
+          {page.canEdit && n.version != null && (
+            <Link to="/folio/p/$page/history" params={params}>
+              <History aria-hidden />
+              {t('folio.reader.history')}
+            </Link>
+          )}
+          {page.canEdit && (
             <Link to="/folio/p/$page/edit" params={params}>
               <PenLine aria-hidden />
               {t('folio.reader.edit')}
             </Link>
-          </S.Actions>
-        )}
+          )}
+        </S.Actions>
       </S.Bar>
 
       <S.Cover $image={n.cover_asset_id ? assetUrl(n.cover_asset_id) : null} aria-hidden />
