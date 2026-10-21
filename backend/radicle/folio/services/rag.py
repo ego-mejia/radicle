@@ -127,6 +127,7 @@ async def index_node(db: AsyncSession, node_id: uuid.UUID) -> int:
         "title": version.title,
         "description": meta.get("description", ""),
         "restricted": await _restricted(db, chain),
+        "status": node.status.value,
     }
     chunks = chunking.chunk(version.content_json)
     inputs = [chunking.embedding_input(version.title, base["description"], c) for c in chunks]

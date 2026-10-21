@@ -1035,6 +1035,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/owner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Transfer Owner
+         * @description Hand the page to someone else; a new version records it in the history.
+         */
+        patch: operations["transfer_owner_api_v1_folio_nodes__node_id__owner_patch"];
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}/publish": {
         parameters: {
             query?: never;
@@ -1076,6 +1096,26 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Set Status
+         * @description The owner or a space admin marks a published page in review or verified.
+         */
+        patch: operations["set_status_api_v1_folio_nodes__node_id__status_patch"];
         trace?: never;
     };
     "/api/v1/folio/nodes/{node_id}/unarchive": {
@@ -5619,6 +5659,14 @@ export interface components {
          * @enum {string}
          */
         Origin: "team" | "user";
+        /** OwnerIn */
+        OwnerIn: {
+            /**
+             * Owner
+             * @description Handle of the new owner, e.g. @ana
+             */
+            owner: string;
+        };
         /** Page[ArchivedOut] */
         Page_ArchivedOut_: {
             /** Items */
@@ -6839,6 +6887,15 @@ export interface components {
             name: string;
             /** Ref */
             ref: string;
+        };
+        /** StatusIn */
+        StatusIn: {
+            /**
+             * Status
+             * @description verified lasts the space's verify_days; outdated comes from expiry
+             * @enum {string}
+             */
+            status: "published" | "in_review" | "verified";
         };
         /** StatusOut */
         StatusOut: {
@@ -10453,6 +10510,41 @@ export interface operations {
             };
         };
     };
+    transfer_owner_api_v1_folio_nodes__node_id__owner_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OwnerIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     publish_api_v1_folio_nodes__node_id__publish_post: {
         parameters: {
             query?: never;
@@ -10550,6 +10642,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RestrictionsIO"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_status_api_v1_folio_nodes__node_id__status_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StatusIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NodeOut"];
                 };
             };
             /** @description Validation Error */

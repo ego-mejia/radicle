@@ -25,6 +25,8 @@ Mode = Literal["hybrid", "text", "semantic"]
 RRF_K = 60
 CANDIDATES = 50
 SEMANTIC_TOP = 20
+# Verified docs rise a little and outdated ones sink (Folio 2.7).
+BOOST = {"verified": 1.15, "outdated": 0.85}
 SNIPPET = "StartSel=**,StopSel=**,MaxWords=30,MinWords=12,MaxFragments=1"
 
 
@@ -53,6 +55,7 @@ class Hit:
     snippet: str
     space: str
     doc_type: str | None
+    status: str = "published"
     score: float = 0.0
     matched_by: list[str] = field(default_factory=list)
 
@@ -105,6 +108,7 @@ def _hit(chunk: FolioChunk, snippet: str) -> Hit:
         snippet=snippet,
         space=m.get("space", ""),
         doc_type=m.get("doc_type"),
+        status=m.get("status", "published"),
     )
 
 
@@ -168,6 +172,12 @@ def _lead(text: str, words: int = 30) -> str:
     return " ".join(parts[:words]) + (" …" if len(parts) > words else "")
 
 
+def boosted(hits: list[Hit]) -> list[Hit]:
+    for h in hits:
+        h.score *= BOOST.get(h.status, 1.0)
+    return sorted(hits, key=lambda h: h.score, reverse=True)
+
+
 def fuse(lists: dict[str, list[Hit]]) -> list[Hit]:
     """Reciprocal Rank Fusion: each list adds 1 / (60 + rank) for the documents it found."""
     merged: dict[uuid.UUID, Hit] = {}
@@ -202,7 +212,7 @@ async def search(
         hits = await _text(db, visible, q, f)
         for h in hits:
             h.matched_by = ["text"]
-        return hits[:limit]
+        return boosted(hits)[:limit]
     try:
         semantic = await _semantic(db, visible, q, f)
     except ai.AiUnavailable:
@@ -219,10 +229,10 @@ async def search(
             )
         for h in semantic:
             h.matched_by = ["semantic"]
-        return semantic[:limit]
+        return boosted(semantic)[:limit]
     text_hits = await _text(db, visible, q, f)
     if semantic is None:
         for h in text_hits:
             h.matched_by = ["text"]
-        return text_hits[:limit]
-    return fuse({"text": text_hits, "semantic": semantic})[:limit]
+        return boosted(text_hits)[:limit]
+    return boosted(fuse({"text": text_hits, "semantic": semantic}))[:limit]
