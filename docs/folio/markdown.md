@@ -22,6 +22,7 @@ Los documentos de Folio se guardan como JSON de TipTap (`backend/radicle/folio/s
 | Timeline | ` ```timeline ` con una línea por hito: `fecha \| título \| texto` (fecha y texto opcionales), y antes el estado si lo tiene: `[x]` hecho, `[~]` en curso, `[ ]` planeado |
 | Comparación | `::::compare`, cada lado en `:::side{title="Antes"}` … `:::`, y cierra `::::` (2 o 3 lados) |
 | Lista por label | `::pages{label=onboarding limit=5 space=docs}`: las páginas con ese label que puede ver quien lee; `order=title` las ordena por título en vez de la más reciente primero |
+| Calendario | `::calendar{id=<uuid> view=week}`: el calendario de un space con sus eventos y milestones de Docket; `view` es `month` (por default) o `week`. Quien no puede verlo ve que no tiene acceso |
 | Whiteboard | `::whiteboard{id=<uuid>}`: el whiteboard tal como está, solo para ver. Quien no puede verlo ve que no tiene acceso |
 | Avance de tickets | `::progress{title="Avance"}` (o `::progress{}`): en un build spec, el estado en vivo de los tickets de sus entregables |
 | Tabla de tickets | `::tickets{rql="project = PA AND status != Done" title="Pendientes" limit=25}`: tickets de Docket por RQL; cada quien ve solo los que Docket le muestra |

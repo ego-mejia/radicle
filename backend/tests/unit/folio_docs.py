@@ -116,6 +116,7 @@ EVERY_BLOCK: dict[str, Any] = {
         block("pageList", label="onboarding", limit=5, space="docs", order="title"),
         block("databaseView", database="6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14", view="board"),
         block("whiteboard", whiteboard="0b7e2c41-5a3d-4f6e-9c8b-1d2e3f4a5b6c"),
+        block("calendar", calendar="5d2f8a17-3c4b-4e6a-9f1d-2b7c8e9a0f13", view="week"),
         block("ticketTable", rql="project = PA AND status != Done", title="Pendientes", limit=10),
         block("ticketProgress", title="Avance de la fase"),
         block("embed", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", title="La demo"),

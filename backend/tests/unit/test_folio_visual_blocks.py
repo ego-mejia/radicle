@@ -36,6 +36,8 @@ VISUAL = {"format": "svg", "code": "<svg></svg>", "description": "Un dibujo"}
         (block("databaseView", database="inventario"), "a database's id"),
         (block("databaseView"), "database"),
         (block("whiteboard", whiteboard="mapa"), "a whiteboard's id"),
+        (block("calendar", calendar="releases"), "a calendar's id"),
+        (block("calendar", calendar="5d2f8a17-3c4b-4e6a-9f1d-2b7c8e9a0f13", view="year"), "month"),
         (block("chart", kind="bar"), "header row"),
         (block("chart", kind="bar", source="table", data=[["a", "b"], ["x", 1]]), "has no data"),
         (block("chart", kind="bar", source="sheet"), "must be one of table"),
@@ -62,6 +64,7 @@ def test_valid_blocks_pass() -> None:
         block("pageList", label="onboarding"),
         block("databaseView", database="6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14"),
         block("whiteboard", whiteboard="0b7e2c41-5a3d-4f6e-9c8b-1d2e3f4a5b6c"),
+        block("calendar", calendar="5d2f8a17-3c4b-4e6a-9f1d-2b7c8e9a0f13"),
     ]
     assert schema.validate(doc(*nodes)) == doc(*nodes)
 
