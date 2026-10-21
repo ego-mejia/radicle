@@ -83,3 +83,13 @@ async def test_never_inside_the_network(seen: list[str], url: str, says: str) ->
 )
 def test_only_public_addresses(address: str, public: bool) -> None:
     assert _public(address) is public
+
+
+async def test_posts_pinned_without_following_redirects(seen: list[str]) -> None:
+    answer = await safe_fetch.post("https://hops.example.com/hook", b"{}", {"X-Test": "1"})
+    assert answer.status == 302  # the caller decides it failed
+    assert seen == ["hops.example.com/hook via 93.184.216.35"]
+    with pytest.raises(Blocked, match="not a public address"):
+        await safe_fetch.post("https://evil.example.com/hook", b"{}", {})
+    with pytest.raises(Blocked, match="not a public address"):
+        await safe_fetch.check("http://127.0.0.1/")

@@ -5,6 +5,10 @@ them into notifications for whoever each app's resolver says, once per user and 
 
     @events.resolver("folio", "comment_mention")
     async def mentioned(db, event) -> list[events.Notice]: ...
+
+Events can also leave Radicle (webhooks, chat channels, automation rules): an app's
+publisher turns its internal event into public ones with stable names such as
+`page.published`, and every subscriber gets them.
 """
 
 import logging
@@ -83,6 +87,60 @@ def resolver(
         return fn
 
     return register
+
+
+@dataclass(frozen=True)
+class PublicEvent:
+    """An event as it leaves Radicle: a stable name and data that is safe to send outside.
+    `scope` says where it happened (`{"app": "folio", "space": "eng"}`) for filters."""
+
+    name: str
+    data: dict[str, Any]
+    scope: dict[str, str] = field(default_factory=dict)
+
+
+Publisher = Callable[[AsyncSession, OutboxEvent], Awaitable[list[PublicEvent]]]
+Subscriber = Callable[[AsyncSession, OutboxEvent, list[PublicEvent]], Awaitable[None]]
+
+_publishers: dict[tuple[str, str], Publisher] = {}
+_public: dict[str, str] = {}  # name -> label
+_subscribers: list[Subscriber] = []
+
+
+def publisher(app: str, type: str) -> Callable[[Publisher], Publisher]:
+    """Register how `app.type` is told outside Radicle."""
+
+    def register(fn: Publisher) -> Publisher:
+        _publishers[(app, type)] = fn
+        return fn
+
+    return register
+
+
+def public_event(name: str, label: str) -> None:
+    """Declare a public event name, so admins can pick it (webhooks, rules)."""
+    _public[name] = label
+
+
+def public_events() -> dict[str, str]:
+    return dict(sorted(_public.items()))
+
+
+def subscriber(fn: Subscriber) -> Subscriber:
+    """Hear every public event (webhooks, chat channels, automation)."""
+    if fn not in _subscribers:
+        _subscribers.append(fn)
+    return fn
+
+
+async def _publish(db: AsyncSession, event: OutboxEvent) -> None:
+    publish = _publishers.get((event.app, event.type))
+    if publish is None or not _subscribers:
+        return
+    published = await publish(db, event)
+    if published:
+        for fn in _subscribers:
+            await fn(db, event, published)
 
 
 def event_types() -> list[EventType]:
@@ -223,6 +281,7 @@ async def dispatch_pending(db: AsyncSession) -> int:
                     if kind is not None:
                         for notice in await _recipients(db, event, kind):
                             await _deliver(db, event, kind, notice)
+                    await _publish(db, event)
                 event.dispatched_at = utcnow()
             except Exception as exc:  # one bad event must not block the rest
                 log.exception("Dispatching event %s failed", event.id)

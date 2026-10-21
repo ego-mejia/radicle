@@ -135,3 +135,25 @@ async def test_without_smtp_there_is_no_email(db: AsyncSession, team: Team) -> N
     assert "platform_send_email" not in await run_jobs(db)
     channels = set(await db.scalars(select(EventDelivery.channel)))
     assert channels == {Channel.in_app}
+
+
+async def test_public_events_reach_every_subscriber_without_users(
+    db: AsyncSession, team: Team, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    heard: list[tuple[int, str, dict[str, str]]] = []
+
+    async def publish(db: AsyncSession, event: OutboxEvent) -> list[events.PublicEvent]:
+        return [events.PublicEvent("test.pinged", {"n": 1}, {"space": "eng"})]
+
+    async def listen(
+        db: AsyncSession, event: OutboxEvent, published: list[events.PublicEvent]
+    ) -> None:
+        heard.extend((event.id, p.name, p.scope) for p in published)
+
+    monkeypatch.setitem(events._publishers, ("test", "ping"), publish)
+    monkeypatch.setattr(events, "_subscribers", [listen])
+    events.public_event("test.pinged", "Test pings")
+    assert events.public_events()["test.pinged"] == "Test pings"
+    await events.emit(db, "test", "ping", actor=None, payload={"to": []})
+    await run_jobs(db)
+    assert [(name, scope) for _, name, scope in heard] == [("test.pinged", {"space": "eng"})]
