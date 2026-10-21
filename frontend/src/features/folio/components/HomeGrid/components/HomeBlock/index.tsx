@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { MarkdownView } from '../../../../../../components/Markdown/MarkdownView';
 import type { FolioHomeBlock } from '../../../../../../services/api/folio';
+import { DocsChat } from '../../../DocsChat';
 import { DocList } from '../DocList';
 import { Featured } from '../Featured';
 import { SearchBox } from '../SearchBox';
@@ -45,7 +46,15 @@ export function HomeBlock({ block }: { block: FolioHomeBlock }) {
       );
     case 'search':
       return <SearchBox label={title || t('folio.search')} />;
+    case 'chat':
+      // The API sends it only when the docs chat is on.
+      return (
+        <S.Chat aria-label={title || t('folio.chat.title')}>
+          <S.Heading>{title || t('folio.chat.title')}</S.Heading>
+          <DocsChat compact />
+        </S.Chat>
+      );
     default:
-      return null; // chat waits for phase 4; a type this build doesn't know stays out
+      return null; // a type this build doesn't know stays out
   }
 }

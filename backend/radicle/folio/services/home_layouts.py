@@ -10,7 +10,7 @@ Blocks and their config:
 - for_you, most_read: {"title"?, "limit": 1-12}
 - spaces: {"title"?}
 - text: {"markdown"} up to 5,000 characters
-- search: {} and chat: {} (reserved for phase 4's chat; readers don't see it yet)
+- search: {} and chat: {} (the docs chat, shown only when it is on: Folio 4.5)
 """
 
 import uuid
