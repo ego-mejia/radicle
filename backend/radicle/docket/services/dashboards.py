@@ -23,14 +23,14 @@ from radicle.docket.db.models import (
     User,
     utcnow,
 )
-from radicle.docket.query.errors import RQLError
-from radicle.docket.query.parser import parse
 from radicle.docket.services import boards, filters, search, sprints
 from radicle.docket.services.access import project_access, role_in
 from radicle.docket.services.reports import agile, general
 from radicle.docket.services.reports import common as report_common
 from radicle.docket.services.templates import SYSTEM_USER_ID
 from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from radicle.platform.query.errors import RQLError
+from radicle.platform.query.parser import parse
 
 NAME_MAX = 120
 GRID_COLUMNS = 12

@@ -1,11 +1,10 @@
 """RQL field catalog: types, operators and sort keys. Also feeds autocompletion."""
 
-import difflib
 from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 
-from radicle.docket.query.errors import RQLError
+from radicle.platform.query.errors import RQLError, suggest
 
 
 class Kind(StrEnum):
@@ -151,11 +150,6 @@ KEYWORDS = (
     "ASC",
     "DESC",
 )
-
-
-def suggest(word: str, options: list[str] | tuple[str, ...]) -> str:
-    match = difflib.get_close_matches(word.lower(), list(options), n=1, cutoff=0.6)
-    return f" Did you mean '{match[0]}'?" if match else ""
 
 
 # Custom field type -> (operators, IN, IS EMPTY).

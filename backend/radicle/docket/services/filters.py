@@ -6,12 +6,12 @@ from sqlalchemy import ColumnElement, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.docket.db.models import FilterVisibility, Project, SavedFilter, User, utcnow
-from radicle.docket.query import ast
-from radicle.docket.query.errors import RQLError
-from radicle.docket.query.parser import parse
 from radicle.docket.services.access import project_access
 from radicle.docket.services.search import visible_project_ids
 from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from radicle.platform.query import ast
+from radicle.platform.query.errors import RQLError
+from radicle.platform.query.parser import parse
 
 NAME_MAX = 100
 MAX_DEPTH = 5

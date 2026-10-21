@@ -9,10 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from radicle.docket.core.permissions import effective_role, permissions_for
 from radicle.docket.db.models import EventType, Project, StatusCategory, Ticket, User, utcnow
 from radicle.docket.query.compiler import Context, compile_query
-from radicle.docket.query.parser import parse
 from radicle.docket.services import history, search, tickets, transitions
 from radicle.docket.services.access import ProjectAccess, project_access
 from radicle.platform.errors import Conflict, NotFound, ValidationFailed
+from radicle.platform.query.parser import parse
 from radicle.platform.services import queue, rank
 
 REBALANCE_JOB = "rebalance_ranks"

@@ -31,11 +31,11 @@ from radicle.docket.db.models import (
     WipMode,
     utcnow,
 )
-from radicle.docket.query.errors import RQLError
-from radicle.docket.query.parser import parse
 from radicle.docket.services import ranking, search, tickets, transitions
 from radicle.docket.services.access import ProjectAccess, project_access
 from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from radicle.platform.query.errors import RQLError
+from radicle.platform.query.parser import parse
 
 NAME_MAX = 80
 COLUMNS_MAX = 12

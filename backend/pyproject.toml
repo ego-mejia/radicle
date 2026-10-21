@@ -75,8 +75,10 @@ ignore_missing_imports = true
 module = [
     "radicle.platform.services.*",
     "radicle.docket.services.*",
+    "radicle.platform.query.*",
     "radicle.docket.query.*",
     "radicle.folio.services.*",
+    "radicle.folio.query.*",
 ]
 strict = true
 
