@@ -10,6 +10,7 @@ from radicle.folio.api import ai as ai_api
 from radicle.folio.api import analytics as analytics_api
 from radicle.folio.api import assets as assets_api
 from radicle.folio.api import build_spec as build_spec_api
+from radicle.folio.api import calendars as calendars_api
 from radicle.folio.api import catalogs as catalogs_api
 from radicle.folio.api import chat as chat_api
 from radicle.folio.api import collab as collab_api
@@ -173,5 +174,6 @@ router.include_router(tickets_api.router)
 router.include_router(build_spec_api.router)
 router.include_router(ai_api.router)
 router.include_router(glossary_api.router)
+router.include_router(calendars_api.router)
 router.include_router(chat_api.router)
 router.include_router(public_links_api.router)

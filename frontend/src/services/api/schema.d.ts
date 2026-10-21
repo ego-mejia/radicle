@@ -1070,6 +1070,120 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/calendars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Calendars
+         * @description A space's calendars, by name.
+         */
+        get: operations["list_calendars_api_v1_folio_calendars_get"];
+        put?: never;
+        /**
+         * Create Calendar
+         * @description A new calendar in the space. Space admins only.
+         */
+        post: operations["create_calendar_api_v1_folio_calendars_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/calendars/{calendar_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Calendar */
+        get: operations["get_calendar_api_v1_folio_calendars__calendar_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Calendar
+         * @description The calendar and its events. Space admins only.
+         */
+        delete: operations["delete_calendar_api_v1_folio_calendars__calendar_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Calendar
+         * @description Rename, recolor or change the Docket projects it shows. Space admins only.
+         */
+        patch: operations["patch_calendar_api_v1_folio_calendars__calendar_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/calendars/{calendar_id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Events
+         * @description Events that overlap the range, and the Docket milestones due in it that you can see.
+         */
+        get: operations["list_events_api_v1_folio_calendars__calendar_id__events_get"];
+        put?: never;
+        /**
+         * Create Event
+         * @description A new event. Takes the create permission in the space.
+         */
+        post: operations["create_event_api_v1_folio_calendars__calendar_id__events_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/calendars/{calendar_id}/events/{event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Event */
+        delete: operations["delete_event_api_v1_folio_calendars__calendar_id__events__event_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Event
+         * @description Change an event you added (delete_any changes anyone's).
+         */
+        patch: operations["patch_event_api_v1_folio_calendars__calendar_id__events__event_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/calendars/{calendar_id}/ical-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rotate Ical Token
+         * @description A new feed link; subscriptions to the old one stop updating. Space admins only.
+         */
+        post: operations["rotate_ical_token_api_v1_folio_calendars__calendar_id__ical_token_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/chat/availability": {
         parameters: {
             query?: never;
@@ -4882,6 +4996,13 @@ export interface components {
             /** Done */
             done: boolean;
         };
+        /** AgendaOut */
+        AgendaOut: {
+            /** Events */
+            events: components["schemas"]["CalendarEventOut"][];
+            /** Milestones */
+            milestones: components["schemas"]["CalendarMilestoneOut"][];
+        };
         /** AgentCreate */
         AgentCreate: {
             /** Display Name */
@@ -5584,6 +5705,176 @@ export interface components {
             key: string;
             /** Ok */
             ok: boolean;
+        };
+        /** CalendarEventIn */
+        CalendarEventIn: {
+            /**
+             * All Day
+             * @default false
+             */
+            all_day?: boolean;
+            /**
+             * Category
+             * @default event
+             * @enum {string}
+             */
+            category?: "vacation" | "release" | "event" | "oncall" | "other";
+            /**
+             * Description
+             * @default
+             */
+            description?: string;
+            /**
+             * End At
+             * Format: date-time
+             */
+            end_at: string;
+            /**
+             * People
+             * @description Handles
+             */
+            people?: string[];
+            /**
+             * Start At
+             * Format: date-time
+             */
+            start_at: string;
+            /** Title */
+            title: string;
+        };
+        /** CalendarEventOut */
+        CalendarEventOut: {
+            /** All Day */
+            all_day: boolean;
+            /** Can Edit */
+            can_edit: boolean;
+            /**
+             * Category
+             * @enum {string}
+             */
+            category: "vacation" | "release" | "event" | "oncall" | "other";
+            /** Created By */
+            created_by: string | null;
+            /** Description */
+            description: string;
+            /**
+             * End At
+             * @description Exclusive; all-day events end at a midnight UTC
+             */
+            end_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * People
+             * @description Handles
+             */
+            people: string[];
+            /** Start At */
+            start_at: string;
+            /** Title */
+            title: string;
+        };
+        /** CalendarEventPatch */
+        CalendarEventPatch: {
+            /** All Day */
+            all_day?: boolean | null;
+            /** Category */
+            category?: ("vacation" | "release" | "event" | "oncall" | "other") | null;
+            /** Description */
+            description?: string | null;
+            /** End At */
+            end_at?: string | null;
+            /** People */
+            people?: string[] | null;
+            /** Start At */
+            start_at?: string | null;
+            /** Title */
+            title?: string | null;
+        };
+        /** CalendarIn */
+        CalendarIn: {
+            /**
+             * Color
+             * @default blue
+             * @enum {string}
+             */
+            color?: "blue" | "green" | "purple" | "orange" | "red" | "teal" | "gray";
+            /**
+             * Docket Projects
+             * @description Keys of Docket projects whose milestones it shows
+             */
+            docket_projects?: string[];
+            /** Name */
+            name: string;
+            /** Space */
+            space: string;
+        };
+        /** CalendarMilestoneOut */
+        CalendarMilestoneOut: {
+            /**
+             * Due
+             * Format: date
+             */
+            due: string;
+            /** Name */
+            name: string;
+            /** Project */
+            project: string;
+            /** Status */
+            status: string;
+        };
+        /** CalendarOut */
+        CalendarOut: {
+            /**
+             * Can Add
+             * @description You may add events
+             */
+            can_add: boolean;
+            /**
+             * Can Manage
+             * @description You may rename it, delete it or rotate its feed link
+             */
+            can_manage: boolean;
+            /**
+             * Color
+             * @enum {string}
+             */
+            color: "blue" | "green" | "purple" | "orange" | "red" | "teal" | "gray";
+            /** Created At */
+            created_at: string;
+            /** Docket Projects */
+            docket_projects: string[];
+            /**
+             * Ical Path
+             * @description The read-only iCal feed; anyone with the link can read it
+             */
+            ical_path: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Space */
+            space: string;
+        };
+        /** CalendarPatch */
+        CalendarPatch: {
+            /** Color */
+            color?: ("blue" | "green" | "purple" | "orange" | "red" | "teal" | "gray") | null;
+            /** Docket Projects */
+            docket_projects?: string[] | null;
+            /** Name */
+            name?: string | null;
+        };
+        /** CalendarsOut */
+        CalendarsOut: {
+            /** Items */
+            items: components["schemas"]["CalendarOut"][];
         };
         /** CandidateGroup */
         CandidateGroup: {
@@ -14011,6 +14302,334 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_calendars_api_v1_folio_calendars_get: {
+        parameters: {
+            query: {
+                /** @description The space's key */
+                space: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_calendar_api_v1_folio_calendars_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalendarIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_calendar_api_v1_folio_calendars__calendar_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calendar_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_calendar_api_v1_folio_calendars__calendar_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calendar_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_calendar_api_v1_folio_calendars__calendar_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calendar_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalendarPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_events_api_v1_folio_calendars__calendar_id__events_get: {
+        parameters: {
+            query: {
+                /** @description From, inclusive (ISO 8601 with a time zone) */
+                start: string;
+                /** @description To, exclusive; at most 400 days after start */
+                end: string;
+            };
+            header?: never;
+            path: {
+                calendar_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgendaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_event_api_v1_folio_calendars__calendar_id__events_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calendar_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalendarEventIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEventOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_event_api_v1_folio_calendars__calendar_id__events__event_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calendar_id: string;
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_event_api_v1_folio_calendars__calendar_id__events__event_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calendar_id: string;
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CalendarEventPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarEventOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rotate_ical_token_api_v1_folio_calendars__calendar_id__ical_token_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                calendar_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CalendarOut"];
+                };
             };
             /** @description Validation Error */
             422: {

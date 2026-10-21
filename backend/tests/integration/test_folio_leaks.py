@@ -107,6 +107,7 @@ def _urls(s: dict) -> dict[str, list[str]]:
         "/api/v1/folio/chat/sessions": [f"{API}/chat/sessions"],
         "/api/v1/folio/analytics/pages/{node_id}": [f"{API}/analytics/pages/{p}"],
         "/api/v1/folio/analytics/site": [f"{API}/analytics/site"],
+        "/api/v1/folio/calendars": [f"{API}/calendars?space=docs"],
         "/api/v1/folio/public-links": [
             f"{API}/public-links?node={p}",
             f"{API}/public-links?space=docs",
@@ -137,6 +138,10 @@ EXEMPT = {
     # rest). test_folio_chat_api.py covers both, and retrieval its restricted pages.
     "/api/v1/folio/chat/sessions/{session_id}",
     "/api/v1/folio/admin/chat/unanswered",
+    # Calendars hold events, not pages; a space you can't see is a 404:
+    # test_folio_calendars_api.py.
+    "/api/v1/folio/calendars/{calendar_id}",
+    "/api/v1/folio/calendars/{calendar_id}/events",
     # Without an account, by token: test_folio_public_links_api.py checks a restricted page
     # never shows in a space's link, nor its files.
     "/api/v1/folio/pub/{token}",

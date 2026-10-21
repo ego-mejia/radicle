@@ -15,6 +15,30 @@
         "title": "ActionItemPatch",
         "type": "object"
       },
+      "AgendaOut": {
+        "properties": {
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarEventOut"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "milestones": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarMilestoneOut"
+            },
+            "title": "Milestones",
+            "type": "array"
+          }
+        },
+        "required": [
+          "events",
+          "milestones"
+        ],
+        "title": "AgendaOut",
+        "type": "object"
+      },
       "AgentCreate": {
         "additionalProperties": false,
         "properties": {
@@ -1987,6 +2011,443 @@
           "error"
         ],
         "title": "BulkTicketResult",
+        "type": "object"
+      },
+      "CalendarEventIn": {
+        "additionalProperties": false,
+        "properties": {
+          "all_day": {
+            "default": false,
+            "title": "All Day",
+            "type": "boolean"
+          },
+          "category": {
+            "default": "event",
+            "enum": [
+              "vacation",
+              "release",
+              "event",
+              "oncall",
+              "other"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "default": "",
+            "title": "Description",
+            "type": "string"
+          },
+          "end_at": {
+            "format": "date-time",
+            "title": "End At",
+            "type": "string"
+          },
+          "people": {
+            "description": "Handles",
+            "items": {
+              "type": "string"
+            },
+            "title": "People",
+            "type": "array"
+          },
+          "start_at": {
+            "format": "date-time",
+            "title": "Start At",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "start_at",
+          "end_at"
+        ],
+        "title": "CalendarEventIn",
+        "type": "object"
+      },
+      "CalendarEventOut": {
+        "properties": {
+          "all_day": {
+            "title": "All Day",
+            "type": "boolean"
+          },
+          "can_edit": {
+            "title": "Can Edit",
+            "type": "boolean"
+          },
+          "category": {
+            "enum": [
+              "vacation",
+              "release",
+              "event",
+              "oncall",
+              "other"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "end_at": {
+            "description": "Exclusive; all-day events end at a midnight UTC",
+            "title": "End At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "people": {
+            "description": "Handles",
+            "items": {
+              "type": "string"
+            },
+            "title": "People",
+            "type": "array"
+          },
+          "start_at": {
+            "title": "Start At",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "description",
+          "start_at",
+          "end_at",
+          "all_day",
+          "category",
+          "people",
+          "created_by",
+          "can_edit"
+        ],
+        "title": "CalendarEventOut",
+        "type": "object"
+      },
+      "CalendarEventPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "all_day": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "All Day"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "enum": [
+                  "vacation",
+                  "release",
+                  "event",
+                  "oncall",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "end_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End At"
+          },
+          "people": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "People"
+          },
+          "start_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start At"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "title": "CalendarEventPatch",
+        "type": "object"
+      },
+      "CalendarIn": {
+        "additionalProperties": false,
+        "properties": {
+          "color": {
+            "default": "blue",
+            "enum": [
+              "blue",
+              "green",
+              "purple",
+              "orange",
+              "red",
+              "teal",
+              "gray"
+            ],
+            "title": "Color",
+            "type": "string"
+          },
+          "docket_projects": {
+            "description": "Keys of Docket projects whose milestones it shows",
+            "items": {
+              "type": "string"
+            },
+            "title": "Docket Projects",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          }
+        },
+        "required": [
+          "space",
+          "name"
+        ],
+        "title": "CalendarIn",
+        "type": "object"
+      },
+      "CalendarMilestoneOut": {
+        "properties": {
+          "due": {
+            "format": "date",
+            "title": "Due",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "project": {
+            "title": "Project",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project",
+          "name",
+          "status",
+          "due"
+        ],
+        "title": "CalendarMilestoneOut",
+        "type": "object"
+      },
+      "CalendarOut": {
+        "properties": {
+          "can_add": {
+            "description": "You may add events",
+            "title": "Can Add",
+            "type": "boolean"
+          },
+          "can_manage": {
+            "description": "You may rename it, delete it or rotate its feed link",
+            "title": "Can Manage",
+            "type": "boolean"
+          },
+          "color": {
+            "enum": [
+              "blue",
+              "green",
+              "purple",
+              "orange",
+              "red",
+              "teal",
+              "gray"
+            ],
+            "title": "Color",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "docket_projects": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Docket Projects",
+            "type": "array"
+          },
+          "ical_path": {
+            "description": "The read-only iCal feed; anyone with the link can read it",
+            "title": "Ical Path",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "space",
+          "name",
+          "color",
+          "docket_projects",
+          "ical_path",
+          "can_manage",
+          "can_add",
+          "created_at"
+        ],
+        "title": "CalendarOut",
+        "type": "object"
+      },
+      "CalendarPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "color": {
+            "anyOf": [
+              {
+                "enum": [
+                  "blue",
+                  "green",
+                  "purple",
+                  "orange",
+                  "red",
+                  "teal",
+                  "gray"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Color"
+          },
+          "docket_projects": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Docket Projects"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "title": "CalendarPatch",
+        "type": "object"
+      },
+      "CalendarsOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "CalendarsOut",
         "type": "object"
       },
       "CandidateGroup": {
@@ -22447,6 +22908,503 @@
           }
         },
         "summary": "Get Asset",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/calendars": {
+      "get": {
+        "description": "A space's calendars, by name.",
+        "operationId": "list_calendars_api_v1_folio_calendars_get",
+        "parameters": [
+          {
+            "description": "The space's key",
+            "in": "query",
+            "name": "space",
+            "required": true,
+            "schema": {
+              "description": "The space's key",
+              "title": "Space",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Calendars",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "description": "A new calendar in the space. Space admins only.",
+        "operationId": "create_calendar_api_v1_folio_calendars_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Calendar",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/calendars/{calendar_id}": {
+      "delete": {
+        "description": "The calendar and its events. Space admins only.",
+        "operationId": "delete_calendar_api_v1_folio_calendars__calendar_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Calendar Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Calendar",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "get": {
+        "operationId": "get_calendar_api_v1_folio_calendars__calendar_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Calendar Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Calendar",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "patch": {
+        "description": "Rename, recolor or change the Docket projects it shows. Space admins only.",
+        "operationId": "patch_calendar_api_v1_folio_calendars__calendar_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Calendar Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Calendar",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/calendars/{calendar_id}/events": {
+      "get": {
+        "description": "Events that overlap the range, and the Docket milestones due in it that you can see.",
+        "operationId": "list_events_api_v1_folio_calendars__calendar_id__events_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Calendar Id",
+              "type": "string"
+            }
+          },
+          {
+            "description": "From, inclusive (ISO 8601 with a time zone)",
+            "in": "query",
+            "name": "start",
+            "required": true,
+            "schema": {
+              "description": "From, inclusive (ISO 8601 with a time zone)",
+              "format": "date-time",
+              "title": "Start",
+              "type": "string"
+            }
+          },
+          {
+            "description": "To, exclusive; at most 400 days after start",
+            "in": "query",
+            "name": "end",
+            "required": true,
+            "schema": {
+              "description": "To, exclusive; at most 400 days after start",
+              "format": "date-time",
+              "title": "End",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgendaOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Events",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "description": "A new event. Takes the create permission in the space.",
+        "operationId": "create_event_api_v1_folio_calendars__calendar_id__events_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Calendar Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarEventIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarEventOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Event",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/calendars/{calendar_id}/events/{event_id}": {
+      "delete": {
+        "operationId": "delete_event_api_v1_folio_calendars__calendar_id__events__event_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Calendar Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Event Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Event",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "patch": {
+        "description": "Change an event you added (delete_any changes anyone's).",
+        "operationId": "patch_event_api_v1_folio_calendars__calendar_id__events__event_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Calendar Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Event Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarEventPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarEventOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Event",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/calendars/{calendar_id}/ical-token": {
+      "post": {
+        "description": "A new feed link; subscriptions to the old one stop updating. Space admins only.",
+        "operationId": "rotate_ical_token_api_v1_folio_calendars__calendar_id__ical_token_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "calendar_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Calendar Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rotate Ical Token",
         "tags": [
           "folio",
           "folio"
