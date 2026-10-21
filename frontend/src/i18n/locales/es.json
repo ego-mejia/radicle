@@ -2484,6 +2484,21 @@
       },
       "createFromItem": "Crear un ticket de este action item"
     },
+    "buildSpec": {
+      "button": "Crear tickets",
+      "title": "Crear tickets de los entregables",
+      "intro": "Una tarea de Docket por entregable, con link a su sección y sus criterios de aceptación como checklist. Los entregables que ya tienen ticket se saltan.",
+      "items": "Entregables",
+      "empty": "No encontré entregables. Agrega una tabla de entregables (# | Entregable | Incluye | Se acepta cuando) o encabezados de nivel 3 numerados.",
+      "criteria_one": "{{count}} criterio",
+      "criteria_other": "{{count}} criterios",
+      "already": "Ya es {{key}}",
+      "create_one": "Crear {{count}} ticket",
+      "create_other": "Crear {{count}} tickets",
+      "created_one": "{{count}} ticket creado y ligado.",
+      "created_other": "{{count}} tickets creados y ligados.",
+      "failed": "No se pudieron cargar los entregables."
+    },
     "chat": {
       "title": "Pregunta a los docs",
       "open": "Preguntar",

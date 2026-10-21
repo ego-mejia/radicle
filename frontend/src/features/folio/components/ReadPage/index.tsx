@@ -16,6 +16,7 @@ import { useFocusMode } from '../../hooks/useFocusMode';
 import { CommentsPanel } from '../CommentsPanel';
 import { DatabasePage } from '../DatabasePage';
 import { ActionItemTickets } from '../ActionItemTickets';
+import { BuildSpecTickets } from '../BuildSpecTickets';
 import { DocContent } from '../DocContent';
 import { headingsOf, readingMinutes } from '../DocContent/anchors';
 import { FocusReader } from '../FocusReader';
@@ -145,6 +146,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
               {t('folio.reader.history')}
             </Link>
           )}
+          {page.canEdit && meta.doc_type === 'build-spec' && <BuildSpecTickets nodeId={n.id} />}
           {page.canEdit && (
             <Link to="/folio/p/$page/edit" params={params}>
               <PenLine aria-hidden />
