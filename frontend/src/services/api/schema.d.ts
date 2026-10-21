@@ -784,6 +784,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Home
+         * @description The default bento with every block already resolved for you.
+         */
+        get: operations["get_home_api_v1_folio_home_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/me": {
         parameters: {
             query?: never;
@@ -3780,6 +3800,48 @@ export interface components {
             /** Vote Count */
             vote_count: number;
         };
+        /** CardOut */
+        CardOut: {
+            /**
+             * Author
+             * @description Handle of who published it
+             */
+            author: string | null;
+            /** Author Name */
+            author_name: string | null;
+            /** Cover Asset Id */
+            cover_asset_id: string | null;
+            /** Description */
+            description: string;
+            /** Doc Type */
+            doc_type: string | null;
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "page" | "blog_post";
+            /** Labels */
+            labels: string[];
+            /** Published At */
+            published_at: string | null;
+            /** Reading Minutes */
+            reading_minutes: number;
+            /** Slug */
+            slug: string;
+            /** Space */
+            space: string;
+            /** Space Name */
+            space_name: string;
+            /** Title */
+            title: string;
+        };
         /** CategoryCounts */
         CategoryCounts: {
             /**
@@ -4686,6 +4748,31 @@ export interface components {
              * @description Link to the page, at the section
              */
             url: string;
+        };
+        /** HomeOut */
+        HomeOut: {
+            /**
+             * Ai Tools
+             * @description Latest docs of the ai-tools space
+             */
+            ai_tools: components["schemas"]["CardOut"][];
+            /** @description Latest post labelled anuncio */
+            announcement: components["schemas"]["CardOut"] | null;
+            /**
+             * Can Write
+             * @description Creators and admins see the Write button
+             */
+            can_write: boolean;
+            featured: components["schemas"]["CardOut"] | null;
+            /** Latest Posts */
+            latest_posts: components["schemas"]["CardOut"][];
+            /**
+             * Most Read
+             * @description For now, the most recently published
+             */
+            most_read: components["schemas"]["CardOut"][];
+            /** Spaces */
+            spaces: components["schemas"]["SpaceCountOut"][];
         };
         /** InboxOut */
         InboxOut: {
@@ -6153,6 +6240,25 @@ export interface components {
         SetupStatus: {
             /** Needs Setup */
             needs_setup: boolean;
+        };
+        /** SpaceCountOut */
+        SpaceCountOut: {
+            /**
+             * Docs
+             * @description Published pages and posts you can see
+             */
+            docs: number;
+            /** Icon */
+            icon: string | null;
+            /** Key */
+            key: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "team" | "personal";
+            /** Name */
+            name: string;
         };
         /** SpaceIn */
         SpaceIn: {
@@ -9556,6 +9662,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FolioHealthOut"];
+                };
+            };
+        };
+    };
+    get_home_api_v1_folio_home_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomeOut"];
                 };
             };
         };

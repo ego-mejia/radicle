@@ -9,6 +9,7 @@ from pydantic import Field
 from radicle.folio.api import assets as assets_api
 from radicle.folio.api import catalogs as catalogs_api
 from radicle.folio.api import drafts as drafts_api
+from radicle.folio.api import home as home_api
 from radicle.folio.api import publishing as publishing_api
 from radicle.folio.api import query as query_api
 from radicle.folio.api import search as search_api
@@ -131,3 +132,4 @@ router.include_router(sharing_api.router)
 router.include_router(submissions_api.router)
 router.include_router(search_api.router)
 router.include_router(query_api.router)
+router.include_router(home_api.router)
