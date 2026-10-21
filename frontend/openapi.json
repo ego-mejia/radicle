@@ -4831,51 +4831,6 @@
         "title": "MilestoneStatus",
         "type": "string"
       },
-      "MoveIn": {
-        "additionalProperties": false,
-        "properties": {
-          "area_mapping": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "title": "Area Mapping",
-            "type": "object"
-          },
-          "include_children": {
-            "default": true,
-            "title": "Include Children",
-            "type": "boolean"
-          },
-          "milestone": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Milestone"
-          },
-          "status_mapping": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "{\"In Review\": \"QA\"}; by name otherwise, else initial",
-            "title": "Status Mapping",
-            "type": "object"
-          },
-          "target_project": {
-            "title": "Target Project",
-            "type": "string"
-          }
-        },
-        "required": [
-          "target_project"
-        ],
-        "title": "MoveIn",
-        "type": "object"
-      },
       "NextIn": {
         "additionalProperties": false,
         "properties": {
@@ -4939,6 +4894,246 @@
           "ticket"
         ],
         "title": "NextOut",
+        "type": "object"
+      },
+      "NodeIn": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "page",
+              "folder",
+              "blog_post"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "parent": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Page or folder; never for posts",
+            "title": "Parent"
+          },
+          "space": {
+            "description": "Space key",
+            "title": "Space",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "space",
+          "kind",
+          "title"
+        ],
+        "title": "NodeIn",
+        "type": "object"
+      },
+      "NodeOut": {
+        "properties": {
+          "breadcrumbs": {
+            "description": "Ancestors from the root down",
+            "items": {
+              "$ref": "#/components/schemas/NodeRef"
+            },
+            "title": "Breadcrumbs",
+            "type": "array"
+          },
+          "cover_asset_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Asset Id"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "page",
+              "folder",
+              "blog_post"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "slug",
+          "icon",
+          "space",
+          "parent_id",
+          "cover_asset_id",
+          "published_at",
+          "created_at",
+          "updated_at",
+          "breadcrumbs"
+        ],
+        "title": "NodeOut",
+        "type": "object"
+      },
+      "NodePatch": {
+        "additionalProperties": false,
+        "properties": {
+          "cover_asset_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null removes it",
+            "title": "Cover Asset Id"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null removes it",
+            "title": "Icon"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "title": "NodePatch",
+        "type": "object"
+      },
+      "NodeRef": {
+        "properties": {
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "page",
+              "folder",
+              "blog_post"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "slug",
+          "icon"
+        ],
+        "title": "NodeRef",
         "type": "object"
       },
       "Origin": {
@@ -5341,6 +5536,34 @@
         "title": "Page[MilestoneOut]",
         "type": "object"
       },
+      "Page_NodeRef_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/NodeRef"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[NodeRef]",
+        "type": "object"
+      },
       "Page_ProjectOut_": {
         "properties": {
           "items": {
@@ -5479,6 +5702,34 @@
           "next_cursor"
         ],
         "title": "Page[SecurityLevelOut]",
+        "type": "object"
+      },
+      "Page_SpaceOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SpaceOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[SpaceOut]",
         "type": "object"
       },
       "Page_SprintOut_": {
@@ -7292,6 +7543,145 @@
           "needs_setup"
         ],
         "title": "SetupStatus",
+        "type": "object"
+      },
+      "SpaceIn": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "default": "",
+            "title": "Description",
+            "type": "string"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "key": {
+            "description": "2 to 40 lowercase letters, digits and dashes, e.g. ai-tools",
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name"
+        ],
+        "title": "SpaceIn",
+        "type": "object"
+      },
+      "SpaceOut": {
+        "properties": {
+          "cover_asset_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cover Asset Id"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "team",
+              "personal"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "description",
+          "kind",
+          "icon",
+          "cover_asset_id",
+          "created_at"
+        ],
+        "title": "SpaceOut",
+        "type": "object"
+      },
+      "SpacePatch": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null removes it",
+            "title": "Icon"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "title": "SpacePatch",
         "type": "object"
       },
       "SprintComplete": {
@@ -10445,6 +10835,60 @@
         "title": "TransitionOut",
         "type": "object"
       },
+      "TreeItem": {
+        "properties": {
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/TreeItem"
+            },
+            "title": "Children",
+            "type": "array"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "page",
+              "folder",
+              "blog_post"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "slug",
+          "icon",
+          "children"
+        ],
+        "title": "TreeItem",
+        "type": "object"
+      },
       "TypeChangeIn": {
         "additionalProperties": false,
         "properties": {
@@ -11459,6 +11903,97 @@
           }
         },
         "title": "WorklogPatch",
+        "type": "object"
+      },
+      "radicle__docket__api__bulk__MoveIn": {
+        "additionalProperties": false,
+        "properties": {
+          "area_mapping": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Area Mapping",
+            "type": "object"
+          },
+          "include_children": {
+            "default": true,
+            "title": "Include Children",
+            "type": "boolean"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milestone"
+          },
+          "status_mapping": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "{\"In Review\": \"QA\"}; by name otherwise, else initial",
+            "title": "Status Mapping",
+            "type": "object"
+          },
+          "target_project": {
+            "title": "Target Project",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_project"
+        ],
+        "title": "MoveIn",
+        "type": "object"
+      },
+      "radicle__folio__api__spaces__MoveIn": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sibling to place it after",
+            "title": "After"
+          },
+          "before": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sibling to place it before",
+            "title": "Before"
+          },
+          "parent": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null moves it to the root",
+            "title": "Parent"
+          }
+        },
+        "title": "MoveIn",
         "type": "object"
       }
     }
@@ -14037,6 +14572,575 @@
         },
         "summary": "Me",
         "tags": [
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/me/personal-space": {
+      "get": {
+        "description": "Your personal space, created the first time you ask for it.",
+        "operationId": "my_space_api_v1_folio_me_personal_space_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "My Space",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes": {
+      "post": {
+        "description": "A page or folder (optionally under `parent`) or a blog post.",
+        "operationId": "create_node_api_v1_folio_nodes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Node",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}": {
+      "delete": {
+        "description": "Soft delete; its children go with it.",
+        "operationId": "delete_node_api_v1_folio_nodes__node_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Node",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "get": {
+        "operationId": "get_node_api_v1_folio_nodes__node_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Node",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_node_api_v1_folio_nodes__node_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NodePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Node",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/move": {
+      "post": {
+        "description": "Move within its space; `before` and `after` place it among its new siblings.",
+        "operationId": "move_node_api_v1_folio_nodes__node_id__move_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/radicle__folio__api__spaces__MoveIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Move Node",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/spaces": {
+      "get": {
+        "description": "Team spaces you can see, then your personal space.",
+        "operationId": "list_spaces_api_v1_folio_spaces_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_SpaceOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Spaces",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "description": "A team space (Folio creators and admins).",
+        "operationId": "create_space_api_v1_folio_spaces_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpaceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Space",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/spaces/{key}": {
+      "delete": {
+        "description": "Soft delete: the space and its pages disappear; their history stays.",
+        "operationId": "delete_space_api_v1_folio_spaces__key__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Space",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "get": {
+        "operationId": "get_space_api_v1_folio_spaces__key__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Space",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "patch": {
+        "operationId": "patch_space_api_v1_folio_spaces__key__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpacePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Space",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/spaces/{key}/posts": {
+      "get": {
+        "description": "Blog posts, newest first.",
+        "operationId": "list_posts_api_v1_folio_spaces__key__posts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Posts older than this",
+            "in": "query",
+            "name": "before",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Posts older than this",
+              "title": "Before"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_NodeRef_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Posts",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/spaces/{key}/tree": {
+      "get": {
+        "description": "Pages and folders as a tree, siblings in order. Blog posts are under /posts.",
+        "operationId": "get_tree_api_v1_folio_spaces__key__tree_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TreeItem"
+                  },
+                  "title": "Response Get Tree Api V1 Folio Spaces  Key  Tree Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Tree",
+        "tags": [
+          "folio",
           "folio"
         ]
       }
@@ -19706,7 +20810,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MoveIn"
+                "$ref": "#/components/schemas/radicle__docket__api__bulk__MoveIn"
               }
             }
           },

@@ -1,0 +1,254 @@
+"""Spaces and their tree over REST (Folio 1.1): /api/v1/folio/spaces, /nodes."""
+
+import uuid
+from datetime import datetime
+from typing import Literal
+
+from fastapi import APIRouter, Query, Response
+from pydantic import Field
+
+from radicle.folio.db.models import FolioNode, FolioSpace, NodeKind
+from radicle.folio.services import nodes, spaces
+from radicle.platform import authz
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.schemas import Input, Output, Page, UtcDatetime
+
+router = APIRouter(tags=["folio"])
+
+Kind = Literal["page", "folder", "blog_post"]
+
+
+class SpaceOut(Output):
+    key: str
+    name: str
+    description: str
+    kind: Literal["team", "personal"]
+    icon: str | None
+    cover_asset_id: uuid.UUID | None
+    created_at: UtcDatetime
+
+
+class SpaceIn(Input):
+    key: str = Field(description="2 to 40 lowercase letters, digits and dashes, e.g. ai-tools")
+    name: str
+    description: str = ""
+    icon: str | None = None
+
+
+class SpacePatch(Input):
+    name: str | None = None
+    description: str | None = None
+    icon: str | None = Field(default=None, description="null removes it")
+
+
+class NodeRef(Output):
+    id: uuid.UUID
+    kind: Kind
+    title: str
+    slug: str
+    icon: str | None
+
+
+class TreeItem(NodeRef):
+    children: list["TreeItem"]
+
+
+class NodeOut(NodeRef):
+    space: str
+    parent_id: uuid.UUID | None
+    cover_asset_id: uuid.UUID | None
+    published_at: UtcDatetime | None
+    created_at: UtcDatetime
+    updated_at: UtcDatetime
+    breadcrumbs: list[NodeRef] = Field(description="Ancestors from the root down")
+
+
+class NodeIn(Input):
+    space: str = Field(description="Space key")
+    kind: Kind
+    title: str
+    parent: uuid.UUID | None = Field(default=None, description="Page or folder; never for posts")
+
+
+class NodePatch(Input):
+    title: str | None = None
+    icon: str | None = Field(default=None, description="null removes it")
+    cover_asset_id: uuid.UUID | None = Field(default=None, description="null removes it")
+
+
+class MoveIn(Input):
+    parent: uuid.UUID | None = Field(default=None, description="null moves it to the root")
+    before: uuid.UUID | None = Field(default=None, description="Sibling to place it before")
+    after: uuid.UUID | None = Field(default=None, description="Sibling to place it after")
+
+
+def _space(s: FolioSpace) -> SpaceOut:
+    return SpaceOut(
+        key=s.key,
+        name=s.name,
+        description=s.description,
+        kind=s.kind.value,
+        icon=s.icon,
+        cover_asset_id=s.cover_asset_id,
+        created_at=s.created_at,
+    )
+
+
+def _ref(n: FolioNode) -> NodeRef:
+    return NodeRef(id=n.id, kind=n.kind.value, title=n.title, slug=n.slug, icon=n.icon)
+
+
+def _tree(level: list[nodes.TreeNode]) -> list[TreeItem]:
+    return [TreeItem(**_ref(t.node).model_dump(), children=_tree(t.children)) for t in level]
+
+
+async def _node(db: Db, node: FolioNode) -> NodeOut:
+    space = await db.get(FolioSpace, node.space_id)
+    return NodeOut(
+        **_ref(node).model_dump(),
+        space=space.key if space else "",
+        parent_id=node.parent_id,
+        cover_asset_id=node.cover_asset_id,
+        published_at=node.published_at,
+        created_at=node.created_at,
+        updated_at=node.updated_at,
+        breadcrumbs=[_ref(b) for b in await nodes.breadcrumbs(db, node)],
+    )
+
+
+async def _reader(db: Db, principal: CurrentPrincipal) -> None:
+    (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
+
+
+@router.get("/spaces", response_model=Page[SpaceOut])
+async def list_spaces(principal: CurrentPrincipal, db: Db) -> Page[SpaceOut]:
+    """Team spaces you can see, then your personal space."""
+    await _reader(db, principal)
+    return Page(items=[_space(s) for s in await spaces.list_spaces(db, principal.user)])
+
+
+@router.post("/spaces", response_model=SpaceOut, status_code=201)
+async def create_space(body: SpaceIn, principal: CurrentPrincipal, db: Db) -> SpaceOut:
+    """A team space (Folio creators and admins)."""
+    space = await spaces.create_space(
+        db,
+        principal.user,
+        key=body.key,
+        name=body.name,
+        description=body.description,
+        icon=body.icon,
+    )
+    return _space(space)
+
+
+@router.get("/me/personal-space", response_model=SpaceOut)
+async def my_space(principal: CurrentPrincipal, db: Db) -> SpaceOut:
+    """Your personal space, created the first time you ask for it."""
+    await _reader(db, principal)
+    return _space(await spaces.personal_space(db, principal.user))
+
+
+@router.get("/spaces/{key}", response_model=SpaceOut)
+async def get_space(key: str, principal: CurrentPrincipal, db: Db) -> SpaceOut:
+    await _reader(db, principal)
+    return _space(await spaces.get_space(db, principal.user, key))
+
+
+@router.patch("/spaces/{key}", response_model=SpaceOut)
+async def patch_space(key: str, body: SpacePatch, principal: CurrentPrincipal, db: Db) -> SpaceOut:
+    await _reader(db, principal)
+    space = await spaces.get_space(db, principal.user, key)
+    changes = spaces.SpaceChanges(
+        name=body.name,
+        description=body.description,
+        icon=body.icon,
+        clear_icon="icon" in body.model_fields_set and body.icon is None,
+    )
+    return _space(await spaces.update_space(db, principal.user, space, changes))
+
+
+@router.delete("/spaces/{key}", status_code=204)
+async def delete_space(key: str, principal: CurrentPrincipal, db: Db) -> Response:
+    """Soft delete: the space and its pages disappear; their history stays."""
+    await _reader(db, principal)
+    space = await spaces.get_space(db, principal.user, key)
+    await spaces.delete_space(db, principal.user, space)
+    return Response(status_code=204)
+
+
+@router.get("/spaces/{key}/tree", response_model=list[TreeItem])
+async def get_tree(key: str, principal: CurrentPrincipal, db: Db) -> list[TreeItem]:
+    """Pages and folders as a tree, siblings in order. Blog posts are under /posts."""
+    await _reader(db, principal)
+    space = await spaces.get_space(db, principal.user, key)
+    return _tree(await nodes.tree(db, space))
+
+
+@router.get("/spaces/{key}/posts", response_model=Page[NodeRef])
+async def list_posts(
+    key: str,
+    principal: CurrentPrincipal,
+    db: Db,
+    before: datetime | None = Query(default=None, description="Posts older than this"),
+    limit: int = Query(default=20, ge=1, le=100),
+) -> Page[NodeRef]:
+    """Blog posts, newest first."""
+    await _reader(db, principal)
+    space = await spaces.get_space(db, principal.user, key)
+    return Page(items=[_ref(p) for p in await nodes.posts(db, space, before=before, limit=limit)])
+
+
+@router.post("/nodes", response_model=NodeOut, status_code=201)
+async def create_node(body: NodeIn, principal: CurrentPrincipal, db: Db) -> NodeOut:
+    """A page or folder (optionally under `parent`) or a blog post."""
+    await _reader(db, principal)
+    space = await spaces.get_space(db, principal.user, body.space)
+    node = await nodes.create_node(
+        db, principal.user, space, kind=NodeKind(body.kind), title=body.title, parent_id=body.parent
+    )
+    return await _node(db, node)
+
+
+@router.get("/nodes/{node_id}", response_model=NodeOut)
+async def get_node(node_id: uuid.UUID, principal: CurrentPrincipal, db: Db) -> NodeOut:
+    await _reader(db, principal)
+    return await _node(db, await nodes.get_node(db, principal.user, node_id))
+
+
+@router.patch("/nodes/{node_id}", response_model=NodeOut)
+async def patch_node(
+    node_id: uuid.UUID, body: NodePatch, principal: CurrentPrincipal, db: Db
+) -> NodeOut:
+    await _reader(db, principal)
+    node = await nodes.get_node(db, principal.user, node_id)
+    sent = body.model_fields_set
+    changes = nodes.NodeChanges(
+        title=body.title,
+        icon=body.icon,
+        clear_icon="icon" in sent and body.icon is None,
+        cover_asset_id=body.cover_asset_id,
+        clear_cover="cover_asset_id" in sent and body.cover_asset_id is None,
+    )
+    return await _node(db, await nodes.update_node(db, principal.user, node, changes))
+
+
+@router.post("/nodes/{node_id}/move", response_model=NodeOut)
+async def move_node(
+    node_id: uuid.UUID, body: MoveIn, principal: CurrentPrincipal, db: Db
+) -> NodeOut:
+    """Move within its space; `before` and `after` place it among its new siblings."""
+    await _reader(db, principal)
+    node = await nodes.get_node(db, principal.user, node_id)
+    moved = await nodes.move_node(
+        db, principal.user, node, parent_id=body.parent, before_id=body.before, after_id=body.after
+    )
+    return await _node(db, moved)
+
+
+@router.delete("/nodes/{node_id}", status_code=204)
+async def delete_node(node_id: uuid.UUID, principal: CurrentPrincipal, db: Db) -> Response:
+    """Soft delete; its children go with it."""
+    await _reader(db, principal)
+    node = await nodes.get_node(db, principal.user, node_id)
+    await nodes.delete_node(db, principal.user, node)
+    return Response(status_code=204)
