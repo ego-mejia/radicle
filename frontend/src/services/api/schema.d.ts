@@ -2246,6 +2246,110 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/pub/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Public
+         * @description Without an account: the shared page, or the shared space's index.
+         */
+        get: operations["read_public_api_v1_folio_pub__token__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/pub/{token}/assets/{asset_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Public Asset
+         * @description An image or file of a shared page.
+         */
+        get: operations["read_public_asset_api_v1_folio_pub__token__assets__asset_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/pub/{token}/pages/{node_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Public Page
+         * @description Without an account: one page of a shared space.
+         */
+        get: operations["read_public_page_api_v1_folio_pub__token__pages__node_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/public-links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Public Links
+         * @description Live public links. Space admins only.
+         */
+        get: operations["list_public_links_api_v1_folio_public_links_get"];
+        put?: never;
+        /**
+         * Create Public Link
+         * @description A read-only link to a published page or a whole space. Space admins only.
+         */
+        post: operations["create_public_link_api_v1_folio_public_links_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/public-links/{link_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Revoke Public Link
+         * @description From now on the link answers 404.
+         */
+        delete: operations["revoke_public_link_api_v1_folio_public_links__link_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/reactions/{target_type}/{target_id}": {
         parameters: {
             query?: never;
@@ -9003,6 +9107,145 @@ export interface components {
             label: string;
             /** Name */
             name: string;
+        };
+        /** PublicLinkIn */
+        PublicLinkIn: {
+            /**
+             * Node
+             * @description A published page or post
+             */
+            node?: string | null;
+            /**
+             * Noindex
+             * @default true
+             */
+            noindex?: boolean;
+            /**
+             * Space
+             * @description Space key, for the whole space
+             */
+            space?: string | null;
+        };
+        /** PublicLinkOut */
+        PublicLinkOut: {
+            /** Created At */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Noindex
+             * @description Asks search engines not to index it
+             */
+            noindex: boolean;
+            /**
+             * Target Id
+             * Format: uuid
+             */
+            target_id: string;
+            /**
+             * Target Type
+             * @enum {string}
+             */
+            target_type: "node" | "space";
+            /**
+             * Url
+             * @description Opens without an account
+             */
+            url: string;
+            /** View Count */
+            view_count: number;
+        };
+        /** PublicLinksOut */
+        PublicLinksOut: {
+            /** Items */
+            items: components["schemas"]["PublicLinkOut"][];
+        };
+        /** PublicNodeOut */
+        PublicNodeOut: {
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Parent Id */
+            parent_id: string | null;
+            /** Slug */
+            slug: string;
+            /** Title */
+            title: string;
+        };
+        /** PublicPageOut */
+        PublicPageOut: {
+            /** Children */
+            children: components["schemas"]["PublicNodeOut"][];
+            /**
+             * Content Json
+             * @description Without mentions or assignees
+             */
+            content_json: {
+                [key: string]: unknown;
+            };
+            /** Cover Asset Id */
+            cover_asset_id: string | null;
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Kind */
+            kind: string;
+            /**
+             * Metadata
+             * @description Only what a stranger may see
+             */
+            metadata: {
+                [key: string]: unknown;
+            };
+            /** Parent Id */
+            parent_id: string | null;
+            /** Published At */
+            published_at: string | null;
+            /** Slug */
+            slug: string;
+            /** Title */
+            title: string;
+            /** Version */
+            version: number;
+        };
+        /** PublicSpaceOut */
+        PublicSpaceOut: {
+            /** Cover Asset Id */
+            cover_asset_id: string | null;
+            /** Description */
+            description: string;
+            /** Icon */
+            icon: string | null;
+            /** Name */
+            name: string;
+        };
+        /** PublicViewOut */
+        PublicViewOut: {
+            /**
+             * Nodes
+             * @description The space's open tree, flat, in order
+             */
+            nodes: components["schemas"]["PublicNodeOut"][];
+            page: components["schemas"]["PublicPageOut"] | null;
+            space: components["schemas"]["PublicSpaceOut"];
+            /**
+             * Target Type
+             * @enum {string}
+             */
+            target_type: "node" | "space";
         };
         /** PublishIn */
         PublishIn: {
@@ -15971,6 +16214,195 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["Page_FolioPersonOut_"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_public_api_v1_folio_pub__token__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicViewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_public_asset_api_v1_folio_pub__token__assets__asset_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_public_page_api_v1_folio_pub__token__pages__node_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicViewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_public_links_api_v1_folio_public_links_get: {
+        parameters: {
+            query?: {
+                /** @description A page's links */
+                node?: string | null;
+                /** @description A space's links, its pages' too */
+                space?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicLinksOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_public_link_api_v1_folio_public_links_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PublicLinkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicLinkOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revoke_public_link_api_v1_folio_public_links__link_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                link_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

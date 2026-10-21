@@ -18,6 +18,7 @@ from sqlalchemy import Select, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import (
+    FolioAsset,
     FolioNode,
     FolioPageRestriction,
     FolioSpace,
@@ -137,6 +138,34 @@ async def create_link(
     return link
 
 
+async def list_links(
+    db: AsyncSession, user: User, target: FolioNode | FolioSpace
+) -> list[FolioPublicLink]:
+    """The live links of a page, or of a space and every page in it."""
+    if isinstance(target, FolioSpace):
+        space = target
+    else:
+        space = await db.get_one(FolioSpace, target.space_id)
+    await access.require_admin(db, user, space)
+    query = select(FolioPublicLink).where(FolioPublicLink.revoked_at.is_(None))
+    if isinstance(target, FolioSpace):
+        pages = select(FolioNode.id).where(FolioNode.space_id == space.id)
+        query = query.where(
+            or_(
+                (FolioPublicLink.target_type == PublicTarget.space)
+                & (FolioPublicLink.target_id == space.id),
+                (FolioPublicLink.target_type == PublicTarget.node)
+                & FolioPublicLink.target_id.in_(pages),
+            )
+        )
+    else:
+        query = query.where(
+            FolioPublicLink.target_type == PublicTarget.node,
+            FolioPublicLink.target_id == target.id,
+        )
+    return list(await db.scalars(query.order_by(FolioPublicLink.created_at.desc())))
+
+
 async def revoke(db: AsyncSession, user: User, link_id: uuid.UUID) -> FolioPublicLink:
     link = await db.get(FolioPublicLink, link_id)
     space = await _space_of(db, link) if link else None
@@ -200,6 +229,19 @@ async def view(db: AsyncSession, token: str, node_id: uuid.UUID | None = None) -
         .values(view_count=FolioPublicLink.view_count + 1)
     )
     return PublicView(link, space, open_nodes, page)
+
+
+async def asset(
+    db: AsyncSession, token: str, asset_id: uuid.UUID
+) -> tuple[FolioPublicLink, FolioAsset]:
+    """An image or file of a page the link shows, or a cover of it or its space."""
+    link, space, open_nodes = await resolve(db, token)
+    found = await db.get(FolioAsset, asset_id)
+    ids = {n.id for n in open_nodes}
+    covers = {n.cover_asset_id for n in open_nodes} | {space.cover_asset_id}
+    if found is None or (found.node_id not in ids and found.id not in covers):
+        raise NotFound("No such file in this public link.")
+    return link, found
 
 
 def public_metadata(metadata: dict[str, Any]) -> dict[str, Any]:
