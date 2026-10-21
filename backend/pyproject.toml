@@ -26,6 +26,7 @@ dependencies = [
     "jinja2>=3.1",
     "cryptography>=43",
     "authlib>=1.4",
+    "markdown-it-py>=3.0",
 ]
 
 [project.scripts]
@@ -53,6 +54,8 @@ packages = ["radicle"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# Markdown fixtures must stay byte for byte (ruff would format their Python code blocks).
+extend-exclude = ["tests/**/*.md"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "N", "S", "ASYNC", "RUF"]
