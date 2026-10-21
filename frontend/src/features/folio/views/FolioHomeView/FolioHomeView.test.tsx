@@ -47,6 +47,7 @@ describe('FolioHomeView', () => {
       'V1 ships in November',
     );
     expect(screen.getByRole('link', { name: 'Read Connect Claude over MCP' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Write' })).not.toBeInTheDocument();
   });
 
   it('lists the latest posts, the most read and the spaces', async () => {

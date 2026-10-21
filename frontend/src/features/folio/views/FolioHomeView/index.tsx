@@ -7,6 +7,7 @@ import { DocList } from './components/DocList';
 import { Featured } from './components/Featured';
 import { SpaceList } from './components/SpaceList';
 import { Spotlight } from './components/Spotlight';
+import { WriteButton } from './components/WriteButton';
 import * as S from './style';
 
 /** Folio's home (Folio 1.8): the default bento, every block resolved by GET /home. */
@@ -20,6 +21,7 @@ export function FolioHomeView() {
     <S.Wrap>
       <S.Top>
         <S.Heading>{t('folio.home.title')}</S.Heading>
+        {home.can_write && <WriteButton />}
       </S.Top>
       {empty ? (
         <EmptyState
