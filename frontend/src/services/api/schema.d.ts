@@ -6779,6 +6779,11 @@ export interface components {
              * @description What you may do here: view, create, ...
              */
             permissions: string[];
+            /**
+             * Verify Days
+             * @description Days a Verified page stays verified
+             */
+            verify_days: number;
         };
         /** SpacePatch */
         SpacePatch: {
@@ -6791,6 +6796,11 @@ export interface components {
             icon?: string | null;
             /** Name */
             name?: string | null;
+            /**
+             * Verify Days
+             * @description Days a Verified page stays verified (1 to 730)
+             */
+            verify_days?: number | null;
         };
         /** SprintComplete */
         SprintComplete: {

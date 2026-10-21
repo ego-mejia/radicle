@@ -9335,6 +9335,11 @@
             },
             "title": "Permissions",
             "type": "array"
+          },
+          "verify_days": {
+            "description": "Days a Verified page stays verified",
+            "title": "Verify Days",
+            "type": "integer"
           }
         },
         "required": [
@@ -9345,7 +9350,8 @@
           "icon",
           "cover_asset_id",
           "created_at",
-          "permissions"
+          "permissions",
+          "verify_days"
         ],
         "title": "SpaceOut",
         "type": "object"
@@ -9386,6 +9392,18 @@
               }
             ],
             "title": "Name"
+          },
+          "verify_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Days a Verified page stays verified (1 to 730)",
+            "title": "Verify Days"
           }
         },
         "title": "SpacePatch",
