@@ -12,6 +12,7 @@ from radicle.folio.mcp import (
     comments,
     databases,
     livedocs,
+    prompts,
     read,
     templates,
     tickets,
@@ -29,7 +30,9 @@ To find docs use search_docs (words or a question) or query_docs (RQL), then get
 the Markdown. Before writing, search whether the doc already exists and read
 get_metadata_schema; then create_page or update_draft in Markdown, submit_for_publication
 (agents wait for a Folio admin's approval) and check list_my_submissions for the outcome.
-For visuals, diagrams and charts read folio://guide/visuals first.
+For visuals, diagrams and charts read folio://guide/visuals first. Working from a
+codebase, use the prompts weekly_changes_post, document_module and
+build_spec_from_discussion.
 Errors explain what is valid instead."""
 
 server = LimitedMCPServer(
@@ -59,6 +62,7 @@ visuals.register(server)
 tickets.register(server)
 tickets.register_build_spec(server)
 chat.register(server)
+prompts.register(server)
 
 
 def mount(app: FastAPI) -> None:
