@@ -61,6 +61,17 @@ NODES: dict[str, NodeSpec] = {
     "listItem": NodeSpec("list", (BLOCK,), min_children=1),
     "taskList": NodeSpec(BLOCK, ("taskItem",), min_children=1),
     "taskItem": NodeSpec("list", (BLOCK,), {"checked": Attr(bool)}, min_children=1),
+    # An action item (Folio 2.4): its id is stable, so Mis tareas can find it again.
+    "actionItem": NodeSpec(
+        BLOCK,
+        (INLINE,),
+        {
+            "id": Attr(str, required=True, max_length=64),
+            "done": Attr(bool),
+            "assignee": Attr((str, type(None)), max_length=64),
+            "due": Attr((str, type(None)), max_length=10),
+        },
+    ),
     "blockquote": NodeSpec(BLOCK, (BLOCK,), min_children=1),
     "codeBlock": NodeSpec(BLOCK, attrs={"language": _OPT_STR}, leaf_text=True),
     "horizontalRule": NodeSpec(BLOCK),

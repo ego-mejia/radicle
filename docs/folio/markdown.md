@@ -15,6 +15,7 @@ Los documentos de Folio se guardan como JSON de TipTap (`backend/radicle/folio/s
 | Archivo | `::file{asset=<id> name="spec.pdf" type=application/pdf size=1024}` |
 | Video | `::video{src="https://…" caption="Demo"}` o `::video{asset=<id>}` |
 | Checklist | `- [ ]` y `- [x]` |
+| Action item | `::task[texto]{id=ai-1 assignee=ana due=2026-11-01 done=true}` en su propia línea; sin `id`, se genera uno estable. Va a Mis tareas del asignado (fase 2) |
 
 Un contenedor dentro de otro usa un `:` más en su apertura y su cierre (`:::expand` con un `::::panel` adentro), para que se lean bien. Al leer, cada `:::` cierra el contenedor abierto más reciente.
 

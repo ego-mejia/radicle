@@ -4,7 +4,9 @@ fenced code); the rest goes through markdown-it (CommonMark, GFM tables and stri
 """
 
 import re
+import uuid
 from dataclasses import dataclass, field
+from datetime import date
 from typing import Any
 
 from markdown_it import MarkdownIt
@@ -19,6 +21,7 @@ _md = MarkdownIt("commonmark", {"html": False}).enable(["table", "strikethrough"
 _OPEN = re.compile(r"^(:{3,})(panel|expand|columns|column)(\{.*\})?\s*$")
 _CLOSE = re.compile(r"^:{3,}\s*$")
 _LEAF = re.compile(r"^::(file|video)(\{.*\})\s*$")
+_ACTION = re.compile(r"^::task\[(?P<label>.*)\](?P<attrs>\{[^}]*\})?\s*$")
 _FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
 _ATTR = re.compile(r'(\w+)=("(?:[^"\\]|\\.)*"|[^\s}]+)')
 _INLINE = re.compile(
@@ -81,6 +84,10 @@ def _segments(markdown: str) -> list[Any]:
         elif (leaf := _LEAF.match(stripped)) is not None:
             flush()
             stack[-1].items.append((leaf.group(1), _attrs(leaf.group(2))))
+        elif (action := _ACTION.match(stripped)) is not None:
+            flush()
+            attrs = _attrs(action.group("attrs")) | {"__label": action.group("label")}
+            stack[-1].items.append(("task", attrs))
         elif stripped in ("[[toc]]", "[[children]]"):
             flush()
             stack[-1].items.append(("toc" if stripped == "[[toc]]" else "children", {}))
@@ -340,6 +347,28 @@ def _empty() -> Node:
     return {"type": "paragraph"}
 
 
+def _action_item(attrs: dict[str, str]) -> Node:
+    """`::task[text]{id=… assignee=ana due=2026-11-01 done=true}`; without an id, one is
+    made up, so items written in Markdown by agents still get a stable one."""
+    tokens = _md.parseInline(attrs.get("__label", ""))
+    content = _merge(_inline(tokens[0].children or [])) if tokens else []
+    due = attrs.get("due")
+    try:
+        due = date.fromisoformat(due).isoformat() if due else None
+    except ValueError:
+        due = None
+    item_attrs: dict[str, Any] = {
+        "id": (attrs.get("id") or f"ai-{uuid.uuid4().hex[:12]}")[:64],
+        "done": attrs.get("done", "").lower() in ("true", "1", "yes", "x"),
+        "assignee": (attrs.get("assignee") or "").lstrip("@").lower() or None,
+        "due": due,
+    }
+    node: Node = {"type": "actionItem", "attrs": item_attrs}
+    if content:
+        node["content"] = content
+    return node
+
+
 def _markdown_blocks(text: str) -> list[Node]:
     return _Blocks(_md.parse(text)).until(None)
 
@@ -368,6 +397,8 @@ def _convert(items: list[Any], parent: str = "doc") -> list[Node]:
                 keys = (("src", "src"), ("assetId", "asset"), ("caption", "caption"))
                 video = {k: attrs[v] for k, v in keys if attrs.get(v)}
                 out.append({"type": "video", "attrs": video})
+            elif name == "task":
+                out.append(_action_item(attrs))
         else:
             out += _container(item, parent)
     return out
