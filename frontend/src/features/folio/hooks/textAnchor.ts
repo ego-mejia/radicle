@@ -61,22 +61,26 @@ export function rangeOf(container: HTMLElement, quote: string): Range | null {
   return range;
 }
 
-/** The anchor of the last heading before the selection inside `container`: the section a
- * ticket made from it links to. The reader's headings carry it as their id; the editor's
- * don't, so it passes the document's anchors in order (`headingsOf`). Null before the
- * first heading. */
+/** The anchor of the last heading before `node` inside `container`: the section a ticket
+ * made from it links to. The reader's headings carry it as their id; the editor's don't,
+ * so it passes the document's anchors in order (`headingsOf`). Null before the first
+ * heading. */
+export function sectionAt(container: HTMLElement, node: Node, anchors: string[] = []) {
+  let found: string | null = null;
+  const headings = container.querySelectorAll<HTMLElement>('h1, h2, h3, h4');
+  headings.forEach((heading, i) => {
+    const before = heading.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING;
+    if (before || heading.contains(node)) found = heading.id || anchors[i] || found;
+  });
+  return found;
+}
+
+/** `sectionAt` for where the selection starts. */
 export function sectionOf(
   container: HTMLElement,
   selection: Selection | null,
   anchors: string[] = [],
 ): string | null {
   if (!selection || selection.rangeCount === 0) return null;
-  const start = selection.getRangeAt(0).startContainer;
-  let found: string | null = null;
-  const headings = container.querySelectorAll<HTMLElement>('h1, h2, h3, h4');
-  headings.forEach((heading, i) => {
-    const before = heading.compareDocumentPosition(start) & Node.DOCUMENT_POSITION_FOLLOWING;
-    if (before || heading.contains(start)) found = heading.id || anchors[i] || found;
-  });
-  return found;
+  return sectionAt(container, selection.getRangeAt(0).startContainer, anchors);
 }
