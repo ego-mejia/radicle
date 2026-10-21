@@ -119,7 +119,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
               )}
             </span>
           </S.Byline>
-          {n.version != null && <PageSocial nodeId={n.id} />}
+          {n.version != null && <PageSocial nodeId={n.id} title={n.title} />}
           <DocContent doc={page.content} childPages={page.children} size="large" />
         </S.Article>
         <S.Aside>
