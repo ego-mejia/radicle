@@ -4,6 +4,7 @@ import { IconButton } from '../../../../../../components/ui/Button';
 import type { DbColumn, DbRow } from '../../../../../../services/api/folioDatabases';
 import { DbCell } from '../../../DbCell';
 import * as S from './style';
+import { columnName } from '../../labels';
 
 type Props = {
   columns: DbColumn[];
@@ -23,7 +24,7 @@ export function TableView({ columns, rows, onChange, onDelete }: Props) {
           <tr>
             {columns.map((c) => (
               <th key={c.key} scope="col">
-                {c.name}
+                {columnName(c, t)}
               </th>
             ))}
             {onDelete && <th aria-label={t('folio.db.actions')} />}

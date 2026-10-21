@@ -2312,6 +2312,8 @@
       "restored": "El doc volvió a ese snapshot"
     },
     "db": {
+      "defaultView": "Tabla",
+      "defaultColumn": "Nombre",
       "views": "Vistas",
       "noAccess": "No tienes acceso a esta database.",
       "empty": "Aún no hay filas.",
