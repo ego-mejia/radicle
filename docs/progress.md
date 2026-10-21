@@ -690,3 +690,21 @@ Decisiones: [0034](decisions/0034-folio-fase-0-1-reorganizar-backend.md), [0035]
 | Reglas generales | ruff, mypy estricto (también `folio.services`), cobertura 95%, migraciones up/down/up, E2E completo (28) en una instancia limpia |
 
 Nota: los E2E `stage1` y `stage3` estaban rotos desde #60 (botones de área y milestone en las tarjetas); se arreglaron en #78.
+
+## Folio fase 1: Core de publicación + MCP
+
+Spec: `docs/folio/fase-1.md`. Decisión de base: [0037](decisions/0037-pgvector-y-dimension-de-embeddings.md).
+
+| # | Entregable | Estado |
+| --- | --- | --- |
+| 1.1 | Spaces y árbol | Pendiente |
+| 1.2 | Editor base | Pendiente |
+| 1.3 | Publicación y versiones | Pendiente |
+| 1.4 | Permisos | Pendiente |
+| 1.5 | Agentes y aprobación | Pendiente |
+| 1.6 | RAG, búsqueda y RQL | Pendiente |
+| 1.7 | MCP de Folio | Pendiente |
+| 1.8 | UI | Pendiente |
+
+Orden de trabajo: el backend de 1.1 a 1.7 primero (cada entregable en PRs de menos de 500 líneas), luego la UI de 1.8 por pantallas.
+
