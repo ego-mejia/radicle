@@ -1138,6 +1138,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/glossary/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Suggest Glossary Terms
+         * @description Ask the AI for new terms from the newest Verified docs; they wait for approval.
+         */
+        post: operations["suggest_glossary_terms_api_v1_folio_glossary_suggestions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/glossary/{term_id}": {
         parameters: {
             query?: never;
@@ -13088,6 +13108,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    suggest_glossary_terms_api_v1_folio_glossary_suggestions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GlossaryTermsOut"];
                 };
             };
         };

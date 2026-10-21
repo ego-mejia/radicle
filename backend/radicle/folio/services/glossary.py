@@ -1,6 +1,8 @@
 """The glossary (Folio 4.6). The AI suggests terms and definitions from Verified docs, a
 Folio admin approves, edits or rejects them, and readers only ever see approved terms."""
 
+import json
+import re
 import uuid
 from dataclasses import dataclass
 
@@ -8,15 +10,18 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.glossary import FolioGlossaryTerm, TermStatus
-from radicle.folio.db.models import FolioNode
-from radicle.folio.services import access
+from radicle.folio.db.models import FolioNode, FolioVersion, NodeStatus
+from radicle.folio.services import access, editor_ai
 from radicle.platform import authz
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.errors import Conflict, NotFound, ValidationFailed
+from radicle.platform.services import ai
 
 TERM_MAX = 80
 DEFINITION_MAX = 600
 ALIASES_MAX = 10
+SUGGEST_DOCS = 20
+SUGGEST_CHARS = 1500
 
 
 def _invalid(field_name: str, message: str) -> ValidationFailed:
@@ -140,3 +145,77 @@ async def update_term(
     row.updated_by, row.updated_at = user.id, utcnow()
     await db.flush()
     return row
+
+
+def _suggested(text: str) -> list[dict[str, object]]:
+    match = re.search(r"\[.*\]", text, re.S)
+    try:
+        data = json.loads(match.group(0)) if match else None
+    except ValueError:
+        data = None
+    if not isinstance(data, list):
+        raise ai.AiUnavailable("The AI did not answer with terms. Try again.")
+    return [d for d in data if isinstance(d, dict)]
+
+
+async def suggest(db: AsyncSession, user: User) -> list[FolioGlossaryTerm]:
+    """Ask the AI for terms in the newest Verified docs; new ones wait as suggestions."""
+    await _admin(db, user)
+    cfg = await ai.load(db)
+    off = editor_ai.instance_off(cfg)
+    if off:
+        raise editor_ai.AiOff(editor_ai.REASONS[off])
+    rows = (
+        await db.execute(
+            select(FolioNode.id, FolioNode.title, FolioVersion.content_md)
+            .join(FolioVersion, FolioVersion.id == FolioNode.published_version_id)
+            .where(FolioNode.status == NodeStatus.verified, FolioNode.deleted_at.is_(None))
+            .order_by(FolioNode.updated_at.desc())
+            .limit(SUGGEST_DOCS)
+        )
+    ).all()
+    if not rows:
+        raise ValidationFailed(
+            "There are no Verified docs yet: the glossary is suggested from them.",
+            errors=[{"field": "docs", "message": "none verified"}],
+        )
+    docs = "\n\n".join(
+        f"[{n}] {title}\n{md[:SUGGEST_CHARS]}" for n, (_, title, md) in enumerate(rows, 1)
+    )
+    system = (
+        "You build a glossary of an organization's own terms (products, acronyms, internal "
+        "names) from its documentation. Skip common words. Answer only with JSON: "
+        '[{"term": "...", "aliases": ["..."], "definition": "one or two sentences, in the '
+        'language of the docs", "doc": n}] with at most 15 terms.'
+    )
+    reply = await ai.chat(
+        db, cfg, system, [ai.Turn("user", docs)], app="folio", feature="glossary", user=user
+    )
+    known = {t.lower() for t in await db.scalars(select(FolioGlossaryTerm.term))}
+    made: list[FolioGlossaryTerm] = []
+    for item in _suggested(reply.text):
+        term = str(item.get("term") or "").strip()
+        definition = str(item.get("definition") or "").strip()
+        if not (1 <= len(term) <= TERM_MAX and 1 <= len(definition) <= DEFINITION_MAX):
+            continue
+        if term.lower() in known:
+            continue
+        doc = item.get("doc")
+        source = rows[doc - 1][0] if isinstance(doc, int) and 1 <= doc <= len(rows) else None
+        raw = item.get("aliases")
+        aliases = [str(a).strip() for a in raw if str(a).strip()] if isinstance(raw, list) else []
+        row = FolioGlossaryTerm(
+            id=uuid.uuid4(),
+            term=term,
+            definition=definition,
+            aliases=[a for a in aliases if len(a) <= TERM_MAX][:ALIASES_MAX],
+            source_node_id=source,
+            status=TermStatus.suggested,
+            updated_by=user.id,
+            updated_at=utcnow(),
+        )
+        db.add(row)
+        known.add(term.lower())
+        made.append(row)
+    await db.flush()
+    return made

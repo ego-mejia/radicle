@@ -21288,6 +21288,29 @@
         ]
       }
     },
+    "/api/v1/folio/glossary/suggestions": {
+      "post": {
+        "description": "Ask the AI for new terms from the newest Verified docs; they wait for approval.",
+        "operationId": "suggest_glossary_terms_api_v1_folio_glossary_suggestions_post",
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GlossaryTermsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Suggest Glossary Terms",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/glossary/{term_id}": {
       "patch": {
         "description": "Edit, approve or reject a term. Folio admins only.",
