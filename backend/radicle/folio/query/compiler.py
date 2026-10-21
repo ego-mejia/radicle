@@ -61,12 +61,14 @@ class Context:
 class Compiled:
     where: ColumnElement[bool]
     order_by: list[Any]
+    # Field names the query uses, so callers can add defaults (archived = false).
+    fields: set[str] = field(default_factory=set)
 
 
 def compile_query(query: ast.Query, ctx: Context) -> Compiled:
     compiler = _Compiler(ctx)
     where = compiler.node(query.where) if query.where is not None else true()
-    return Compiled(where=where, order_by=_order_by(query.order))
+    return Compiled(where=where, order_by=_order_by(query.order), fields=compiler.fields)
 
 
 def _nn(expr: ColumnElement[bool]) -> ColumnElement[bool]:
@@ -86,6 +88,7 @@ class _Compiler:
     def __init__(self, ctx: Context) -> None:
         self.ctx = ctx
         self.clock = Clock(ctx.now, ctx.tz)
+        self.fields: set[str] = set()
 
     def node(self, node: ast.Node) -> ColumnElement[bool]:
         if isinstance(node, ast.And):
@@ -95,6 +98,7 @@ class _Compiler:
         if isinstance(node, ast.Not):
             return not_(self.node(node.item))
         f = lookup(node.field, node.field_pos)
+        self.fields.add(f.name)
         if isinstance(node, ast.IsEmpty):
             check_empty(f, node.field_pos)
             empty = self.empty(f)
@@ -146,6 +150,15 @@ class _Compiler:
             return _nn(_meta(f).contains(cast([wanted], JSONB)))
         if f.kind is Kind.handle:
             return self.handle_equals(f, v)
+        if f.kind is Kind.flag:
+            if text.lower() not in f.values:
+                raise RQLError(
+                    f"'{text}' is not true or false (at {v.pos}).",
+                    position=v.pos,
+                    expected=list(f.values),
+                )
+            archived = FolioNode.archived_at.is_not(None)
+            return archived if text.lower() == "true" else not_(archived)
         return self.parent_equals(v)
 
     def handle_equals(self, f: Field, v: ast.Value) -> ColumnElement[bool]:

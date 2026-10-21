@@ -16,6 +16,7 @@ class Kind(StrEnum):
     fulltext = "fulltext"
     node = "node"
     datetime = "datetime"
+    flag = "flag"
 
 
 EQ = ("=", "!=")
@@ -51,6 +52,7 @@ FIELDS: dict[str, Field] = {
         Field("created", Kind.datetime, ("=", *ORDER)),
         Field("updated", Kind.datetime, ("=", *ORDER)),
         Field("published", Kind.datetime, ("=", *ORDER), empty=True),
+        Field("archived", Kind.flag, EQ, values=("true", "false"), description="Default false"),
     )
 }
 ALIASES = {"tag": "label", "type": "doc_type", "labels": "label", "audiences": "audience"}

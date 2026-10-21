@@ -133,7 +133,9 @@ class TreeNode:
 async def tree(db: AsyncSession, user: User, space: FolioSpace) -> list[TreeNode]:
     """The pages and folders of the space you can see, as a forest, siblings by rank."""
     ids = await access.visible_ids(db, user, space)
-    rows = await db.scalars(select(FolioNode).where(FolioNode.id.in_(ids)))
+    rows = await db.scalars(
+        select(FolioNode).where(FolioNode.id.in_(ids), FolioNode.archived_at.is_(None))
+    )
     items = {n.id: TreeNode(n) for n in rows if n.kind != NodeKind.blog_post}
     roots: list[TreeNode] = []
     for item in items.values():
@@ -162,6 +164,7 @@ async def posts(
     query = select(FolioNode).where(
         FolioNode.space_id == space.id,
         FolioNode.kind == NodeKind.blog_post,
+        FolioNode.archived_at.is_(None),
         await access.node_filter(db, user),
     )
     if before is not None:

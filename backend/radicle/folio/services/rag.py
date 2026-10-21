@@ -105,8 +105,9 @@ async def index_node(db: AsyncSession, node_id: uuid.UUID) -> int:
         return 0
     space = await db.get(FolioSpace, node.space_id)
     chain = await _ancestry(db, node)
-    if space is None or space.deleted_at is not None or any(n.deleted_at for n in chain):
-        return 0
+    gone = any(n.deleted_at or n.archived_at for n in chain)
+    if space is None or space.deleted_at is not None or gone:
+        return 0  # deleted or archived: out of the index
     version = await db.get(FolioVersion, node.published_version_id)
     if version is None:  # pragma: no cover - the published version always exists
         return 0

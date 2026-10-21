@@ -313,6 +313,69 @@
         "title": "ApproveIn",
         "type": "object"
       },
+      "ArchivedOut": {
+        "properties": {
+          "archived_at": {
+            "title": "Archived At",
+            "type": "string"
+          },
+          "archived_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived By"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "page",
+              "folder",
+              "blog_post"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "slug",
+          "icon",
+          "archived_at",
+          "archived_by"
+        ],
+        "title": "ArchivedOut",
+        "type": "object"
+      },
       "AreaConf": {
         "additionalProperties": false,
         "properties": {
@@ -5920,13 +5983,25 @@
         "enum": [
           "page",
           "folder",
-          "blog_post"
+          "blog_post",
+          "live_doc"
         ],
         "title": "NodeKind",
         "type": "string"
       },
       "NodeOut": {
         "properties": {
+          "archived_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Archived At"
+          },
           "breadcrumbs": {
             "description": "Ancestors from the root down",
             "items": {
@@ -6033,6 +6108,17 @@
             "title": "Space",
             "type": "string"
           },
+          "status": {
+            "enum": [
+              "draft",
+              "published",
+              "in_review",
+              "verified",
+              "outdated"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
           "title": {
             "title": "Title",
             "type": "string"
@@ -6040,6 +6126,18 @@
           "updated_at": {
             "title": "Updated At",
             "type": "string"
+          },
+          "verified_until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verified Until"
           },
           "version": {
             "anyOf": [
@@ -6069,7 +6167,10 @@
           "breadcrumbs",
           "version",
           "metadata",
-          "content_json"
+          "content_json",
+          "status",
+          "verified_until",
+          "archived_at"
         ],
         "title": "NodeOut",
         "type": "object"
@@ -6294,6 +6395,34 @@
         ],
         "title": "Origin",
         "type": "string"
+      },
+      "Page_ArchivedOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ArchivedOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[ArchivedOut]",
+        "type": "object"
       },
       "Page_AreaOut_": {
         "properties": {
@@ -17054,6 +17183,51 @@
         ]
       }
     },
+    "/api/v1/folio/nodes/{node_id}/archive": {
+      "post": {
+        "description": "Take the node and everything under it out of the tree, search and the RAG index.\nNeeds the delete permission, like deleting.",
+        "operationId": "archive_node_api_v1_folio_nodes__node_id__archive_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Archive Node",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/nodes/{node_id}/assets": {
       "post": {
         "description": "Upload an image, file or video to a page. Images lose EXIF and shrink to `resize`.",
@@ -17490,6 +17664,51 @@
           }
         },
         "summary": "Put Restrictions",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/unarchive": {
+      "post": {
+        "description": "Bring back what that archive took out, and index it again.",
+        "operationId": "unarchive_node_api_v1_folio_nodes__node_id__unarchive_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NodeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unarchive Node",
         "tags": [
           "folio",
           "folio"
@@ -18086,6 +18305,50 @@
           }
         },
         "summary": "Patch Space",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/spaces/{key}/archived": {
+      "get": {
+        "description": "The space's Archived section: what was archived, newest first.",
+        "operationId": "list_archived_api_v1_folio_spaces__key__archived_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_ArchivedOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Archived",
         "tags": [
           "folio",
           "folio"
