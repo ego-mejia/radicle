@@ -15,8 +15,8 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.collab import FolioYDoc, FolioYUpdate
-from radicle.folio.db.models import FolioDraft, FolioNode
-from radicle.folio.services import publishing, schema, ydoc
+from radicle.folio.db.models import FolioDraft, FolioNode, NodeKind
+from radicle.folio.services import publishing, schema, whiteboards, ydoc
 from radicle.platform.db.models import utcnow
 
 
@@ -28,11 +28,17 @@ async def _seed_content(db: AsyncSession, node: FolioNode) -> dict[str, Any]:
     return version.content_json if version is not None else schema.empty()
 
 
+async def _seed(db: AsyncSession, node: FolioNode) -> pycrdt.Doc[Any]:
+    if node.kind == NodeKind.whiteboard:
+        return whiteboards.from_elements((await whiteboards.get(db, node)).elements)
+    return ydoc.from_json(await _seed_content(db, node))
+
+
 async def load(db: AsyncSession, node: FolioNode) -> pycrdt.Doc[Any]:
     """The node's Y.Doc: the stored state with every later update applied."""
     row = await db.get(FolioYDoc, node.id)
     if row is None:
-        seeded = ydoc.from_json(await _seed_content(db, node))
+        seeded = await _seed(db, node)
         await db.execute(
             insert(FolioYDoc)
             .values(node_id=node.id, state=seeded.get_update(), updated_at=utcnow())
@@ -77,7 +83,10 @@ async def compact(db: AsyncSession, node_id: uuid.UUID, doc: pycrdt.Doc[Any]) ->
 
 async def save_json(db: AsyncSession, node: FolioNode, doc: pycrdt.Doc[Any]) -> bool:
     """Keep the draft's JSON in step with the Y.Doc; False if it read as invalid (the
-    draft then keeps its last valid content)."""
+    draft then keeps its last valid content). A whiteboard keeps its scene instead."""
+    if node.kind == NodeKind.whiteboard:
+        await whiteboards.save(db, node, doc)
+        return True
     try:
         content = schema.validate(ydoc.to_json(doc))
     except schema.SchemaError:

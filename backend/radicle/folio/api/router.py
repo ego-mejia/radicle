@@ -29,6 +29,7 @@ from radicle.folio.api import submissions as submissions_api
 from radicle.folio.api import tasks as tasks_api
 from radicle.folio.api import templates as templates_api
 from radicle.folio.api import visuals as visuals_api
+from radicle.folio.api import whiteboards as whiteboards_api
 from radicle.folio.db.models import FolioRole, GranteeType
 from radicle.folio.services import roles
 from radicle.platform import authz
@@ -159,3 +160,4 @@ router.include_router(links_api.router)
 router.include_router(page_list_api.router)
 router.include_router(databases_api.router)
 router.include_router(visuals_api.router)
+router.include_router(whiteboards_api.router)
