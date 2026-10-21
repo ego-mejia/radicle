@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
 import { Field, FormError } from '../../../../components/ui/Field';
@@ -15,10 +15,14 @@ import {
   updateTemplate,
   type FolioTemplate,
 } from '../../../../services/api/folio';
-import { DocContent } from '../DocContent';
-import type { DocNode } from '../DocContent/anchors';
 import { TEMPLATE_VARIABLES } from '../TemplatesAdmin/variables';
+import { useAutosave } from '../../hooks/useAutosave';
 import * as S from './style';
+
+// TipTap loads only when a template is opened.
+const TemplateBody = lazy(() =>
+  import('../TemplateBody').then((m) => ({ default: m.TemplateBody })),
+);
 
 /** A template's name, icon, document type and default labels, and its document (page
  * templates) or tree of pages (space templates). */
@@ -37,25 +41,31 @@ export function TemplateForm({ template }: { template: FolioTemplate }) {
   const [structure, setStructure] = useState(JSON.stringify(template.structure ?? {}, null, 2));
   const [structureError, setStructureError] = useState<string | null>(null);
 
+  // The PATCH replaces every field, so each save sends the whole form.
+  const fields = () => {
+    let parsed: Record<string, unknown> | null = null;
+    if (template.kind === 'space') parsed = JSON.parse(structure) as Record<string, unknown>;
+    return {
+      name,
+      description,
+      icon: icon.trim() || null,
+      doc_type_key: docType || null,
+      default_metadata: {
+        ...template.default_metadata,
+        labels: labelText
+          .split(',')
+          .map((l) => l.trim().replace(/^#/, '').toLowerCase())
+          .filter(Boolean),
+      },
+      structure: parsed,
+    };
+  };
+  const body = useAutosave(async (doc: Record<string, unknown>) => {
+    const saved = await updateTemplate(template.id, { ...fields(), content_json: doc });
+    queryClient.setQueryData(folioKeys.template(saved.id), saved);
+  });
   const save = useMutation({
-    mutationFn: () => {
-      let parsed: Record<string, unknown> | null = null;
-      if (template.kind === 'space') parsed = JSON.parse(structure) as Record<string, unknown>;
-      return updateTemplate(template.id, {
-        name,
-        description,
-        icon: icon.trim() || null,
-        doc_type_key: docType || null,
-        default_metadata: {
-          ...template.default_metadata,
-          labels: labelText
-            .split(',')
-            .map((l) => l.trim().replace(/^#/, '').toLowerCase())
-            .filter(Boolean),
-        },
-        structure: parsed,
-      });
-    },
+    mutationFn: () => updateTemplate(template.id, fields()),
     onSuccess: (saved) => {
       queryClient.setQueryData(folioKeys.template(saved.id), saved);
       void queryClient.invalidateQueries({ queryKey: ['folio', 'templates'] });
@@ -110,9 +120,16 @@ export function TemplateForm({ template }: { template: FolioTemplate }) {
           </S.Row>
         )}
         {template.kind === 'page' ? (
-          <S.Body aria-label={t('folio.templates.content')}>
-            <S.Variables>{t('folio.templates.variables', TEMPLATE_VARIABLES)}</S.Variables>
-            <DocContent doc={template.content_json as DocNode} />
+          <S.Body>
+            <S.Variables>
+              {t('folio.templates.variables', TEMPLATE_VARIABLES)}
+              <S.State role="status">
+                {t(`folio.editor.state.${body.state === 'unsaved' ? 'saving' : body.state}`)}
+              </S.State>
+            </S.Variables>
+            <Suspense fallback={null}>
+              <TemplateBody content={template.content_json} onChange={body.change} />
+            </Suspense>
           </S.Body>
         ) : (
           <Field
