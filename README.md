@@ -435,6 +435,16 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
 
 - **Write together.** Everyone editing a page writes in it at the same time: you see their carets and selections in their color, who is in the document, and their mouse with their name. An agent editing over REST or MCP shows up as "is writing". Publishing takes what is on screen.
 - **Live docs.** For meeting notes and running logs: always editable, never published. Folio takes a snapshot every 10 minutes with who wrote since the last one; **Snapshots** shows them and restores any. Agents use `create_live_doc` and `append_to_live_doc`.
+- **Comments.** Comment at the foot of a page, or select text and press **Comment** to anchor a thread to that sentence: it stays put while people edit around it, and if the text is deleted the thread is marked orphaned with its quote. Reply, mention with `@`, resolve and reopen. Commenting is the space's `comment` permission.
+- **Notifications.** The bell shows mentions, comments, shares, tasks and agents' submissions as they happen; **Profile → Notifications** picks, per kind, in the app and by email. You never hear about your own actions.
+- **Tasks and the social bits.** React to pages and comments, follow a page, star it, share it with a message. Action items (`/` → Action item) have an assignee and a due date and land in **My tasks**, grouped by overdue, today, upcoming and no date; checking one there checks it in the document.
+- **Organize and keep docs fresh.** Move, copy and archive pages from their menu (the space's **Archived** section restores them). **Favorites**, **Recents** and **For you** take you back to what matters.
+
+<p align="center">
+  <img src="docs/images/folio-realtime.png" alt="Two people editing the same page, with a named caret" width="49%">
+  <img src="docs/images/folio-comments.png" alt="An inline comment thread beside its quote" width="49%">
+</p>
+<p align="center"><img src="docs/images/folio-tasks.png" alt="My tasks grouped by due date" width="820"></p>
 - **Search.** Type a question in the bar at the top and Folio finds the section that answers it, in English and Spanish. Hybrid search mixes words and meaning (with an AI provider for embeddings); filters narrow it by space, type, document type, language or label. The same RQL as Docket queries docs: `space = ai-tools AND #onboarding AND published >= -30d ORDER BY published DESC`.
 
 <p align="center"><img src="docs/images/folio-search.png" alt="Search results with highlighted matches" width="820"></p>
@@ -520,7 +530,7 @@ Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning
 
 - [x] Phase 0: shared platform (one backend split into `platform`, `docket` and `folio`, generic authorization, AI provider, suite switch, Folio's skeleton).
 - [x] Phase 1: spaces and pages, the editor, publishing with versions, permissions, agent submissions with approval, RAG search and Folio's MCP.
-- [ ] Phase 2 (in progress): real-time collaboration, comments, mentions, live docs. Done so far: notifications in the app and by email, archiving, moving and copying pages, verification that expires, following, favorites and reactions.
+- [x] Phase 2: real-time editing with named carets and pointers, comments anchored to the text, mentions, notifications in the app and by email, reactions, following, sharing, action items and My tasks, live docs with snapshots, moving, copying and archiving pages, owners and statuses that expire, and the For you feed.
 - [ ] Phase 3: templates, the home editor, visual blocks, whiteboards and databases.
 - [ ] Phase 4: tickets inside docs and chat with citations.
 - [ ] Phase 5: public pages, import and export, Slack and Teams, webhooks.

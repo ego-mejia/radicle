@@ -411,6 +411,16 @@ Docket (el tracker de tickets) y Folio comparten personas, grupos, agentes y el 
 - **Proveedor de IA.** **Admin → Settings → AI provider** define un solo proveedor para chat y embeddings (OpenAI, un servidor compatible con OpenAI como Voyage, Ollama, o Anthropic para chat). La llave se guarda cifrada; **Test connection** muestra dimensiones y latencia. Sin proveedor, la búsqueda usa solo palabras.
 - **Escribir juntos.** Quienes editan una página escriben en ella al mismo tiempo: ves sus carets y selecciones en su color, quién está en el documento y su mouse con su nombre. Un agente que edita por REST o MCP aparece como "está escribiendo". Publicar toma lo que está en pantalla.
 - **Live docs.** Para minutas y bitácoras: siempre editables, nunca se publican. Folio toma un snapshot cada 10 minutos con quién escribió desde el anterior; **Snapshots** los muestra y restaura cualquiera. Los agentes usan `create_live_doc` y `append_to_live_doc`.
+- **Comentarios.** Comenta al pie de una página, o selecciona texto y presiona **Comentar** para anclar el hilo a esa frase: se queda en su lugar aunque editen alrededor, y si se borra el texto el hilo queda huérfano con su cita. Responde, menciona con `@`, resuelve y reabre. Comentar es el permiso `comment` del space.
+- **Avisos.** La campana muestra al instante menciones, comentarios, páginas compartidas, tareas y envíos de agentes; **Perfil → Avisos** elige, por tipo, en la app y por email. Nunca recibes avisos de lo que haces tú.
+- **Tareas y lo social.** Reacciona a páginas y comentarios, sigue una página, márcala como favorita y compártela con un mensaje. Los action items (`/` → Action item) tienen asignado y fecha y llegan a **Mis tareas**, agrupados en vencidas, hoy, próximas y sin fecha; marcarla ahí la marca en el documento.
+- **Ordenar y mantener al día.** Mueve, copia y archiva páginas desde su menú (la sección **Archivados** del space las restaura). **Favoritos**, **Recientes** y **Para ti** te regresan a lo importante.
+
+<p align="center">
+  <img src="docs/images/folio-realtime.png" alt="Dos personas editando la misma página, con el caret de cada una" width="49%">
+  <img src="docs/images/folio-comments.png" alt="Un hilo de comentario inline junto a su cita" width="49%">
+</p>
+<p align="center"><img src="docs/images/folio-tasks.png" alt="Mis tareas agrupadas por fecha" width="820"></p>
 - **MCP de Folio.** `/mcp/folio` acepta los mismos tokens que `/mcp`. Los agentes buscan (`search_docs`, `query_docs`), leen páginas en Markdown (`get_page`), ven qué pide publicar (`get_metadata_schema`), escriben (`create_page`, `update_draft`) y mandan a aprobación (`submit_for_publication`, `list_my_submissions`). Los admins eligen qué tools de Folio puede usar cada agente, igual que con las de Docket.
 
 ```bash
@@ -491,7 +501,7 @@ Las etapas 1 a 4 están completas: core y MCP, configuración y trabajo diario, 
 
 - [x] Fase 0: plataforma compartida (backend partido en `platform`, `docket` y `folio`, autorización genérica, proveedor de IA, switch de suite, esqueleto de Folio).
 - [x] Fase 1: spaces y páginas, editor, publicación con versiones, permisos, envíos de agentes con aprobación, búsqueda RAG y MCP de Folio.
-- [ ] Fase 2 (en curso): colaboración en tiempo real, comentarios, menciones, live docs. Ya está: avisos en la app y por email, archivar, mover y copiar páginas, verificación que vence, seguir, favoritos y reacciones.
+- [x] Fase 2: edición en tiempo real con carets y punteros con nombre, comentarios anclados al texto, menciones, avisos en la app y por email, reacciones, seguir, compartir, action items y Mis tareas, live docs con snapshots, mover, copiar y archivar páginas, dueños y estados que vencen, y el feed Para ti.
 - [ ] Fase 3: templates, editor de la home, bloques visuales, whiteboards y databases.
 - [ ] Fase 4: tickets dentro de los docs y chat con citas.
 - [ ] Fase 5: páginas públicas, importar y exportar, Slack y Teams, webhooks.
