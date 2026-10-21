@@ -1,8 +1,8 @@
-import { useTranslation } from 'react-i18next';
-import { PageTitle } from '../../../../components/ui/PageTitle';
+import { useParams } from '@tanstack/react-router';
+import { SpacePage } from '../../components/SpacePage';
 
 /** A space: its cover, the page tree and its blog posts. */
 export function FolioSpaceView() {
-  const { t } = useTranslation();
-  return <PageTitle title={t('folio.space.title')} />;
+  const { key } = useParams({ from: '/folio/folio/s/$key' });
+  return <SpacePage spaceKey={key} />;
 }
