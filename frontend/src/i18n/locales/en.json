@@ -1648,7 +1648,8 @@
       "title": "Space"
     },
     "reader": {
-      "title": "Page"
+      "title": "Page",
+      "task": "Task"
     },
     "editor": {
       "title": "Editor"
