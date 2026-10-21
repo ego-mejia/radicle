@@ -115,6 +115,22 @@ async def test_one_page_alone(db: AsyncSession, team: Team, guides: dict) -> Non
     assert "](assets/" in zf.read(page).decode()
 
 
+async def test_a_space_to_a_static_html_site(db: AsyncSession, team: Team, guides: dict) -> None:
+    luis = await _user(db, team.member.handle)
+    row = await exports.create_export(db, luis, guides["space"], ExportFormat.html)
+    await run_jobs(db)
+    await db.refresh(row)
+    assert row.status == ExportStatus.done, row.stats
+    zf = zipfile.ZipFile(io.BytesIO((await exports.download(db, luis, row.id))[1]))
+    index = zf.read("index.html").decode()
+    assert '<a href="empezar/conectar-un-agente.html">Conectar un agente</a>' in index
+    assert "Salarios" not in index and "style.css" in zf.namelist()
+    page = zf.read("empezar/conectar-un-agente.html").decode()
+    assert 'href="../style.css"' in page and 'href="../index.html">← Guías' in page
+    image = next(n for n in zf.namelist() if n.endswith("diagrama.png"))
+    assert f'src="../{image}"' in page
+
+
 async def test_who_may_export_and_what(db: AsyncSession, team: Team, guides: dict) -> None:
     vera = await _user(db, team.viewer.handle)  # can read Guías, can't export
     with pytest.raises(Forbidden, match="export permission"):
