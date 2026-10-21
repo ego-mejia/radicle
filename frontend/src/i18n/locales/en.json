@@ -1806,7 +1806,29 @@
       }
     },
     "searchPage": {
-      "title": "Search"
+      "title": "Search",
+      "placeholder": "Words or a question, e.g. how do I connect an agent",
+      "submit": "Search",
+      "hint": "Search finds the section that answers you, in English and Spanish.",
+      "none": "Nothing matches “{{q}}”.",
+      "results": "Results",
+      "mode": "How to search",
+      "modes": {
+        "hybrid": "Hybrid",
+        "text": "Words",
+        "semantic": "Meaning"
+      },
+      "matchedBy": {
+        "text": "words",
+        "semantic": "meaning"
+      },
+      "filters": "Filters",
+      "any": "Any",
+      "space": "Space",
+      "kind": "Type",
+      "docType": "Document type",
+      "language": "Language",
+      "label": "Label"
     },
     "approvals": {
       "title": "Approvals",
