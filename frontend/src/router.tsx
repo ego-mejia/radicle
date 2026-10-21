@@ -34,6 +34,7 @@ import { FolioEditView } from './features/folio/views/FolioEditView';
 import { FolioHistoryView } from './features/folio/views/FolioHistoryView';
 import { FolioReadView } from './features/folio/views/FolioReadView';
 import { FolioSearchView } from './features/folio/views/FolioSearchView';
+import { FolioCalendarView } from './features/folio/views/FolioCalendarView';
 import { FolioSpaceView } from './features/folio/views/FolioSpaceView';
 import { FolioHomeView } from './features/folio/views/FolioHomeView';
 import { FolioPublicView } from './features/folio/views/FolioPublicView';
@@ -157,6 +158,12 @@ const folioSpaceRoute = createRoute({
   getParentRoute: () => folioLayout,
   path: '/folio/s/$key',
   component: FolioSpaceView,
+});
+
+const folioCalendarRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/s/$key/calendar',
+  component: FolioCalendarView,
 });
 
 /** `$page` is `<id>-<slug>`; only the id matters, so renamed pages keep their links. */
@@ -442,6 +449,7 @@ const routeTree = rootRoute.addChildren([
     folioAdminRoute,
     folioTemplateRoute,
     folioSpaceRoute,
+    folioCalendarRoute,
     folioReadRoute,
     folioEditRoute,
     folioHistoryRoute,
