@@ -43,6 +43,7 @@ from radicle.docket.mcp import server as mcp_server
 from radicle.docket.public.router import router as public_router
 from radicle.folio.api.router import router as folio_router
 from radicle.folio.authz import FolioAuthz
+from radicle.folio.mcp import server as folio_mcp
 from radicle.platform import authz, mcp_tools
 from radicle.platform.api import ai as ai_api
 from radicle.platform.config import get_settings
@@ -56,7 +57,10 @@ API_PREFIX = "/api/v1"
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    async with mcp_server.server.session_manager.run():
+    async with (
+        mcp_server.server.session_manager.run(),
+        folio_mcp.server.session_manager.run(),
+    ):
         yield
     await dispose_engine()
 
@@ -118,6 +122,7 @@ def create_app() -> FastAPI:
     app.include_router(api)
     app.include_router(public_router)
     mcp_server.mount(app)
+    folio_mcp.mount(app)
     # Unversioned alias for container health checks and load balancers.
     app.add_api_route("/health", system.health, methods=["GET"], include_in_schema=False)
 
