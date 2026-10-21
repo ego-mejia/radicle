@@ -3483,6 +3483,41 @@
         "title": "DbRowPatch",
         "type": "object"
       },
+      "DbRowsAdded": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DbRowOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "DbRowsAdded",
+        "type": "object"
+      },
+      "DbRowsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "rows": {
+            "description": "Each row's values by column key",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rows"
+        ],
+        "title": "DbRowsIn",
+        "type": "object"
+      },
       "DbRowsOut": {
         "properties": {
           "columns": {
@@ -19801,6 +19836,61 @@
           }
         },
         "summary": "Add Row",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/databases/{node_id}/rows/batch": {
+      "post": {
+        "description": "Add up to 100 rows at the end, all or none.",
+        "operationId": "add_rows_api_v1_folio_databases__node_id__rows_batch_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DbRowsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DbRowsAdded"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Rows",
         "tags": [
           "folio",
           "folio"

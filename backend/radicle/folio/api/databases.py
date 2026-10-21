@@ -162,6 +162,25 @@ async def add_row(
     return _row(row)
 
 
+class DbRowsIn(Input):
+    rows: list[dict[str, Any]] = Field(description="Each row's values by column key")
+
+
+class DbRowsAdded(Output):
+    items: list[DbRowOut]
+
+
+@router.post("/databases/{node_id}/rows/batch", response_model=DbRowsAdded, status_code=201)
+async def add_rows(
+    node_id: uuid.UUID, body: DbRowsIn, principal: CurrentPrincipal, db: Db
+) -> DbRowsAdded:
+    """Add up to 100 rows at the end, all or none."""
+    await _reader(db, principal)
+    node = await nodes.get_node(db, principal.user, node_id)
+    rows = await db_rows.add_rows(db, principal.user, node, body.rows)
+    return DbRowsAdded(items=[_row(r) for r in rows])
+
+
 @router.patch("/rows/{row_id}", response_model=DbRowOut)
 async def patch_row(
     row_id: uuid.UUID, body: DbRowPatch, principal: CurrentPrincipal, db: Db

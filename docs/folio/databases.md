@@ -33,6 +33,13 @@ Cambiar el tipo de una columna convierte lo que se puede (`"12"` → `12`, una f
 
 El servidor aplica filtros y orden: quien lee una vista ve las mismas filas. Límites: 50 columnas, 20 vistas y 10,000 filas por database.
 
+## API y MCP
+
+- `GET/PATCH /folio/databases/{id}`: columnas y vistas, y `can_edit`. PATCH reemplaza columnas, vistas o ambas.
+- `GET /folio/databases/{id}/rows?view=`: las filas de la vista. `POST` agrega una; `POST .../rows/batch` agrega hasta 100, todas o ninguna.
+- `PATCH /folio/rows/{id}` cambia valores (`null` borra) o la mueve (`after`, `to_top`); `DELETE` la borra.
+- Tools del MCP: `query_database` (las filas de una vista, por nombre de columna) y `add_database_rows` (hasta 100 filas por nombre de columna; si una está mal no se agrega ninguna y el error dice cuál).
+
 ## Bloque en una página
 
 Un bloque `databaseView` con `{database, view}` muestra una vista dentro de una página. Si quien lee la página no puede ver la database, el bloque dice que no tiene acceso.

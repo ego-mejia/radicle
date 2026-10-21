@@ -15,6 +15,7 @@ READ = (
     "list_my_tasks",
     "get_feed",
     "list_notifications",
+    "query_database",
 )
 
 WRITE = (
@@ -29,6 +30,7 @@ WRITE = (
     "watch",
     "create_live_doc",
     "append_to_live_doc",
+    "add_database_rows",
 )
 
 CATALOG: tuple[Tool, ...] = (
