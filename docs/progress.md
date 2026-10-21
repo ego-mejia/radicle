@@ -741,12 +741,14 @@ Spec: `docs/folio/fase-2.md`. Decisión: [0038](decisions/0038-eventos-y-notific
 | # | Entregable | Estado |
 | --- | --- | --- |
 | 2.1 | Bus de eventos y notificaciones en platform | Backend listo (#117, #120, #122, #123, #129); falta la campanita en la UI |
-| 2.2 | Tiempo real | Pendiente (tablas listas en #155) |
+| 2.2 | Tiempo real | Listo (#174, #185, #188, #192, #235, #236, #239, #251) |
 | 2.3 | Comentarios | Pendiente (tablas listas en #155) |
 | 2.4 | Menciones, reacciones, watch, compartir y action items | Watch, favoritos y reacciones listos (#160, #161) |
-| 2.5 | Live docs | Pendiente |
+| 2.5 | Live docs | Listo (#198, #208, #241, #242, #251) |
 | 2.6 | Organización | Backend listo: archivar (#142), copiar y mover entre spaces (#147) |
 | 2.7 | Calidad y navegación | Backend de estados, vencimiento, dueño y recientes listo (#133, #151, #160) |
 
 - **Eventos:** outbox en la misma transacción, despacho con `SKIP LOCKED`, entregas únicas por evento, persona y canal, preferencias por tipo y canal, email por SMTP con reintentos, y un stream SSE sobre `LISTEN/NOTIFY`.
+- **Tiempo real:** Yjs con `pycrdt` en el servidor y sala propia sobre su protocolo, sin pycrdt-websocket ([0039](decisions/0039-tiempo-real-con-pycrdt-sin-pycrdt-websocket.md)). WebSocket `/api/v1/folio/collab/{node_id}` solo para quien edita (sesión o bearer), una sala por documento en el proceso, máximo 50 editores. Los updates van a `folio_yupdates` y se compactan en `folio_ydocs` cada 30 s o al vaciarse la sala; el `content_json` del borrador se regenera cada 5 s. Los borradores de fase 1 se convierten la primera vez. Publicar toma el estado del Y.Doc. Las ediciones de agentes por REST o MCP entran al Y.Doc con su etiqueta. En el editor: carets y selecciones en el color de cada quien, avatares de presencia y punteros de mouse con nombre (≤30 por segundo, se ocultan tras 10 s quietos).
+- **Live docs:** `kind=live_doc`, siempre editables, sin publicar, metadata ni RAG. Snapshot cada 10 minutos con sus autores, historial con restaurar (`GET /nodes/{id}/snapshots`, `POST /snapshots/{id}/restore`) y en el MCP `create_live_doc` y `append_to_live_doc`.
 - **E2E:** `RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE` se puede subir para correrlos (las specs entran más de diez veces por minuto).
