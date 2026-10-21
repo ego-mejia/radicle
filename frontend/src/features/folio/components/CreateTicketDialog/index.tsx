@@ -1,14 +1,15 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
 import { Field } from '../../../../components/ui/Field';
-import { Input, Select } from '../../../../components/ui/Input';
+import { Input } from '../../../../components/ui/Input';
 import { Modal } from '../../../../components/ui/Modal';
 import { useToast } from '../../../../hooks/useToast';
 import { isApiError } from '../../../../services/api/client';
 import { createTicketFromText, ticketKeys } from '../../../../services/api/folioTickets';
-import { fetchProject, fetchProjects, projectKeys } from '../../../../services/api/projects';
+import { useTicketTarget } from '../../hooks/useTicketTarget';
+import { TicketTargetFields } from '../TicketTargetFields';
 import * as S from './style';
 
 type Props = {
@@ -28,18 +29,9 @@ export function CreateTicketDialog({ nodeId, text, anchor, onClose }: Props) {
   const { t } = useTranslation();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const [project, setProject] = useState('');
   const [title, setTitle] = useState(() => firstLine(text));
-  const [type, setType] = useState<'task' | 'bug' | 'draft'>('task');
-  const [area, setArea] = useState('');
-  const [milestone, setMilestone] = useState('');
-  const projects = useQuery({ queryKey: projectKeys.list(false), queryFn: () => fetchProjects() });
-  const chosen = project || projects.data?.[0]?.key || '';
-  const detail = useQuery({
-    queryKey: projectKeys.detail(chosen),
-    queryFn: () => fetchProject(chosen),
-    enabled: !!chosen,
-  });
+  const target = useTicketTarget();
+  const chosen = target.project;
   const create = useMutation({
     mutationFn: () =>
       createTicketFromText(nodeId, {
@@ -47,9 +39,9 @@ export function CreateTicketDialog({ nodeId, text, anchor, onClose }: Props) {
         anchor,
         project: chosen,
         title: title.trim() || null,
-        type,
-        area: area || null,
-        milestone: milestone || null,
+        type: target.type,
+        area: target.area || null,
+        milestone: target.milestone || null,
       }),
     onSuccess: (link) => {
       void queryClient.invalidateQueries({ queryKey: ticketKeys.links(nodeId) });
@@ -57,8 +49,6 @@ export function CreateTicketDialog({ nodeId, text, anchor, onClose }: Props) {
       onClose();
     },
   });
-  const areas = (detail.data?.areas ?? []).filter((a) => !a.archived);
-  const milestones = (detail.data?.milestones ?? []).filter((m) => m.status === 'open');
 
   return (
     <Modal
@@ -83,55 +73,7 @@ export function CreateTicketDialog({ nodeId, text, anchor, onClose }: Props) {
         <Field label={t('folio.tickets.title')}>
           <Input value={title} maxLength={255} onChange={(e) => setTitle(e.target.value)} />
         </Field>
-        <S.Row>
-          <Field label={t('folio.tickets.project')}>
-            <Select
-              value={chosen}
-              onChange={(e) => {
-                setProject(e.target.value);
-                setArea('');
-                setMilestone('');
-              }}
-            >
-              {(projects.data ?? []).map((p) => (
-                <option key={p.key} value={p.key}>
-                  {p.key} · {p.name}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label={t('folio.tickets.type')}>
-            <Select value={type} onChange={(e) => setType(e.target.value as typeof type)}>
-              {(['task', 'bug', 'draft'] as const).map((kind) => (
-                <option key={kind} value={kind}>
-                  {t(`folio.tickets.types.${kind}`)}
-                </option>
-              ))}
-            </Select>
-          </Field>
-        </S.Row>
-        <S.Row>
-          <Field label={t('folio.tickets.area')} hint={t('folio.tickets.areaHint')}>
-            <Select value={area} onChange={(e) => setArea(e.target.value)}>
-              <option value="">{t('folio.tickets.none')}</option>
-              {areas.map((a) => (
-                <option key={a.name} value={a.name}>
-                  {a.name}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label={t('folio.tickets.milestone')}>
-            <Select value={milestone} onChange={(e) => setMilestone(e.target.value)}>
-              <option value="">{t('folio.tickets.none')}</option>
-              {milestones.map((m) => (
-                <option key={m.name} value={m.name}>
-                  {m.name}
-                </option>
-              ))}
-            </Select>
-          </Field>
-        </S.Row>
+        <TicketTargetFields target={target} />
         {create.error ? (
           <S.Error role="alert">
             {isApiError(create.error) ? create.error.message : t('folio.tickets.createFailed')}

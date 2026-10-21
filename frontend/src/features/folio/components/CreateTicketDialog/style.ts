@@ -5,12 +5,6 @@ export const Form = styled.div`
   gap: ${({ theme }) => theme.space.md};
 `;
 
-export const Row = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: ${({ theme }) => theme.space.md};
-`;
-
 export const Quote = styled.p`
   margin: 0;
   padding-left: ${({ theme }) => theme.space.sm};
