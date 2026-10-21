@@ -35,6 +35,7 @@ async def test_list_page_and_mark_read(client: AsyncClient, db: AsyncSession, te
     h = team.member.headers
     page = (await client.get(URL, params={"limit": 2}, headers=h)).json()
     assert [n["title"] for n in page["items"]] == ["#2", "#1"] and page["unread"] == 3
+    assert page["items"][0]["params"] == {}  # a notice that sends none
     rest = (await client.get(URL, params={"cursor": page["next_cursor"]}, headers=h)).json()
     assert [n["title"] for n in rest["items"]] == ["#0"] and rest["next_cursor"] is None
     first = page["items"][0]["id"]

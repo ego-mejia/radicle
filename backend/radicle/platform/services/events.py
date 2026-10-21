@@ -10,7 +10,7 @@ them into notifications for whoever each app's resolver says, once per user and 
 import logging
 import uuid
 from collections.abc import Awaitable, Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from sqlalchemy import select, text, update
@@ -48,6 +48,9 @@ class Notice:
     title: str
     body: str = ""
     link: str | None = None
+    # What the title says, for the web app to write it in the reader's language: `actor`
+    # and `page` mostly, and `variant` when one type has more than one wording.
+    params: dict[str, str] = field(default_factory=dict)
 
 
 Resolver = Callable[[AsyncSession, OutboxEvent], Awaitable[list[Notice]]]
@@ -148,6 +151,7 @@ async def _deliver(db: AsyncSession, event: OutboxEvent, kind: EventType, notice
                     title=notice.title,
                     body=notice.body,
                     link=notice.link,
+                    params=notice.params,
                     actor_id=event.actor_id,
                     # The clock, not now(): one dispatch writes many, newest last.
                     created_at=utcnow(),

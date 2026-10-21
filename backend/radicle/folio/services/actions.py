@@ -203,4 +203,5 @@ async def _assigned(db: AsyncSession, event: OutboxEvent) -> list[events.Notice]
     who = actor.display_name if actor else "Someone"
     due = f" (due {item.due_date.isoformat()})" if item.due_date else ""
     title = f"{who} assigned you a task in '{node.title}'"
-    return [events.Notice(user.id, "assignee", title, item.text + due, node_link(node))]
+    params = {"page": node.title} | ({"actor": actor.display_name} if actor else {})
+    return [events.Notice(user.id, "assignee", title, item.text + due, node_link(node), params)]

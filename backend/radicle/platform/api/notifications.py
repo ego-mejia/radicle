@@ -25,7 +25,11 @@ class NotificationOut(Output):
     id: uuid.UUID
     app: str
     type: str
-    title: str
+    title: str = Field(description="In English; params lets a client write it in its language")
+    params: dict[str, str] = Field(
+        default_factory=dict,
+        description="What the title is built from: actor, page, version, variant, until",
+    )
     body: str
     link: str | None
     actor_id: uuid.UUID | None
@@ -86,6 +90,7 @@ async def list_notifications(
                 app=n.app,
                 type=n.type,
                 title=n.title,
+                params={k: str(v) for k, v in (n.params or {}).items()},
                 body=n.body,
                 link=n.link,
                 actor_id=n.actor_id,

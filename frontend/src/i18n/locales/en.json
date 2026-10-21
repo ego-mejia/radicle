@@ -2595,6 +2595,22 @@
         "page_shared": "Someone shares a page with you",
         "page_outdated": "A page you own is outdated"
       }
+    },
+    "someone": "Someone",
+    "titles": {
+      "folio": {
+        "comment": {
+          "comment": "{{actor}} commented on '{{page}}'",
+          "reply": "{{actor}} replied in a thread on '{{page}}'"
+        },
+        "comment_mention": "{{actor}} mentioned you on '{{page}}'",
+        "page_shared": "{{actor}} shared '{{page}}' with you",
+        "page_published": "{{actor}} published '{{page}}' (v{{version}})",
+        "page_mention": "{{actor}} mentioned you in '{{page}}'",
+        "submission_pending": "{{actor}} sent '{{page}}' for approval",
+        "task_assigned": "{{actor}} assigned you a task in '{{page}}'",
+        "page_outdated": "'{{page}}' is outdated"
+      }
     }
   }
 }

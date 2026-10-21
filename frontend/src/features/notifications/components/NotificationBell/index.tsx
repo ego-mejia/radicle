@@ -13,6 +13,7 @@ import {
 } from '../../../../services/api/notifications';
 import { useNotificationStream } from '../../hooks/useNotificationStream';
 import * as S from './style';
+import { notificationTitle } from './title';
 
 /** The bell in both apps' top bars: unread count, the latest notifications, mark read. */
 export function NotificationBell() {
@@ -67,7 +68,7 @@ export function NotificationBell() {
                   <S.Item type="button" $unread={!n.read} onClick={() => openOne(n)}>
                     {!n.read && <S.Dot aria-label={t('notifications.unread')} />}
                     <S.Text>
-                      <strong>{n.title}</strong>
+                      <strong>{notificationTitle(n, t)}</strong>
                       {n.body && <span>{n.body}</span>}
                       <S.When>{relativeTime(n.created_at)}</S.When>
                     </S.Text>
