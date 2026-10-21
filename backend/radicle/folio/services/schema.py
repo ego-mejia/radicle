@@ -6,6 +6,7 @@ A document is `{"type": "doc", "content": [block, ...]}`. Every node has a `type
 or children are rejected with the JSON path of the first problem.
 """
 
+import re
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -113,6 +114,14 @@ def _check_timeline(path: str, attrs: dict[str, Any]) -> None:
 def _check_embed(path: str, attrs: dict[str, Any]) -> None:
     if not str(attrs.get("url", "")).startswith(("https://", "http://")):
         raise SchemaError(f"{path}.attrs.url", "embeds take http or https links")
+
+
+TICKET_KEY = re.compile(r"^[A-Z][A-Z0-9]{1,9}-\d{1,9}$")
+
+
+def _check_ticket(path: str, attrs: dict[str, Any]) -> None:
+    if not TICKET_KEY.fullmatch(str(attrs.get("key", ""))):
+        raise SchemaError(f"{path}.attrs.key", "is a Docket ticket key in capitals, like PA-4")
 
 
 def _check_database_view(path: str, attrs: dict[str, Any]) -> None:
@@ -258,6 +267,15 @@ NODES: dict[str, NodeSpec] = {
             "order": Attr(str, PAGE_LIST_ORDERS),
         },
     ),
+    # Docket tickets by RQL (Folio 4.1), each reader seeing only the tickets Docket shows them.
+    "ticketTable": NodeSpec(
+        BLOCK,
+        attrs={
+            "rql": Attr(str, required=True, max_length=2000),
+            "title": Attr((str, type(None)), max_length=200),
+            "limit": Attr(int, minimum=1, maximum=100),
+        },
+    ),
     # A database's view inside a page (Folio 3.6); the reader without access to the
     # database sees a placeholder, not its rows.
     "databaseView": NodeSpec(
@@ -292,6 +310,10 @@ NODES: dict[str, NodeSpec] = {
     "hardBreak": NodeSpec(INLINE),
     "mention": NodeSpec(INLINE, attrs={"handle": Attr(str, required=True, max_length=64)}),
     "inlineFormula": NodeSpec(INLINE, attrs={"latex": Attr(str, required=True, max_length=2000)}),
+    # A Docket ticket's smart link (Folio 4.1): its status and assignee are read live.
+    "ticket": NodeSpec(
+        INLINE, attrs={"key": Attr(str, required=True, max_length=20)}, check=_check_ticket
+    ),
     "status": NodeSpec(
         INLINE,
         attrs={

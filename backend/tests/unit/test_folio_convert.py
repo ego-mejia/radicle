@@ -61,7 +61,7 @@ def test_images_from_assets_and_empty_documents() -> None:
 
 def test_plain_text_for_search() -> None:
     text = convert.to_text(EVERY_BLOCK)
-    assert text.startswith("Conecta un agente\nTexto negrita y código con link\n@fernando Listo")
+    assert text.startswith("Conecta un agente\nTexto negrita y código con link\n@fernando Listo PA-4")
     assert "print('hola')" in text and "Ojo con el token." in text
     assert "Diagrama El flujo\nspec.pdf\nDemo\n" in text
     # Visual blocks: search reads their description, source, table and items.
@@ -70,6 +70,6 @@ def test_plain_text_for_search() -> None:
         "Flujo graph TD\n  A-->B\n"
         "Tickets por área\nÁrea Abiertos Cerrados\nLegal 3 5\nBackend 7 2.5\n"
         "2026-11-01 Beta Equipo interno\nLanzamiento\n"
-        "E = mc^2\nEn línea a^2 + b^2\nAntes\nrápido\nmás rápido\nLa demo\nFin"
+        "E = mc^2\nEn línea a^2 + b^2\nAntes\nrápido\nmás rápido\nPendientes\nLa demo\nFin"
     )
     assert "**" not in text and ":::" not in text
