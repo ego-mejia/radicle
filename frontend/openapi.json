@@ -2944,6 +2944,113 @@
         "title": "DiscardIn",
         "type": "object"
       },
+      "DocOut": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/NodeKind"
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Of the published version",
+            "title": "Metadata"
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
+          },
+          "published_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Published At"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Published version; null until first published",
+            "title": "Version"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "slug",
+          "icon",
+          "space",
+          "parent_id",
+          "published_at",
+          "created_at",
+          "updated_at",
+          "version",
+          "metadata"
+        ],
+        "title": "DocOut",
+        "type": "object"
+      },
       "DraftIn": {
         "additionalProperties": false,
         "properties": {
@@ -5603,6 +5710,15 @@
         "title": "NodeIn",
         "type": "object"
       },
+      "NodeKind": {
+        "enum": [
+          "page",
+          "folder",
+          "blog_post"
+        ],
+        "title": "NodeKind",
+        "type": "string"
+      },
       "NodeOut": {
         "properties": {
           "breadcrumbs": {
@@ -6043,6 +6159,34 @@
           "next_cursor"
         ],
         "title": "Page[DashboardOut]",
+        "type": "object"
+      },
+      "Page_DocOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DocOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[DocOut]",
         "type": "object"
       },
       "Page_EntryOut_": {
@@ -16148,6 +16292,80 @@
       }
     },
     "/api/v1/folio/nodes": {
+      "get": {
+        "description": "Pages, folders and posts you can see that match the query; errors say where.",
+        "operationId": "query_nodes_api_v1_folio_nodes_get",
+        "parameters": [
+          {
+            "description": "RQL, e.g. space = ai-tools AND doc_type = how-to ORDER BY published DESC",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "default": "",
+              "description": "RQL, e.g. space = ai-tools AND doc_type = how-to ORDER BY published DESC",
+              "maxLength": 2000,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_DocOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Query Nodes",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
       "post": {
         "description": "A page or folder (optionally under `parent`) or a blog post.",
         "operationId": "create_node_api_v1_folio_nodes_post",

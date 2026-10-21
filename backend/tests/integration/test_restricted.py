@@ -265,6 +265,7 @@ EXEMPT = {
     "/api/v1/folio/nodes/{node_id}/restrictions",
     "/api/v1/folio/submissions",
     "/api/v1/folio/search",
+    "/api/v1/folio/nodes",
     "/api/v1/folio/submissions/{submission_id}",
     "/api/v1/folio/admin/{catalog}",
     "/api/v1/mcp/tools",
