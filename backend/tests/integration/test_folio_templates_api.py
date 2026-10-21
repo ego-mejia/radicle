@@ -63,6 +63,17 @@ async def test_a_space_from_a_template(client: AsyncClient, team: Team) -> None:
     assert [n["title"] for n in tree] == ["Specs", "Inicio"]
 
 
+async def test_the_engineering_space_template_ships(client: AsyncClient, team: Team) -> None:
+    i = team.instance.headers
+    r = await client.get(f"{API}/templates", params={"kind": "space"}, headers=i)
+    tid = next(t["id"] for t in r.json()["items"] if t["name"] == "Equipo de ingeniería")
+    body = {"template": tid, "key": "eng", "name": "Ingeniería"}
+    r = await client.post(f"{API}/spaces/from-template", headers=i, json=body)
+    assert r.status_code == 201, r.text
+    tree = (await client.get(f"{API}/spaces/eng/tree", headers=i)).json()
+    assert [n["title"] for n in tree] == ["Inicio", "Specs", "Decisiones", "Guías", "Minutas"]
+
+
 async def test_errors_and_permissions(client: AsyncClient, team: Team, space: str) -> None:
     m = team.member.headers
     r = await client.post(f"{API}/templates", headers=m, json={"name": "Mía", "content_md": "x"})

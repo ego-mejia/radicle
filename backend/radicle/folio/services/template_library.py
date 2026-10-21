@@ -204,3 +204,40 @@ Lo que necesitas tener listo.
 """,
     ),
 )
+
+
+@dataclass(frozen=True)
+class SpaceBuiltin:
+    key: str
+    name: str
+    description: str
+    icon: str
+    structure: dict[str, Any]
+
+
+SPACE_BUILTINS: tuple[SpaceBuiltin, ...] = (
+    SpaceBuiltin(
+        "engineering-team",
+        "Equipo de ingeniería",
+        "Un space para un equipo técnico: inicio, specs, decisiones, guías y minutas.",
+        "🛠️",
+        {
+            "description": "Specs, decisiones y guías del equipo.",
+            "pages": [
+                {"title": "Inicio"},
+                {
+                    "title": "Specs",
+                    "kind": "folder",
+                    "children": [{"title": "Primer build spec", "template": "build-spec"}],
+                },
+                {
+                    "title": "Decisiones",
+                    "kind": "folder",
+                    "children": [{"title": "Registro de decisiones", "template": "decision-log"}],
+                },
+                {"title": "Guías", "kind": "folder"},
+                {"title": "Minutas", "kind": "folder"},
+            ],
+        },
+    ),
+)
