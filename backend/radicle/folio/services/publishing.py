@@ -14,7 +14,7 @@ from radicle.folio.db.models import (
     NodeKind,
     NodeStatus,
 )
-from radicle.folio.services import access, convert, nodes, rag, schema
+from radicle.folio.services import access, comments, convert, nodes, rag, schema
 from radicle.folio.services.metadata import validate_metadata
 from radicle.platform.db.models import User, UserKind, utcnow
 from radicle.platform.errors import Conflict, Forbidden, ValidationFailed
@@ -62,6 +62,7 @@ async def create_version(
     db.add(version)
     await db.flush()
     node.published_version_id = version.id
+    await comments.reanchor(db, node, content)
     node.title = metadata["title"]
     node.slug = nodes.slugify(node.title)
     if node.published_at is None:
