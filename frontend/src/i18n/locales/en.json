@@ -2652,7 +2652,23 @@
         "oncall": "On call",
         "other": "Other"
       },
-      "milestone": "Docket milestone"
+      "milestone": "Docket milestone",
+      "event": {
+        "new": "New event",
+        "edit": "Event",
+        "title": "Title",
+        "allDay": "All day",
+        "start": "Starts",
+        "end": "Ends",
+        "lastDay": "Last day",
+        "category": "Category",
+        "people": "People",
+        "peopleHint": "Handles, separated by commas",
+        "description": "Description",
+        "addedBy": "Added by @{{handle}}",
+        "deleteTitle": "Delete this event?",
+        "deleteMessage": "“{{title}}” will be removed from the calendar."
+      }
     },
     "imports": {
       "title": "Import",
