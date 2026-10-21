@@ -2500,7 +2500,15 @@
       "notHelpful": "Not helpful",
       "note": "What was missing?",
       "notePlaceholder": "What was missing or wrong?",
-      "sendNote": "Send"
+      "sendNote": "Send",
+      "unanswered": {
+        "tab": "Chat",
+        "title": "Questions the docs didn't answer",
+        "help": "Questions answered without a source, or whose answer someone rated not helpful. Each one is a doc worth writing.",
+        "empty": "Every question so far found its answer in the docs.",
+        "down": "Rated not helpful",
+        "noSource": "No source in the docs"
+      }
     },
     "glossary": {
       "source": "Source: {{title}}",
