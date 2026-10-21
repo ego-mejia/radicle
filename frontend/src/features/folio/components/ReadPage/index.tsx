@@ -13,6 +13,7 @@ import { useCommentHighlights } from '../../hooks/useCommentHighlights';
 import { useComments } from '../../hooks/useComments';
 import { useFocusMode } from '../../hooks/useFocusMode';
 import { CommentsPanel } from '../CommentsPanel';
+import { DatabasePage } from '../DatabasePage';
 import { DocContent } from '../DocContent';
 import { headingsOf, readingMinutes } from '../DocContent/anchors';
 import { FocusReader } from '../FocusReader';
@@ -52,6 +53,8 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
         replace
       />
     );
+  if (node.data.kind === 'database')
+    return <DatabasePage node={node.data} spaceName={page.space?.name} />;
   if (page.isDraft && page.draft.isPending) return <PageSpinner />;
   if (page.isDraft && page.draft.isError)
     return (
