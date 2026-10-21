@@ -2770,7 +2770,18 @@
         "failed": "Falló"
       },
       "published": "publicada",
-      "missing": "borrador: falta {{fields}}"
+      "missing": "borrador: falta {{fields}}",
+      "tab": "Importar",
+      "checking": "Leyendo el export…",
+      "another": "Importar otra cosa",
+      "history": "Importaciones anteriores",
+      "statuses": {
+        "uploaded": "Subida",
+        "checked": "Revisada",
+        "running": "Corriendo",
+        "done": "Lista",
+        "failed": "Falló"
+      }
     }
   },
   "notifications": {

@@ -14,6 +14,7 @@ import { useToast } from '../../../../hooks/useToast';
 import { Tabs } from '../../../../components/ui/Tabs';
 import { GlossaryAdmin } from '../../components/GlossaryAdmin';
 import { HomeEditor } from '../../components/HomeEditor';
+import { ImportWizard } from '../../components/ImportWizard';
 import { TemplatesAdmin } from '../../components/TemplatesAdmin';
 import { UnansweredQuestions } from '../../components/UnansweredQuestions';
 
@@ -154,7 +155,8 @@ function AddGrant() {
   );
 }
 
-type Section = 'roles' | 'templates' | 'home' | 'glossary' | 'chat' | 'analytics' | FolioCatalog;
+type Section =
+  'roles' | 'templates' | 'home' | 'glossary' | 'chat' | 'analytics' | 'import' | FolioCatalog;
 const CATALOGS: FolioCatalog[] = ['doc-types', 'audiences', 'languages'];
 
 /** Folio, Admin: global roles (Folio 0.5), the metadata catalogs (Folio 1.3), templates
@@ -179,6 +181,7 @@ export function FolioAdminView() {
           { id: 'home', label: t('folio.homeEditor.title') },
           { id: 'glossary', label: t('folio.glossary.title') },
           { id: 'chat', label: t('folio.chat.unanswered.tab') },
+          { id: 'import', label: t('folio.imports.tab') },
           { id: 'analytics', label: t('folio.analytics.site.tab') },
         ]}
       />
@@ -193,6 +196,8 @@ export function FolioAdminView() {
           <GlossaryAdmin />
         ) : section === 'chat' ? (
           <UnansweredQuestions />
+        ) : section === 'import' ? (
+          <ImportWizard />
         ) : section === 'analytics' ? (
           <Suspense fallback={<PageSpinner />}>
             <SiteAnalytics />
