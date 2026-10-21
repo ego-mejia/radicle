@@ -1,4 +1,4 @@
-// Mirrors backend/radicle/services/markdown.py: which lines are checklist items, and their index.
+// Mirrors backend/radicle/platform/services/markdown.py: which lines are checklist items, and their index.
 const FENCE = /^\s{0,3}(`{3,}|~{3,})/;
 const ITEM = /^\s*[-*]\s+\[[ xX]\]\s+/;
 

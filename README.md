@@ -113,7 +113,7 @@ Radi answers questions about using Radicle and shows you where things are.
 
 <p align="center"><img src="docs/images/assistant-settings.png" alt="Assistant settings" width="820"></p>
 
-Radi can only point at a fixed catalog of places in the app, so a model cannot invent buttons. The guide it answers from lives in `backend/radicle/services/assistant/guide/`.
+Radi can only point at a fixed catalog of places in the app, so a model cannot invent buttons. The guide it answers from lives in `backend/radicle/docket/services/assistant/guide/`.
 
 ## 📖 User guide
 
@@ -432,7 +432,7 @@ The `worker` container runs background jobs: template propagation, image variant
 | MCP | Official Python MCP SDK, Streamable HTTP at `/mcp` |
 | Quality | pytest with testcontainers (real Postgres and Keycloak), mypy strict, ruff, Vitest, Playwright E2E |
 
-Business logic lives only in `backend/radicle/services/`. The REST routers and the MCP tools validate input and call those services, so the UI, the API and agents always follow the same rules.
+Business logic lives only in the services: `backend/radicle/platform/services/` for what the apps share and `backend/radicle/docket/services/` for tickets. The REST routers and the MCP tools validate input and call those services, so the UI, the API and agents always follow the same rules.
 
 ## 🧑‍💻 Development
 

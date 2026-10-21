@@ -2,7 +2,7 @@ import random
 
 import pytest
 
-from radicle.services import rank
+from radicle.docket.services import rank
 
 
 def test_first_key() -> None:

@@ -3,7 +3,7 @@ from httpx import AsyncClient
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.db.models import Ticket
+from radicle.docket.db.models import Ticket
 from tests.conftest import Team, new_ticket, patch_ticket, run_jobs
 
 API = "/api/v1"

@@ -6,10 +6,10 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.db.models import Project, Template
-from radicle.services import template_sync
-from radicle.services.template_config import parse
-from radicle.services.templates import system_user
+from radicle.docket.db.models import Project, Template
+from radicle.docket.services import template_sync
+from radicle.docket.services.template_config import parse
+from radicle.docket.services.templates import system_user
 from tests.conftest import Team, new_ticket, run_jobs
 
 API = "/api/v1"
@@ -295,7 +295,7 @@ async def test_failed_sync_does_not_stop_others_and_can_be_retried(
             raise ValueError("disk full")
         return await original(db_, project_, *args, **kwargs)
 
-    monkeypatch.setattr("radicle.services.templates.apply_config", flaky)
+    monkeypatch.setattr("radicle.docket.services.templates.apply_config", flaky)
     config = copy.deepcopy(producto["config"])
     config["areas"].append({"name": "Soporte"})
     r = await patch_config(client, board, producto["id"], config)
@@ -312,7 +312,7 @@ async def test_failed_sync_does_not_stop_others_and_can_be_retried(
     assert "Soporte" in [a["name"] for a in (await project(client, board, "PD"))["areas"]]
     assert "Soporte" not in [a["name"] for a in (await project(client, board, "PB"))["areas"]]
 
-    monkeypatch.setattr("radicle.services.templates.apply_config", original)
+    monkeypatch.setattr("radicle.docket.services.templates.apply_config", original)
     run_id = by_project["PB"]["id"]
     r = await client.post(
         f"{API}/templates/{producto['id']}/sync-runs/{by_project['PD']['id']}/retry",

@@ -131,10 +131,10 @@ The design documents in [`docs/`](docs/) (in Spanish) explain the decisions behi
 
 **Backend** (`backend/`)
 
-- Business logic lives in `radicle/services/`. Routers (`radicle/api/`) and MCP tools (`radicle/mcp/`) only validate input and call services.
-- Errors are raised as `ProblemError` (`radicle/core/errors.py`) with a message that tells the user what to do. They are returned as RFC 9457 problem details.
+- Business logic lives in services: `radicle/platform/services/` (shared by the apps) and `radicle/docket/services/` (tickets). Routers (`radicle/docket/api/`) and MCP tools (`radicle/docket/mcp/`) only validate input and call services. `radicle/platform` never imports from an app.
+- Errors are raised as `ProblemError` (`radicle/platform/errors.py`) with a message that tells the user what to do. They are returned as RFC 9457 problem details.
 - Every schema change is an Alembic migration with both `upgrade` and `downgrade`.
-- Permissions always go through `radicle/core/permissions.py`. Restricted tickets must never leak: if you add a `GET` route or an MCP tool, add it to `tests/integration/test_restricted.py`.
+- Permissions always go through `radicle/docket/core/permissions.py`. Restricted tickets must never leak: if you add a `GET` route or an MCP tool, add it to `tests/integration/test_restricted.py`.
 - `mypy --strict` passes on `services/` and `query/`. Format with `ruff format`.
 
 **Frontend** (`frontend/`)

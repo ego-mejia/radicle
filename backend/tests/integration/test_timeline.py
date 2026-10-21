@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from httpx import AsyncClient
 
-from radicle.services import periods
+from radicle.docket.services import periods
 from tests.conftest import Team, new_ticket, patch_ticket
 
 API = "/api/v1"

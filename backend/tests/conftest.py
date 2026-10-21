@@ -15,7 +15,7 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
-from radicle.api.ratelimit import login_limiter
+from radicle.docket.api.ratelimit import login_limiter
 from radicle.platform import security
 from radicle.platform.config import get_settings
 from radicle.platform.db.session import get_db
@@ -99,7 +99,7 @@ async def client(db: AsyncSession) -> AsyncIterator[AsyncClient]:
 
     app.dependency_overrides[get_db] = _override_db
     login_limiter.reset()
-    from radicle.public.router import tracking_limiter
+    from radicle.docket.public.router import tracking_limiter
 
     tracking_limiter.reset()
     transport = ASGITransport(app=app, client=("10.0.0.1", 1234))

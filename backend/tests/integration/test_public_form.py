@@ -8,8 +8,8 @@ from PIL import Image
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.db.models import InboxSettings, InboxSubmission, Ticket
-from radicle.services import altcha, public_form
+from radicle.docket.db.models import InboxSettings, InboxSubmission, Ticket
+from radicle.docket.services import altcha, public_form
 from tests.conftest import Team
 
 API = "/api/v1"

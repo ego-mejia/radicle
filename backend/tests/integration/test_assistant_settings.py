@@ -8,9 +8,9 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.db.models import InstanceSetting
+from radicle.docket.db.models import InstanceSetting
+from radicle.docket.services.assistant import llm
 from radicle.platform.config import get_settings
-from radicle.services.assistant import llm
 from tests.conftest import Team
 
 API = "/api/v1"

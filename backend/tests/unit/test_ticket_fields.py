@@ -2,9 +2,9 @@ from decimal import Decimal
 
 import pytest
 
-from radicle.db.models import TicketType
+from radicle.docket.db.models import TicketType
+from radicle.docket.services import ticket_fields as f
 from radicle.platform.errors import NotFound, ValidationFailed
-from radicle.services import ticket_fields as f
 
 
 def test_parse_key() -> None:

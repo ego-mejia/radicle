@@ -131,7 +131,7 @@ async def test_comment_order_and_pagination(client: AsyncClient, board: Team) ->
 async def test_comment_mentions_stored(client: AsyncClient, board: Team, db) -> None:  # type: ignore[no-untyped-def]
     from sqlalchemy import select
 
-    from radicle.db.models import Mention, User
+    from radicle.docket.db.models import Mention, User
 
     await new_ticket(client, board.member)
     c = (await comment(client, board.member, "@ana mira `@luis`")).json()

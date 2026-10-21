@@ -5,8 +5,8 @@ import json
 import httpx
 import pytest
 
-from radicle.services.assistant import llm, tours
-from radicle.services.assistant.config import AssistantConfig
+from radicle.docket.services.assistant import llm, tours
+from radicle.docket.services.assistant.config import AssistantConfig
 
 STEPS = {"steps": [{"target": "nav.projects", "action": "click", "text": "Go"}]}
 

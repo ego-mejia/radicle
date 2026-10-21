@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from radicle import __version__
-from radicle.api import (
+from radicle.docket.api import (
     assistant,
     attachments,
     audit,
@@ -37,15 +37,15 @@ from radicle.api import (
     users,
     work,
 )
-from radicle.core import mcp_catalog
-from radicle.mcp import server as mcp_server
+from radicle.docket.core import mcp_catalog
+from radicle.docket.mcp import server as mcp_server
+from radicle.docket.public.router import router as public_router
 from radicle.platform import mcp_tools
 from radicle.platform.config import get_settings
 from radicle.platform.crypto import require_key
 from radicle.platform.db.session import dispose_engine
 from radicle.platform.errors import NotFound, install_error_handlers
 from radicle.platform.services.audit import RequestInfoMiddleware
-from radicle.public.router import router as public_router
 
 API_PREFIX = "/api/v1"
 

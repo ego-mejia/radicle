@@ -5,8 +5,8 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.db.models import DailyStatusCount, Sprint
-from radicle.services import periods
+from radicle.docket.db.models import DailyStatusCount, Sprint
+from radicle.docket.services import periods
 from tests.conftest import Team, new_ticket, patch_ticket
 from tests.mcp.conftest import McpFor, error_text, payload
 from tests.mcp.conftest import mcp_for as mcp_for  # the fixture

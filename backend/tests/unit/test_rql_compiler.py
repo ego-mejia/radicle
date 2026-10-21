@@ -5,9 +5,9 @@ from zoneinfo import ZoneInfo
 import pytest
 from sqlalchemy.dialects import postgresql
 
-from radicle.query.compiler import Context, compile_query
-from radicle.query.errors import RQLError
-from radicle.query.parser import parse
+from radicle.docket.query.compiler import Context, compile_query
+from radicle.docket.query.errors import RQLError
+from radicle.docket.query.parser import parse
 
 USER = uuid.UUID("00000000-0000-0000-0000-000000000001")
 NOW = datetime(2026, 10, 18, 15, 0, tzinfo=UTC)

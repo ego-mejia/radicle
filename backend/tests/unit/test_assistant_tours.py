@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from radicle.services.assistant import guide, tours
+from radicle.docket.services.assistant import guide, tours
 
 
 def test_clean_keeps_known_targets_and_never_submits() -> None:

@@ -1,6 +1,6 @@
 import pytest
 
-from radicle.services.assistant import guide
+from radicle.docket.services.assistant import guide
 
 
 @pytest.mark.parametrize(

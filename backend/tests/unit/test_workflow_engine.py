@@ -2,10 +2,10 @@ import uuid
 
 import pytest
 
-from radicle.db.models import Resolution, Status, TicketType, Transition
+from radicle.docket.db.models import Resolution, Status, TicketType, Transition
+from radicle.docket.services.workflow_engine import available, decide
+from radicle.docket.services.workflows import DEFAULT_WORKFLOWS, Workflow
 from radicle.platform.errors import Conflict, ValidationFailed
-from radicle.services.workflow_engine import available, decide
-from radicle.services.workflows import DEFAULT_WORKFLOWS, Workflow
 
 R = Resolution
 

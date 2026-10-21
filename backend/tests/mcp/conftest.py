@@ -9,7 +9,7 @@ from httpx import AsyncClient
 from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
 
-from radicle.mcp.server import server
+from radicle.docket.mcp.server import server
 from tests.conftest import Actor
 
 McpFor = Callable[[Actor], AbstractAsyncContextManager[Client]]

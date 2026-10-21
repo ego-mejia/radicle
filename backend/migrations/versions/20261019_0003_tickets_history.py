@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-from radicle.db.models.tickets import SEARCH_VECTOR_SQL
+from radicle.docket.db.models.tickets import SEARCH_VECTOR_SQL
 
 revision: str = "0003"
 down_revision: str | None = "0002"
