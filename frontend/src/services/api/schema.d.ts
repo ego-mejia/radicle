@@ -5997,6 +5997,32 @@ export interface components {
             /** Y */
             y: number;
         };
+        /** HomeBlockOut */
+        HomeBlockOut: {
+            /** Cards */
+            cards: components["schemas"]["CardOut"][];
+            /** H */
+            h: number;
+            /** Id */
+            id: string;
+            /** Markdown */
+            markdown: string;
+            /** Spaces */
+            spaces: components["schemas"]["SpaceCountOut"][];
+            /** Title */
+            title: string;
+            /**
+             * Type
+             * @description featured, announcement, posts, query, for_you, ...
+             */
+            type: string;
+            /** W */
+            w: number;
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
         /** HomeDraftOut */
         HomeDraftOut: {
             layout: components["schemas"]["HomeLayoutBody"];
@@ -6051,6 +6077,11 @@ export interface components {
             ai_tools: components["schemas"]["CardOut"][];
             /** @description Latest post labelled anuncio */
             announcement: components["schemas"]["CardOut"] | null;
+            /**
+             * Blocks
+             * @description The published layout, each block resolved for you; empty ones left out
+             */
+            blocks: components["schemas"]["HomeBlockOut"][];
             /**
              * Can Write
              * @description Creators and admins see the Write button

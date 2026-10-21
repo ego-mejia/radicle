@@ -5574,6 +5574,71 @@
         "title": "HomeBlock",
         "type": "object"
       },
+      "HomeBlockOut": {
+        "properties": {
+          "cards": {
+            "items": {
+              "$ref": "#/components/schemas/CardOut"
+            },
+            "title": "Cards",
+            "type": "array"
+          },
+          "h": {
+            "title": "H",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "markdown": {
+            "title": "Markdown",
+            "type": "string"
+          },
+          "spaces": {
+            "items": {
+              "$ref": "#/components/schemas/SpaceCountOut"
+            },
+            "title": "Spaces",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "type": {
+            "description": "featured, announcement, posts, query, for_you, ...",
+            "title": "Type",
+            "type": "string"
+          },
+          "w": {
+            "title": "W",
+            "type": "integer"
+          },
+          "x": {
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "x",
+          "y",
+          "w",
+          "h",
+          "title",
+          "cards",
+          "spaces",
+          "markdown"
+        ],
+        "title": "HomeBlockOut",
+        "type": "object"
+      },
       "HomeDraftOut": {
         "properties": {
           "layout": {
@@ -5716,6 +5781,14 @@
             ],
             "description": "Latest post labelled anuncio"
           },
+          "blocks": {
+            "description": "The published layout, each block resolved for you; empty ones left out",
+            "items": {
+              "$ref": "#/components/schemas/HomeBlockOut"
+            },
+            "title": "Blocks",
+            "type": "array"
+          },
           "can_write": {
             "description": "Creators and admins see the Write button",
             "title": "Can Write",
@@ -5761,7 +5834,8 @@
           "ai_tools",
           "latest_posts",
           "spaces",
-          "most_read"
+          "most_read",
+          "blocks"
         ],
         "title": "HomeOut",
         "type": "object"
