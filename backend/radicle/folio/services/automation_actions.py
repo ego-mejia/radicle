@@ -114,6 +114,32 @@ def register() -> None:
     )(create_ticket)
     automation.action("folio.archive", "Archive the page")(archive_page)
     automation.selector("folio.pages")(pages)
+    automation.example(
+        "Outdated pages to a channel",
+        "When a verified page expires, post it on a Slack or Teams channel.",
+        {"type": "event", "event": "page.outdated"},
+        [{"type": "notify_channel", "integration": "", "route": 0}],
+    )
+    automation.example(
+        "Review what agents publish",
+        "When a page is published in a space, label it and send it back to review.",
+        {"type": "event", "event": "page.published"},
+        [
+            {"type": "folio.add_label", "label": "revisar"},
+            {"type": "folio.change_status", "status": "in_review"},
+        ],
+    )
+    automation.example(
+        "Archive outdated pages",
+        "Every day, archive the pages an RQL query finds (here, the outdated ones).",
+        {
+            "type": "schedule",
+            "every": "day",
+            "select": "folio.pages",
+            "params": {"rql": "status = outdated"},
+        },
+        [{"type": "folio.archive"}],
+    )
 
 
 register()  # the worker imports this module to run rules

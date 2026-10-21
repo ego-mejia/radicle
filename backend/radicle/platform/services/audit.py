@@ -70,6 +70,9 @@ ACTIONS = (
     "integration.create",
     "integration.update",
     "integration.delete",
+    "automation.create",
+    "automation.update",
+    "automation.delete",
 )
 # Actions on what every app shares; the rest belong to the app that records them.
 PLATFORM_PREFIXES = (
@@ -81,6 +84,7 @@ PLATFORM_PREFIXES = (
     "settings.",
     "webhook.",
     "integration.",
+    "automation.",
 )
 RETENTION_JOB = "audit_retention"
 RETENTION_ROLE = "radicle_audit_retention"

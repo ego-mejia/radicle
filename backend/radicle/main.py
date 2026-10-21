@@ -51,6 +51,7 @@ from radicle.folio.services import automation_actions, collab, public_events
 from radicle.folio.services import chat_commands as folio_commands
 from radicle.platform import authz, mcp_tools
 from radicle.platform.api import ai as ai_api
+from radicle.platform.api import automation as automation_api
 from radicle.platform.api import hooks as hooks_api
 from radicle.platform.api import integrations as integrations_api
 from radicle.platform.api import notifications as notifications_api
@@ -136,6 +137,7 @@ def create_app() -> FastAPI:
         webhooks_api,
         integrations_api,
         hooks_api,
+        automation_api,
     ):
         api.include_router(module.router)
     api.include_router(folio_router)

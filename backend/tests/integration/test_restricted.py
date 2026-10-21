@@ -265,6 +265,12 @@ EXEMPT = {
     # Instance admins only (test_integrations_api.py); never a secret.
     "/api/v1/integrations",
     "/api/v1/integrations/{integration_id}",
+    # Instance admins only (test_automation_api.py); runs log ids and titles.
+    "/api/v1/automation/actions",
+    "/api/v1/automation/examples",
+    "/api/v1/automation/rules",
+    "/api/v1/automation/rules/{rule_id}",
+    "/api/v1/automation/rules/{rule_id}/runs",
     "/api/v1/folio/health",
     # Imports, for the target space's admins only: test_folio_imports_api.py.
     "/api/v1/folio/imports",
