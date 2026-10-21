@@ -34,6 +34,29 @@ export const Search = styled.div`
   min-width: 0;
 `;
 
+export const AdminLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.lg};
+  color: ${({ theme }) => theme.color.text};
+  font-size: ${({ theme }) => theme.fontSize.md};
+  text-decoration: none;
+
+  &:hover,
+  &[data-status='active'] {
+    background: ${({ theme }) => theme.color.surface2};
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
 export const Profile = styled.button`
   display: inline-flex;
   padding: 0;

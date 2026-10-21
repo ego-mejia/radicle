@@ -1614,6 +1614,30 @@
       "reader": "lector",
       "creator": "creador",
       "admin": "admin"
+    },
+    "admin": {
+      "link": "Admin",
+      "title": "Admin de Folio",
+      "subtitle": "Los roles globales deciden quién lee, crea y administra Folio.",
+      "grants": "Roles globales",
+      "help": "Cada persona tiene el rol más alto que le llega: el suyo, el de sus grupos o el de todos. Los admins de instancia siempre son admins de Folio. Sin ningún rol, Folio no aparece.",
+      "everyone": "Todos",
+      "kinds": {
+        "everyone": "todos",
+        "group": "grupo",
+        "user": "persona"
+      },
+      "type": "Quién",
+      "role": "Rol",
+      "granteeLabel": {
+        "group": "Grupo",
+        "user": "Handle"
+      },
+      "roleOf": "Rol de {{name}}",
+      "remove": "Quitar el rol de {{name}}",
+      "saved": "Rol guardado",
+      "none": "Nadie tiene rol: Folio solo aparece para los admins de instancia.",
+      "forbidden": "Solo los admins de Folio pueden gestionar los roles globales."
     }
   }
 }

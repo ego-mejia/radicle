@@ -1614,6 +1614,30 @@
       "reader": "reader",
       "creator": "creator",
       "admin": "admin"
+    },
+    "admin": {
+      "link": "Admin",
+      "title": "Folio admin",
+      "subtitle": "Global roles decide who reads, creates and administers Folio.",
+      "grants": "Global roles",
+      "help": "A person gets the highest role that reaches them: their own, their groups' or everyone's. Instance admins are always Folio admins. Without any role, Folio is hidden for them.",
+      "everyone": "Everyone",
+      "kinds": {
+        "everyone": "everyone",
+        "group": "group",
+        "user": "person"
+      },
+      "type": "Who",
+      "role": "Role",
+      "granteeLabel": {
+        "group": "Group",
+        "user": "Handle"
+      },
+      "roleOf": "Role of {{name}}",
+      "remove": "Remove the role of {{name}}",
+      "saved": "Role saved",
+      "none": "Nobody has a role: Folio is hidden for everyone but instance admins.",
+      "forbidden": "Only Folio admins can manage global roles."
     }
   }
 }
