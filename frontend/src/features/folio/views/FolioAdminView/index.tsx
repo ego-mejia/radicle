@@ -11,7 +11,9 @@ import { SettingsCard, SettingsParts as S } from '../../../../components/ui/Sett
 import { PageSpinner } from '../../../../components/ui/Spinner';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { useToast } from '../../../../hooks/useToast';
+import { Tabs } from '../../../../components/ui/Tabs';
 import {
+  type FolioCatalog,
   type FolioGrant,
   type FolioGrantIn,
   fetchFolioGrants,
@@ -20,6 +22,7 @@ import {
   removeFolioGrant,
   setFolioGrant,
 } from '../../../../services/api/folio';
+import { CatalogEditor } from '../../components/CatalogEditor';
 import * as F from './style';
 
 const ROLES: FolioGrant['role'][] = ['reader', 'creator', 'admin'];
@@ -142,20 +145,48 @@ function AddGrant() {
   );
 }
 
-/** Folio, Admin, Global roles (Folio 0.5): who reads, creates or administers Folio. */
+type Section = 'roles' | FolioCatalog;
+const CATALOGS: FolioCatalog[] = ['doc-types', 'audiences', 'languages'];
+
+/** Folio, Admin: global roles (Folio 0.5) and the metadata catalogs (Folio 1.3). */
 export function FolioAdminView() {
   const { t } = useTranslation();
   const { data: me } = useQuery({ queryKey: folioKeys.me, queryFn: fetchFolioMe });
   const isAdmin = me?.role === 'admin';
-  const { data: grants } = useQuery({
-    queryKey: folioKeys.grants,
-    queryFn: fetchFolioGrants,
-    enabled: isAdmin,
-  });
+  const [section, setSection] = useState<Section>('roles');
   if (me && !isAdmin) return <EmptyState plant="seed" title={t('folio.admin.forbidden')} />;
   return (
     <>
       <PageTitle title={t('folio.admin.title')} subtitle={t('folio.admin.subtitle')} />
+      <Tabs
+        label={t('folio.catalogs.tabs')}
+        value={section}
+        onChange={setSection}
+        tabs={[
+          { id: 'roles', label: t('folio.catalogs.roles') },
+          ...CATALOGS.map((c) => ({ id: c, label: t(`folio.catalogs.names.${c}`) })),
+        ]}
+      />
+      <F.Section>
+        {section === 'roles' ? (
+          <GlobalRoles enabled={isAdmin} />
+        ) : (
+          <CatalogEditor key={section} catalog={section} />
+        )}
+      </F.Section>
+    </>
+  );
+}
+
+function GlobalRoles({ enabled }: { enabled: boolean }) {
+  const { t } = useTranslation();
+  const { data: grants } = useQuery({
+    queryKey: folioKeys.grants,
+    queryFn: fetchFolioGrants,
+    enabled,
+  });
+  return (
+    <>
       <SettingsCard title={t('folio.admin.grants')} help={t('folio.admin.help')}>
         {grants ? (
           <S.Rows>

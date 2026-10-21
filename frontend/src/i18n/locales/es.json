@@ -1781,7 +1781,30 @@
       "title": "Aprobaciones"
     },
     "catalogs": {
-      "title": "Catálogos"
+      "title": "Catálogos",
+      "tabs": "Secciones del admin de Folio",
+      "roles": "Roles globales",
+      "names": {
+        "doc-types": "Tipos de documento",
+        "audiences": "Audiencias",
+        "languages": "Idiomas"
+      },
+      "help": {
+        "doc-types": "Cada página publicada tiene uno: how-to, guía, build spec… Los archivados siguen en las páginas viejas pero ya no se pueden elegir.",
+        "audiences": "Para quién está escrita una página. Una página puede tener varias.",
+        "languages": "Los idiomas en que se escriben las páginas, por código: es, en…"
+      },
+      "key": "Clave",
+      "name": "Nombre",
+      "description": "Descripción",
+      "archived": "Archivado",
+      "none": "Todavía no hay entradas.",
+      "added": "Agregado",
+      "up": "Subir {{name}}",
+      "down": "Bajar {{name}}",
+      "edit": "Editar {{name}}",
+      "archive": "Archivar {{name}}",
+      "restore": "Restaurar {{name}}"
     }
   }
 }

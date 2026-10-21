@@ -13,3 +13,7 @@ export const Kind = styled.span`
 export const Role = styled.div`
   width: 140px;
 `;
+
+export const Section = styled.div`
+  margin-top: ${({ theme }) => theme.space.lg};
+`;
