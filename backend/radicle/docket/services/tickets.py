@@ -28,13 +28,13 @@ from radicle.docket.db.models import (
     User,
     utcnow,
 )
-from radicle.docket.services import custom_fields, history, periods, rank, screens
+from radicle.docket.services import custom_fields, history, periods, screens
 from radicle.docket.services import ticket_fields as fields
 from radicle.docket.services.access import ProjectAccess, check_access, project_access
 from radicle.docket.services.remaining import estimate_changed
 from radicle.docket.services.workflows import load_workflows
 from radicle.platform.errors import Conflict, NotFound, ValidationFailed
-from radicle.platform.services import markdown
+from radicle.platform.services import markdown, rank
 
 UPDATABLE = (
     "title",

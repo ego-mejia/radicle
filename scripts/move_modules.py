@@ -56,6 +56,8 @@ STEPS: dict[str, list[tuple[str, str]]] = {
     ],
     # The in-process REST client every app's MCP tools call through.
     "platform-mcp": [("radicle.docket.mcp.api", "radicle.platform.mcp.api")],
+    # Fractional ranks: Docket orders tickets with them, Folio orders pages.
+    "platform-rank": [("radicle.docket.services.rank", "radicle.platform.services.rank")],
 }
 
 # Inside a moved package, `from radicle.db.models import X` must use that package's own
