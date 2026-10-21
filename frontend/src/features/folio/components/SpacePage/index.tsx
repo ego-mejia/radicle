@@ -17,6 +17,7 @@ import {
 import { type NewKind, NewNodeDialog } from '../NewNodeDialog';
 import { SpaceTree } from '../SpaceTree';
 import { StatusBadge } from '../StatusBadge';
+import { ArchivedList } from '../ArchivedList';
 import * as S from './style';
 
 /** A space: its cover and description, the page tree and its blog posts. */
@@ -77,6 +78,7 @@ export function SpacePage({ spaceKey }: { spaceKey: string }) {
           ) : (
             <PageSpinner />
           )}
+          <ArchivedList space={spaceKey} canRestore={canCreate} />
         </S.Side>
         <S.Main>
           <S.SectionTitle>{t('folio.space.posts')}</S.SectionTitle>
