@@ -8,7 +8,7 @@ from typing import Literal
 from fastapi import APIRouter, Query, Response
 from pydantic import Field
 
-from radicle.docket import public as docket
+import radicle.docket.public as docket
 from radicle.folio.api.spaces import NodeRef, _ref
 from radicle.folio.services import nodes, ticket_links
 from radicle.platform import authz

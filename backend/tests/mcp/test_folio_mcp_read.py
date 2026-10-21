@@ -87,6 +87,8 @@ COVERED = {
     "insert_diagram",
     "insert_chart",
     "insert_timeline",
+    "link_ticket",
+    "unlink_ticket",
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
@@ -102,6 +104,7 @@ EXEMPT = {
     "list_notifications",  # only your own, already filtered by each app's resolver
     "create_live_doc",
     "validate_visual",  # checks code it is sent; touches no page
+    "get_docs_for_ticket",  # docs of a ticket you see; test_folio_mcp_tickets.py
 }
 
 
@@ -134,6 +137,8 @@ async def test_restricted_pages_never_show_up(
             "add_comment": {"body": "x"},
             "append_to_live_doc": {"content_md": "x"},
             "add_database_rows": {"rows": [{"name": "x"}]},
+            "link_ticket": {"key": "PA-1"},
+            "unlink_ticket": {"key": "PA-1"},
             **VISUAL_CALLS,
         }
         for tool in ("get_page", "get_versions", "list_comments", "query_database", *writes):
@@ -188,6 +193,9 @@ async def test_every_tool_explains_missing_access(
         "query_database": {"id": some_id},
         "add_database_rows": {"id": some_id, "rows": [{"name": "x"}]},
         "validate_visual": {"format": "svg", "code": "<svg/>"},
+        "link_ticket": {"id": some_id, "key": "PA-1"},
+        "unlink_ticket": {"id": some_id, "key": "PA-1"},
+        "get_docs_for_ticket": {"key": "PA-1"},
         **{tool: {"id": some_id} | args for tool, args in VISUAL_CALLS.items()},
     }
     async with folio_mcp(client, team.agent) as folio:
