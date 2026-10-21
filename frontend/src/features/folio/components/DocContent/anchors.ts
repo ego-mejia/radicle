@@ -20,6 +20,7 @@ export function plainText(nodes: DocNode[] = []): string {
       if (n.type === 'text') return n.text ?? '';
       if (n.type === 'mention') return `@${String(n.attrs?.handle ?? '')}`;
       if (n.type === 'status') return String(n.attrs?.text ?? '');
+      if (n.type === 'ticket') return String(n.attrs?.key ?? '');
       if (n.type === 'hardBreak') return ' ';
       return plainText(n.content);
     })

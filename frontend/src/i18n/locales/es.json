@@ -2423,6 +2423,10 @@
       "proposalNote": "Es una propuesta: la página no cambia hasta que la insertes.",
       "again": "Intentar de nuevo",
       "insertSummary": "Insertar al inicio"
+    },
+    "tickets": {
+      "restricted": "Ticket restringido",
+      "unassigned": "Sin asignar"
     }
   },
   "notifications": {
