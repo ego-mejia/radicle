@@ -1,5 +1,7 @@
 """The "list by label" block over REST (Folio 3.4): GET /api/v1/folio/page-list."""
 
+from typing import Literal
+
 from fastapi import APIRouter, Query
 
 from radicle.folio.api.spaces import NodeRef, _ref
@@ -27,10 +29,13 @@ async def get_page_list(
     label: str = Query(min_length=1, max_length=50, description="e.g. onboarding"),
     space: str | None = Query(default=None, description="Only this space's pages"),
     limit: int = Query(default=10, ge=1, le=page_list.MAX_LIMIT),
+    order: Literal["newest", "title"] = Query(default="newest"),
 ) -> PageListOut:
-    """Published pages with the label that you can see, newest first."""
+    """Published pages with the label that you can see, newest first or by title."""
     (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
-    found = await page_list.pages_with_label(db, principal.user, label, space=space, limit=limit)
+    found = await page_list.pages_with_label(
+        db, principal.user, label, space=space, limit=limit, order=order
+    )
     return PageListOut(
         items=[
             ListedPageOut(

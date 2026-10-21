@@ -163,7 +163,9 @@ def register(server: MCPServer) -> None:
         id: NodeId,
         items: Annotated[
             list[dict[str, str]],
-            Field(description="In order: {date, title, text}; title is required"),
+            Field(
+                description="In order: {date, title, text, status}; title is required, status is done, in_progress or planned"
+            ),
         ],
         after_heading: AfterHeading = None,
     ) -> dict[str, Any]:

@@ -35,6 +35,12 @@ VISUAL = {"format": "svg", "code": "<svg></svg>", "description": "Un dibujo"}
         (block("pageList", label="x", limit=99), "at most 50"),
         (block("databaseView", database="inventario"), "a database's id"),
         (block("databaseView"), "database"),
+        (block("chart", kind="bar"), "header row"),
+        (block("chart", kind="bar", source="table", data=[["a", "b"], ["x", 1]]), "has no data"),
+        (block("chart", kind="bar", source="sheet"), "must be one of table"),
+        (block("timeline", items=[{"title": "x", "status": "late"}]), "is one of done"),
+        (block("pageList", label="x", order="random"), "must be one of newest, title"),
+        (block("paragraph", {"type": "inlineFormula"}), "latex"),
     ],
 )
 def test_the_schema_says_what_is_wrong(node: dict, says: str) -> None:
@@ -97,3 +103,42 @@ def test_markdown_written_by_hand() -> None:
     ]
     assert pages["attrs"] == {"label": "onboarding", "limit": 50}
     assert loose["type"] == "paragraph"  # a side only means something inside compare
+
+
+def _round_trip(*nodes: dict) -> None:
+    md = convert.to_markdown(doc(*nodes))
+    assert from_markdown(md) == doc(*nodes), md
+
+
+def test_options_round_trip() -> None:
+    _round_trip(
+        block("table", block("tableRow", block("tableHeader", block("paragraph")))),
+        block("chart", kind="line", title="Del cuadro", source="table"),
+        block(
+            "timeline",
+            items=[
+                {"date": "Q1", "title": "Beta", "status": "done"},
+                {"title": "GA", "status": "in_progress", "text": "En curso"},
+                {"date": "Q3", "title": "2.0", "status": "planned"},
+                {"title": "Sin estado"},
+            ],
+        ),
+        block("pageList", label="onboarding", order="title", limit=5),
+    )
+    formula = {"type": "inlineFormula", "attrs": {"latex": "a`b + x^2"}}
+    _round_trip(
+        block(
+            "paragraph",
+            {"type": "text", "text": "Vale "},
+            formula,
+            {"type": "text", "text": " hoy."},
+        )
+    )
+    _round_trip(block("paragraph", {"type": "inlineFormula", "attrs": {"latex": "\\frac{1}{2}"}}))
+
+
+def test_inline_math_only_between_dollars() -> None:
+    para = from_markdown("Cuesta $5 y `code`, y $`e=mc^2`$.")["content"][0]["content"]
+    assert [n["type"] for n in para] == ["text", "text", "text", "inlineFormula", "text"]
+    assert para[3]["attrs"]["latex"] == "e=mc^2" and para[4]["text"] == "."
+    assert "e=mc^2" in convert.to_text(doc(block("paragraph", para[3])))

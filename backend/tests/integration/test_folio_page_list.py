@@ -34,6 +34,8 @@ async def test_lists_published_pages_you_can_see(client: AsyncClient, team: Team
     assert r.status_code == 200, r.text
     assert [p["title"] for p in r.json()["items"]] == ["Segunda", "Primera"]  # newest first
     assert r.json()["items"][0]["space"] == "ops"
+    r = await client.get(f"{API}/page-list", params={"label": "mcp", "order": "title"}, headers=m)
+    assert [p["title"] for p in r.json()["items"]] == ["Primera", "Segunda"]
     r = await client.get(f"{API}/page-list", params={"label": "mcp", "space": "docs"}, headers=m)
     assert [p["id"] for p in r.json()["items"]] == [first]
     r = await client.get(f"{API}/page-list", params={"label": "mcp", "limit": 1}, headers=m)

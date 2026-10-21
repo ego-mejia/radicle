@@ -78,7 +78,16 @@ def inline(nodes: list[Node]) -> str:
             out.append(f"@{attrs['handle']}")
         elif kind == "status":
             out.append(f":status[{_escape(attrs['text'])}]{_attrs(color=attrs.get('color'))}")
+        elif kind == "inlineFormula":
+            out.append(f"${_code_span(attrs['latex'])}$")
     return "".join(out)
+
+
+def _code_span(text: str) -> str:
+    """`text` with enough backticks around it, and spaces when it starts or ends with one."""
+    ticks = "`" * (max((len(r) for r in re.findall(r"`+", text)), default=0) + 1)
+    pad = " " if text.startswith("`") or text.endswith("`") else ""
+    return f"{ticks}{pad}{text}{pad}{ticks}"
 
 
 def _indent(text: str, prefix: str, first: str | None = None) -> str:
@@ -189,6 +198,10 @@ def block(node: Node, depth: int = 0) -> str:
         return _fenced(attrs["language"] + _attrs(caption=attrs.get("caption")), attrs["source"])
     if kind == "formula":
         return _fenced("math", attrs["latex"])
+    if kind == "chart" and attrs.get("source") == "table":
+        return _fenced(
+            "chart" + _attrs(kind=attrs["kind"], title=attrs.get("title"), source="table"), ""
+        )
     if kind == "chart":
         rows = [[str(c) for c in row] for row in attrs["data"]]
         table = ["| " + " | ".join(rows[0]) + " |", "|" + "|".join(["---"] * len(rows[0])) + "|"]
@@ -196,8 +209,10 @@ def block(node: Node, depth: int = 0) -> str:
         head = "chart" + _attrs(kind=attrs["kind"], title=attrs.get("title"))
         return _fenced(head, "\n".join(table))
     if kind == "timeline":
+        boxes = {"done": "[x] ", "in_progress": "[~] ", "planned": "[ ] "}
         lines = [
-            " | ".join([i.get("date", ""), i["title"], i.get("text", "")]).rstrip(" |")
+            boxes.get(i.get("status", ""), "")
+            + " | ".join([i.get("date", ""), i["title"], i.get("text", "")]).rstrip(" |")
             for i in attrs["items"]
         ]
         return _fenced("timeline", "\n".join(lines))
@@ -212,7 +227,10 @@ def block(node: Node, depth: int = 0) -> str:
         return f"{outer}compare\n" + "\n".join(sides) + f"\n{outer}"
     if kind == "pageList":
         return "::pages" + _attrs(
-            label=attrs["label"], limit=attrs.get("limit"), space=attrs.get("space")
+            label=attrs["label"],
+            limit=attrs.get("limit"),
+            space=attrs.get("space"),
+            order=attrs.get("order"),
         )
     if kind == "databaseView":
         return "::database" + _attrs(id=attrs["database"], view=attrs.get("view"))
@@ -261,6 +279,8 @@ def _text_of(node: Node, out: list[str]) -> None:
         out.append(f"@{attrs['handle']}")
     elif kind == "status":
         out.append(attrs["text"])
+    elif kind == "inlineFormula":
+        out.append(attrs["latex"])
     elif kind == "image":
         out.append(" ".join(v for v in (attrs.get("alt"), attrs.get("caption")) if v))
     elif kind in ("file", "video"):
@@ -278,10 +298,11 @@ def _text_of(node: Node, out: list[str]) -> None:
     elif kind == "formula":
         out.append(attrs["latex"] + "\n")
     elif kind == "chart":
-        rows = [" ".join(str(c) for c in row) for row in attrs["data"]]
+        rows = [" ".join(str(c) for c in row) for row in attrs.get("data") or []]
         out.append("\n".join([attrs.get("title") or "", *rows]).strip() + "\n")
     elif kind == "timeline":
-        items = (" ".join(v for v in i.values() if v) for i in attrs["items"])
+        keys = ("date", "title", "text")
+        items = (" ".join(i[k] for k in keys if i.get(k)) for i in attrs["items"])
         out.append("\n".join(items) + "\n")
     for child in node.get("content", []):
         _text_of(child, out)

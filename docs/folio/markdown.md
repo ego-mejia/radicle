@@ -17,11 +17,11 @@ Los documentos de Folio se guardan como JSON de TipTap (`backend/radicle/folio/s
 | Checklist | `- [ ]` y `- [x]` |
 | Visual (3.3) | Un bloque de código ` ```visual{format=svg title="…" description="…"} ` con el SVG o HTML; `format` es `svg` o `html` y la descripción es obligatoria; hasta 512 KB de código, y para publicar necesita título |
 | Diagrama | ` ```mermaid ` con el código de Mermaid; opcional `{caption="…"}` |
-| Fórmula | ` ```math ` con LaTeX (KaTeX) |
-| Gráfica | ` ```chart{kind=bar title="…"} ` con una tabla GFM: la primera fila nombra las columnas, la primera columna son etiquetas y el resto números (`bar`, `line`, `area`, `pie`) |
-| Timeline | ` ```timeline ` con una línea por hito: `fecha \| título \| texto` (fecha y texto opcionales) |
+| Fórmula | ` ```math ` con LaTeX (KaTeX) en bloque; en línea, ``$`a^2 + b^2`$`` |
+| Gráfica | ` ```chart{kind=bar title="…"} ` con una tabla GFM: la primera fila nombra las columnas, la primera columna son etiquetas y el resto números (`bar`, `line`, `area`, `pie`). Con `source=table` y sin cuerpo dibuja la tabla que tiene justo antes y cambia cuando la editan |
+| Timeline | ` ```timeline ` con una línea por hito: `fecha \| título \| texto` (fecha y texto opcionales), y antes el estado si lo tiene: `[x]` hecho, `[~]` en curso, `[ ]` planeado |
 | Comparación | `::::compare`, cada lado en `:::side{title="Antes"}` … `:::`, y cierra `::::` (2 o 3 lados) |
-| Lista por label | `::pages{label=onboarding limit=5 space=docs}`: las páginas con ese label que puede ver quien lee |
+| Lista por label | `::pages{label=onboarding limit=5 space=docs}`: las páginas con ese label que puede ver quien lee; `order=title` las ordena por título en vez de la más reciente primero |
 | Vista de una database | `::database{id=<uuid> view=board}`: las filas de esa vista; sin `view`, la primera. Quien no puede ver la database ve que no tiene acceso |
 
 Un bloque de código con esos nombres que no forma un bloque válido (una gráfica sin filas, un visual sin descripción) se queda como bloque de código.
