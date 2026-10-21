@@ -1870,7 +1870,8 @@
         "comparison": "Comparación",
         "formula": "Fórmula",
         "inlineFormula": "Fórmula en línea",
-        "pageList": "Páginas por label"
+        "pageList": "Páginas por label",
+        "whiteboard": "Whiteboard"
       },
       "addCover": "Agregar portada",
       "changeCover": "Cambiar portada",
@@ -2404,7 +2405,12 @@
       "canvas": "Whiteboard",
       "exportPng": "PNG",
       "exportSvg": "SVG",
-      "unavailable": "No se puede mostrar este whiteboard"
+      "unavailable": "No se puede mostrar este whiteboard",
+      "noAccess": "No puedes ver este whiteboard.",
+      "block": {
+        "choose": "Elige un whiteboard",
+        "none": "Todavía no hay whiteboards que puedas ver."
+      }
     }
   },
   "notifications": {

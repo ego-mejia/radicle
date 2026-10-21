@@ -1,0 +1,24 @@
+import styled from 'styled-components';
+
+export const Picker = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: ${({ theme }) => theme.space.sm};
+  margin-top: ${({ theme }) => theme.space.lg};
+  padding: ${({ theme }) => theme.space.md};
+  border: 1px dashed ${({ theme }) => theme.color.border};
+  border-radius: ${({ theme }) => theme.radius.lg};
+  color: ${({ theme }) => theme.color.textMuted};
+  font-size: ${({ theme }) => theme.fontSize.md};
+
+  select {
+    flex: 1 1 180px;
+    width: auto;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
