@@ -7,7 +7,7 @@ way people read them: `assignee != luis` includes unassigned tickets.
 import re
 import uuid
 from dataclasses import dataclass, field
-from datetime import UTC, date, datetime, time, timedelta
+from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -58,11 +58,10 @@ from radicle.docket.query.fields import (
     lookup,
 )
 from radicle.platform.query import ast
+from radicle.platform.query.dates import Clock, apply
 from radicle.platform.query.errors import RQLError
 
 KEY_RE = re.compile(r"^([A-Za-z][A-Za-z0-9]{1,9})-(\d{1,9})$")
-REL_RE = re.compile(r"^([+-])(\d+)([mhdw])$")
-UNITS = {"m": "minutes", "h": "hours", "d": "days", "w": "weeks"}
 _ENGLISH: ColumnElement[Any] = literal_column("'english'::regconfig")
 _SPANISH: ColumnElement[Any] = literal_column("'spanish'::regconfig")
 
@@ -100,6 +99,7 @@ def _nn(expr: ColumnElement[bool]) -> ColumnElement[bool]:
 class _Compiler:
     def __init__(self, ctx: Context) -> None:
         self.ctx = ctx
+        self.clock = Clock(ctx.now, ctx.tz)
         self.references: list[tuple[str, str, int]] = []
 
     # --- structure -------------------------------------------------------------------------
@@ -304,11 +304,11 @@ class _Compiler:
                 (func.jsonb_typeof(stored) == "number", stored.astext.cast(Numeric)),
                 else_=None,
             )
-            return _nn(_apply(numeric, op, number))
+            return _nn(apply(numeric, op, number))
         if f.custom != "date":
             raise RQLError(f"'{f.name}' cannot be compared with {op} (at {v.pos}).", position=v.pos)
         day = self.as_date(v).isoformat()
-        return _nn(_apply(stored.astext, op, day))
+        return _nn(apply(stored.astext, op, day))
 
     # --- text ------------------------------------------------------------------------------
 
@@ -342,84 +342,17 @@ class _Compiler:
                 raise RQLError(
                     f"'{v.text}' is not a number (at {v.pos}).", position=v.pos
                 ) from None
-            return _nn(_apply(_column(f), op, number))
+            return _nn(apply(_column(f), op, number))
         if f.kind is Kind.date:
             day = self.as_date(v)
-            return _nn(_apply(_column(f), op, day))
+            return _nn(apply(_column(f), op, day))
         return self.datetime_compare(f, op, v)
 
     def datetime_compare(self, f: Field, op: str, v: ast.Value) -> ColumnElement[bool]:
-        column = _column(f)
-        moment, whole_day = self.as_datetime(v)
-        if whole_day is None:
-            return _nn(_apply(column, op, moment))
-        start, end = whole_day
-        bounds = {
-            "=": and_(column >= start, column < end),
-            ">": column >= end,
-            ">=": column >= start,
-            "<": column < start,
-            "<=": column < end,
-        }
-        return _nn(bounds[op])
-
-    def as_datetime(self, v: ast.Value) -> tuple[datetime, tuple[datetime, datetime] | None]:
-        """A moment, plus the [start, end) of the day when the value is a plain date."""
-        text = v.text.strip()
-        if v.kind == "reldate":
-            return self.relative(v), None
-        if v.kind == "func":
-            return self.function(v), None
-        try:
-            day = date.fromisoformat(text)
-        except ValueError:
-            day = None
-        if day is not None:
-            start = datetime.combine(day, time(), self.ctx.tz).astimezone(UTC)
-            return start, (start, start + timedelta(days=1))
-        try:
-            moment = datetime.fromisoformat(text)
-        except ValueError:
-            raise RQLError(
-                f"'{v.text}' is not a date (at {v.pos}). Use YYYY-MM-DD, a relative date "
-                "like -7d or a function like startOfWeek().",
-                position=v.pos,
-            ) from None
-        if moment.tzinfo is None:
-            moment = moment.replace(tzinfo=self.ctx.tz)
-        return moment.astimezone(UTC), None
+        return _nn(self.clock.compare(_column(f), op, v))
 
     def as_date(self, v: ast.Value) -> date:
-        moment, whole_day = self.as_datetime(v)
-        if whole_day is not None:
-            return whole_day[0].astimezone(self.ctx.tz).date()
-        return moment.astimezone(self.ctx.tz).date()
-
-    def relative(self, v: ast.Value) -> datetime:
-        match = REL_RE.fullmatch(v.text)
-        if match is None:  # pragma: no cover - the grammar only lets valid ones through
-            raise RQLError(f"Bad relative date '{v.text}' at {v.pos}.", position=v.pos)
-        sign, amount, unit = match.groups()
-        delta = timedelta(**{UNITS[unit]: int(amount)})
-        return self.ctx.now + delta if sign == "+" else self.ctx.now - delta
-
-    def function(self, v: ast.Value) -> datetime:
-        name = v.raw.lower()
-        local = self.ctx.now.astimezone(self.ctx.tz)
-        midnight = local.replace(hour=0, minute=0, second=0, microsecond=0)
-        if name == "now()":
-            return self.ctx.now
-        if name == "startofday()":
-            return midnight.astimezone(UTC)
-        if name == "startofweek()":
-            return (midnight - timedelta(days=midnight.weekday())).astimezone(UTC)
-        if name == "startofmonth()":
-            return midnight.replace(day=1).astimezone(UTC)
-        raise RQLError(
-            f"'{v.raw}' is not a date function (at {v.pos}). Use now(), startOfDay(), "
-            "startOfWeek() or startOfMonth().",
-            position=v.pos,
-        )
+        return self.clock.day(v)
 
 
 def _open_sprint_row() -> ColumnElement[bool]:
@@ -460,17 +393,6 @@ def _column(f: Field) -> Any:
         "effort": Ticket.effort,
     }
     return columns[f.name]
-
-
-def _apply(column: Any, op: str, value: object) -> ColumnElement[bool]:
-    ops: dict[str, ColumnElement[bool]] = {
-        "=": column == value,
-        ">": column > value,
-        ">=": column >= value,
-        "<": column < value,
-        "<=": column <= value,
-    }
-    return ops[op]
 
 
 def _cmp(a: int, op: str, b: int) -> bool:
