@@ -1084,6 +1084,203 @@
         "title": "AuthOptions",
         "type": "object"
       },
+      "AutomationActionOut": {
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "label"
+        ],
+        "title": "AutomationActionOut",
+        "type": "object"
+      },
+      "AutomationExampleOut": {
+        "properties": {
+          "actions": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Actions",
+            "type": "array"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "trigger": {
+            "additionalProperties": true,
+            "title": "Trigger",
+            "type": "object"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "trigger",
+          "actions"
+        ],
+        "title": "AutomationExampleOut",
+        "type": "object"
+      },
+      "AutomationRuleIn": {
+        "additionalProperties": false,
+        "properties": {
+          "actions": {
+            "description": "e.g. [{\"type\": \"folio.add_label\", \u2026}]",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Actions",
+            "type": "array"
+          },
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "filter": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "e.g. {\"space\": \"docs\"}",
+            "title": "Filter",
+            "type": "object"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "trigger": {
+            "additionalProperties": true,
+            "description": "{\"type\": \"event\", \"event\": \"page.outdated\"} or {\"type\": \"schedule\", \"every\": \"day\", \"select\": \"folio.pages\", \"params\": {\"rql\": \"\u2026\"}}",
+            "title": "Trigger",
+            "type": "object"
+          }
+        },
+        "required": [
+          "name",
+          "trigger",
+          "actions"
+        ],
+        "title": "AutomationRuleIn",
+        "type": "object"
+      },
+      "AutomationRuleOut": {
+        "properties": {
+          "actions": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Actions",
+            "type": "array"
+          },
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "filter": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Filter",
+            "type": "object"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "last_run_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Run At"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "trigger": {
+            "additionalProperties": true,
+            "title": "Trigger",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "trigger",
+          "filter",
+          "actions",
+          "active",
+          "created_at",
+          "last_run_at"
+        ],
+        "title": "AutomationRuleOut",
+        "type": "object"
+      },
+      "AutomationRunOut": {
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "log": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Log",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "target",
+          "log",
+          "created_at"
+        ],
+        "title": "AutomationRunOut",
+        "type": "object"
+      },
       "BacklogOut": {
         "properties": {
           "items": {
@@ -20953,6 +21150,298 @@
         "summary": "Auth Options",
         "tags": [
           "sso"
+        ]
+      }
+    },
+    "/api/v1/automation/actions": {
+      "get": {
+        "operationId": "list_automation_actions_api_v1_automation_actions_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AutomationActionOut"
+                  },
+                  "title": "Response List Automation Actions Api V1 Automation Actions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Automation Actions",
+        "tags": [
+          "automation"
+        ]
+      }
+    },
+    "/api/v1/automation/examples": {
+      "get": {
+        "description": "Ready-made rules to start from; fill what's empty (e.g. the integration).",
+        "operationId": "list_automation_examples_api_v1_automation_examples_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AutomationExampleOut"
+                  },
+                  "title": "Response List Automation Examples Api V1 Automation Examples Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Automation Examples",
+        "tags": [
+          "automation"
+        ]
+      }
+    },
+    "/api/v1/automation/rules": {
+      "get": {
+        "operationId": "list_automation_rules_api_v1_automation_rules_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AutomationRuleOut"
+                  },
+                  "title": "Response List Automation Rules Api V1 Automation Rules Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Automation Rules",
+        "tags": [
+          "automation"
+        ]
+      },
+      "post": {
+        "description": "The actions run with your permissions.",
+        "operationId": "create_automation_rule_api_v1_automation_rules_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutomationRuleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutomationRuleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Automation Rule",
+        "tags": [
+          "automation"
+        ]
+      }
+    },
+    "/api/v1/automation/rules/{rule_id}": {
+      "delete": {
+        "operationId": "delete_automation_rule_api_v1_automation_rules__rule_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Rule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Automation Rule",
+        "tags": [
+          "automation"
+        ]
+      },
+      "get": {
+        "operationId": "get_automation_rule_api_v1_automation_rules__rule_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Rule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutomationRuleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Automation Rule",
+        "tags": [
+          "automation"
+        ]
+      },
+      "put": {
+        "operationId": "update_automation_rule_api_v1_automation_rules__rule_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Rule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutomationRuleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutomationRuleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Automation Rule",
+        "tags": [
+          "automation"
+        ]
+      }
+    },
+    "/api/v1/automation/rules/{rule_id}/runs": {
+      "get": {
+        "description": "The latest 50 runs, newest first, with what each action did.",
+        "operationId": "list_automation_runs_api_v1_automation_rules__rule_id__runs_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Rule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AutomationRunOut"
+                  },
+                  "title": "Response List Automation Runs Api V1 Automation Rules  Rule Id  Runs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Automation Runs",
+        "tags": [
+          "automation"
         ]
       }
     },

@@ -147,6 +147,14 @@ async def every_action(client: AsyncClient, team: Team) -> None:
     chat_id = (await client.post(f"{API}/integrations", headers=i, json=slack)).json()["id"]
     await client.put(f"{API}/integrations/{chat_id}", headers=i, json=slack | {"credentials": None})
     await client.delete(f"{API}/integrations/{chat_id}", headers=i)
+    rule = {
+        "name": "R",
+        "trigger": {"type": "event", "event": "page.published"},
+        "actions": [{"type": "notify_person", "handle": "ana"}],
+    }
+    rule_id = (await client.post(f"{API}/automation/rules", headers=i, json=rule)).json()["id"]
+    await client.put(f"{API}/automation/rules/{rule_id}", headers=i, json=rule | {"name": "R2"})
+    await client.delete(f"{API}/automation/rules/{rule_id}", headers=i)
     await client.post(
         f"{API}/tickets/bulk",
         headers=team.member.headers,

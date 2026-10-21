@@ -60,6 +60,7 @@ class Action:
 
 _actions: dict[str, Action] = {}
 _selectors: dict[str, Select] = {}
+_examples: list[dict[str, Any]] = []
 
 
 def action(name: str, label: str, *, check: Check | None = None) -> Callable[[Run], Run]:
@@ -81,6 +82,17 @@ def selector(name: str) -> Callable[[Select], Select]:
         return fn
 
     return register
+
+
+def example(name: str, description: str, trigger: dict[str, Any], steps: list[Any]) -> None:
+    """A ready-made rule admins start from (fields left empty are theirs to fill)."""
+    _examples.append(
+        {"name": name, "description": description, "trigger": trigger, "actions": steps}
+    )
+
+
+def examples() -> list[dict[str, Any]]:
+    return list(_examples)
 
 
 def actions() -> dict[str, str]:
@@ -138,6 +150,39 @@ async def create(
     db.add(rule)
     await db.flush()
     return rule
+
+
+async def update(
+    db: AsyncSession,
+    rule: AutomationRule,
+    name: str,
+    trigger: dict[str, Any],
+    steps: list[dict[str, Any]],
+    filter: dict[str, str] | None = None,
+    active: bool = True,
+) -> AutomationRule:
+    if not name.strip():
+        raise _invalid("name", "Give the rule a name that says what it does.")
+    check(trigger, steps)
+    rule.name, rule.trigger, rule.actions = name.strip(), trigger, steps
+    rule.filter, rule.active = filter or {}, active
+    await db.flush()
+    return rule
+
+
+async def list_all(db: AsyncSession) -> list[AutomationRule]:
+    return list(await db.scalars(select(AutomationRule).order_by(AutomationRule.name)))
+
+
+async def runs(db: AsyncSession, rule: AutomationRule, limit: int = 50) -> list[AutomationRun]:
+    return list(
+        await db.scalars(
+            select(AutomationRun)
+            .where(AutomationRun.rule_id == rule.id)
+            .order_by(AutomationRun.id.desc())
+            .limit(limit)
+        )
+    )
 
 
 async def get(db: AsyncSession, rule_id: uuid.UUID) -> AutomationRule:

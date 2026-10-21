@@ -368,6 +368,103 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/automation/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Automation Actions */
+        get: operations["list_automation_actions_api_v1_automation_actions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/automation/examples": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Automation Examples
+         * @description Ready-made rules to start from; fill what's empty (e.g. the integration).
+         */
+        get: operations["list_automation_examples_api_v1_automation_examples_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/automation/rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Automation Rules */
+        get: operations["list_automation_rules_api_v1_automation_rules_get"];
+        put?: never;
+        /**
+         * Create Automation Rule
+         * @description The actions run with your permissions.
+         */
+        post: operations["create_automation_rule_api_v1_automation_rules_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/automation/rules/{rule_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Automation Rule */
+        get: operations["get_automation_rule_api_v1_automation_rules__rule_id__get"];
+        /** Update Automation Rule */
+        put: operations["update_automation_rule_api_v1_automation_rules__rule_id__put"];
+        post?: never;
+        /** Delete Automation Rule */
+        delete: operations["delete_automation_rule_api_v1_automation_rules__rule_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/automation/rules/{rule_id}/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Automation Runs
+         * @description The latest 50 runs, newest first, with what each action did.
+         */
+        get: operations["list_automation_runs_api_v1_automation_rules__rule_id__runs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/boards/{board_id}": {
         parameters: {
             query?: never;
@@ -5564,6 +5661,100 @@ export interface components {
             password_login_enabled: boolean;
             /** Providers */
             providers: components["schemas"]["ProviderButton"][];
+        };
+        /** AutomationActionOut */
+        AutomationActionOut: {
+            /** Label */
+            label: string;
+            /** Name */
+            name: string;
+        };
+        /** AutomationExampleOut */
+        AutomationExampleOut: {
+            /** Actions */
+            actions: {
+                [key: string]: unknown;
+            }[];
+            /** Description */
+            description: string;
+            /** Name */
+            name: string;
+            /** Trigger */
+            trigger: {
+                [key: string]: unknown;
+            };
+        };
+        /** AutomationRuleIn */
+        AutomationRuleIn: {
+            /**
+             * Actions
+             * @description e.g. [{"type": "folio.add_label", …}]
+             */
+            actions: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Active
+             * @default true
+             */
+            active?: boolean;
+            /**
+             * Filter
+             * @description e.g. {"space": "docs"}
+             */
+            filter?: {
+                [key: string]: string;
+            };
+            /** Name */
+            name: string;
+            /**
+             * Trigger
+             * @description {"type": "event", "event": "page.outdated"} or {"type": "schedule", "every": "day", "select": "folio.pages", "params": {"rql": "…"}}
+             */
+            trigger: {
+                [key: string]: unknown;
+            };
+        };
+        /** AutomationRuleOut */
+        AutomationRuleOut: {
+            /** Actions */
+            actions: {
+                [key: string]: unknown;
+            }[];
+            /** Active */
+            active: boolean;
+            /** Created At */
+            created_at: string;
+            /** Filter */
+            filter: {
+                [key: string]: string;
+            };
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Last Run At */
+            last_run_at: string | null;
+            /** Name */
+            name: string;
+            /** Trigger */
+            trigger: {
+                [key: string]: unknown;
+            };
+        };
+        /** AutomationRunOut */
+        AutomationRunOut: {
+            /** Created At */
+            created_at: string;
+            /** Id */
+            id: number;
+            /** Log */
+            log: string[];
+            /** Status */
+            status: string;
+            /** Target */
+            target: string;
         };
         /** BacklogOut */
         BacklogOut: {
@@ -13111,6 +13302,225 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AuthOptions"];
+                };
+            };
+        };
+    };
+    list_automation_actions_api_v1_automation_actions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomationActionOut"][];
+                };
+            };
+        };
+    };
+    list_automation_examples_api_v1_automation_examples_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomationExampleOut"][];
+                };
+            };
+        };
+    };
+    list_automation_rules_api_v1_automation_rules_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomationRuleOut"][];
+                };
+            };
+        };
+    };
+    create_automation_rule_api_v1_automation_rules_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AutomationRuleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomationRuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_automation_rule_api_v1_automation_rules__rule_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomationRuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_automation_rule_api_v1_automation_rules__rule_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AutomationRuleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomationRuleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_automation_rule_api_v1_automation_rules__rule_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_automation_runs_api_v1_automation_rules__rule_id__runs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomationRunOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
