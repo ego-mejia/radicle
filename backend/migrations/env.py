@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 # Importing the modules registers their tables on the shared metadata.
 import radicle.folio.db.collab
+import radicle.folio.db.databases
 import radicle.folio.db.models
 import radicle.folio.db.templates  # noqa: F401  (ruff flags only the last of these)
 from radicle.docket.db.models import Base

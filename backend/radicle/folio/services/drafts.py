@@ -40,6 +40,8 @@ def _invalid(field: str, message: str) -> ValidationFailed:
 def _require_content(node: FolioNode) -> None:
     if node.kind == NodeKind.folder:
         raise _invalid("node", "Folders have no content; write in a page or blog post.")
+    if node.kind == NodeKind.database:
+        raise _invalid("node", "Databases have rows, not a draft: use /databases/{id}/rows.")
 
 
 async def get_draft(db: AsyncSession, node: FolioNode) -> Draft:

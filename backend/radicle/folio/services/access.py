@@ -122,6 +122,7 @@ def visible_nodes(user: User, role: FolioRole | None) -> ColumnElement[bool]:
         FolioNode.published_version_id.is_not(None),
         FolioNode.kind == NodeKind.folder,
         FolioNode.kind == NodeKind.live_doc,  # never published: readable as they are written
+        FolioNode.kind == NodeKind.database,  # likewise: its rows are its content
         FolioNode.created_by == user.id,
         FolioNode.space_id.in_(_spaces_with(user, "admin")),
         *writers,

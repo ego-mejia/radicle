@@ -65,7 +65,8 @@ async def collab_socket(websocket: WebSocket, node_id: uuid.UUID) -> None:
         if not allowed.allowed or node is None or not await access.can_view(db, user, node_id):
             await websocket.close(code=NOT_FOUND, reason=f"Page {node_id} not found.")
             return
-        if node.kind == NodeKind.folder or not await access.may_edit(db, user, node):
+        no_text = node.kind in (NodeKind.folder, NodeKind.database)
+        if no_text or not await access.may_edit(db, user, node):
             await websocket.close(
                 code=FORBIDDEN,
                 reason="You can read this page but not edit it; open the published version.",

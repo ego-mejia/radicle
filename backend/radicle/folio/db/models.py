@@ -75,6 +75,7 @@ class NodeKind(enum.StrEnum):
     folder = "folder"
     blog_post = "blog_post"
     live_doc = "live_doc"  # always editable, never published (Folio 2.5)
+    database = "database"  # typed rows and views, never published (Folio 3.6)
 
 
 class NodeStatus(enum.StrEnum):
