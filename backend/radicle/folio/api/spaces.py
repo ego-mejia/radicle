@@ -1,7 +1,7 @@
 """Spaces and their tree over REST (Folio 1.1): /api/v1/folio/spaces, /nodes."""
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Literal
 
 from fastapi import APIRouter, Query, Response
@@ -66,6 +66,9 @@ class NodeOut(NodeRef):
     version: int | None = Field(description="Published version; null until first published")
     metadata: dict[str, Any] | None = Field(description="Of the published version")
     content_json: dict[str, Any] | None = Field(description="Published content (TipTap)")
+    status: Literal["draft", "published", "in_review", "verified", "outdated"]
+    verified_until: date | None
+    archived_at: UtcDatetime | None
 
 
 class NodeIn(Input):
@@ -124,6 +127,9 @@ async def _node(db: Db, node: FolioNode) -> NodeOut:
         version=current.number if current else None,
         metadata=current.metadata_ if current else None,
         content_json=current.content_json if current else None,
+        status=node.status.value,
+        verified_until=node.verified_until,
+        archived_at=node.archived_at,
     )
 
 

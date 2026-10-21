@@ -10,11 +10,11 @@ from dataclasses import dataclass
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import select
+from sqlalchemy import ColumnElement, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioNode, FolioSpace, FolioVersion
-from radicle.folio.query.compiler import Context, Published, compile_query
+from radicle.folio.query.compiler import Compiled, Context, Published, compile_query
 from radicle.folio.services import access
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.errors import ValidationFailed
@@ -56,6 +56,11 @@ def _decode(cursor: str | None) -> int:
     return offset
 
 
+def _defaults(compiled: Compiled) -> list[ColumnElement[bool]]:
+    """Archived nodes stay out unless the query asks about them."""
+    return [] if "archived" in compiled.fields else [FolioNode.archived_at.is_(None)]
+
+
 async def query(
     db: AsyncSession,
     user: User,
@@ -74,7 +79,7 @@ async def query(
         select(FolioNode, FolioSpace.key, Published)
         .join(FolioSpace, FolioSpace.id == FolioNode.space_id)
         .outerjoin(Published, Published.id == FolioNode.published_version_id)
-        .where(await access.node_filter(db, user), compiled.where)
+        .where(await access.node_filter(db, user), compiled.where, *_defaults(compiled))
         .order_by(*compiled.order_by)
         .offset(offset)
         .limit(limit + 1)

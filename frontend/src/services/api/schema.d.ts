@@ -910,6 +910,27 @@ export interface paths {
         patch: operations["patch_node_api_v1_folio_nodes__node_id__patch"];
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archive Node
+         * @description Take the node and everything under it out of the tree, search and the RAG index.
+         *     Needs the delete permission, like deleting.
+         */
+        post: operations["archive_node_api_v1_folio_nodes__node_id__archive_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}/assets": {
         parameters: {
             query?: never;
@@ -1028,6 +1049,26 @@ export interface paths {
          */
         put: operations["put_restrictions_api_v1_folio_nodes__node_id__restrictions_put"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/unarchive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Unarchive Node
+         * @description Bring back what that archive took out, and index it again.
+         */
+        post: operations["unarchive_node_api_v1_folio_nodes__node_id__unarchive_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1156,6 +1197,26 @@ export interface paths {
         head?: never;
         /** Patch Space */
         patch: operations["patch_space_api_v1_folio_spaces__key__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/spaces/{key}/archived": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Archived
+         * @description The space's Archived section: what was archived, newest first.
+         */
+        get: operations["list_archived_api_v1_folio_spaces__key__archived_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/folio/spaces/{key}/grants": {
@@ -3333,6 +3394,29 @@ export interface components {
             /** @description task or bug */
             type: components["schemas"]["TicketType"];
         };
+        /** ArchivedOut */
+        ArchivedOut: {
+            /** Archived At */
+            archived_at: string;
+            /** Archived By */
+            archived_by: string | null;
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "page" | "folder" | "blog_post";
+            /** Slug */
+            slug: string;
+            /** Title */
+            title: string;
+        };
         /** AreaConf */
         AreaConf: {
             /** Color */
@@ -5347,9 +5431,11 @@ export interface components {
          * NodeKind
          * @enum {string}
          */
-        NodeKind: "page" | "folder" | "blog_post";
+        NodeKind: "page" | "folder" | "blog_post" | "live_doc";
         /** NodeOut */
         NodeOut: {
+            /** Archived At */
+            archived_at: string | null;
             /**
              * Breadcrumbs
              * @description Ancestors from the root down
@@ -5393,10 +5479,17 @@ export interface components {
             slug: string;
             /** Space */
             space: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "published" | "in_review" | "verified" | "outdated";
             /** Title */
             title: string;
             /** Updated At */
             updated_at: string;
+            /** Verified Until */
+            verified_until: string | null;
             /**
              * Version
              * @description Published version; null until first published
@@ -5485,6 +5578,13 @@ export interface components {
          * @enum {string}
          */
         Origin: "team" | "user";
+        /** Page[ArchivedOut] */
+        Page_ArchivedOut_: {
+            /** Items */
+            items: components["schemas"]["ArchivedOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
         /** Page[AreaOut] */
         Page_AreaOut_: {
             /** Items */
@@ -10071,6 +10171,37 @@ export interface operations {
             };
         };
     };
+    archive_node_api_v1_folio_nodes__node_id__archive_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     upload_asset_api_v1_folio_nodes__node_id__assets_post: {
         parameters: {
             query?: never;
@@ -10338,6 +10469,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RestrictionsIO"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unarchive_node_api_v1_folio_nodes__node_id__unarchive_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NodeOut"];
                 };
             };
             /** @description Validation Error */
@@ -10629,6 +10791,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SpaceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_archived_api_v1_folio_spaces__key__archived_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ArchivedOut_"];
                 };
             };
             /** @description Validation Error */
