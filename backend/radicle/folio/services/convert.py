@@ -134,6 +134,14 @@ def block(node: Node, depth: int = 0) -> str:
         return f"{ticks}{attrs.get('language') or ''}\n{code}\n{ticks}"
     if kind == "horizontalRule":
         return "---"
+    if kind == "actionItem":
+        extra = _attrs(
+            id=attrs["id"],
+            assignee=attrs.get("assignee"),
+            due=attrs.get("due"),
+            done="true" if attrs.get("done") else None,
+        )
+        return f"::task[{inline(content)}]{extra}"
     if kind == "table":
         return _table(node)
     if kind == "panel":
@@ -181,6 +189,7 @@ def to_markdown(doc: Node) -> str:
 
 _LINES = (
     "paragraph",
+    "actionItem",
     "heading",
     "codeBlock",
     "tableCell",
