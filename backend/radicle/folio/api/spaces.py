@@ -20,6 +20,7 @@ Kind = Literal["page", "folder", "blog_post"]
 
 
 class SpaceOut(Output):
+    id: uuid.UUID = Field(description="For follow and favorite (/watch/space/{id})")
     key: str
     name: str
     description: str
@@ -100,6 +101,7 @@ class MoveIn(Input):
 async def _space(db: Db, user: User, s: FolioSpace) -> SpaceOut:
     granted = await access.space_permissions(db, user, s)
     return SpaceOut(
+        id=s.id,
         permissions=[p.value for p in SpacePermission if p.value in granted],
         key=s.key,
         name=s.name,

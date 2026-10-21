@@ -9780,6 +9780,12 @@
             ],
             "title": "Icon"
           },
+          "id": {
+            "description": "For follow and favorite (/watch/space/{id})",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
           "key": {
             "title": "Key",
             "type": "string"
@@ -9811,6 +9817,7 @@
           }
         },
         "required": [
+          "id",
           "key",
           "name",
           "description",
