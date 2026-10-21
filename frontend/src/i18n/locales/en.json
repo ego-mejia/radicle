@@ -1934,7 +1934,8 @@
         "order": "Order",
         "newest": "Newest first",
         "byTitle": "By title",
-        "limit": "How many"
+        "limit": "How many",
+        "sideTitle": "Side heading"
       }
     },
     "publish": {
