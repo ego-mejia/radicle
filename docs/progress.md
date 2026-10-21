@@ -131,7 +131,7 @@ curl -H "Authorization: Bearer rdc_..." localhost:8000/api/v1/me
 
 **Qué se hizo**
 
-- Gramática Lark (`query/grammar.lark`), árbol en `query/ast.py`, parser con errores que dicen posición, qué se encontró y qué se esperaba.
+- Gramática Lark (`query/grammar.lark`), árbol en `query/ast.py` (desde Folio 1.6 en `platform/query/`, compartidos con Folio), parser con errores que dicen posición, qué se encontró y qué se esperaba.
 - Catálogo de 23 campos con operadores, IN y EMPTY (`query/fields.py`); sugerencias por distancia de edición ("Did you mean 'priority'?").
 - Compilador a SQLAlchemy sin acceso a base de datos (`query/compiler.py`), probado comparando SQL generado.
 - `GET /tickets?q=&limit=&cursor=` con filtro de permisos siempre aplicado (solo proyectos donde eres miembro, nunca tickets borrados), `total` y `warnings`.

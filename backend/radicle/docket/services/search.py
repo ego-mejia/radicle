@@ -23,9 +23,9 @@ from radicle.docket.db.models import (
     utcnow,
 )
 from radicle.docket.query.compiler import Compiled, Context, compile_query
-from radicle.docket.query.parser import parse
 from radicle.docket.services import custom_fields
 from radicle.platform.errors import ValidationFailed
+from radicle.platform.query.parser import parse
 
 DEFAULT_LIMIT = 50
 MAX_LIMIT = 200

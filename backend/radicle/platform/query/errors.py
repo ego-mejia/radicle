@@ -1,3 +1,5 @@
+import difflib
+
 from radicle.platform.errors import ValidationFailed
 
 
@@ -14,3 +16,9 @@ class RQLError(ValidationFailed):
         )
         self.position = position
         self.expected = expected or []
+
+
+def suggest(word: str, options: list[str] | tuple[str, ...]) -> str:
+    """A hint with the closest option, or an empty string."""
+    match = difflib.get_close_matches(word.lower(), list(options), n=1, cutoff=0.6)
+    return f" Did you mean '{match[0]}'?" if match else ""

@@ -58,6 +58,11 @@ STEPS: dict[str, list[tuple[str, str]]] = {
     "platform-mcp": [("radicle.docket.mcp.api", "radicle.platform.mcp.api")],
     # Fractional ranks: Docket orders tickets with them, Folio orders pages.
     "platform-rank": [("radicle.docket.services.rank", "radicle.platform.services.rank")],
+    "platform-query": [
+        ("radicle.docket.query.ast", "radicle.platform.query.ast"),
+        ("radicle.docket.query.errors", "radicle.platform.query.errors"),
+        ("radicle.docket.query.parser", "radicle.platform.query.parser"),
+    ],
 }
 
 # Inside a moved package, `from radicle.db.models import X` must use that package's own

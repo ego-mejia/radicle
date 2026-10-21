@@ -7,8 +7,8 @@ from typing import Any
 from lark import Lark, Token, Transformer, Tree, v_args
 from lark.exceptions import UnexpectedCharacters, UnexpectedEOF, UnexpectedInput, UnexpectedToken
 
-from radicle.docket.query import ast
-from radicle.docket.query.errors import RQLError
+from radicle.platform.query import ast
+from radicle.platform.query.errors import RQLError
 
 MAX_LENGTH = 2000
 

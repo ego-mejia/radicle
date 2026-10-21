@@ -48,8 +48,6 @@ from radicle.docket.db.models import (
     TicketLink,
     User,
 )
-from radicle.docket.query import ast
-from radicle.docket.query.errors import RQLError
 from radicle.docket.query.fields import (
     Field,
     Kind,
@@ -59,6 +57,8 @@ from radicle.docket.query.fields import (
     check_sort,
     lookup,
 )
+from radicle.platform.query import ast
+from radicle.platform.query.errors import RQLError
 
 KEY_RE = re.compile(r"^([A-Za-z][A-Za-z0-9]{1,9})-(\d{1,9})$")
 REL_RE = re.compile(r"^([+-])(\d+)([mhdw])$")
