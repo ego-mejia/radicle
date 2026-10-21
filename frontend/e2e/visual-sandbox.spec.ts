@@ -93,3 +93,29 @@ test('a visual reaches neither the page nor the network', async ({ page }) => {
   }, THEME_MESSAGE);
   await expect.poll(async () => ((await probes()) as { theme?: string }).theme).toBe('#E6E6E6');
 });
+
+test('a frame taller than its visual reports the visual, so it can shrink', async ({ page }) => {
+  await page.route(`${ORIGIN}/`, (route) =>
+    route.fulfill({ contentType: 'text/html', body: '<!doctype html><body></body>' }),
+  );
+  await page.goto(`${ORIGIN}/`);
+  const srcdoc = visualDocument('<div style="height:120px">corto</div>', LIGHT);
+  await page.evaluate(
+    ({ srcdoc, sandbox, height }) => {
+      const w = window as unknown as { heights: number[] };
+      w.heights = [];
+      addEventListener('message', (e) => {
+        if (e.data?.type === height) w.heights.push(e.data.height);
+      });
+      const frame = document.createElement('iframe');
+      frame.setAttribute('sandbox', sandbox);
+      frame.style.height = '600px';
+      frame.srcdoc = srcdoc;
+      document.body.append(frame);
+    },
+    { srcdoc, sandbox: VISUAL_SANDBOX, height: HEIGHT_MESSAGE },
+  );
+  const heights = () => page.evaluate(() => (window as unknown as { heights: number[] }).heights);
+  await expect.poll(async () => (await heights()).length).toBeGreaterThan(0);
+  expect(Math.max(...(await heights()))).toBe(120);
+});
