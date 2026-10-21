@@ -17,6 +17,7 @@ READ = (
     "list_notifications",
     "query_database",
     "validate_visual",
+    "get_docs_for_ticket",
 )
 
 WRITE = (
@@ -36,6 +37,8 @@ WRITE = (
     "insert_diagram",
     "insert_chart",
     "insert_timeline",
+    "link_ticket",
+    "unlink_ticket",
 )
 
 CATALOG: tuple[Tool, ...] = (

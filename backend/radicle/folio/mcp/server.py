@@ -7,7 +7,17 @@ from fastapi import FastAPI
 from mcp.server.mcpserver import Context
 
 from radicle import __version__
-from radicle.folio.mcp import comments, databases, livedocs, read, templates, visuals, work, write
+from radicle.folio.mcp import (
+    comments,
+    databases,
+    livedocs,
+    read,
+    templates,
+    tickets,
+    visuals,
+    work,
+    write,
+)
 from radicle.platform.mcp import http
 from radicle.platform.mcp.api import api
 from radicle.platform.mcp.server import LimitedMCPServer
@@ -45,6 +55,7 @@ work.register(server)
 livedocs.register(server)
 databases.register(server)
 visuals.register(server)
+tickets.register(server)
 
 
 def mount(app: FastAPI) -> None:
