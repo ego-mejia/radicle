@@ -55,13 +55,37 @@ async def _page(
     return data, {"app": APP, "space": space.key if space else ""}
 
 
+SUMMARIES = {
+    "page.published": "{actor} published “{title}” in {space}",
+    "page.updated": "{actor} published a new version of “{title}” in {space}",
+    "page.archived": "{actor} archived “{title}” in {space}",
+    "page.commented": "{actor} commented on “{title}” in {space}",
+    "page.status_changed": "“{title}” in {space} is now {after}",
+    "page.outdated": "“{title}” in {space} is outdated: its verification expired",
+    "submission.created": "{actor} sent “{title}” in {space} for approval",
+    "submission.decided": "“{title}” in {space} was {decision}",
+}
+
+
+def _summary(name: str, data: dict[str, Any]) -> str:
+    page = data["page"]
+    return SUMMARIES[name].format(
+        actor=data["actor"] or "Radicle",
+        title=page["title"],
+        space=page["space"],
+        after=data.get("after", ""),
+        decision=data.get("decision", ""),
+    )
+
+
 def _one(
     name: str, page: tuple[dict[str, Any], dict[str, str]] | None, **more: Any
 ) -> list[PublicEvent]:
     if page is None:
         return []
     data, scope = page
-    return [PublicEvent(name, data | more, scope)]
+    data = data | more
+    return [PublicEvent(name, data, scope, _summary(name, data), data["page"]["url"])]
 
 
 @events.publisher(APP, "page_published")
