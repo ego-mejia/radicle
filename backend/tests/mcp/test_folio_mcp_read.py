@@ -110,6 +110,9 @@ EXEMPT = {
     "validate_visual",  # checks code it is sent; touches no page
     "get_docs_for_ticket",  # docs of a ticket you see; test_folio_mcp_tickets.py
     "get_search_gaps",  # Folio admins only; test_folio_mcp_analytics.py
+    # Events, not pages; a space you can't see is not found: test_folio_mcp_calendars.py
+    "list_calendar_events",
+    "add_calendar_event",
 }
 
 
@@ -214,6 +217,14 @@ async def test_every_tool_explains_missing_access(
         "ask_docs": {"question": "¿Cómo conecto un agente?"},
         "get_page_analytics": {"id": some_id},
         "get_search_gaps": {},
+        "list_calendar_events": {"space": "docs"},
+        "add_calendar_event": {
+            "space": "docs",
+            "calendar": "x",
+            "title": "x",
+            "start_at": "2026-12-01T10:00:00Z",
+            "end_at": "2026-12-01T11:00:00Z",
+        },
         **{tool: {"id": some_id} | args for tool, args in VISUAL_CALLS.items()},
     }
     async with folio_mcp(client, team.agent) as folio:
