@@ -1,5 +1,6 @@
 """The dependency rule (ADR 0034): docket and folio depend on platform, platform on
-neither, and folio talks to docket only through its public services, never its tables."""
+neither, and folio talks to docket only through `radicle.docket.public`, never its tables or
+services."""
 
 import ast
 import subprocess
@@ -32,11 +33,16 @@ def test_platform_imports_only_platform() -> None:
     assert not bad, f"platform must not import from an app: {sorted(bad)}"
 
 
-def test_folio_never_touches_docket_tables() -> None:
+def test_folio_talks_to_docket_only_through_its_public_interface() -> None:
     if not (RADICLE / "folio").exists():
         pytest.skip("no folio package yet")
-    bad = {(f, m) for f, m in _imports("folio") if m.startswith("radicle.docket.db")}
-    assert not bad, f"folio must use docket's services, not its tables: {sorted(bad)}"
+    from radicle.docket import public
+
+    allowed = {"radicle.docket.public"} | {f"radicle.docket.public.{n}" for n in public.__all__}
+    bad = {
+        (f, m) for f, m in _imports("folio") if m.startswith("radicle.docket") and m not in allowed
+    }
+    assert not bad, f"folio may import only radicle.docket.public: {sorted(bad)}"
 
 
 def test_importing_platform_loads_no_app() -> None:
