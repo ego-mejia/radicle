@@ -64,3 +64,26 @@ async def test_only_folio_admins(client: AsyncClient, team: Team) -> None:
     assert r.status_code == 403
     assert (await client.post(f"{URL}/publish", headers=m)).status_code == 403
     assert (await client.get(f"{URL}/history", headers=m)).status_code == 403
+    r = await client.post(f"{URL}/preview", headers=m, json={"blocks": []})
+    assert r.status_code == 403
+
+
+async def test_preview_resolves_without_saving(client: AsyncClient, team: Team) -> None:
+    i = team.instance.headers
+    layout = {
+        "blocks": [
+            _block("txt", "text", markdown="Hola"),
+            _block("box", "search", y=2),
+            _block("chat", "chat", y=4),
+            _block("none", "posts", y=6, label="nadie"),
+        ]
+    }
+    r = await client.post(f"{URL}/preview", headers=i, json=layout)
+    assert r.status_code == 200, r.text
+    assert [b["id"] for b in r.json()["blocks"]] == ["txt", "box"]
+    assert r.json()["blocks"][0]["markdown"] == "Hola"
+    assert (await client.get(f"{URL}/draft", headers=i)).json()["saved"] is False
+
+    bad = {"blocks": [_block("q", "query", rql="kind =")]}
+    r = await client.post(f"{URL}/preview", headers=i, json=bad)
+    assert r.status_code == 422 and r.json()["errors"][0]["field"] == "blocks[0].config.rql"

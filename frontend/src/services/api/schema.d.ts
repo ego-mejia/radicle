@@ -793,6 +793,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/admin/home/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Preview
+         * @description The layout resolved as the home would show it to you, without saving it; empty
+         *     blocks are left out, as readers would never see them.
+         */
+        post: operations["preview_api_v1_folio_admin_home_preview_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/admin/home/publish": {
         parameters: {
             query?: never;
@@ -4080,7 +4101,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
             /** Slug */
             slug: string;
             /**
@@ -6098,6 +6119,11 @@ export interface components {
             /** Spaces */
             spaces: components["schemas"]["SpaceCountOut"][];
         };
+        /** HomePreviewOut */
+        HomePreviewOut: {
+            /** Blocks */
+            blocks: components["schemas"]["HomeBlockOut"][];
+        };
         /** InboxOut */
         InboxOut: {
             /**
@@ -6349,7 +6375,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
             /** Published At */
             published_at: string | null;
             /** Slug */
@@ -6679,7 +6705,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
             /**
              * Parent
              * @description Page or folder; never for posts
@@ -6697,7 +6723,7 @@ export interface components {
          * NodeKind
          * @enum {string}
          */
-        NodeKind: "page" | "folder" | "blog_post" | "live_doc";
+        NodeKind: "page" | "folder" | "blog_post" | "live_doc" | "database";
         /** NodeMoveIn */
         NodeMoveIn: {
             /**
@@ -6762,7 +6788,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
             /**
              * Metadata
              * @description Of the published version
@@ -6823,7 +6849,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
             /** Slug */
             slug: string;
             /**
@@ -9160,7 +9186,7 @@ export interface components {
              * Kind
              * @enum {string}
              */
-            kind: "page" | "folder" | "blog_post" | "live_doc";
+            kind: "page" | "folder" | "blog_post" | "live_doc" | "database";
             /** Slug */
             slug: string;
             /**
@@ -11346,6 +11372,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HomeLayoutVersionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    preview_api_v1_folio_admin_home_preview_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HomeLayoutIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomePreviewOut"];
                 };
             };
             /** @description Validation Error */

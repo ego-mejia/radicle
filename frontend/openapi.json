@@ -380,7 +380,8 @@
               "page",
               "folder",
               "blog_post",
-              "live_doc"
+              "live_doc",
+              "database"
             ],
             "title": "Kind",
             "type": "string"
@@ -5840,6 +5841,22 @@
         "title": "HomeOut",
         "type": "object"
       },
+      "HomePreviewOut": {
+        "properties": {
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/HomeBlockOut"
+            },
+            "title": "Blocks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "blocks"
+        ],
+        "title": "HomePreviewOut",
+        "type": "object"
+      },
       "InboxOut": {
         "properties": {
           "counts": {
@@ -6551,7 +6568,8 @@
               "page",
               "folder",
               "blog_post",
-              "live_doc"
+              "live_doc",
+              "database"
             ],
             "title": "Kind",
             "type": "string"
@@ -7469,7 +7487,8 @@
               "page",
               "folder",
               "blog_post",
-              "live_doc"
+              "live_doc",
+              "database"
             ],
             "title": "Kind",
             "type": "string"
@@ -7510,7 +7529,8 @@
           "page",
           "folder",
           "blog_post",
-          "live_doc"
+          "live_doc",
+          "database"
         ],
         "title": "NodeKind",
         "type": "string"
@@ -7654,7 +7674,8 @@
               "page",
               "folder",
               "blog_post",
-              "live_doc"
+              "live_doc",
+              "database"
             ],
             "title": "Kind",
             "type": "string"
@@ -7838,7 +7859,8 @@
               "page",
               "folder",
               "blog_post",
-              "live_doc"
+              "live_doc",
+              "database"
             ],
             "title": "Kind",
             "type": "string"
@@ -14773,7 +14795,8 @@
               "page",
               "folder",
               "blog_post",
-              "live_doc"
+              "live_doc",
+              "database"
             ],
             "title": "Kind",
             "type": "string"
@@ -18712,6 +18735,49 @@
           }
         },
         "summary": "Restore",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/admin/home/preview": {
+      "post": {
+        "description": "The layout resolved as the home would show it to you, without saving it; empty\nblocks are left out, as readers would never see them.",
+        "operationId": "preview_api_v1_folio_admin_home_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HomeLayoutIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomePreviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview",
         "tags": [
           "folio",
           "folio"
