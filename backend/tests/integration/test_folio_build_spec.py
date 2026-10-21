@@ -93,6 +93,10 @@ async def test_choosing_deliverables(db: AsyncSession, board: Team, spec: FolioN
     assert made[0].ticket and "Fase 4 — Crear ticket desde texto" in build_spec.description(
         spec, made[0].item
     )
+    english = build_spec.description(spec, made[0].item)
+    assert "From [" in english and "Acceptance criteria:" in english
+    spanish = build_spec.description(spec, made[0].item, "es")
+    assert "Del documento [" in spanish and "Criterios de aceptación:" in spanish
     with pytest.raises(ValidationFailed, match="Unknown deliverables: 9"):
         await build_spec.create_tickets(
             db, fernando, spec, build_spec.Choice(project="PA", keys=["9"])

@@ -84,8 +84,9 @@ async def test_link_and_unlink_by_hand(db: AsyncSession, board: Team, page: Foli
 
 
 async def test_create_a_ticket_from_a_selection(
-    db: AsyncSession, board: Team, page: FolioNode
+    client: AsyncClient, db: AsyncSession, board: Team, page: FolioNode
 ) -> None:
+    await publish(client, board, str(page.id), "# Conecta un agente\n\nCon su token.")
     luis = await _user(db, "luis")
     data = ticket_links.FromText(
         text="Documentar el token del agente\ncon un ejemplo",
@@ -97,6 +98,9 @@ async def test_create_a_ticket_from_a_selection(
     assert made.ticket is not None and made.ticket.title == "Documentar el token del agente"
     assert made.link.kind == TicketLinkKind.created_from_text
     assert made.link.anchor == "conecta-un-agente"
+    r = await client.get(f"/api/v1/tickets/{made.ticket.key}", headers=board.admin.headers)
+    # The page is in Spanish, so the ticket's own words are too.
+    assert "Del documento [" in r.json()["description_md"]
     long = ticket_links.FromText(text="x" * 300, project="PA", area="Backend")
     assert len((await ticket_links.create_from_text(db, luis, page, long)).ticket.title) == 120  # type: ignore[union-attr]
     with pytest.raises(ValidationFailed, match="selected text"):

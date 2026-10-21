@@ -17,7 +17,7 @@ from radicle.folio.db.docket_links import FolioTicketLink, TicketLinkKind
 from radicle.folio.db.models import FolioDraft, FolioNode, FolioVersion
 from radicle.folio.services import access
 from radicle.folio.services.chunking import anchor_for, heading_text
-from radicle.folio.services.ticket_links import page_path, upsert
+from radicle.folio.services.ticket_links import doc_language, page_path, upsert
 from radicle.platform.config import get_settings
 from radicle.platform.db.models import User
 from radicle.platform.errors import ValidationFailed
@@ -209,12 +209,20 @@ async def items(db: AsyncSession, user: User, node: FolioNode) -> list[ItemWithT
     return out
 
 
-def description(node: FolioNode, item: Item) -> str:
+# The ticket's own words follow the doc's language; anything else reads in English.
+WORDS = {
+    "en": ("From", "Acceptance criteria"),
+    "es": ("Del documento", "Criterios de aceptación"),
+}
+
+
+def description(node: FolioNode, item: Item, language: str | None = None) -> str:
+    source, criteria = WORDS.get((language or "en")[:2].lower(), WORDS["en"])
     url = get_settings().base_url.rstrip("/") + page_path(node, item.anchor)
     parts = [item.description] if item.description else []
-    parts.append(f"From [{node.title} — {item.title}]({url}).")
+    parts.append(f"{source} [{node.title} — {item.title}]({url}).")
     if item.criteria:
-        parts.append("Acceptance criteria:\n\n" + "\n".join(f"- [ ] {c}" for c in item.criteria))
+        parts.append(f"{criteria}:\n\n" + "\n".join(f"- [ ] {c}" for c in item.criteria))
     return "\n\n".join(parts)
 
 
@@ -239,13 +247,14 @@ async def create_tickets(
     if dry_run:
         return todo
     made = []
+    language = await doc_language(db, node)
     for f in todo:
         ticket = await docket.create_ticket(
             db,
             docket.NewTicket(
                 project=choice.project,
                 title=f"{f.item.key} {f.item.title}"[:255],
-                description_md=description(node, f.item),
+                description_md=description(node, f.item, language),
                 type=choice.type,
                 area=choice.area,
                 milestone=choice.milestone,
