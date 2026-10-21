@@ -66,6 +66,9 @@ COVERED = {
     "get_versions",
     "update_draft",
     "submit_for_publication",
+    "list_comments",
+    "add_comment",
+    "resolve_comment",
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
@@ -91,6 +94,12 @@ async def test_restricted_pages_never_show_up(
     client: AsyncClient, db: AsyncSession, team: Team
 ) -> None:
     ids = await _docs(client, db, team)
+    r = await client.post(
+        f"{API}/nodes/{ids['secret']}/comments",
+        headers=team.instance.headers,
+        json={"body": "Solo para admins"},
+    )
+    hidden_thread = r.json()["id"]
     async with folio_mcp(client, team.agent) as folio:
         tree = payload(await folio.call_tool("get_space_tree", {"space": "docs"}))
         assert ids["secret"] not in str(tree)
@@ -101,11 +110,15 @@ async def test_restricted_pages_never_show_up(
         writes = {
             "update_draft": {"content_md": "x"},
             "submit_for_publication": {"change_note": "x"},
+            "add_comment": {"body": "x"},
         }
-        for tool in ("get_page", "get_versions", *writes):
+        for tool in ("get_page", "get_versions", "list_comments", *writes):
             args = {"id": ids["secret"]} | writes.get(tool, {})
             text = error_text(await folio.call_tool(tool, args))
             assert "not found" in text.lower(), (tool, text)
+        args = {"thread_id": hidden_thread}
+        text = error_text(await folio.call_tool("resolve_comment", args))
+        assert "not found" in text.lower()
 
 
 async def test_errors_explain_what_works(client: AsyncClient, db: AsyncSession, team: Team) -> None:
@@ -145,6 +158,9 @@ async def test_every_tool_explains_missing_access(
         "list_my_submissions": {},
         "list_templates": {},
         "create_from_template": {"template": some_id, "space": "docs", "title": "x"},
+        "list_comments": {"id": some_id},
+        "add_comment": {"id": some_id, "body": "x"},
+        "resolve_comment": {"thread_id": some_id},
     }
     async with folio_mcp(client, team.agent) as folio:
         for tool, args in calls.items():

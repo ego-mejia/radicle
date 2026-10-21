@@ -11,6 +11,7 @@ READ = (
     "get_metadata_schema",
     "get_versions",
     "list_templates",
+    "list_comments",
 )
 
 WRITE = (
@@ -19,6 +20,8 @@ WRITE = (
     "submit_for_publication",
     "list_my_submissions",
     "create_from_template",
+    "add_comment",
+    "resolve_comment",
 )
 
 CATALOG: tuple[Tool, ...] = (
