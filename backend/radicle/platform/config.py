@@ -35,6 +35,13 @@ class Settings(BaseSettings):
     assistant_model: str | None = None
     assistant_base_url: str | None = None  # OpenAI-compatible servers: Ollama, LM Studio...
     image_default_resize: str = "large"
+    # Email notifications (ADR 0038). No host, no email: in-app notifications only.
+    smtp_host: str | None = None
+    smtp_port: int = 587
+    smtp_user: str | None = None
+    smtp_password: str | None = None
+    smtp_from: str = "Radicle <radicle@localhost>"
+    smtp_tls: bool = True  # STARTTLS; port 465 uses implicit TLS
 
     @property
     def secure_cookies(self) -> bool:
