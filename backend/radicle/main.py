@@ -45,6 +45,7 @@ from radicle.folio.api.router import router as folio_router
 from radicle.folio.authz import FolioAuthz
 from radicle.folio.mcp import catalog as folio_catalog
 from radicle.folio.mcp import server as folio_mcp
+from radicle.folio.services import collab
 from radicle.platform import authz, mcp_tools
 from radicle.platform.api import ai as ai_api
 from radicle.platform.api import notifications as notifications_api
@@ -65,6 +66,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         folio_mcp.server.session_manager.run(),
     ):
         yield
+    await collab.rooms.close_all()
     await notify_hub.close()
     await dispose_engine()
 
