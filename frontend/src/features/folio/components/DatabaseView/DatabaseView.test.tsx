@@ -10,7 +10,7 @@ const status = COLUMNS[1]!;
 
 describe('DatabaseView', () => {
   it('shows the first view as a table, values by type', async () => {
-    dbApi();
+    dbApi({ ...DATABASE, can_edit: false });
     renderWithProviders(<DatabaseView nodeId={DB_ID} />);
     const table = await screen.findByRole('table');
     expect(

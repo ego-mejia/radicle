@@ -2217,7 +2217,13 @@
       "noValue": "Sin valor",
       "board": "Tablero por {{column}}",
       "checked": "Sí",
-      "openPage": "Abrir página"
+      "openPage": "Abrir página",
+      "addRow": "Agregar fila",
+      "deleteRow": "Borrar fila",
+      "actions": "Acciones",
+      "edit": "Editar {{column}}",
+      "done": "Listo",
+      "personHint": "handle"
     }
   },
   "notifications": {
