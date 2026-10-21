@@ -148,8 +148,13 @@ async def ask_in_chat_session(
     events = await chat_service.ask(db, principal.user, session, body.content, filters=filters)
 
     async def body_stream() -> AsyncIterator[str]:
-        async for event in events:
-            yield f"event: {event.name}\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+        try:
+            async for event in events:
+                yield f"event: {event.name}\ndata: {json.dumps(event.data, ensure_ascii=False)}\n\n"
+        finally:
+            # The request's session already committed before the stream started: the
+            # answer and its ai_calls row are only kept if this commits them.
+            await db.commit()
 
     headers = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no"}
     return StreamingResponse(body_stream(), media_type="text/event-stream", headers=headers)
