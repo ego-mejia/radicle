@@ -3,11 +3,13 @@ metadata for filters and an embedding when an AI provider is configured.
 
 `folio_reindex_node` is idempotent: it deletes the node's chunks and writes them again from
 what is published now, so the index always mirrors the last published, live version.
+Whiteboards are never published: their text is indexed as it is drawn (Folio 3.5).
 It runs after publishing, restoring, moving, deleting and changing restrictions.
 """
 
 import logging
 import uuid
+from dataclasses import dataclass
 from typing import Any
 
 from sqlalchemy import delete, exists, select, text
@@ -19,8 +21,10 @@ from radicle.folio.db.models import (
     FolioPageRestriction,
     FolioSpace,
     FolioVersion,
+    NodeKind,
     RestrictionMode,
 )
+from radicle.folio.db.whiteboards import FolioWhiteboard
 from radicle.folio.services import chunking
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.services import ai, queue
@@ -97,22 +101,58 @@ async def ensure_index(db: AsyncSession, dims: int) -> None:
     )
 
 
+@dataclass(frozen=True)
+class _Source:
+    """What gets indexed: a published version, or a whiteboard as it is drawn."""
+
+    title: str
+    content_json: dict[str, Any]
+    metadata_: dict[str, Any]
+    author_id: uuid.UUID | None
+    version_id: uuid.UUID | None = None
+    number: int | None = None
+
+
+async def _source(db: AsyncSession, node: FolioNode) -> _Source | None:
+    if node.kind == NodeKind.whiteboard:
+        board = await db.get(FolioWhiteboard, node.id)
+        lines = board.text.splitlines() if board else []
+        paragraphs = [
+            {"type": "paragraph", "content": [{"type": "text", "text": t}]} for t in lines
+        ]
+        author = (board.updated_by if board else None) or node.created_by
+        return _Source(node.title, {"type": "doc", "content": paragraphs}, {}, author)
+    if node.published_version_id is None:
+        return None
+    version = await db.get(FolioVersion, node.published_version_id)
+    if version is None:  # pragma: no cover - the published version always exists
+        return None
+    return _Source(
+        version.title,
+        version.content_json,
+        version.metadata_,
+        version.author_id,
+        version.id,
+        version.number,
+    )
+
+
 async def index_node(db: AsyncSession, node_id: uuid.UUID) -> int:
     """Rebuild the node's chunks; returns how many there are now."""
     await db.execute(delete(FolioChunk).where(FolioChunk.node_id == node_id))
     node = await db.get(FolioNode, node_id)
-    if node is None or node.published_version_id is None:
+    if node is None:
+        return 0
+    source = await _source(db, node)
+    if source is None:
         return 0
     space = await db.get(FolioSpace, node.space_id)
     chain = await _ancestry(db, node)
     gone = any(n.deleted_at or n.archived_at for n in chain)
     if space is None or space.deleted_at is not None or gone:
         return 0  # deleted or archived: out of the index
-    version = await db.get(FolioVersion, node.published_version_id)
-    if version is None:  # pragma: no cover - the published version always exists
-        return 0
-    author = await db.get(User, version.author_id)
-    meta = version.metadata_
+    author = await db.get(User, source.author_id) if source.author_id else None
+    meta = source.metadata_
     base: dict[str, Any] = {
         "space": space.key,
         "node_kind": node.kind.value,
@@ -122,15 +162,15 @@ async def index_node(db: AsyncSession, node_id: uuid.UUID) -> int:
         "language": meta.get("language"),
         "owner": meta.get("owner"),
         "author": author.handle if author else None,
-        "version": version.number,
+        "version": source.number,
         "published_at": node.published_at.isoformat() if node.published_at else None,
-        "title": version.title,
+        "title": source.title,
         "description": meta.get("description", ""),
         "restricted": await _restricted(db, chain),
         "status": node.status.value,
     }
-    chunks = chunking.chunk(version.content_json)
-    inputs = [chunking.embedding_input(version.title, base["description"], c) for c in chunks]
+    chunks = chunking.chunk(source.content_json)
+    inputs = [chunking.embedding_input(source.title, base["description"], c) for c in chunks]
     vectors = await _embeddings(inputs, db) if chunks else None
     url = f"/folio/p/{node.id}-{node.slug}"
     for i, c in enumerate(chunks):
@@ -138,7 +178,7 @@ async def index_node(db: AsyncSession, node_id: uuid.UUID) -> int:
         db.add(
             FolioChunk(
                 node_id=node.id,
-                version_id=version.id,
+                version_id=source.version_id,
                 position=c.position,
                 heading_path=c.heading_path,
                 anchor=c.anchor,

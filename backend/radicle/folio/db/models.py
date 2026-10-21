@@ -424,7 +424,8 @@ class FolioChunk(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     node_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("folio_nodes.id", ondelete="CASCADE"))
-    version_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("folio_versions.id"))
+    # None for a whiteboard's chunks: it is indexed as it is drawn (Folio 3.5).
+    version_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("folio_versions.id"))
     position: Mapped[int] = mapped_column(BigInteger)
     heading_path: Mapped[list[str]] = mapped_column(ARRAY(Text))
     anchor: Mapped[str | None] = mapped_column(Text)
