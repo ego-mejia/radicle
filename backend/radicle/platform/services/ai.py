@@ -9,7 +9,7 @@ import httpx
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.platform import crypto
-from radicle.platform.db.models import AiProvider, AiSettings, User, utcnow
+from radicle.platform.db.models import AiCall, AiProvider, AiSettings, User, utcnow
 from radicle.platform.errors import ProblemError, ValidationFailed
 
 # Tests swap this for an httpx.MockTransport.
@@ -194,3 +194,115 @@ async def embed_many(cfg: AiConfig, texts: list[str]) -> list[list[float]]:
         return []
     data, _ = await _post(cfg, texts)
     return _vectors(cfg, data, len(texts))
+
+
+@dataclass(frozen=True)
+class Turn:
+    role: str  # "user" or "assistant"
+    content: str
+
+
+@dataclass(frozen=True)
+class Reply:
+    text: str
+    input_tokens: int
+    output_tokens: int
+    latency_ms: int
+
+
+CHAT_MAX_TOKENS = 1500
+
+
+def _chat_request(
+    cfg: AiConfig, system: str, turns: list[Turn], max_tokens: int
+) -> tuple[str, dict[str, str], dict[str, Any]]:
+    if not cfg.enabled:
+        raise AiUnavailable("No AI provider is configured. Choose one in Admin, AI provider.")
+    if not cfg.chat_model:
+        raise AiUnavailable("Set a chat model first in Admin, AI provider.")
+    messages = [{"role": t.role, "content": t.content} for t in turns]
+    if cfg.provider == AiProvider.anthropic:
+        headers = {"x-api-key": cfg.api_key or "", "anthropic-version": "2023-06-01"}
+        body = {
+            "model": cfg.chat_model,
+            "max_tokens": max_tokens,
+            "system": system,
+            "messages": messages,
+        }
+        return f"{cfg.base_url}/v1/messages", headers, body
+    full = [{"role": "system", "content": system}, *messages]
+    if cfg.provider == AiProvider.ollama:
+        body = {"model": cfg.chat_model, "messages": full, "stream": False}
+        return f"{cfg.base_url}/api/chat", {}, body
+    headers = {"Authorization": f"Bearer {cfg.api_key}"} if cfg.api_key else {}
+    body = {"model": cfg.chat_model, "messages": full, "max_completion_tokens": max_tokens}
+    return f"{cfg.base_url}/chat/completions", headers, body
+
+
+def _reply(cfg: AiConfig, data: dict[str, Any], latency: int) -> Reply:
+    try:
+        if cfg.provider == AiProvider.anthropic:
+            text = "".join(b.get("text", "") for b in data["content"] if b.get("type") == "text")
+            usage = data.get("usage") or {}
+            tokens = (usage.get("input_tokens", 0), usage.get("output_tokens", 0))
+        elif cfg.provider == AiProvider.ollama:
+            text = data["message"]["content"]
+            tokens = (data.get("prompt_eval_count", 0), data.get("eval_count", 0))
+        else:
+            text = data["choices"][0]["message"]["content"] or ""
+            usage = data.get("usage") or {}
+            tokens = (usage.get("prompt_tokens", 0), usage.get("completion_tokens", 0))
+    except (KeyError, IndexError, TypeError):
+        raise AiUnavailable(
+            f"The provider answered, but not with a chat reply. Is '{cfg.chat_model}' a chat model?"
+        ) from None
+    return Reply(str(text).strip(), int(tokens[0] or 0), int(tokens[1] or 0), latency)
+
+
+async def chat(
+    db: AsyncSession,
+    cfg: AiConfig,
+    system: str,
+    turns: list[Turn],
+    *,
+    app: str,
+    feature: str,
+    user: User | None,
+    max_tokens: int = CHAT_MAX_TOKENS,
+) -> Reply:
+    """The model's answer; every call, failed or not, is recorded in ai_calls without
+    its content."""
+    url, headers, body = _chat_request(cfg, system, turns, max_tokens)
+    call = AiCall(
+        app=app,
+        feature=feature,
+        user_id=user.id if user else None,
+        provider=cfg.provider.value,
+        model=cfg.chat_model,
+        ok=False,
+    )
+    db.add(call)
+    started = time.perf_counter()
+    try:
+        try:
+            async with _client() as client:
+                r = await client.post(url, headers=headers, json=body)
+        except httpx.HTTPError as exc:
+            raise AiUnavailable(
+                f"Could not reach {cfg.base_url}: {exc.__class__.__name__}."
+            ) from exc
+        call.latency_ms = int((time.perf_counter() - started) * 1000)
+        if r.status_code in (401, 403):
+            raise AiUnavailable(
+                "The provider rejected the API key. Check it in Admin, AI provider."
+            )
+        if r.status_code >= 400:
+            raise AiUnavailable(f"The provider answered {r.status_code}: {r.text[:200]}")
+        reply = _reply(cfg, r.json(), call.latency_ms)
+    finally:
+        call.latency_ms = call.latency_ms or int((time.perf_counter() - started) * 1000)
+        await db.flush()
+    call.ok = True
+    call.input_tokens, call.output_tokens = reply.input_tokens, reply.output_tokens
+    await db.flush()
+    return reply
