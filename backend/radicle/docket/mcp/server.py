@@ -6,15 +6,13 @@ from typing import Any
 from fastapi import FastAPI
 from mcp.server.mcpserver import Context, MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
-from mcp.server.transport_security import TransportSecuritySettings
 from mcp.types import ListToolsResult
-from starlette.routing import Route
-from starlette.types import Receive, Scope, Send
 
 from radicle import __version__
 from radicle.docket.mcp import tools
-from radicle.docket.mcp.api import APIError, RadicleAPI, api, attach
 from radicle.docket.mcp.guide import rql_guide
+from radicle.platform.mcp import http
+from radicle.platform.mcp.api import api
 
 INSTRUCTIONS = """Radicle is a ticket tracker. You work tickets like a teammate.
 Typical flow: whoami, then my_tickets or search_tickets, get_ticket for details, then
@@ -84,59 +82,8 @@ async def project_schema(key: str, ctx: Context) -> str:
     return json.dumps(tools.project_schema(project), ensure_ascii=False, indent=2)
 
 
-class _RequireToken:
-    """Reject connections without a valid, unrevoked token before MCP sees them."""
-
-    def __init__(self, app: Any) -> None:
-        self.app = app
-
-    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        headers = dict(scope.get("headers") or [])
-        authorization = headers.get(b"authorization", b"").decode()
-        scheme, _, token = authorization.partition(" ")
-        detail = None
-        if scheme.lower() != "bearer" or not token.strip():
-            detail = "Connect with 'Authorization: Bearer rdc_...' (an agent or personal token)."
-        else:
-            async with RadicleAPI(token.strip()) as client:
-                try:
-                    await client.call("GET", "/me")
-                except APIError as exc:
-                    detail = str(exc)
-        if detail is not None:
-            body = json.dumps({"error": "unauthorized", "detail": detail}).encode()
-            await send(
-                {
-                    "type": "http.response.start",
-                    "status": 401,
-                    "headers": [
-                        (b"content-type", b"application/json"),
-                        (b"www-authenticate", b'Bearer realm="radicle"'),
-                    ],
-                }
-            )
-            await send({"type": "http.response.body", "body": body})
-            return
-        await self.app(scope, receive, send)
-
-
 def mount(app: FastAPI) -> None:
-    """Add POST/GET/DELETE /mcp to the app. The session manager runs in the app lifespan."""
-    attach(app)
-    starlette_app = server.streamable_http_app(
-        streamable_http_path="/mcp",
-        stateless_http=True,
-        json_response=True,
-        # Auth is a bearer header, never a cookie, so DNS rebinding cannot borrow it.
-        transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False),
-        host="0.0.0.0",  # noqa: S104 - only disables the localhost-only default
-        # upload_attachment takes up to 10 MB, about 13.4 MB once in base64.
-        max_request_body_size=16 * 1024 * 1024,
-    )
-    route = starlette_app.routes[0]
-    if not isinstance(route, Route):  # pragma: no cover - SDK layout changed
-        raise RuntimeError("Unexpected MCP app layout")
-    endpoint = route.endpoint
-    app.router.routes.insert(
-        0, Route("/mcp", endpoint=_RequireToken(endpoint), methods=["GET", "POST", "DELETE"])
-    )
+    """Add POST/GET/DELETE /mcp to the app, behind platform's token check. The session
+    manager runs in the app lifespan."""
+    # upload_attachment takes up to 10 MB, about 13.4 MB once in base64.
+    http.mount(app, server, "/mcp", max_request_body_size=16 * 1024 * 1024)

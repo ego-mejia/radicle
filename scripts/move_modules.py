@@ -54,6 +54,8 @@ STEPS: dict[str, list[tuple[str, str]]] = {
         ("radicle.docket.api.ratelimit", "radicle.platform.api.ratelimit"),
         ("radicle.docket.api.schemas.common", "radicle.platform.api.schemas"),
     ],
+    # The in-process REST client every app's MCP tools call through.
+    "platform-mcp": [("radicle.docket.mcp.api", "radicle.platform.mcp.api")],
 }
 
 # Inside a moved package, `from radicle.db.models import X` must use that package's own

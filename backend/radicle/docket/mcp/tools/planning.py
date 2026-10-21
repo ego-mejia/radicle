@@ -7,8 +7,8 @@ from urllib.parse import quote
 from mcp.server.mcpserver import Context, MCPServer
 from pydantic import BaseModel, ConfigDict, Field
 
-from radicle.docket.mcp.api import api
 from radicle.docket.mcp.tools.common import APIErrorMessage, compact
+from radicle.platform.mcp.api import api
 
 Board = Annotated[str, Field(description="Board id, from list_boards")]
 Project = Annotated[str, Field(description="Project key, e.g. PA")]

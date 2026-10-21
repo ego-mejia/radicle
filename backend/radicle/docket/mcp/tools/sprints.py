@@ -6,8 +6,8 @@ from typing import Annotated, Any, Literal
 from mcp.server.mcpserver import Context, MCPServer
 from pydantic import Field
 
-from radicle.docket.mcp.api import api
 from radicle.docket.mcp.tools.common import Key, compact
+from radicle.platform.mcp.api import api
 
 Sprint = Annotated[str, Field(description="Sprint id, from list_sprints")]
 Keys = Annotated[list[Key], Field(min_length=1, description="Ticket keys")]

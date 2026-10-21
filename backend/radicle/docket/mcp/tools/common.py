@@ -6,7 +6,7 @@ from mcp.server.mcpserver import Context
 from mcp.server.mcpserver.exceptions import ToolError
 from pydantic import Field
 
-from radicle.docket.mcp.api import api
+from radicle.platform.mcp.api import api
 
 TicketType = Literal["task", "bug", "draft"]
 Priority = Literal["highest", "high", "medium", "low", "lowest"]
