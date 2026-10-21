@@ -36,6 +36,7 @@ import { FolioReadView } from './features/folio/views/FolioReadView';
 import { FolioSearchView } from './features/folio/views/FolioSearchView';
 import { FolioSpaceView } from './features/folio/views/FolioSpaceView';
 import { FolioHomeView } from './features/folio/views/FolioHomeView';
+import { FolioPublicView } from './features/folio/views/FolioPublicView';
 import { AppPage } from './pages/AppPage';
 import { FolioPage } from './pages/FolioPage';
 import { AuthPage } from './pages/AuthPage';
@@ -399,7 +400,22 @@ const templateRoute = createRoute({
   }),
 });
 
+/** A public link: no account, no app shell. `$page` is `<id>-<slug>` within a space. */
+const publicRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/pub/$token',
+  component: FolioPublicView,
+});
+
+const publicPageRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/pub/$token/$page',
+  component: FolioPublicView,
+});
+
 const routeTree = rootRoute.addChildren([
+  publicRoute,
+  publicPageRoute,
   authLayout.addChildren([setupRoute, loginRoute]),
   appLayout.addChildren([
     projectsRoute,

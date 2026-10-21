@@ -2587,7 +2587,12 @@
       "readerViews_other": "{{count}} views"
     },
     "public": {
-      "liveOnly": "Live content from Radicle; open it in Radicle to see it."
+      "liveOnly": "Live content from Radicle; open it in Radicle to see it.",
+      "badge": "Public page",
+      "pages": "Pages",
+      "empty": "Nothing has been published here yet.",
+      "notFound": "This link doesn't work",
+      "notFoundText": "It may have been revoked. Ask whoever shared it for a new one."
     }
   },
   "notifications": {

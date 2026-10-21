@@ -2587,7 +2587,12 @@
       "readerViews_other": "{{count}} vistas"
     },
     "public": {
-      "liveOnly": "Contenido en vivo de Radicle; ábrelo en Radicle para verlo."
+      "liveOnly": "Contenido en vivo de Radicle; ábrelo en Radicle para verlo.",
+      "badge": "Página pública",
+      "pages": "Páginas",
+      "empty": "Todavía no hay nada publicado aquí.",
+      "notFound": "Este link no funciona",
+      "notFoundText": "Quizá lo revocaron. Pide uno nuevo a quien lo compartió."
     }
   },
   "notifications": {
