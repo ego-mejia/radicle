@@ -263,6 +263,9 @@ EXEMPT = {
     "/api/v1/webhooks/{webhook_id}",
     "/api/v1/webhooks/{webhook_id}/deliveries",
     "/api/v1/folio/health",
+    # Imports, for the target space's admins only: test_folio_imports_api.py.
+    "/api/v1/folio/imports",
+    "/api/v1/folio/imports/{import_id}",
     "/api/v1/folio/me",
     "/api/v1/folio/admin/grants",
     # Folio content: its own leak test comes with page restrictions (Folio 1.4).

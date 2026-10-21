@@ -1535,6 +1535,88 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Imports
+         * @description Imports into the spaces you administer, newest first.
+         */
+        get: operations["list_imports_api_v1_folio_imports_get"];
+        put?: never;
+        /**
+         * Create Import
+         * @description Upload an export. Nothing is created until it's dry-run and run.
+         */
+        post: operations["create_import_api_v1_folio_imports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/imports/{import_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Import */
+        get: operations["get_import_api_v1_folio_imports__import_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/imports/{import_id}/dry-run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Dry Run
+         * @description The plan: each page created or updated, who each author becomes, files and problems.
+         *     Send it again with other options as often as needed; it creates nothing.
+         */
+        post: operations["dry_run_api_v1_folio_imports__import_id__dry_run_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/imports/{import_id}/run": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Run
+         * @description Run the checked import in the background; GET it to follow its status.
+         */
+        post: operations["run_api_v1_folio_imports__import_id__run_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/link-preview": {
         parameters: {
             query?: never;
@@ -5560,6 +5642,25 @@ export interface components {
             name: string;
             type: components["schemas"]["TicketType"];
         };
+        /** Body_create_import_api_v1_folio_imports_post */
+        Body_create_import_api_v1_folio_imports_post: {
+            /**
+             * File
+             * @description The export: a zip, a .docx or a .md
+             */
+            file: string;
+            /**
+             * Source
+             * @description Where the export comes from
+             * @enum {string}
+             */
+            source: "confluence" | "notion" | "word" | "markdown";
+            /**
+             * Space
+             * @description Key of the space to import into
+             */
+            space: string;
+        };
         /** Body_upload_asset_api_v1_folio_nodes__node_id__assets_post */
         Body_upload_asset_api_v1_folio_nodes__node_id__assets_post: {
             /**
@@ -7953,6 +8054,72 @@ export interface components {
             /** Blocks */
             blocks: components["schemas"]["HomeBlockOut"][];
         };
+        /** ImportOptionsIn */
+        ImportOptionsIn: {
+            /**
+             * Authors
+             * @description Each source author (as the plan lists them) → a user id, or null
+             */
+            authors?: {
+                [key: string]: string | null;
+            } | null;
+            /**
+             * Default Metadata
+             * @description Metadata for every page; a page that's then complete is published
+             */
+            default_metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Parent Id
+             * @description Import under this page or folder
+             */
+            parent_id?: string | null;
+        };
+        /** ImportOut */
+        ImportOut: {
+            /** Created At */
+            created_at: string;
+            /** Filename */
+            filename: string;
+            /** Finished At */
+            finished_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Options */
+            options: {
+                [key: string]: unknown;
+            };
+            /**
+             * Report
+             * @description The dry run's plan (pages, authors, errors, totals), and `run` with each page's outcome once it ran
+             */
+            report: {
+                [key: string]: unknown;
+            };
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "confluence" | "notion" | "word" | "markdown";
+            /**
+             * Space
+             * @description Key of the space it imports into
+             */
+            space: string;
+            /** Stats */
+            stats: {
+                [key: string]: unknown;
+            };
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "uploaded" | "checked" | "running" | "done" | "failed";
+        };
         /** InboxOut */
         InboxOut: {
             /**
@@ -8943,6 +9110,13 @@ export interface components {
         Page_HomeLayoutVersionOut_: {
             /** Items */
             items: components["schemas"]["HomeLayoutVersionOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[ImportOut] */
+        Page_ImportOut_: {
+            /** Items */
+            items: components["schemas"]["ImportOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -15339,6 +15513,156 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HomeOut"];
+                };
+            };
+        };
+    };
+    list_imports_api_v1_folio_imports_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_ImportOut_"];
+                };
+            };
+        };
+    };
+    create_import_api_v1_folio_imports_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_create_import_api_v1_folio_imports_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_import_api_v1_folio_imports__import_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                import_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    dry_run_api_v1_folio_imports__import_id__dry_run_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                import_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImportOptionsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    run_api_v1_folio_imports__import_id__run_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                import_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
