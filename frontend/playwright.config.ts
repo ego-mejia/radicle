@@ -1,8 +1,10 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * End-to-end tests run against a real Radicle with a fresh database:
- *   docker compose down -v && docker compose up -d --build && pnpm e2e
+ * End-to-end tests run against a real Radicle with a fresh database. The specs sign in
+ * more than the login limit allows in a minute, so raise it for the run:
+ *   docker compose down -v
+ *   RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE=100 docker compose up -d --build && pnpm e2e
  * RADICLE_E2E_URL points elsewhere; PLAYWRIGHT_CHANNEL=chrome uses the local Chrome.
  */
 export default defineConfig({

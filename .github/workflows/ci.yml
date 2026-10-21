@@ -85,6 +85,8 @@ jobs:
       - name: Start Radicle on a fresh database
         env:
           RADICLE_SECRET_KEY: ci-only-not-secret-0123456789abcdef
+          # The specs sign in more often than the default login limit allows a minute.
+          RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE: "100"
         run: |
           docker compose up -d --build
           for i in $(seq 1 60); do curl -fsS localhost:8000/health && break; sleep 2; done
