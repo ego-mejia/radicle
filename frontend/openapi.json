@@ -6232,6 +6232,28 @@
         "title": "NotificationOut",
         "type": "object"
       },
+      "NotificationPreferencesOut": {
+        "properties": {
+          "email_available": {
+            "description": "False until an admin configures SMTP",
+            "title": "Email Available",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PreferenceOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "email_available",
+          "items"
+        ],
+        "title": "NotificationPreferencesOut",
+        "type": "object"
+      },
       "NotificationsPage": {
         "properties": {
           "items": {
@@ -7341,6 +7363,41 @@
           "email"
         ],
         "title": "PreferenceOut",
+        "type": "object"
+      },
+      "PreferencesOut": {
+        "properties": {
+          "density": {
+            "title": "Density",
+            "type": "string"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "shortcuts": {
+            "title": "Shortcuts",
+            "type": "boolean"
+          },
+          "theme": {
+            "title": "Theme",
+            "type": "string"
+          }
+        },
+        "required": [
+          "theme",
+          "language",
+          "shortcuts",
+          "density"
+        ],
+        "title": "PreferencesOut",
         "type": "object"
       },
       "Priority": {
@@ -13834,41 +13891,6 @@
         "title": "MoveIn",
         "type": "object"
       },
-      "radicle__docket__api__work__PreferencesOut": {
-        "properties": {
-          "density": {
-            "title": "Density",
-            "type": "string"
-          },
-          "language": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Language"
-          },
-          "shortcuts": {
-            "title": "Shortcuts",
-            "type": "boolean"
-          },
-          "theme": {
-            "title": "Theme",
-            "type": "string"
-          }
-        },
-        "required": [
-          "theme",
-          "language",
-          "shortcuts",
-          "density"
-        ],
-        "title": "PreferencesOut",
-        "type": "object"
-      },
       "radicle__folio__api__spaces__MoveIn": {
         "additionalProperties": false,
         "properties": {
@@ -13913,28 +13935,6 @@
           }
         },
         "title": "MoveIn",
-        "type": "object"
-      },
-      "radicle__platform__api__notifications__PreferencesOut": {
-        "properties": {
-          "email_available": {
-            "description": "False until an admin configures SMTP",
-            "title": "Email Available",
-            "type": "boolean"
-          },
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/PreferenceOut"
-            },
-            "title": "Items",
-            "type": "array"
-          }
-        },
-        "required": [
-          "email_available",
-          "items"
-        ],
-        "title": "PreferencesOut",
         "type": "object"
       }
     }
@@ -19028,7 +19028,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/radicle__platform__api__notifications__PreferencesOut"
+                  "$ref": "#/components/schemas/NotificationPreferencesOut"
                 }
               }
             },
@@ -19057,7 +19057,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/radicle__platform__api__notifications__PreferencesOut"
+                  "$ref": "#/components/schemas/NotificationPreferencesOut"
                 }
               }
             },
@@ -19222,7 +19222,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/radicle__docket__api__work__PreferencesOut"
+                  "$ref": "#/components/schemas/PreferencesOut"
                 }
               }
             },
@@ -19254,7 +19254,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/radicle__docket__api__work__PreferencesOut"
+                  "$ref": "#/components/schemas/PreferencesOut"
                 }
               }
             },
