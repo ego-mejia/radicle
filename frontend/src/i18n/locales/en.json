@@ -2271,6 +2271,39 @@
         "lte": "at most",
         "empty": "is empty",
         "not_empty": "is not empty"
+      },
+      "columns": "Columns",
+      "columnName": "Column name",
+      "columnType": "Type",
+      "addColumn": "Add column",
+      "newColumnName": "Column {{n}}",
+      "removeColumn": "Remove {{column}}",
+      "typeChange": "Values that don't fit the new type are cleared when you save.",
+      "cleared_one": "{{count}} value didn't fit its column's new type and was cleared.",
+      "cleared_other": "{{count}} values didn't fit their column's new type and were cleared.",
+      "choices": "Choices",
+      "choiceValue": "Choice",
+      "choiceColor": "Color",
+      "addChoice": "Add choice",
+      "removeChoice": "Remove {{choice}}",
+      "type": {
+        "text": "Text",
+        "number": "Number",
+        "date": "Date",
+        "select": "Select",
+        "multi_select": "Multi-select",
+        "person": "Person",
+        "checkbox": "Checkbox",
+        "url": "Link",
+        "page": "Page"
+      },
+      "color": {
+        "grey": "Grey",
+        "blue": "Blue",
+        "green": "Green",
+        "yellow": "Yellow",
+        "red": "Red",
+        "purple": "Purple"
       }
     }
   },
