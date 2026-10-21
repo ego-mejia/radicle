@@ -10,7 +10,7 @@ from pydantic import Field
 
 import radicle.docket.public as docket
 from radicle.folio.api.spaces import NodeRef, _ref
-from radicle.folio.services import nodes, ticket_links
+from radicle.folio.services import docket_docs, nodes, ticket_links
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Input, Output, UtcDatetime
@@ -88,9 +88,14 @@ class TicketFromTextIn(Input):
 class TicketDocOut(Output):
     node: NodeRef
     space: str
-    kind: LinkKind
+    kind: LinkKind | None = Field(
+        description="How it links to a ticket; null for a milestone or area"
+    )
     anchor: str | None
     url: str = Field(description="The doc, at the linked section when there is one")
+    description: str | None = Field(
+        default=None, description="For a milestone or area: the doc's published description"
+    )
 
 
 class TicketDocsOut(Output):
@@ -235,10 +240,37 @@ async def create_ticket_from_text(
 async def docs_for_ticket(
     principal: CurrentPrincipal,
     db: Db,
-    ticket: str = Query(min_length=3, max_length=30, examples=["PA-4"]),
+    ticket: str | None = Query(default=None, min_length=3, max_length=30, examples=["PA-4"]),
+    milestone: str | None = Query(default=None, max_length=120, examples=["PA:V1"]),
+    area: str | None = Query(default=None, max_length=120, examples=["PA:Backend"]),
 ) -> TicketDocsOut:
-    """The docs linked to a ticket that you may see (the Docs panel in Docket)."""
+    """The docs you may see that are linked to a ticket, or that name a milestone or an area
+    in their metadata (the Docs panels in Docket). Pass exactly one of the three."""
     await require_reader(db, principal)
+    if sum(v is not None for v in (ticket, milestone, area)) != 1:
+        raise ValidationFailed(
+            "Pass one of ticket=PA-4, milestone=PA:V1 or area=PA:Backend.",
+            errors=[{"field": "ticket", "message": "one of ticket, milestone, area"}],
+        )
+    if ticket is None:
+        named = await (
+            docket_docs.docs_for_milestone(db, principal.user, milestone)
+            if milestone is not None
+            else docket_docs.docs_for_area(db, principal.user, area or "")
+        )
+        return TicketDocsOut(
+            items=[
+                TicketDocOut(
+                    node=_ref(d.node),
+                    space=d.space_key,
+                    kind=None,
+                    anchor=None,
+                    url=ticket_links.page_path(d.node),
+                    description=d.description,
+                )
+                for d in named
+            ]
+        )
     found = await ticket_links.docs_for_ticket(db, principal.user, ticket)
     return TicketDocsOut(
         items=[

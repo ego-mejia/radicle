@@ -22,6 +22,14 @@ async def test_metadata_schema_lists_rules_and_active_entries(
         "owner",
         "audiences",
         "language",
+        "docket_project",
+        "docket_milestones",
+        "docket_areas",
+    ]
+    assert [f["name"] for f in body["fields"] if not f["required"]] == [
+        "docket_project",
+        "docket_milestones",
+        "docket_areas",
     ]
     assert "how-to" in [d["key"] for d in body["doc_types"]]
     assert [a["key"] for a in body["audiences"]] == ["everyone"]

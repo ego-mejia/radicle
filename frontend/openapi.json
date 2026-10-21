@@ -14696,15 +14696,35 @@
             ],
             "title": "Anchor"
           },
-          "kind": {
-            "enum": [
-              "mention",
-              "created_from_text",
-              "build_spec_item",
-              "manual"
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
             ],
-            "title": "Kind",
-            "type": "string"
+            "description": "For a milestone or area: the doc's published description",
+            "title": "Description"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "mention",
+                  "created_from_text",
+                  "build_spec_item",
+                  "manual"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How it links to a ticket; null for a milestone or area",
+            "title": "Kind"
           },
           "node": {
             "$ref": "#/components/schemas/NodeRef"
@@ -14724,7 +14744,8 @@
           "space",
           "kind",
           "anchor",
-          "url"
+          "url",
+          "description"
         ],
         "title": "TicketDocOut",
         "type": "object"
@@ -22364,21 +22385,68 @@
     },
     "/api/v1/folio/links": {
       "get": {
-        "description": "The docs linked to a ticket that you may see (the Docs panel in Docket).",
+        "description": "The docs you may see that are linked to a ticket, or that name a milestone or an area\nin their metadata (the Docs panels in Docket). Pass exactly one of the three.",
         "operationId": "docs_for_ticket_api_v1_folio_links_get",
         "parameters": [
           {
             "in": "query",
             "name": "ticket",
-            "required": true,
+            "required": false,
             "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 30,
+                  "minLength": 3,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
               "examples": [
                 "PA-4"
               ],
-              "maxLength": 30,
-              "minLength": 3,
-              "title": "Ticket",
-              "type": "string"
+              "title": "Ticket"
+            }
+          },
+          {
+            "in": "query",
+            "name": "milestone",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 120,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "examples": [
+                "PA:V1"
+              ],
+              "title": "Milestone"
+            }
+          },
+          {
+            "in": "query",
+            "name": "area",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 120,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "examples": [
+                "PA:Backend"
+              ],
+              "title": "Area"
             }
           }
         ],

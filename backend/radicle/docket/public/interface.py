@@ -196,3 +196,17 @@ async def get_milestone(
     return MilestoneSummary(
         found.id, access.project.key, found.name, found.status.value, found.target_date
     )
+
+
+async def get_area(db: AsyncSession, project: str, name: str, user: User) -> str | None:
+    """An area's name as Docket spells it, in a project the user can see, or None."""
+    try:
+        access = await project_access(db, user, project.strip().upper())
+    except NotFound:
+        return None
+    return await db.scalar(
+        select(Area.name).where(
+            Area.project_id == access.project.id,
+            func.lower(Area.name) == name.strip().lower(),
+        )
+    )
