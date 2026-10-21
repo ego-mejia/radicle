@@ -10,6 +10,7 @@ from radicle.folio.api import assets as assets_api
 from radicle.folio.api import catalogs as catalogs_api
 from radicle.folio.api import collab as collab_api
 from radicle.folio.api import comments as comments_api
+from radicle.folio.api import databases as databases_api
 from radicle.folio.api import drafts as drafts_api
 from radicle.folio.api import home as home_api
 from radicle.folio.api import home_layouts as home_layouts_api
@@ -155,3 +156,4 @@ router.include_router(people_api.router)
 router.include_router(livedocs_api.router)
 router.include_router(links_api.router)
 router.include_router(page_list_api.router)
+router.include_router(databases_api.router)

@@ -950,6 +950,52 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/databases/{node_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Database
+         * @description Its columns and views, and whether you may change them.
+         */
+        get: operations["get_database_api_v1_folio_databases__node_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Patch Database
+         * @description Replace the columns and/or the views. A column's new type keeps what fits; `cleared`
+         *     says how many values it couldn't.
+         */
+        patch: operations["patch_database_api_v1_folio_databases__node_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/databases/{node_id}/rows": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Rows
+         * @description The rows the view shows, its filters and sort applied.
+         */
+        get: operations["list_rows_api_v1_folio_databases__node_id__rows_get"];
+        put?: never;
+        /** Add Row */
+        post: operations["add_row_api_v1_folio_databases__node_id__rows_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/favorites/{target_type}/{target_id}": {
         parameters: {
             query?: never;
@@ -1719,6 +1765,27 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/rows/{row_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Row */
+        delete: operations["delete_row_api_v1_folio_rows__row_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Row
+         * @description Change some values, or move it after another row (or to the top).
+         */
+        patch: operations["patch_row_api_v1_folio_rows__row_id__patch"];
         trace?: never;
     };
     "/api/v1/folio/search": {
@@ -5065,6 +5132,172 @@ export interface components {
             /** Project */
             project?: string | null;
             visibility?: components["schemas"]["FilterVisibility"] | null;
+        };
+        /** DatabaseColumn */
+        DatabaseColumn: {
+            /**
+             * Key
+             * @description Leave out for a new column
+             */
+            key?: string | null;
+            /** Name */
+            name: string;
+            /**
+             * Options
+             * @description Selects: {"choices": [{"value", "color"}]}
+             */
+            options?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "text" | "number" | "date" | "select" | "multi_select" | "person" | "checkbox" | "url" | "page";
+        };
+        /** DatabaseFilter */
+        DatabaseFilter: {
+            /** Column */
+            column: string;
+            /**
+             * Op
+             * @enum {string}
+             */
+            op: "eq" | "neq" | "contains" | "gt" | "gte" | "lt" | "lte" | "empty" | "not_empty";
+            /** Value */
+            value?: unknown;
+        };
+        /** DatabaseOut */
+        DatabaseOut: {
+            /** Can Edit */
+            can_edit: boolean;
+            /**
+             * Cleared
+             * @description Values a column's new type could not keep
+             * @default 0
+             */
+            cleared: number;
+            /** Columns */
+            columns: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Node Id
+             * Format: uuid
+             */
+            node_id: string;
+            /** Space */
+            space: string;
+            /** Title */
+            title: string;
+            /** Views */
+            views: {
+                [key: string]: unknown;
+            }[];
+        };
+        /** DatabasePatch */
+        DatabasePatch: {
+            /** Columns */
+            columns?: components["schemas"]["DatabaseColumn"][] | null;
+            /** Views */
+            views?: components["schemas"]["DatabaseView"][] | null;
+        };
+        /** DatabaseSort */
+        DatabaseSort: {
+            /** Column */
+            column: string;
+            /**
+             * Direction
+             * @default asc
+             * @enum {string}
+             */
+            direction?: "asc" | "desc";
+        };
+        /** DatabaseView */
+        DatabaseView: {
+            /** Filters */
+            filters?: components["schemas"]["DatabaseFilter"][];
+            /**
+             * Group By
+             * @description Boards: a select column's key
+             */
+            group_by?: string | null;
+            /**
+             * Id
+             * @description Leave out for a new view
+             */
+            id?: string | null;
+            /**
+             * Kind
+             * @default table
+             * @enum {string}
+             */
+            kind?: "table" | "cards" | "board";
+            /** Name */
+            name: string;
+            /** Sort */
+            sort?: components["schemas"]["DatabaseSort"][];
+            /** Visible Columns */
+            visible_columns?: string[] | null;
+        };
+        /** DbRowIn */
+        DbRowIn: {
+            /**
+             * After
+             * @description Place it after this row
+             */
+            after?: string | null;
+            /**
+             * Values
+             * @description By column key
+             */
+            values?: {
+                [key: string]: unknown;
+            };
+        };
+        /** DbRowOut */
+        DbRowOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Updated At */
+            updated_at: string;
+            /** Values */
+            values: {
+                [key: string]: unknown;
+            };
+        };
+        /** DbRowPatch */
+        DbRowPatch: {
+            /** After */
+            after?: string | null;
+            /**
+             * To Top
+             * @default false
+             */
+            to_top?: boolean;
+            /**
+             * Values
+             * @description Only these; null clears
+             */
+            values?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** DbRowsOut */
+        DbRowsOut: {
+            /** Columns */
+            columns: {
+                [key: string]: unknown;
+            }[];
+            /** Items */
+            items: components["schemas"]["DbRowOut"][];
+            /** View */
+            view: {
+                [key: string]: unknown;
+            };
         };
         /** DecisionIn */
         DecisionIn: {
@@ -11697,6 +11930,141 @@ export interface operations {
             };
         };
     };
+    get_database_api_v1_folio_databases__node_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DatabaseOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_database_api_v1_folio_databases__node_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DatabasePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DatabaseOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_rows_api_v1_folio_databases__node_id__rows_get: {
+        parameters: {
+            query?: {
+                /** @description A view's id; default the first */
+                view?: string | null;
+            };
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DbRowsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_row_api_v1_folio_databases__node_id__rows_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DbRowIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DbRowOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     favorite_api_v1_folio_favorites__target_type___target_id__put: {
         parameters: {
             query?: never;
@@ -13117,6 +13485,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FolioReactionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_row_api_v1_folio_rows__row_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                row_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_row_api_v1_folio_rows__row_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                row_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DbRowPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DbRowOut"];
                 };
             };
             /** @description Validation Error */
