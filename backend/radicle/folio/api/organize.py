@@ -42,7 +42,7 @@ async def copy_node(
         parent_id=body.parent,
         include_children=body.include_children,
     )
-    return await _node(db, copy)
+    return await _node(db, principal.user, copy)
 
 
 class StatusIn(Input):
@@ -63,7 +63,7 @@ async def set_status(
     await _reader(db, principal)
     node = await nodes.get_node(db, principal.user, node_id)
     changed = await quality.set_status(db, principal.user, node, NodeStatus(body.status))
-    return await _node(db, changed)
+    return await _node(db, principal.user, changed)
 
 
 @router.patch("/nodes/{node_id}/owner", response_model=NodeOut)
@@ -73,7 +73,9 @@ async def transfer_owner(
     """Hand the page to someone else; a new version records it in the history."""
     await _reader(db, principal)
     node = await nodes.get_node(db, principal.user, node_id)
-    return await _node(db, await quality.transfer_owner(db, principal.user, node, body.owner))
+    return await _node(
+        db, principal.user, await quality.transfer_owner(db, principal.user, node, body.owner)
+    )
 
 
 class ArchivedOut(NodeRef):
@@ -91,7 +93,7 @@ async def archive_node(node_id: uuid.UUID, principal: CurrentPrincipal, db: Db) 
     Needs the delete permission, like deleting."""
     await _reader(db, principal)
     node = await nodes.get_node(db, principal.user, node_id)
-    return await _node(db, await archive.archive(db, principal.user, node))
+    return await _node(db, principal.user, await archive.archive(db, principal.user, node))
 
 
 @router.post("/nodes/{node_id}/unarchive", response_model=NodeOut)
@@ -99,7 +101,7 @@ async def unarchive_node(node_id: uuid.UUID, principal: CurrentPrincipal, db: Db
     """Bring back what that archive took out, and index it again."""
     await _reader(db, principal)
     node = await nodes.get_node(db, principal.user, node_id)
-    return await _node(db, await archive.unarchive(db, principal.user, node))
+    return await _node(db, principal.user, await archive.unarchive(db, principal.user, node))
 
 
 @router.get("/spaces/{key}/archived", response_model=Page[ArchivedOut])

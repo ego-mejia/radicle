@@ -69,6 +69,8 @@ class NodeOut(NodeRef):
     status: Literal["draft", "published", "in_review", "verified", "outdated"]
     verified_until: date | None
     archived_at: UtcDatetime | None
+    can_edit: bool = Field(description="You may edit its draft (space and page restrictions)")
+    can_delete: bool = Field(description="You may delete, archive or move it to another space")
 
 
 class NodeIn(Input):
@@ -113,7 +115,7 @@ def _tree(level: list[nodes.TreeNode]) -> list[TreeItem]:
     return [TreeItem(**_ref(t.node).model_dump(), children=_tree(t.children)) for t in level]
 
 
-async def _node(db: Db, node: FolioNode) -> NodeOut:
+async def _node(db: Db, user: User, node: FolioNode) -> NodeOut:
     space = await db.get(FolioSpace, node.space_id)
     current = await publishing.current_version(db, node)
     return NodeOut(
@@ -131,6 +133,8 @@ async def _node(db: Db, node: FolioNode) -> NodeOut:
         status=node.status.value,
         verified_until=node.verified_until,
         archived_at=node.archived_at,
+        can_edit=await access.may_edit(db, user, node),
+        can_delete=await access.may_delete(db, user, node),
     )
 
 
@@ -236,7 +240,7 @@ async def create_node(body: NodeIn, principal: CurrentPrincipal, db: Db) -> Node
     node = await nodes.create_node(
         db, principal.user, space, kind=NodeKind(body.kind), title=body.title, parent_id=body.parent
     )
-    return await _node(db, node)
+    return await _node(db, principal.user, node)
 
 
 @router.get("/nodes/{node_id}", response_model=NodeOut)
@@ -244,7 +248,7 @@ async def get_node(node_id: uuid.UUID, principal: CurrentPrincipal, db: Db) -> N
     await _reader(db, principal)
     node = await nodes.get_node(db, principal.user, node_id)
     await social.record_view(db, principal.user, node)
-    return await _node(db, node)
+    return await _node(db, principal.user, node)
 
 
 @router.patch("/nodes/{node_id}", response_model=NodeOut)
@@ -261,7 +265,9 @@ async def patch_node(
         cover_asset_id=body.cover_asset_id,
         clear_cover="cover_asset_id" in sent and body.cover_asset_id is None,
     )
-    return await _node(db, await nodes.update_node(db, principal.user, node, changes))
+    return await _node(
+        db, principal.user, await nodes.update_node(db, principal.user, node, changes)
+    )
 
 
 @router.post("/nodes/{node_id}/move", response_model=NodeOut)
@@ -279,11 +285,11 @@ async def move_node(
             moved = await copying.move_to_space(
                 db, principal.user, node, target, parent_id=body.parent
             )
-            return await _node(db, moved)
+            return await _node(db, principal.user, moved)
     moved = await nodes.move_node(
         db, principal.user, node, parent_id=body.parent, before_id=body.before, after_id=body.after
     )
-    return await _node(db, moved)
+    return await _node(db, principal.user, moved)
 
 
 @router.delete("/nodes/{node_id}", status_code=204)
