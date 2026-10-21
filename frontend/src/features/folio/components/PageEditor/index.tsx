@@ -28,6 +28,7 @@ import { FolioUploads } from '../../editor/uploads';
 import { pickFiles } from '../../hooks/pickFiles';
 import { AiMenu } from '../AiMenu';
 import { EditorProse } from '../EditorProse';
+import { SelectionAi } from '../SelectionAi';
 import { SelectionComment } from '../SelectionComment';
 import { PageHeader } from './components/PageHeader';
 import { mediaBlocks } from './media';
@@ -247,6 +248,7 @@ function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
               <EditorContent editor={editor} />
             </div>
           </EditorProse>
+          {editor && <SelectionAi editor={editor} nodeId={node.id} space={node.space} />}
           {node.version != null && (
             <SelectionComment
               container={bodyEl}
