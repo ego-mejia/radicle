@@ -15,12 +15,19 @@ from alembic import op
 from pgvector.sqlalchemy import Vector
 from sqlalchemy.dialects import postgresql
 
-from radicle.folio.db.models import CHUNK_SEARCH_SQL
-
 revision: str = "0038"
 down_revision: str | None = "0037"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
+
+CHUNK_SEARCH_SQL = (
+    "setweight(to_tsvector('english'::regconfig, coalesce(metadata->>'title', '')), 'A') || "
+    "setweight(to_tsvector('spanish'::regconfig, coalesce(metadata->>'title', '')), 'A') || "
+    "setweight(to_tsvector('english'::regconfig, coalesce(metadata->>'description', '')), 'B') || "
+    "setweight(to_tsvector('spanish'::regconfig, coalesce(metadata->>'description', '')), 'B') || "
+    "setweight(to_tsvector('english'::regconfig, coalesce(text, '')), 'C') || "
+    "setweight(to_tsvector('spanish'::regconfig, coalesce(text, '')), 'C')"
+)
 
 
 def upgrade() -> None:

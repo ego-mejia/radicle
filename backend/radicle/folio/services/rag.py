@@ -142,7 +142,11 @@ async def index_node(db: AsyncSession, node_id: uuid.UUID) -> int:
                 anchor=c.anchor,
                 text=c.text,
                 token_count=c.token_count,
-                metadata_={**base, "url": f"{url}#{c.anchor}" if c.anchor else url},
+                metadata_={
+                    **base,
+                    "section": " > ".join(c.heading_path),
+                    "url": f"{url}#{c.anchor}" if c.anchor else url,
+                },
                 embedding=vector,
                 embedding_dims=len(vector) if vector else None,
                 embedded_at=utcnow() if vector else None,
