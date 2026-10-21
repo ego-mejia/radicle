@@ -2586,7 +2586,7 @@
           },
           "reactions": {
             "items": {
-              "$ref": "#/components/schemas/radicle__docket__api__schemas__tickets__ReactionOut"
+              "$ref": "#/components/schemas/ReactionOut"
             },
             "title": "Reactions",
             "type": "array"
@@ -4053,6 +4053,29 @@
           "role"
         ],
         "title": "FolioMeOut",
+        "type": "object"
+      },
+      "FolioReactionOut": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "emoji": {
+            "title": "Emoji",
+            "type": "string"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "emoji",
+          "count",
+          "mine"
+        ],
+        "title": "FolioReactionOut",
         "type": "object"
       },
       "FolioTemplateIn": {
@@ -6288,6 +6311,51 @@
         "title": "MilestoneStatus",
         "type": "string"
       },
+      "MoveIn": {
+        "additionalProperties": false,
+        "properties": {
+          "area_mapping": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Area Mapping",
+            "type": "object"
+          },
+          "include_children": {
+            "default": true,
+            "title": "Include Children",
+            "type": "boolean"
+          },
+          "milestone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Milestone"
+          },
+          "status_mapping": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "{\"In Review\": \"QA\"}; by name otherwise, else initial",
+            "title": "Status Mapping",
+            "type": "object"
+          },
+          "target_project": {
+            "title": "Target Project",
+            "type": "string"
+          }
+        },
+        "required": [
+          "target_project"
+        ],
+        "title": "MoveIn",
+        "type": "object"
+      },
       "NextIn": {
         "additionalProperties": false,
         "properties": {
@@ -6451,6 +6519,64 @@
         ],
         "title": "NodeKind",
         "type": "string"
+      },
+      "NodeMoveIn": {
+        "additionalProperties": false,
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sibling to place it after",
+            "title": "After"
+          },
+          "before": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sibling to place it before",
+            "title": "Before"
+          },
+          "parent": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null moves it to the root",
+            "title": "Parent"
+          },
+          "space": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Another space's key to move it there",
+            "title": "Space"
+          }
+        },
+        "title": "NodeMoveIn",
+        "type": "object"
       },
       "NodeOut": {
         "properties": {
@@ -8788,6 +8914,32 @@
           }
         },
         "title": "RankIn",
+        "type": "object"
+      },
+      "ReactionOut": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "emoji": {
+            "title": "Emoji",
+            "type": "string"
+          },
+          "users": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Users",
+            "type": "array"
+          }
+        },
+        "required": [
+          "emoji",
+          "count",
+          "users"
+        ],
+        "title": "ReactionOut",
         "type": "object"
       },
       "ReadIn": {
@@ -14574,158 +14726,6 @@
         },
         "title": "WorklogPatch",
         "type": "object"
-      },
-      "radicle__docket__api__bulk__MoveIn": {
-        "additionalProperties": false,
-        "properties": {
-          "area_mapping": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "title": "Area Mapping",
-            "type": "object"
-          },
-          "include_children": {
-            "default": true,
-            "title": "Include Children",
-            "type": "boolean"
-          },
-          "milestone": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Milestone"
-          },
-          "status_mapping": {
-            "additionalProperties": {
-              "type": "string"
-            },
-            "description": "{\"In Review\": \"QA\"}; by name otherwise, else initial",
-            "title": "Status Mapping",
-            "type": "object"
-          },
-          "target_project": {
-            "title": "Target Project",
-            "type": "string"
-          }
-        },
-        "required": [
-          "target_project"
-        ],
-        "title": "MoveIn",
-        "type": "object"
-      },
-      "radicle__docket__api__schemas__tickets__ReactionOut": {
-        "properties": {
-          "count": {
-            "title": "Count",
-            "type": "integer"
-          },
-          "emoji": {
-            "title": "Emoji",
-            "type": "string"
-          },
-          "users": {
-            "items": {
-              "type": "string"
-            },
-            "title": "Users",
-            "type": "array"
-          }
-        },
-        "required": [
-          "emoji",
-          "count",
-          "users"
-        ],
-        "title": "ReactionOut",
-        "type": "object"
-      },
-      "radicle__folio__api__social__ReactionOut": {
-        "properties": {
-          "count": {
-            "title": "Count",
-            "type": "integer"
-          },
-          "emoji": {
-            "title": "Emoji",
-            "type": "string"
-          },
-          "mine": {
-            "title": "Mine",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "emoji",
-          "count",
-          "mine"
-        ],
-        "title": "ReactionOut",
-        "type": "object"
-      },
-      "radicle__folio__api__spaces__MoveIn": {
-        "additionalProperties": false,
-        "properties": {
-          "after": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Sibling to place it after",
-            "title": "After"
-          },
-          "before": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Sibling to place it before",
-            "title": "Before"
-          },
-          "parent": {
-            "anyOf": [
-              {
-                "format": "uuid",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "null moves it to the root",
-            "title": "Parent"
-          },
-          "space": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Another space's key to move it there",
-            "title": "Space"
-          }
-        },
-        "title": "MoveIn",
-        "type": "object"
       }
     }
   },
@@ -18368,7 +18368,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/radicle__folio__api__spaces__MoveIn"
+                "$ref": "#/components/schemas/NodeMoveIn"
               }
             }
           },
@@ -18924,7 +18924,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/radicle__folio__api__social__ReactionOut"
+                    "$ref": "#/components/schemas/FolioReactionOut"
                   },
                   "title": "Response List Reactions Api V1 Folio Reactions  Target Type   Target Id  Get",
                   "type": "array"
@@ -18994,7 +18994,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/radicle__folio__api__social__ReactionOut"
+                    "$ref": "#/components/schemas/FolioReactionOut"
                   },
                   "title": "Response Unreact Api V1 Folio Reactions  Target Type   Target Id   Emoji  Delete",
                   "type": "array"
@@ -19063,7 +19063,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/radicle__folio__api__social__ReactionOut"
+                    "$ref": "#/components/schemas/FolioReactionOut"
                   },
                   "title": "Response React Api V1 Folio Reactions  Target Type   Target Id   Emoji  Put",
                   "type": "array"
@@ -26302,7 +26302,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/radicle__docket__api__bulk__MoveIn"
+                "$ref": "#/components/schemas/MoveIn"
               }
             }
           },

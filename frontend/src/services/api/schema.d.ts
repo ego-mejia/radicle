@@ -4467,7 +4467,7 @@ export interface components {
             /** Id */
             id: string;
             /** Reactions */
-            reactions: components["schemas"]["radicle__docket__api__schemas__tickets__ReactionOut"][];
+            reactions: components["schemas"]["ReactionOut"][];
             /** Ticket */
             ticket: string;
         };
@@ -4995,6 +4995,15 @@ export interface components {
              * @enum {string}
              */
             role: "reader" | "creator" | "admin";
+        };
+        /** FolioReactionOut */
+        FolioReactionOut: {
+            /** Count */
+            count: number;
+            /** Emoji */
+            emoji: string;
+            /** Mine */
+            mine: boolean;
         };
         /** FolioTemplateIn */
         FolioTemplateIn: {
@@ -5815,6 +5824,29 @@ export interface components {
          * @enum {string}
          */
         MilestoneStatus: "open" | "closed";
+        /** MoveIn */
+        MoveIn: {
+            /** Area Mapping */
+            area_mapping?: {
+                [key: string]: string;
+            };
+            /**
+             * Include Children
+             * @default true
+             */
+            include_children?: boolean;
+            /** Milestone */
+            milestone?: string | null;
+            /**
+             * Status Mapping
+             * @description {"In Review": "QA"}; by name otherwise, else initial
+             */
+            status_mapping?: {
+                [key: string]: string;
+            };
+            /** Target Project */
+            target_project: string;
+        };
         /** NextIn */
         NextIn: {
             /** Area */
@@ -5879,6 +5911,29 @@ export interface components {
          * @enum {string}
          */
         NodeKind: "page" | "folder" | "blog_post" | "live_doc";
+        /** NodeMoveIn */
+        NodeMoveIn: {
+            /**
+             * After
+             * @description Sibling to place it after
+             */
+            after?: string | null;
+            /**
+             * Before
+             * @description Sibling to place it before
+             */
+            before?: string | null;
+            /**
+             * Parent
+             * @description null moves it to the root
+             */
+            parent?: string | null;
+            /**
+             * Space
+             * @description Another space's key to move it there
+             */
+            space?: string | null;
+        };
         /** NodeOut */
         NodeOut: {
             /** Archived At */
@@ -6638,6 +6693,15 @@ export interface components {
              * @description Ticket key to go right above
              */
             before?: string | null;
+        };
+        /** ReactionOut */
+        ReactionOut: {
+            /** Count */
+            count: number;
+            /** Emoji */
+            emoji: string;
+            /** Users */
+            users: string[];
         };
         /** ReadIn */
         ReadIn: {
@@ -8598,70 +8662,6 @@ export interface components {
             minutes?: number | null;
             /** Started At */
             started_at?: string | null;
-        };
-        /** MoveIn */
-        radicle__docket__api__bulk__MoveIn: {
-            /** Area Mapping */
-            area_mapping?: {
-                [key: string]: string;
-            };
-            /**
-             * Include Children
-             * @default true
-             */
-            include_children?: boolean;
-            /** Milestone */
-            milestone?: string | null;
-            /**
-             * Status Mapping
-             * @description {"In Review": "QA"}; by name otherwise, else initial
-             */
-            status_mapping?: {
-                [key: string]: string;
-            };
-            /** Target Project */
-            target_project: string;
-        };
-        /** ReactionOut */
-        radicle__docket__api__schemas__tickets__ReactionOut: {
-            /** Count */
-            count: number;
-            /** Emoji */
-            emoji: string;
-            /** Users */
-            users: string[];
-        };
-        /** ReactionOut */
-        radicle__folio__api__social__ReactionOut: {
-            /** Count */
-            count: number;
-            /** Emoji */
-            emoji: string;
-            /** Mine */
-            mine: boolean;
-        };
-        /** MoveIn */
-        radicle__folio__api__spaces__MoveIn: {
-            /**
-             * After
-             * @description Sibling to place it after
-             */
-            after?: string | null;
-            /**
-             * Before
-             * @description Sibling to place it before
-             */
-            before?: string | null;
-            /**
-             * Parent
-             * @description null moves it to the root
-             */
-            parent?: string | null;
-            /**
-             * Space
-             * @description Another space's key to move it there
-             */
-            space?: string | null;
         };
     };
     responses: never;
@@ -11057,7 +11057,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["radicle__folio__api__spaces__MoveIn"];
+                "application/json": components["schemas"]["NodeMoveIn"];
             };
         };
         responses: {
@@ -11409,7 +11409,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["radicle__folio__api__social__ReactionOut"][];
+                    "application/json": components["schemas"]["FolioReactionOut"][];
                 };
             };
             /** @description Validation Error */
@@ -11442,7 +11442,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["radicle__folio__api__social__ReactionOut"][];
+                    "application/json": components["schemas"]["FolioReactionOut"][];
                 };
             };
             /** @description Validation Error */
@@ -11475,7 +11475,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["radicle__folio__api__social__ReactionOut"][];
+                    "application/json": components["schemas"]["FolioReactionOut"][];
                 };
             };
             /** @description Validation Error */
@@ -15994,7 +15994,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["radicle__docket__api__bulk__MoveIn"];
+                "application/json": components["schemas"]["MoveIn"];
             };
         };
         responses: {
