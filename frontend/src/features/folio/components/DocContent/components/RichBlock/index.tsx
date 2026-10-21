@@ -14,6 +14,7 @@ import type { ChartKind } from '../../../ChartBlock/components/ChartView';
 import { type ChartData, tableData } from '../../../ChartBlock/tableData';
 import { PageList } from '../../../PageList';
 import { TicketTable } from '../../../TicketTable';
+import { TicketProgress } from '../../../TicketProgress';
 import { Timeline, type TimelineItem } from '../../../Timeline';
 import { WhiteboardEmbed } from '../../../WhiteboardEmbed';
 import * as S from './style';
@@ -157,6 +158,8 @@ export function RichBlock({ node: n, previous, headings, childPages, children }:
           limit={a.limit ? Number(a.limit) : null}
         />
       );
+    case 'ticketProgress':
+      return <TicketProgress title={a.title ? String(a.title) : null} />;
     case 'comparison':
       return (
         <S.Compare $sides={(n.content ?? []).length}>

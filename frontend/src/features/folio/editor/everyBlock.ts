@@ -119,6 +119,7 @@ export const EVERY_BLOCK: JSONContent = {
     ),
     node('pageList', { label: 'onboarding', limit: 5, space: 'docs', order: 'title' }),
     node('ticketTable', { rql: 'project = PA AND status != Done', title: 'Pendientes', limit: 10 }),
+    node('ticketProgress', { title: 'Avance de la fase' }),
     node('horizontalRule'),
     p(t('Fin')),
   ],

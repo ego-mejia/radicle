@@ -98,6 +98,8 @@ más rápido
 
 ::tickets{rql="project = PA AND status != Done" title=Pendientes limit=10}
 
+::progress{title="Avance de la fase"}
+
 ::embed{url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" title="La demo"}
 
 ---

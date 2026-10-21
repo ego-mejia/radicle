@@ -84,6 +84,8 @@ export const TicketTable = suiteAtom('ticketTable', {
   limit: attr('limit', 'number'),
 });
 
+export const TicketProgress = suiteAtom('ticketProgress', { title: attr('title') });
+
 export const InlineFormula = Node.create({
   name: 'inlineFormula',
   group: 'inline',
@@ -136,6 +138,7 @@ export const VISUAL_NODES = [
   Formula,
   PageList,
   TicketTable,
+  TicketProgress,
   InlineFormula,
   Comparison,
   ComparisonSide,

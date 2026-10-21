@@ -20,7 +20,7 @@ _md = MarkdownIt("commonmark", {"html": False}).enable(["table", "strikethrough"
 
 _OPEN = re.compile(r"^(:{3,})(panel|expand|columns|column|compare|side)(\{.*\})?\s*$")
 _CLOSE = re.compile(r"^:{3,}\s*$")
-_LEAF = re.compile(r"^::(file|video|pages|database|whiteboard|embed|tickets)(\{.*\})\s*$")
+_LEAF = re.compile(r"^::(file|video|pages|database|whiteboard|embed|tickets|progress)(\{.*\})\s*$")
 _INFO = re.compile(r"^(?P<name>[\w-]+)\s*(?P<attrs>\{.*\})?\s*$")
 _ACTION = re.compile(r"^::task\[(?P<label>.*)\](?P<attrs>\{[^}]*\})?\s*$")
 _FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
@@ -541,6 +541,9 @@ def _convert(items: list[Any], parent: str = "doc") -> list[Node]:
                 if (attrs.get("limit") or "").isdigit():
                     table["limit"] = min(max(int(attrs["limit"]), 1), 100)
                 out.append({"type": "ticketTable", "attrs": table})
+            elif name == "progress":
+                title = (attrs.get("title") or "")[:200]
+                out.append({"type": "ticketProgress", "attrs": {"title": title} if title else {}})
             elif name == "whiteboard" and attrs.get("id"):
                 out.append({"type": "whiteboard", "attrs": {"whiteboard": attrs["id"]}})
         else:

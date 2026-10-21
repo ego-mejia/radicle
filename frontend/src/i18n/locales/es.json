@@ -1882,7 +1882,8 @@
         "inlineFormula": "Fórmula en línea",
         "pageList": "Páginas por label",
         "whiteboard": "Whiteboard",
-        "ticketTable": "Tabla de tickets"
+        "ticketTable": "Tabla de tickets",
+        "ticketProgress": "Avance de tickets"
       },
       "addCover": "Agregar portada",
       "changeCover": "Cambiar portada",
@@ -2497,7 +2498,12 @@
       "create_other": "Crear {{count}} tickets",
       "created_one": "{{count}} ticket creado y ligado.",
       "created_other": "{{count}} tickets creados y ligados.",
-      "failed": "No se pudieron cargar los entregables."
+      "failed": "No se pudieron cargar los entregables.",
+      "progress": "Avance de tickets",
+      "done": "{{done}} de {{total}} terminados",
+      "onlyHere": "Se ve en la página del build spec.",
+      "noTicket": "Sin ticket todavía",
+      "checklist": "Checklist de {{key}}"
     },
     "chat": {
       "title": "Pregunta a los docs",

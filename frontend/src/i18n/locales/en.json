@@ -1882,7 +1882,8 @@
         "inlineFormula": "Inline formula",
         "pageList": "Pages by label",
         "whiteboard": "Whiteboard",
-        "ticketTable": "Ticket table"
+        "ticketTable": "Ticket table",
+        "ticketProgress": "Ticket progress"
       },
       "addCover": "Add cover",
       "changeCover": "Change cover",
@@ -2497,7 +2498,12 @@
       "create_other": "Create {{count}} tickets",
       "created_one": "{{count}} ticket created and linked.",
       "created_other": "{{count}} tickets created and linked.",
-      "failed": "The deliverables couldn't load."
+      "failed": "The deliverables couldn't load.",
+      "progress": "Ticket progress",
+      "done": "{{done}} of {{total}} done",
+      "onlyHere": "Shows on the build spec's own page.",
+      "noTicket": "No ticket yet",
+      "checklist": "Checklist of {{key}}"
     },
     "chat": {
       "title": "Ask the docs",

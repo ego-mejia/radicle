@@ -117,6 +117,7 @@ EVERY_BLOCK: dict[str, Any] = {
         block("databaseView", database="6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14", view="board"),
         block("whiteboard", whiteboard="0b7e2c41-5a3d-4f6e-9c8b-1d2e3f4a5b6c"),
         block("ticketTable", rql="project = PA AND status != Done", title="Pendientes", limit=10),
+        block("ticketProgress", title="Avance de la fase"),
         block("embed", url="https://www.youtube.com/watch?v=dQw4w9WgXcQ", title="La demo"),
         block("horizontalRule"),
         p(t("Fin")),

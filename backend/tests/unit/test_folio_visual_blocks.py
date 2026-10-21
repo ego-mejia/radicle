@@ -153,3 +153,13 @@ def test_inline_math_only_between_dollars() -> None:
     assert [n["type"] for n in para] == ["text", "text", "text", "inlineFormula", "text"]
     assert para[3]["attrs"]["latex"] == "e=mc^2" and para[4]["text"] == "."
     assert "e=mc^2" in convert.to_text(doc(block("paragraph", para[3])))
+
+
+def test_ticket_progress_round_trips_with_or_without_title() -> None:
+    from radicle.folio.services import convert
+    from radicle.folio.services.parse_markdown import from_markdown
+
+    for md, attrs in (("::progress{}", {}), ("::progress{title=Avance}", {"title": "Avance"})):
+        doc = from_markdown(md)
+        assert doc["content"] == [{"type": "ticketProgress", "attrs": attrs}]
+        assert convert.to_markdown(doc).strip() == md

@@ -162,6 +162,11 @@ export const BLOCKS: BlockItem[] = [
     keywords: 'tickets docket rql table tabla tareas',
     run: (c) => c.insertContent({ type: 'ticketTable', attrs: { rql: '' } }),
   },
+  {
+    key: 'ticketProgress',
+    keywords: 'progress avance build spec entregables tickets docket',
+    run: (c) => c.insertContent({ type: 'ticketProgress' }),
+  },
   { key: 'divider', keywords: 'hr divider line separador', run: (c) => c.setHorizontalRule() },
 ];
 
