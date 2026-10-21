@@ -73,6 +73,7 @@ COVERED = {
     "set_task_done",
     "watch",
     "get_feed",
+    "append_to_live_doc",
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
@@ -86,6 +87,7 @@ EXEMPT = {
     "list_templates",
     "create_from_template",
     "list_notifications",  # only your own, already filtered by each app's resolver
+    "create_live_doc",
 }
 
 
@@ -116,6 +118,7 @@ async def test_restricted_pages_never_show_up(
             "update_draft": {"content_md": "x"},
             "submit_for_publication": {"change_note": "x"},
             "add_comment": {"body": "x"},
+            "append_to_live_doc": {"content_md": "x"},
         }
         for tool in ("get_page", "get_versions", "list_comments", *writes):
             args = {"id": ids["secret"]} | writes.get(tool, {})

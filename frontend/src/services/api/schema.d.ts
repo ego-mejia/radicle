@@ -1111,6 +1111,26 @@ export interface paths {
         patch: operations["patch_node_api_v1_folio_nodes__node_id__patch"];
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/append": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Append
+         * @description Add Markdown at the end of a live doc without touching what others are writing.
+         */
+        post: operations["append_api_v1_folio_nodes__node_id__append_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}/archive": {
         parameters: {
             query?: never;
@@ -1340,6 +1360,63 @@ export interface paths {
          *     out, unless `grant_view` adds them to the page's own view restriction.
          */
         post: operations["share_node_api_v1_folio_nodes__node_id__share_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/snapshots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Snapshots
+         * @description A live doc's history, newest first.
+         */
+        get: operations["list_snapshots_api_v1_folio_nodes__node_id__snapshots_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/snapshots/{snapshot_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Snapshot */
+        get: operations["get_snapshot_api_v1_folio_nodes__node_id__snapshots__snapshot_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/snapshots/{snapshot_id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Restore Snapshot
+         * @description Bring the doc back to a snapshot, live for whoever is editing; it becomes a new one.
+         */
+        post: operations["restore_snapshot_api_v1_folio_nodes__node_id__snapshots__snapshot_id__restore_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3844,6 +3921,14 @@ export interface components {
             /** Ok */
             ok: boolean;
         };
+        /** AppendIn */
+        AppendIn: {
+            /**
+             * Content Md
+             * @description Markdown to add at the end
+             */
+            content_md: string;
+        };
         /** ApproveIn */
         ApproveIn: {
             /** Area */
@@ -6006,6 +6091,14 @@ export interface components {
             /** Template Version */
             template_version: number | null;
         };
+        /** LiveOut */
+        LiveOut: {
+            /**
+             * Content Md
+             * @description The whole doc after appending
+             */
+            content_md: string;
+        };
         /** LoginIn */
         LoginIn: {
             /**
@@ -6703,6 +6796,13 @@ export interface components {
         Page_SecurityLevelOut_: {
             /** Items */
             items: components["schemas"]["SecurityLevelOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[SnapshotOut] */
+        Page_SnapshotOut_: {
+            /** Items */
+            items: components["schemas"]["SnapshotOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -7512,6 +7612,42 @@ export interface components {
              * @description Handles who will hear about it
              */
             notified: string[];
+        };
+        /** SnapshotContentOut */
+        SnapshotContentOut: {
+            /**
+             * Authors
+             * @description Handles of who wrote since the previous one
+             */
+            authors: string[];
+            /** Content Json */
+            content_json: {
+                [key: string]: unknown;
+            };
+            /** Content Md */
+            content_md: string;
+            /** Created At */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+        };
+        /** SnapshotOut */
+        SnapshotOut: {
+            /**
+             * Authors
+             * @description Handles of who wrote since the previous one
+             */
+            authors: string[];
+            /** Created At */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
         };
         /** SpaceCountOut */
         SpaceCountOut: {
@@ -11545,6 +11681,41 @@ export interface operations {
             };
         };
     };
+    append_api_v1_folio_nodes__node_id__append_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AppendIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LiveOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     archive_node_api_v1_folio_nodes__node_id__archive_post: {
         parameters: {
             query?: never;
@@ -12016,6 +12187,101 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ShareOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_snapshots_api_v1_folio_nodes__node_id__snapshots_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_SnapshotOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_snapshot_api_v1_folio_nodes__node_id__snapshots__snapshot_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+                snapshot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SnapshotContentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    restore_snapshot_api_v1_folio_nodes__node_id__snapshots__snapshot_id__restore_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+                snapshot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SnapshotOut"];
                 };
             };
             /** @description Validation Error */
