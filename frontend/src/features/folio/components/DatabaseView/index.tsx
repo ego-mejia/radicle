@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Lock, Plus } from 'lucide-react';
+import { Lock, Plus, SlidersHorizontal } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../../components/ui/Button';
@@ -9,12 +9,14 @@ import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { isApiError } from '../../../../services/api/client';
 import {
   type DbRow,
+  type DbView,
   type DbRows,
   dbKeys,
   fetchDatabase,
   fetchRows,
 } from '../../../../services/api/folioDatabases';
 import { useRowEdits } from '../../hooks/useRowEdits';
+import { ViewSettings } from '../ViewSettings';
 import { BoardView } from './components/BoardView';
 import { CardsView } from './components/CardsView';
 import { TableView } from './components/TableView';
@@ -45,6 +47,8 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
     enabled: database.isSuccess,
   });
   const edits = useRowEdits(nodeId);
+  // The view being changed, or null for a new one; undefined while closed.
+  const [settings, setSettings] = useState<DbView | null | undefined>(undefined);
 
   if (database.isError) {
     if (isApiError(database.error, 404))
@@ -83,6 +87,18 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
             <Plus aria-hidden />
             {t('folio.db.addRow')}
           </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setSettings(views.find((v) => v.id === active) ?? null)}
+          >
+            <SlidersHorizontal aria-hidden />
+            {t('folio.db.editView')}
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setSettings(null)}>
+            <Plus aria-hidden />
+            {t('folio.db.newView')}
+          </Button>
         </S.Toolbar>
       )}
       {rows.isError && <S.Error role="alert">{errorMessage(rows.error)}</S.Error>}
@@ -94,6 +110,16 @@ export function DatabaseView({ nodeId, viewId = null, embedded = false }: Props)
         />
       ) : (
         !rows.isError && <PageSpinner />
+      )}
+      {settings !== undefined && (
+        <ViewSettings
+          database={database.data}
+          view={settings}
+          onClose={(saved) => {
+            setSettings(undefined);
+            if (saved) setCurrent(saved);
+          }}
+        />
       )}
     </S.Wrap>
   );

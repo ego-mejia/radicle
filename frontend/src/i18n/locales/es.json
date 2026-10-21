@@ -2237,7 +2237,20 @@
       "actions": "Acciones",
       "edit": "Editar {{column}}",
       "done": "Listo",
-      "personHint": "handle"
+      "personHint": "handle",
+      "editView": "Editar vista",
+      "newView": "Nueva vista",
+      "newViewName": "Vista {{n}}",
+      "deleteView": "Borrar vista",
+      "viewName": "Nombre",
+      "viewKind": "Se muestra como",
+      "kind": {
+        "table": "Tabla",
+        "cards": "Tarjetas",
+        "board": "Tablero"
+      },
+      "groupBy": "Agrupar por",
+      "shownColumns": "Columnas visibles"
     }
   },
   "notifications": {
