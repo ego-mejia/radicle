@@ -2,7 +2,7 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Index, String, Text, func
+from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Index, SmallInteger, String, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -34,6 +34,9 @@ class User(Base):
     sso_subject: Mapped[str | None] = mapped_column(Text)
     # Agents only: the MCP tools it may call. None means all of them.
     mcp_tools: Mapped[list[str] | None] = mapped_column(ARRAY(Text))
+    # For the daily digest; None means the instance time zone.
+    timezone: Mapped[str | None] = mapped_column(Text)
+    digest_hour: Mapped[int | None] = mapped_column(SmallInteger)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, server_default=func.now()
     )
