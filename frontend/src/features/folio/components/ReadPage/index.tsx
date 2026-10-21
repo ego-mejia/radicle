@@ -204,7 +204,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
               )}
             </span>
           </S.Byline>
-          {n.version != null && <PageSocial nodeId={n.id} title={n.title} />}
+          {n.version != null && <PageSocial nodeId={n.id} title={n.title} space={n.space} />}
           <div ref={content}>
             <ActionItemTickets nodeId={n.id} container={content}>
               <DocContent doc={page.content} childPages={page.children} size="large" />

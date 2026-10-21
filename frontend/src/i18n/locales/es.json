@@ -2320,7 +2320,25 @@
       "sent": "Enviado a {{names}}.",
       "nobody": "No se avisó a nadie.",
       "granted": "Ya pueden verla: {{names}}.",
-      "cannotSee": "{{names}} no puede ver esta página, así que no recibió aviso. Comparte de nuevo con la casilla marcada para darle acceso."
+      "cannotSee": "{{names}} no puede ver esta página, así que no recibió aviso. Comparte de nuevo con la casilla marcada para darle acceso.",
+      "tabs": "Compartir con",
+      "people": "Personas",
+      "public": {
+        "tab": "Link público",
+        "page": "Esta página",
+        "space": "Todo el space",
+        "create": "Crear link",
+        "noindex": "Ocultar de los buscadores",
+        "copy": "Copiar",
+        "copied": "Link copiado.",
+        "revoke": "Revocar",
+        "revoked": "Link revocado: ya no abre.",
+        "url": "Link público",
+        "views_one": "Abierto una vez",
+        "views_other": "Abierto {{count}} veces",
+        "hidden": "oculto de los buscadores",
+        "adminsOnly": "Solo los admins del space crean links públicos."
+      }
     },
     "embed": {
       "opensNewTab": "(se abre en otra pestaña)"
