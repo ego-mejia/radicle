@@ -16,6 +16,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Fixed
 
+- E2E de etapas 1 y 3: el arrastre de tarjetas y el carril de área vuelven a pasar con los botones de área y milestone en las tarjetas.
 - Board: soltar una tarjeta en Done la cierra como Done sin pedir resolución.
 - My tickets y List: el encabezado de la tabla ya no se desfasa de las filas.
 - Boards: un ticket en In Review o QA Verified se puede regresar al primer estado (nuevas transiciones *Back to To Do*, *Back to Reported* y *Back to New* en el template default y sus proyectos ligados), y soltar una tarjeta rápido ya no se ignora.
@@ -27,6 +28,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Added
 
+- Folio fase 0: el backend se parte en `platform`, `docket` y `folio` sin cambiar Docket; autorización genérica con un proveedor por app; `audit_log.app`; proveedor de IA para chat y embeddings (Admin → Settings → AI provider, con prueba de conexión); switch de suite en el logo con `g d` / `g f`; Folio en `/folio` con roles globales (Admin → Global roles), `/api/v1/folio` y `/mcp/folio` con `whoami`.
 - Áreas con icono: se elige de un set de iconos SVG y se pinta con el color del área; se ve en tarjetas, carriles y timeline.
 - Tarjetas del board con área, milestone y número de subtickets (campos de tarjeta `area`, `milestone` y `children`, prendidos en todos los boards); el área y el milestone se cambian desde la tarjeta.
 - Crear ticket: pegar o soltar imágenes y archivos en la descripción; se suben al crear el ticket.

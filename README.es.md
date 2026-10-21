@@ -346,6 +346,8 @@ Los clientes que solo hablan stdio pueden usar [`mcp-remote`](https://www.npmjs.
 
 Hay 52 tools, agrupadas en contexto, búsqueda de trabajo, tickets, colaboración, archivos y tiempo, planeación y Buzón. La lista completa está en el [README en inglés](README.md#13-ai-agents-over-mcp). Los agentes siguen la misma matriz de permisos y los mismos niveles de seguridad que las personas, y se pueden limitar a algunas tools.
 
+**Folio** tiene su propio servidor MCP en `/mcp/folio`, con los mismos tokens. Por ahora trae `whoami`, que le dice al agente su rol global en Folio; las tools para leer, buscar y proponer docs llegan con la fase 1 de Folio.
+
 ### 14. Teclado, paleta de comandos y temas
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** ¿Manos en el teclado? Presiona <kbd>?</kbd> para ver todos los atajos.
@@ -366,6 +368,13 @@ Presiona <kbd>?</kbd> para ver todos los atajos. Los principales:
 Cambia entre claro y oscuro con el botón de la luna, y entre inglés y español en tu perfil o desde la paleta. Los atajos se pueden apagar en tu perfil.
 
 **Úsalo como app de escritorio.** Radicle se puede instalar como app propia, con Radi en el Dock y su propia ventana: en Chrome da clic en **Instalar** en la barra de direcciones, o en Safari elige **Archivo → Añadir al Dock**.
+
+### 15. Folio y el proveedor de IA
+
+Radicle está creciendo con una segunda app, **Radicle Folio**, para documentación (specs en `docs/folio/`). Docket, el tracker de tickets, y Folio comparten usuarios, grupos, agentes y el inicio de sesión: abre el menú del logo (o usa `g f` / `g d`) para cambiar de app, y cada una abre donde la dejaste.
+
+- **Admin → Settings → AI provider** define un solo proveedor para chat y embeddings (OpenAI, un servidor compatible con OpenAI como Voyage, Ollama, o Anthropic para chat). La llave se guarda cifrada; **Test connection** genera un embedding corto y muestra dimensiones y latencia. Sin proveedor, todo lo demás funciona.
+- **Folio → Admin → Global roles** decide quién lee, crea o administra Folio: una persona, un grupo o todos (por default todos leen). Quien no tiene ningún rol no ve Folio.
 
 ## ⚙️ Configuración
 
@@ -433,6 +442,15 @@ scripts/smoke.sh   # construye la imagen y la levanta en limpio en el puerto 800
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Lo que sigue. ¡Las ideas son bienvenidas!
 
 Las etapas 1 a 4 están completas: core y MCP, configuración y trabajo diario, planeación y visibilidad, y el Buzón con control de acceso. Esto es lo que sigue; las ideas y la ayuda son muy bienvenidas.
+
+**Radicle Folio (docs)**
+
+- [x] Fase 0: plataforma compartida (backend partido en `platform`, `docket` y `folio`, autorización genérica, proveedor de IA, switch de suite, esqueleto de Folio).
+- [ ] Fase 1: spaces y páginas, editor, publicación con versiones, permisos, envíos de agentes con aprobación, búsqueda RAG y MCP de Folio.
+- [ ] Fase 2: colaboración en tiempo real, comentarios, menciones, live docs.
+- [ ] Fase 3: templates, editor de la home, bloques visuales, whiteboards y databases.
+- [ ] Fase 4: tickets dentro de los docs y chat con citas.
+- [ ] Fase 5: páginas públicas, importar y exportar, Slack y Teams, webhooks.
 
 **Etapa 5: integraciones**
 
