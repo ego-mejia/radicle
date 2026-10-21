@@ -2118,7 +2118,8 @@
       "cancel": "Cancel",
       "removed": "Removed user",
       "comment": "Comment",
-      "commentOn": "Comment on the selected text"
+      "commentOn": "Comment on the selected text",
+      "margin": "Comments on the text"
     },
     "share": {
       "button": "Share",
