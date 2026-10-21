@@ -26,6 +26,7 @@ import { ProjectsView } from './features/projects/views/ProjectsView';
 import { SettingsView } from './features/settings/views/SettingsView';
 import { TemplateEditorView } from './features/templates/views/TemplateEditorView';
 import { TicketPageView } from './features/tickets/views/TicketPageView';
+import { FolioAdminView } from './features/folio/views/FolioAdminView';
 import { FolioHomeView } from './features/folio/views/FolioHomeView';
 import { AppPage } from './pages/AppPage';
 import { FolioPage } from './pages/FolioPage';
@@ -129,6 +130,12 @@ const folioHomeRoute = createRoute({
   getParentRoute: () => folioLayout,
   path: '/folio',
   component: FolioHomeView,
+});
+
+const folioAdminRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/admin',
+  component: FolioAdminView,
 });
 
 const boardSearch = (search: Record<string, unknown>): BoardSearch => ({
@@ -343,7 +350,7 @@ const routeTree = rootRoute.addChildren([
     adminRoute,
     templateRoute,
   ]),
-  folioLayout.addChildren([folioHomeRoute]),
+  folioLayout.addChildren([folioHomeRoute, folioAdminRoute]),
 ]);
 
 export function createAppRouter(queryClient: QueryClient) {
