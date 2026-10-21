@@ -49,6 +49,21 @@ describe('FolioHomeView', () => {
     expect(screen.getByRole('link', { name: 'Read Connect Claude over MCP' })).toBeInTheDocument();
   });
 
+  it('lists the latest posts, the most read and the spaces', async () => {
+    mockFetch({ 'GET /api/v1/folio/home': { status: 200, body: HOME } });
+    renderWithProviders(<FolioHomeView />);
+    const latest = await screen.findByRole('region', { name: 'Latest posts' });
+    expect(latest).toHaveTextContent('Blog post');
+    expect(latest).toHaveTextContent('Weekly changes');
+    const mostRead = screen.getByRole('region', { name: 'Most read' });
+    expect(mostRead).toHaveTextContent('01Welcome to Radicle');
+    expect(mostRead).toHaveTextContent('02Weekly changes');
+    expect(screen.getByRole('link', { name: /Ingeniería.*3 docs/ })).toHaveAttribute(
+      'href',
+      '/folio/s/eng',
+    );
+  });
+
   it('says so when nothing is published', async () => {
     const empty = { ...HOME, featured: null, announcement: null, ai_tools: [], most_read: [] };
     mockFetch({
