@@ -10,9 +10,16 @@ READ = (
     "get_page",
     "get_metadata_schema",
     "get_versions",
+    "list_templates",
 )
 
-WRITE = ("create_page", "update_draft", "submit_for_publication", "list_my_submissions")
+WRITE = (
+    "create_page",
+    "update_draft",
+    "submit_for_publication",
+    "list_my_submissions",
+    "create_from_template",
+)
 
 CATALOG: tuple[Tool, ...] = (
     Tool("whoami", "context", read_only=True),

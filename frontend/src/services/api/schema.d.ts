@@ -946,6 +946,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/nodes/from-template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Node From Template
+         * @description A page or post whose draft starts with the template's document and metadata.
+         */
+        post: operations["node_from_template_api_v1_folio_nodes_from_template_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}": {
         parameters: {
             query?: never;
@@ -1336,6 +1356,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/spaces/from-template": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Space From Template
+         * @description A space with the template's folders, pages and grants.
+         */
+        post: operations["space_from_template_api_v1_folio_spaces_from_template_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/spaces/{key}": {
         parameters: {
             query?: never;
@@ -1520,6 +1560,52 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Templates
+         * @description Templates you can use: Folio's own, the global ones and your spaces'.
+         */
+        get: operations["list_templates_api_v1_folio_templates_get"];
+        put?: never;
+        /**
+         * Create Template
+         * @description Global templates take a Folio admin; a space's, that space's admin.
+         */
+        post: operations["create_template_api_v1_folio_templates_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/templates/{template_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Template */
+        get: operations["get_template_api_v1_folio_templates__template_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Archive Template
+         * @description Archive it: pages made from it keep their content.
+         */
+        delete: operations["archive_template_api_v1_folio_templates__template_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Template */
+        patch: operations["update_template_api_v1_folio_templates__template_id__patch"];
         trace?: never;
     };
     "/api/v1/folio/watch/{target_type}/{target_id}": {
@@ -4900,6 +4986,126 @@ export interface components {
              */
             role: "reader" | "creator" | "admin";
         };
+        /** FolioTemplateIn */
+        FolioTemplateIn: {
+            /** Content Json */
+            content_json?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Content Md
+             * @description Markdown with {{date}}, {{author}}, {{space}}, {{title}}
+             */
+            content_md?: string | null;
+            /** Default Metadata */
+            default_metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Description
+             * @default
+             */
+            description?: string;
+            /** Doc Type Key */
+            doc_type_key?: string | null;
+            /** Icon */
+            icon?: string | null;
+            /**
+             * Kind
+             * @default page
+             * @enum {string}
+             */
+            kind?: "page" | "space";
+            /** Name */
+            name: string;
+            /**
+             * Space
+             * @description A space key for a space's own template
+             */
+            space?: string | null;
+            /**
+             * Structure
+             * @description Space templates: {"pages": [{"title", "kind", "template", "children"}], "grants": [...]}
+             */
+            structure?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** FolioTemplateOut */
+        FolioTemplateOut: {
+            /**
+             * Builtin
+             * @description Ships with Folio; admins may still edit it
+             */
+            builtin: boolean;
+            /** Content Json */
+            content_json: {
+                [key: string]: unknown;
+            } | null;
+            /** Default Metadata */
+            default_metadata: {
+                [key: string]: unknown;
+            };
+            /** Description */
+            description: string;
+            /** Doc Type Key */
+            doc_type_key: string | null;
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "page" | "space";
+            /** Name */
+            name: string;
+            /**
+             * Scope
+             * @enum {string}
+             */
+            scope: "global" | "space";
+            /** Space */
+            space: string | null;
+            /** Structure */
+            structure: {
+                [key: string]: unknown;
+            } | null;
+            /** Updated At */
+            updated_at: string;
+        };
+        /** FolioTemplatePatch */
+        FolioTemplatePatch: {
+            /** Content Json */
+            content_json?: {
+                [key: string]: unknown;
+            } | null;
+            /** Content Md */
+            content_md?: string | null;
+            /** Default Metadata */
+            default_metadata?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Description
+             * @default
+             */
+            description?: string;
+            /** Doc Type Key */
+            doc_type_key?: string | null;
+            /** Icon */
+            icon?: string | null;
+            /** Name */
+            name: string;
+            /** Structure */
+            structure?: {
+                [key: string]: unknown;
+            } | null;
+        };
         /** FormSchemaOut */
         FormSchemaOut: {
             /** Fields */
@@ -5613,6 +5819,26 @@ export interface components {
             /** @description null when nothing is ready to work on */
             ticket: components["schemas"]["TicketOut"] | null;
         };
+        /** NodeFromTemplateIn */
+        NodeFromTemplateIn: {
+            /**
+             * Kind
+             * @default page
+             * @enum {string}
+             */
+            kind?: "page" | "blog_post";
+            /** Parent */
+            parent?: string | null;
+            /** Space */
+            space: string;
+            /**
+             * Template
+             * Format: uuid
+             */
+            template: string;
+            /** Title */
+            title: string;
+        };
         /** NodeIn */
         NodeIn: {
             /**
@@ -5883,6 +6109,13 @@ export interface components {
         Page_FilterOut_: {
             /** Items */
             items: components["schemas"]["FilterOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[FolioTemplateOut] */
+        Page_FolioTemplateOut_: {
+            /** Items */
+            items: components["schemas"]["FolioTemplateOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -6737,6 +6970,21 @@ export interface components {
             kind: "team" | "personal";
             /** Name */
             name: string;
+        };
+        /** SpaceFromTemplateIn */
+        SpaceFromTemplateIn: {
+            /**
+             * Key
+             * @description 2 to 40 lowercase letters, digits and dashes
+             */
+            key: string;
+            /** Name */
+            name: string;
+            /**
+             * Template
+             * Format: uuid
+             */
+            template: string;
         };
         /** SpaceIn */
         SpaceIn: {
@@ -10438,6 +10686,39 @@ export interface operations {
             };
         };
     };
+    node_from_template_api_v1_folio_nodes_from_template_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NodeFromTemplateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NodeOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_node_api_v1_folio_nodes__node_id__get: {
         parameters: {
             query?: never;
@@ -11274,6 +11555,39 @@ export interface operations {
             };
         };
     };
+    space_from_template_api_v1_folio_spaces_from_template_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SpaceFromTemplateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpaceOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_space_api_v1_folio_spaces__key__get: {
         parameters: {
             query?: never;
@@ -11651,6 +11965,167 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SubmissionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_templates_api_v1_folio_templates_get: {
+        parameters: {
+            query?: {
+                kind?: ("page" | "space") | null;
+                /** @description Only this space's (plus global) */
+                space?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_FolioTemplateOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_template_api_v1_folio_templates_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FolioTemplateIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioTemplateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_template_api_v1_folio_templates__template_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioTemplateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    archive_template_api_v1_folio_templates__template_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_template_api_v1_folio_templates__template_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                template_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FolioTemplatePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioTemplateOut"];
                 };
             };
             /** @description Validation Error */

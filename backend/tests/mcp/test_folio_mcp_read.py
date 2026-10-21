@@ -69,7 +69,16 @@ COVERED = {
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
-EXEMPT = {"whoami", "list_spaces", "get_metadata_schema", "create_page", "list_my_submissions"}
+# Templates hold no page either; create_from_template makes a new one.
+EXEMPT = {
+    "whoami",
+    "list_spaces",
+    "get_metadata_schema",
+    "create_page",
+    "list_my_submissions",
+    "list_templates",
+    "create_from_template",
+}
 
 
 async def test_every_folio_tool_is_covered(client: AsyncClient, team: Team) -> None:
@@ -134,6 +143,8 @@ async def test_every_tool_explains_missing_access(
         "update_draft": {"id": some_id, "content_md": "x"},
         "submit_for_publication": {"id": some_id, "change_note": "x"},
         "list_my_submissions": {},
+        "list_templates": {},
+        "create_from_template": {"template": some_id, "space": "docs", "title": "x"},
     }
     async with folio_mcp(client, team.agent) as folio:
         for tool, args in calls.items():
