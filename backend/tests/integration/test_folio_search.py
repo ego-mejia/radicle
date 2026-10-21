@@ -53,6 +53,21 @@ async def test_acceptance_the_right_guide_at_the_right_section(
     assert first["matched_by"] == ["text"]  # no AI provider: hybrid falls back to text
 
 
+async def test_a_title_that_is_also_a_heading_lands_on_the_section(
+    client: AsyncClient, db: AsyncSession, team: Team
+) -> None:
+    await client.post(
+        f"{API}/spaces", headers=team.instance.headers, json={"key": "docs", "name": "Docs"}
+    )
+    md = "Intro.\n\n# Conecta un agente\n\nCrea el agente en Admin y usa su token por MCP.\n"
+    nid = await _page(client, team, "Conecta un agente", md)
+    await run_jobs(db)
+    params = {"q": "cómo conecto un agente"}
+    r = await client.get(f"{API}/search", params=params, headers=team.member.headers)
+    first = r.json()["items"][0]
+    assert first["node_id"] == nid and first["section"] == ["Conecta un agente"]
+
+
 async def test_filters(client: AsyncClient, team: Team, docs: dict) -> None:
     async def ids(**params: str) -> list[str]:
         r = await client.get(
