@@ -1370,7 +1370,8 @@ export interface paths {
         };
         /**
          * Docs For Ticket
-         * @description The docs linked to a ticket that you may see (the Docs panel in Docket).
+         * @description The docs you may see that are linked to a ticket, or that name a milestone or an area
+         *     in their metadata (the Docs panels in Docket). Pass exactly one of the three.
          */
         get: operations["docs_for_ticket_api_v1_folio_links_get"];
         put?: never;
@@ -1664,6 +1665,49 @@ export interface paths {
          * @description Add a block to the draft under a heading. Visuals are checked first.
          */
         post: operations["add_block_api_v1_folio_nodes__node_id__blocks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/build-spec/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Build Spec Items
+         * @description The deliverables of a build-spec doc (its deliverables table, or numbered level-3
+         *     headings) and each one's ticket, live. Feeds the wizard and the Ticket progress block.
+         */
+        get: operations["build_spec_items_api_v1_folio_nodes__node_id__build_spec_items_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/build-spec/tickets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Build Spec Tickets
+         * @description One Docket task per chosen deliverable that has none yet, with a link to its section
+         *     and its criteria as a checklist. Running it again creates only the new ones. Needs edit
+         *     on the doc and Docket's ticket.create in the project.
+         */
+        post: operations["create_build_spec_tickets_api_v1_folio_nodes__node_id__build_spec_tickets_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5097,6 +5141,75 @@ export interface components {
              * @description Images: original, large, medium or small
              */
             resize?: string | null;
+        };
+        /** BuildSpecItemOut */
+        BuildSpecItemOut: {
+            /**
+             * Anchor
+             * @description Its section's heading anchor
+             */
+            anchor: string | null;
+            /**
+             * Criteria
+             * @description Acceptance criteria, the ticket's checklist
+             */
+            criteria: string[];
+            /** Description */
+            description: string;
+            /**
+             * Key
+             * @description The deliverable's number, e.g. 4.1
+             */
+            key: string;
+            /**
+             * Linked
+             * @description A ticket was already created for it
+             */
+            linked: boolean;
+            /**
+             * Restricted
+             * @description Linked, but you can't see the ticket in Docket
+             */
+            restricted: boolean;
+            ticket: components["schemas"]["FolioTicketOut"] | null;
+            /** Title */
+            title: string;
+        };
+        /** BuildSpecItemsOut */
+        BuildSpecItemsOut: {
+            /** Items */
+            items: components["schemas"]["BuildSpecItemOut"][];
+        };
+        /** BuildSpecTicketsIn */
+        BuildSpecTicketsIn: {
+            /** Area */
+            area?: string | null;
+            /**
+             * Dry Run
+             * @description List what would be created, create none
+             * @default false
+             */
+            dry_run?: boolean;
+            /**
+             * Keys
+             * @description Deliverables to send; omit for all new ones
+             */
+            keys?: string[] | null;
+            /** Milestone */
+            milestone?: string | null;
+            /**
+             * Project
+             * @example PA
+             */
+            project: string;
+            /** Tags */
+            tags?: string[];
+            /**
+             * Type
+             * @default task
+             * @enum {string}
+             */
+            type?: "task" | "bug" | "draft";
         };
         /** BulkIn */
         BulkIn: {
@@ -9788,10 +9901,15 @@ export interface components {
             /** Anchor */
             anchor: string | null;
             /**
-             * Kind
-             * @enum {string}
+             * Description
+             * @description For a milestone or area: the doc's published description
              */
-            kind: "mention" | "created_from_text" | "build_spec_item" | "manual";
+            description: string | null;
+            /**
+             * Kind
+             * @description How it links to a ticket; null for a milestone or area
+             */
+            kind: ("mention" | "created_from_text" | "build_spec_item" | "manual") | null;
             node: components["schemas"]["NodeRef"];
             /** Space */
             space: string;
@@ -13761,8 +13879,10 @@ export interface operations {
     };
     docs_for_ticket_api_v1_folio_links_get: {
         parameters: {
-            query: {
-                ticket: string;
+            query?: {
+                ticket?: string | null;
+                milestone?: string | null;
+                area?: string | null;
             };
             header?: never;
             path?: never;
@@ -14270,6 +14390,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BlockOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    build_spec_items_api_v1_folio_nodes__node_id__build_spec_items_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildSpecItemsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_build_spec_tickets_api_v1_folio_nodes__node_id__build_spec_tickets_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BuildSpecTicketsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildSpecItemsOut"];
                 };
             };
             /** @description Validation Error */

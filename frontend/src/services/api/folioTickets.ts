@@ -1,5 +1,6 @@
-// Docket tickets inside Folio docs (4.1, 4.2): live previews for smart links, the ticket
-// table by RQL, a doc's links, a ticket's docs and creating a ticket from a selection.
+// Docket tickets inside Folio docs (4.1 to 4.4): live previews for smart links, the ticket
+// table by RQL, a doc's links, a ticket's or milestone's docs, creating a ticket from a
+// selection, and a build spec's deliverables as tickets.
 
 import { api, unwrap } from './client';
 import type { components } from './schema';
@@ -11,12 +12,16 @@ export type FolioTicketLink = S['FolioTicketLinkOut'];
 export type FolioTicketQuery = S['FolioTicketQueryOut'];
 export type TicketDoc = S['TicketDocOut'];
 export type TicketFromTextIn = S['TicketFromTextIn'];
+export type BuildSpecItem = S['BuildSpecItemOut'];
+export type BuildSpecTicketsIn = S['BuildSpecTicketsIn'];
 
 export const ticketKeys = {
   preview: (key: string) => ['folio', 'tickets', 'preview', key] as const,
   query: (rql: string, limit: number) => ['folio', 'tickets', 'query', rql, limit] as const,
   links: (nodeId: string) => ['folio', 'nodes', nodeId, 'ticket-links'] as const,
   docs: (key: string) => ['folio', 'tickets', key, 'docs'] as const,
+  buildSpec: (nodeId: string) => ['folio', 'nodes', nodeId, 'build-spec'] as const,
+  milestoneDocs: (ref: string) => ['folio', 'milestones', ref, 'docs'] as const,
 };
 
 /** A smart link's key, as typed or pasted: `PA-4`, or a Docket link `…/t/PA-4`. */
@@ -92,4 +97,26 @@ export async function createTicketFromText(
   return unwrap(
     await api.POST('/api/v1/folio/nodes/{node_id}/tickets', { params: { path }, body }),
   );
+}
+
+export async function fetchMilestoneDocs(project: string, name: string): Promise<TicketDoc[]> {
+  const milestone = `${project}:${name}`;
+  return unwrap(await api.GET('/api/v1/folio/links', { params: { query: { milestone } } })).items;
+}
+
+export async function fetchBuildSpecItems(nodeId: string): Promise<BuildSpecItem[]> {
+  const path = { node_id: nodeId };
+  return unwrap(
+    await api.GET('/api/v1/folio/nodes/{node_id}/build-spec/items', { params: { path } }),
+  ).items;
+}
+
+export async function createBuildSpecTickets(
+  nodeId: string,
+  body: BuildSpecTicketsIn,
+): Promise<BuildSpecItem[]> {
+  const path = { node_id: nodeId };
+  return unwrap(
+    await api.POST('/api/v1/folio/nodes/{node_id}/build-spec/tickets', { params: { path }, body }),
+  ).items;
 }
