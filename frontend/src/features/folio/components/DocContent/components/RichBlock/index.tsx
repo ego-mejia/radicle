@@ -1,8 +1,8 @@
 import { Link } from '@tanstack/react-router';
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { assetUrl } from '../../../../../../services/api/folio';
 import type { DocNode, Heading } from '../../anchors';
+import { useDocEnv } from '../../env';
 import { toneOf } from '../Inline/tone';
 import { DatabaseView } from '../../../DatabaseView';
 import { EmbedCard } from '../../../EmbedCard';
@@ -20,6 +20,14 @@ import { WhiteboardEmbed } from '../../../WhiteboardEmbed';
 import * as S from './style';
 
 export type ChildPage = { id: string; title: string; slug: string };
+
+const ACCOUNT_ONLY = new Set([
+  'whiteboard',
+  'databaseView',
+  'pageList',
+  'ticketTable',
+  'ticketProgress',
+]);
 
 type Props = {
   node: DocNode;
@@ -39,7 +47,7 @@ function formatBytes(size: unknown): string {
   return `${(n / 1024 / 1024).toFixed(1)} MB`;
 }
 
-function mediaSrc(attrs: DocNode['attrs']): string | undefined {
+function mediaSrc(attrs: DocNode['attrs'], assetUrl: (id: string) => string): string | undefined {
   if (attrs?.assetId) return assetUrl(String(attrs.assetId));
   return attrs?.src ? String(attrs.src) : undefined;
 }
@@ -47,7 +55,11 @@ function mediaSrc(attrs: DocNode['attrs']): string | undefined {
 /** Panels, expands, columns, the table of contents, child pages and media. */
 export function RichBlock({ node: n, previous, headings, childPages, children }: Props) {
   const { t } = useTranslation();
+  const env = useDocEnv();
   const a = n.attrs ?? {};
+  // Live data read with the reader's account: a stranger gets a note instead.
+  if (env.isPublic && ACCOUNT_ONLY.has(n.type))
+    return <S.LiveOnly role="note">{t('folio.public.liveOnly')}</S.LiveOnly>;
   switch (n.type) {
     case 'panel':
       return (
@@ -85,16 +97,20 @@ export function RichBlock({ node: n, previous, headings, childPages, children }:
       if (!childPages.length) return null;
       return (
         <S.Toc aria-label={t('folio.reader.childPages')}>
-          {childPages.map((c) => (
-            <Link key={c.id} to="/folio/p/$page" params={{ page: `${c.id}-${c.slug}` }}>
-              {c.title}
-            </Link>
-          ))}
+          {childPages.map((c) =>
+            env.pageLink ? (
+              <Fragment key={c.id}>{env.pageLink(c)}</Fragment>
+            ) : (
+              <Link key={c.id} to="/folio/p/$page" params={{ page: `${c.id}-${c.slug}` }}>
+                {c.title}
+              </Link>
+            ),
+          )}
         </S.Toc>
       );
     case 'image':
     case 'video': {
-      const src = mediaSrc(a);
+      const src = mediaSrc(a, env.assetUrl);
       if (!src) return null;
       return (
         <S.Figure $size={String(a.size ?? 'large')} $align={String(a.align ?? 'center')}>
@@ -175,7 +191,7 @@ export function RichBlock({ node: n, previous, headings, childPages, children }:
       return <EmbedCard url={String(a.url)} title={a.title ? String(a.title) : null} />;
     case 'file':
       return (
-        <S.File href={assetUrl(String(a.assetId))} download={a.name ? String(a.name) : true}>
+        <S.File href={env.assetUrl(String(a.assetId))} download={a.name ? String(a.name) : true}>
           {String(a.name || t('folio.reader.file'))}
           <small>{formatBytes(a.size)}</small>
         </S.File>

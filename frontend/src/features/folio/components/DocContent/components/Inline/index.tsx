@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { DocMark, DocNode } from '../../anchors';
+import { useDocEnv } from '../../env';
 import { Formula } from '../../../Formula';
 import { TicketChip } from '../../../TicketChip';
 import * as S from './style';
@@ -37,6 +38,7 @@ function wrap(mark: DocMark, child: ReactNode, key: number): ReactNode {
 
 /** Text with its marks, mentions, statuses, ticket smart links and line breaks. */
 export function Inline({ nodes }: { nodes?: DocNode[] }) {
+  const env = useDocEnv();
   return (
     <>
       {(nodes ?? []).map((n, i) => {
@@ -49,6 +51,9 @@ export function Inline({ nodes }: { nodes?: DocNode[] }) {
               {String(n.attrs?.text ?? '')}
             </S.Status>
           );
+        // A ticket's status needs an account: strangers see its key.
+        if (n.type === 'ticket' && env.isPublic)
+          return <S.Mention key={i}>{String(n.attrs?.key ?? '')}</S.Mention>;
         if (n.type === 'ticket')
           return <TicketChip key={i} ticketKey={String(n.attrs?.key ?? '')} />;
         if (n.type === 'inlineFormula')

@@ -2585,6 +2585,9 @@
       "noReaders": "Nobody has read it in this range.",
       "readerViews_one": "{{count}} view",
       "readerViews_other": "{{count}} views"
+    },
+    "public": {
+      "liveOnly": "Live content from Radicle; open it in Radicle to see it."
     }
   },
   "notifications": {
