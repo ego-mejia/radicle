@@ -1,8 +1,10 @@
-import { useTranslation } from 'react-i18next';
-import { PageTitle } from '../../../../components/ui/PageTitle';
+import { useParams, useSearch } from '@tanstack/react-router';
+import { nodeIdFrom } from '../../../../services/api/folio';
+import { PageHistory } from '../../components/PageHistory';
 
-/** A page's versions, their diff and restore. */
+/** /folio/p/$page/history?from&to: a page's versions and their diff. */
 export function FolioHistoryView() {
-  const { t } = useTranslation();
-  return <PageTitle title={t('folio.history.title')} />;
+  const { page } = useParams({ from: '/folio/folio/p/$page/history' });
+  const { from, to } = useSearch({ from: '/folio/folio/p/$page/history' });
+  return <PageHistory nodeId={nodeIdFrom(page)} from={from} to={to} />;
 }
