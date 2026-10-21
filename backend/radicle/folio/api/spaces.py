@@ -2,13 +2,13 @@
 
 import uuid
 from datetime import datetime
-from typing import Literal
+from typing import Any, Literal
 
 from fastapi import APIRouter, Query, Response
 from pydantic import Field
 
 from radicle.folio.db.models import FolioNode, FolioSpace, NodeKind
-from radicle.folio.services import nodes, spaces
+from radicle.folio.services import nodes, publishing, spaces
 from radicle.platform import authz
 from radicle.platform.api.deps import CurrentPrincipal, Db
 from radicle.platform.api.schemas import Input, Output, Page, UtcDatetime
@@ -61,6 +61,9 @@ class NodeOut(NodeRef):
     created_at: UtcDatetime
     updated_at: UtcDatetime
     breadcrumbs: list[NodeRef] = Field(description="Ancestors from the root down")
+    version: int | None = Field(description="Published version; null until first published")
+    metadata: dict[str, Any] | None = Field(description="Of the published version")
+    content_json: dict[str, Any] | None = Field(description="Published content (TipTap)")
 
 
 class NodeIn(Input):
@@ -104,6 +107,7 @@ def _tree(level: list[nodes.TreeNode]) -> list[TreeItem]:
 
 async def _node(db: Db, node: FolioNode) -> NodeOut:
     space = await db.get(FolioSpace, node.space_id)
+    current = await publishing.current_version(db, node)
     return NodeOut(
         **_ref(node).model_dump(),
         space=space.key if space else "",
@@ -113,6 +117,9 @@ async def _node(db: Db, node: FolioNode) -> NodeOut:
         created_at=node.created_at,
         updated_at=node.updated_at,
         breadcrumbs=[_ref(b) for b in await nodes.breadcrumbs(db, node)],
+        version=current.number if current else None,
+        metadata=current.metadata_ if current else None,
+        content_json=current.content_json if current else None,
     )
 
 

@@ -5303,6 +5303,19 @@
             "title": "Breadcrumbs",
             "type": "array"
           },
+          "content_json": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Published content (TipTap)",
+            "title": "Content Json"
+          },
           "cover_asset_id": {
             "anyOf": [
               {
@@ -5344,6 +5357,19 @@
             "title": "Kind",
             "type": "string"
           },
+          "metadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Of the published version",
+            "title": "Metadata"
+          },
           "parent_id": {
             "anyOf": [
               {
@@ -5382,6 +5408,18 @@
           "updated_at": {
             "title": "Updated At",
             "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Published version; null until first published",
+            "title": "Version"
           }
         },
         "required": [
@@ -5396,7 +5434,10 @@
           "published_at",
           "created_at",
           "updated_at",
-          "breadcrumbs"
+          "breadcrumbs",
+          "version",
+          "metadata",
+          "content_json"
         ],
         "title": "NodeOut",
         "type": "object"
@@ -7068,6 +7109,31 @@
           "redirect_uri"
         ],
         "title": "ProviderOut",
+        "type": "object"
+      },
+      "PublishIn": {
+        "additionalProperties": false,
+        "properties": {
+          "change_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What changed, for the history",
+            "title": "Change Note"
+          },
+          "confirm": {
+            "default": false,
+            "description": "Publish even if someone published after this draft started",
+            "title": "Confirm",
+            "type": "boolean"
+          }
+        },
+        "title": "PublishIn",
         "type": "object"
       },
       "QuickFilterIn": {
@@ -11570,6 +11636,78 @@
         "title": "Version",
         "type": "object"
       },
+      "VersionOut": {
+        "properties": {
+          "approved_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The admin who approved an agent's version",
+            "title": "Approved By"
+          },
+          "author": {
+            "title": "Author",
+            "type": "string"
+          },
+          "change_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Note"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
+          },
+          "number": {
+            "title": "Number",
+            "type": "integer"
+          },
+          "restored_from": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The version it restored, if any",
+            "title": "Restored From"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "number",
+          "title",
+          "change_note",
+          "author",
+          "approved_by",
+          "restored_from",
+          "created_at",
+          "metadata"
+        ],
+        "title": "VersionOut",
+        "type": "object"
+      },
       "VoteOut": {
         "properties": {
           "vote_count": {
@@ -15599,6 +15737,61 @@
           }
         },
         "summary": "Move Node",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/publish": {
+      "post": {
+        "description": "Publish the draft as the next version. 422 lists every missing metadata field; 409\nwhen someone published after this draft started (send `confirm` to go ahead).",
+        "operationId": "publish_api_v1_folio_nodes__node_id__publish_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Publish",
         "tags": [
           "folio",
           "folio"

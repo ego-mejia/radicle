@@ -9,6 +9,7 @@ from pydantic import Field
 from radicle.folio.api import assets as assets_api
 from radicle.folio.api import catalogs as catalogs_api
 from radicle.folio.api import drafts as drafts_api
+from radicle.folio.api import publishing as publishing_api
 from radicle.folio.api import spaces as spaces_api
 from radicle.folio.db.models import FolioRole, GranteeType
 from radicle.folio.services import roles
@@ -121,3 +122,4 @@ router.include_router(spaces_api.router)
 router.include_router(drafts_api.router)
 router.include_router(assets_api.router)
 router.include_router(catalogs_api.router)
+router.include_router(publishing_api.router)
