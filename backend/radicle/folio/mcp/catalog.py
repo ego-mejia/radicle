@@ -27,6 +27,8 @@ WRITE = (
     "resolve_comment",
     "set_task_done",
     "watch",
+    "create_live_doc",
+    "append_to_live_doc",
 )
 
 CATALOG: tuple[Tool, ...] = (

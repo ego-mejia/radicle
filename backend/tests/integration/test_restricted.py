@@ -269,6 +269,8 @@ EXEMPT = {
     "/api/v1/folio/nodes/{node_id}/restrictions",
     "/api/v1/folio/submissions",
     "/api/v1/folio/search",
+    "/api/v1/folio/nodes/{node_id}/snapshots",
+    "/api/v1/folio/nodes/{node_id}/snapshots/{snapshot_id}",
     "/api/v1/folio/home",
     "/api/v1/folio/nodes",
     "/api/v1/folio/templates",

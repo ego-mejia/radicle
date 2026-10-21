@@ -58,6 +58,10 @@ def _urls(s: dict) -> dict[str, list[str]]:
         "/api/v1/folio/nodes/{node_id}": [f"{API}/nodes/{p}", f"{API}/nodes/{c}"],
         "/api/v1/folio/nodes/{node_id}/draft": [f"{API}/nodes/{p}/draft"],
         "/api/v1/folio/nodes/{node_id}/versions": [f"{API}/nodes/{p}/versions"],
+        "/api/v1/folio/nodes/{node_id}/snapshots": [f"{API}/nodes/{p}/snapshots"],
+        "/api/v1/folio/nodes/{node_id}/snapshots/{snapshot_id}": [
+            f"{API}/nodes/{p}/snapshots/00000000-0000-0000-0000-000000000000"
+        ],
         "/api/v1/folio/nodes/{node_id}/versions/{number}": [f"{API}/nodes/{c}/versions/1"],
         "/api/v1/folio/nodes/{node_id}/diff": [f"{API}/nodes/{p}/diff?from=1&to=1"],
         "/api/v1/folio/nodes/{node_id}/restrictions": [f"{API}/nodes/{p}/restrictions"],
