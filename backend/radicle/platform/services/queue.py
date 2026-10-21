@@ -35,16 +35,20 @@ async def enqueue(
     *,
     queueing_lock: str | None = None,
     lock: str | None = None,
+    delay_seconds: int = 0,
     **args: Any,
 ) -> None:
-    """Queue `task(**args)`. With `queueing_lock`, a job still waiting with the same lock
-    makes this a no-op, so repeated requests do not pile up duplicates."""
+    """Queue `task(**args)`, to run now or after `delay_seconds`. With `queueing_lock`, a
+    job still waiting with the same lock makes this a no-op, so repeated requests do not
+    pile up duplicates."""
     if task not in HANDLERS:
         raise KeyError(f"Unknown job {task}")
     statement = text(
         """
-        INSERT INTO procrastinate_jobs (queue_name, task_name, lock, queueing_lock, args)
-        VALUES (:queue, :task, :lock, :queueing_lock, CAST(:args AS jsonb))
+        INSERT INTO procrastinate_jobs
+            (queue_name, task_name, lock, queueing_lock, args, scheduled_at)
+        VALUES (:queue, :task, :lock, :queueing_lock, CAST(:args AS jsonb),
+                CASE WHEN :delay > 0 THEN now() + make_interval(secs => :delay) END)
         ON CONFLICT DO NOTHING
         """
     )
@@ -56,5 +60,6 @@ async def enqueue(
             "lock": lock,
             "queueing_lock": queueing_lock,
             "args": json.dumps(args),
+            "delay": delay_seconds,
         },
     )
