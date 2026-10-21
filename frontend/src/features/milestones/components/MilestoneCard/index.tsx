@@ -8,6 +8,7 @@ import { formatDate, isOverdue } from '../../../../lib/format';
 import { rqlValue } from '../../../../lib/rql';
 import { fetchReport, reportKeys } from '../../../../services/api/reports';
 import { CATEGORIES, type Milestone } from '../../../../services/api/types';
+import { MilestoneDocs } from '../MilestoneDocs';
 import * as S from './style';
 
 type Props = { project: string; milestone: Milestone; actions?: React.ReactNode };
@@ -91,6 +92,7 @@ export function MilestoneCard({ project, milestone, actions }: Props) {
           {t('milestones.seeTickets')}
         </Link>
       </S.Legend>
+      <MilestoneDocs project={project} milestone={milestone.name} />
     </S.Card>
   );
 }
