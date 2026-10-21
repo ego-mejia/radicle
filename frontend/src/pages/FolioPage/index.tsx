@@ -4,8 +4,8 @@ import { Inbox, LogOut, Shield, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { SuiteSwitch } from '../../components/layout/SuiteSwitch';
 import { Avatar } from '../../components/ui/Avatar';
-import { Input } from '../../components/ui/Input';
 import { Menu } from '../../components/ui/Menu';
+import { TopbarSearch } from '../../features/folio/components/TopbarSearch';
 import { useMe } from '../../hooks/useMe';
 import { useSuiteShortcuts } from '../../hooks/useSuiteShortcuts';
 import { logout } from '../../services/api/auth';
@@ -41,12 +41,7 @@ export function FolioPage() {
           <S.BarInner>
             <SuiteSwitch current="folio" />
             <S.Search>
-              <Input
-                type="search"
-                disabled
-                aria-label={t('folio.search')}
-                placeholder={t('folio.searchSoon')}
-              />
+              <TopbarSearch />
             </S.Search>
             {folio?.role === 'admin' && (
               <S.AdminLink as={Link} to="/folio/approvals">

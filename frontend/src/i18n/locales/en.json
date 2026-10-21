@@ -1607,7 +1607,8 @@
   },
   "folio": {
     "search": "Search the docs",
-    "searchSoon": "Search arrives with spaces and pages",
+    "searchPlaceholder": "Search the docs",
+    "searchEnter": "Press Enter for every result, with filters and RQL.",
     "roles": {
       "reader": "reader",
       "creator": "creator",
