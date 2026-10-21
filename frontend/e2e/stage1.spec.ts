@@ -98,9 +98,10 @@ test('drag a card to In Progress following the workflow', async () => {
   const target = page.getByRole('region', { name: 'In Progress', exact: true });
   const from = (await card.boundingBox())!;
   const to = (await target.boundingBox())!;
-  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  // Grab the card by its title corner: its middle now holds the area and milestone buttons.
+  await page.mouse.move(from.x + 16, from.y + 12);
   await page.mouse.down();
-  await page.mouse.move(from.x + from.width / 2 + 20, from.y + from.height / 2, { steps: 5 });
+  await page.mouse.move(from.x + 36, from.y + 12, { steps: 5 });
   await page.waitForTimeout(400); // transitions load on drag start
   await page.mouse.move(to.x + to.width / 2, to.y + 80, { steps: 15 });
   await page.mouse.up();
