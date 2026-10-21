@@ -1987,6 +1987,16 @@
         "owner": "Escribe el handle del dueño.",
         "audiences": "Elige al menos una audiencia.",
         "language": "Elige un idioma."
+      },
+      "docket": {
+        "title": "Docket",
+        "optional": "Opcional",
+        "summary_one": "{{project}} · {{count}} liga",
+        "summary_other": "{{project}} · {{count}} ligas",
+        "project": "Proyecto",
+        "hint": "Docket lista este doc en los milestones y áreas que elijas.",
+        "milestones": "Milestones",
+        "areas": "Áreas"
       }
     },
     "history": {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fromDraft, parseLabels, validate, type Metadata } from './validate';
+import { fromDraft, parseLabels, toDraft, validate, type Metadata } from './validate';
 
 const CATALOGS = { doc_types: ['how-to'], audiences: ['everyone'], languages: ['es'] };
 const GOOD: Metadata = {
@@ -9,6 +9,9 @@ const GOOD: Metadata = {
   owner: 'fernando',
   audiences: ['everyone'],
   language: 'es',
+  docket_project: '',
+  docket_milestones: [],
+  docket_areas: [],
 };
 
 describe('publishing rules', () => {
@@ -44,5 +47,11 @@ describe('publishing rules', () => {
       description: '',
     });
     expect(fromDraft({}, 'luis').owner).toBe('luis');
+  });
+
+  it('save the Docket links only when a project is set', () => {
+    expect(toDraft(GOOD)).not.toHaveProperty('docket_project');
+    const linked = { ...GOOD, docket_project: 'PA', docket_milestones: ['V1'] };
+    expect(toDraft(linked)).toMatchObject({ docket_project: 'PA', docket_milestones: ['V1'] });
   });
 });

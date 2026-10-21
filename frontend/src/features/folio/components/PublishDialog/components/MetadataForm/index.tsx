@@ -3,6 +3,7 @@ import { Field } from '../../../../../../components/ui/Field';
 import { Input, Select, Textarea } from '../../../../../../components/ui/Input';
 import type { FolioSchema } from '../../../../../../services/api/folio';
 import { parseLabels, type Field as Name, type Metadata } from '../../validate';
+import { DocketFields } from '../DocketFields';
 import * as S from './style';
 
 type Props = {
@@ -16,7 +17,8 @@ type Props = {
   errors: Partial<Record<Name, string>>;
 };
 
-/** The publishing metadata: description, type, labels, owner, audiences and language. */
+/** The publishing metadata: description, type, labels, owner, audiences and language, and
+ * optionally the Docket project, milestones and areas the doc belongs to. */
 export function MetadataForm({
   value,
   labelsText,
@@ -126,6 +128,7 @@ export function MetadataForm({
           ))}
         </S.Checks>
       </Field>
+      <DocketFields value={value} onChange={onChange} errors={errors} />
     </S.Form>
   );
 }

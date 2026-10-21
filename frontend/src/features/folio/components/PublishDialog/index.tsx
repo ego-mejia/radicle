@@ -21,7 +21,7 @@ import {
 } from '../../../../services/api/folio';
 import { AiSuggestions } from './components/AiSuggestions';
 import { MetadataForm } from './components/MetadataForm';
-import { fromDraft, validate, type Field as Name, type Metadata } from './validate';
+import { fromDraft, toDraft, validate, type Field as Name, type Metadata } from './validate';
 import * as S from './style';
 
 export type Published = FolioVersion | FolioSubmission;
@@ -112,7 +112,7 @@ function Form({
     setFailure(null);
     setServer({});
     try {
-      await saveDraft(nodeId, { metadata: value });
+      await saveDraft(nodeId, { metadata: toDraft(value) });
       const result = await publishNode(nodeId, { change_note: note.trim() || null, confirm });
       await queryClient.invalidateQueries({ queryKey: ['folio', 'nodes', nodeId] });
       onOpenChange(false);
