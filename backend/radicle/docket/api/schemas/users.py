@@ -3,8 +3,8 @@ from uuid import UUID
 
 from pydantic import ConfigDict, EmailStr, Field
 
-from radicle.docket.api.schemas.common import Input, Output, UtcDatetime
 from radicle.docket.db.models import ProjectRole, UserKind
+from radicle.platform.api.schemas import Input, Output, UtcDatetime
 from radicle.platform.services.auth import IssuedToken
 
 # --- system -------------------------------------------------------------------------------

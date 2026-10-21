@@ -1,6 +1,6 @@
 from pydantic import Field
 
-from radicle.docket.api.schemas.common import Input, Output
+from radicle.platform.api.schemas import Input, Output
 
 
 class SecurityLevelOut(Output):

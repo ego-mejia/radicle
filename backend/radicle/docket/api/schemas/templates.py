@@ -2,9 +2,9 @@ from typing import Any
 
 from pydantic import Field
 
-from radicle.docket.api.schemas.common import Input, Output, UtcDatetime
 from radicle.docket.db.models import SyncStatus
 from radicle.docket.services.template_config import TemplateConfig, WorkflowConf
+from radicle.platform.api.schemas import Input, Output, UtcDatetime
 
 MAPPINGS_HELP = (
     'Where tickets of removed statuses go, by ref: {"in_review": "in_progress"} for every '

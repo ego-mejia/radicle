@@ -9,10 +9,10 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from starlette.datastructures import UploadFile
 
-from radicle.docket.api.deps import Db
-from radicle.docket.api.ratelimit import SlidingWindowLimiter
 from radicle.docket.public.texts import TEXTS, pick_language
 from radicle.docket.services import altcha, public_form
+from radicle.platform.api.deps import Db
+from radicle.platform.api.ratelimit import SlidingWindowLimiter
 from radicle.platform.errors import NotFound, RateLimited
 
 router = APIRouter(include_in_schema=False)

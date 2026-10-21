@@ -47,12 +47,20 @@ STEPS: dict[str, list[tuple[str, str]]] = {
         (f"radicle.{package}", f"radicle.docket.{package}")
         for package in ("api", "core", "db", "mcp", "public", "query", "services")
     ],
+    # What every app's routers need: the caller, pagination, rate limits, base schemas.
+    "platform-api": [
+        ("radicle.docket.api.deps", "radicle.platform.api.deps"),
+        ("radicle.docket.api.pagination", "radicle.platform.api.pagination"),
+        ("radicle.docket.api.ratelimit", "radicle.platform.api.ratelimit"),
+        ("radicle.docket.api.schemas.common", "radicle.platform.api.schemas"),
+    ],
 }
 
 # Inside a moved package, `from radicle.db.models import X` must use that package's own
 # models: platform never imports the aggregate that also loads Docket's tables.
 AGGREGATES: dict[str, tuple[str, str]] = {
     "platform": ("radicle.db.models", "radicle.platform.db.models"),
+    "platform-api": ("radicle.docket.db.models", "radicle.platform.db.models"),
 }
 
 SOURCES = ("radicle", "tests", "migrations")
@@ -153,7 +161,7 @@ def main(step: str) -> None:
     git_mv(STEPS[step])
     add_inits(mapping)
     aggregate_for = AGGREGATES.get(step)
-    root = "radicle." + step if step in AGGREGATES else None
+    root = AGGREGATES[step][1].removesuffix(".db.models") if step in AGGREGATES else None
     files = [f for d in SOURCES for f in (BACKEND / d).rglob("*.py")]
     files += list((BACKEND.parent / "scripts").glob("*.py"))
     for f in files:

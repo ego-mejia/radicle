@@ -1,7 +1,5 @@
 from fastapi import APIRouter
 
-from radicle.docket.api.deps import CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.screens import (
     FormSchemaOut,
     SchemaFieldOut,
@@ -13,6 +11,8 @@ from radicle.docket.db.models import ScreenOperation, TicketType, Transition
 from radicle.docket.services import screens, templates
 from radicle.docket.services.access import project_access
 from radicle.docket.services.workflows import load_workflows
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.schemas import Page
 from radicle.platform.errors import ValidationFailed
 
 router = APIRouter(prefix="/projects/{key}", tags=["screens"])

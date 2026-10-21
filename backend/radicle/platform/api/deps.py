@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import Depends, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket.db.models import User
 from radicle.platform import security
 from radicle.platform.config import Settings, get_settings
+from radicle.platform.db.models import User
 from radicle.platform.db.session import get_db
 from radicle.platform.errors import Forbidden, Unauthorized
 from radicle.platform.services import auth

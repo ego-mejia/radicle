@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Response
 
 from radicle.docket.api import serializers as out
-from radicle.docket.api.deps import CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.projects import (
     CandidateGroup,
     CandidatePerson,
@@ -27,6 +25,8 @@ from radicle.docket.db.models import ProjectRole, TicketType, utcnow
 from radicle.docket.services import projects, stats, templates
 from radicle.docket.services.access import project_access
 from radicle.docket.services.workflows import load_workflows
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.schemas import Page
 from radicle.platform.services import audit
 
 router = APIRouter(prefix="/projects", tags=["projects"])

@@ -3,10 +3,10 @@ from typing import Literal
 from fastapi import APIRouter
 from pydantic import Field
 
-from radicle.docket.api.deps import CurrentPrincipal, Db, InstanceAdmin
-from radicle.docket.api.ratelimit import SlidingWindowLimiter
-from radicle.docket.api.schemas.common import Input, Output
 from radicle.docket.services.assistant import chat, config, llm
+from radicle.platform.api.deps import CurrentPrincipal, Db, InstanceAdmin
+from radicle.platform.api.ratelimit import SlidingWindowLimiter
+from radicle.platform.api.schemas import Input, Output
 from radicle.platform.errors import ValidationFailed
 from radicle.platform.services import audit
 

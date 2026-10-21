@@ -3,9 +3,9 @@ from typing import Any
 
 from fastapi import APIRouter, Query, Response
 
-from radicle.docket.api.deps import CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Output, Page, UtcDatetime
 from radicle.docket.services import audit_view
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.schemas import Output, Page, UtcDatetime
 
 router = APIRouter(tags=["audit"])
 

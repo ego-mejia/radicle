@@ -4,12 +4,12 @@ from uuid import UUID
 from fastapi import APIRouter, Response
 from pydantic import Field
 
-from radicle.docket.api.deps import CurrentPrincipal, Db, HumanUser
-from radicle.docket.api.schemas.common import Input, Output, Page, UtcDatetime
 from radicle.docket.api.schemas.tickets import TicketOut, UserRef
 from radicle.docket.api.ticket_views import ticket_out, user_ref
 from radicle.docket.db.models import FilterVisibility, Project, SavedFilter, TicketType
 from radicle.docket.services import filters, preferences, ranking, tickets
+from radicle.platform.api.deps import CurrentPrincipal, Db, HumanUser
+from radicle.platform.api.schemas import Input, Output, Page, UtcDatetime
 
 router = APIRouter(tags=["filters, ranking and preferences"])
 

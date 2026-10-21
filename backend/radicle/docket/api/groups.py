@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Response
 
-from radicle.docket.api.deps import CurrentPrincipal, Db, InstanceAdmin
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.groups import (
     GroupCreate,
     GroupDetail,
@@ -17,6 +15,8 @@ from radicle.docket.api.ticket_views import user_ref
 from radicle.docket.db.models import Group, Project, ProjectRole
 from radicle.docket.services import permission_matrix, project_groups
 from radicle.docket.services.access import project_access
+from radicle.platform.api.deps import CurrentPrincipal, Db, InstanceAdmin
+from radicle.platform.api.schemas import Page
 from radicle.platform.services import audit, groups
 
 router = APIRouter(tags=["groups and permissions"])

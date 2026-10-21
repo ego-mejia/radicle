@@ -2,8 +2,8 @@ from typing import Any
 
 from pydantic import Field
 
-from radicle.docket.api.schemas.common import Input, Output, UtcDatetime
 from radicle.docket.db.models import CustomFieldType, TicketType
+from radicle.platform.api.schemas import Input, Output, UtcDatetime
 
 
 class FieldOption(Input):

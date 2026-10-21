@@ -3,7 +3,6 @@ from typing import Literal
 
 from fastapi import APIRouter, Query
 
-from radicle.docket.api.deps import AppSettings, CurrentPrincipal, Db
 from radicle.docket.api.schemas.timeline import (
     DependencyOut,
     MilestoneMarker,
@@ -15,6 +14,7 @@ from radicle.docket.api.ticket_views import summaries_out
 from radicle.docket.db.models import Ticket
 from radicle.docket.services import periods, timeline
 from radicle.docket.services.access import project_access
+from radicle.platform.api.deps import AppSettings, CurrentPrincipal, Db
 
 router = APIRouter(tags=["timeline"])
 

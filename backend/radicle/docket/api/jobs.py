@@ -3,9 +3,9 @@ from uuid import UUID
 
 from fastapi import APIRouter
 
-from radicle.docket.api.deps import CurrentPrincipal, Db
-from radicle.docket.api.schemas.common import Output, UtcDatetime
 from radicle.docket.db.models import Job, JobStatus
+from radicle.platform.api.deps import CurrentPrincipal, Db
+from radicle.platform.api.schemas import Output, UtcDatetime
 from radicle.platform.services import jobs
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])

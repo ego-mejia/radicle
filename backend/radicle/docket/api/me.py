@@ -3,8 +3,6 @@ from uuid import UUID
 from fastapi import APIRouter, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket.api.deps import CurrentPrincipal, Db, HumanUser
-from radicle.docket.api.schemas.common import Page
 from radicle.docket.api.schemas.users import (
     MeOut,
     MePatch,
@@ -17,6 +15,8 @@ from radicle.docket.api.schemas.users import (
 from radicle.docket.core.permissions import permissions_for
 from radicle.docket.db.models import User
 from radicle.docket.services import projects
+from radicle.platform.api.deps import CurrentPrincipal, Db, HumanUser
+from radicle.platform.api.schemas import Page
 from radicle.platform.errors import ValidationFailed
 from radicle.platform.services import audit, auth, users
 

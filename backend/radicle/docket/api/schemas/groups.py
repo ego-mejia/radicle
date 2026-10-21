@@ -1,8 +1,8 @@
 from pydantic import Field
 
-from radicle.docket.api.schemas.common import Input, Output, UtcDatetime
 from radicle.docket.api.schemas.tickets import UserRef
 from radicle.docket.db.models import ProjectRole
+from radicle.platform.api.schemas import Input, Output, UtcDatetime
 
 
 class GroupOut(Output):

@@ -6,9 +6,9 @@ from fastapi.responses import RedirectResponse
 from pydantic import Field
 from sqlalchemy import select
 
-from radicle.docket.api.deps import AppSettings, Db, InstanceAdmin, set_session_cookies
-from radicle.docket.api.schemas.common import Input, Output, Page
 from radicle.docket.db.models import Group, SsoProvider, User
+from radicle.platform.api.deps import AppSettings, Db, InstanceAdmin, set_session_cookies
+from radicle.platform.api.schemas import Input, Output, Page
 from radicle.platform.errors import ProblemError, Unauthorized
 from radicle.platform.services import audit, auth, sso
 

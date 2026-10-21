@@ -2,8 +2,8 @@ from datetime import date
 
 from pydantic import Field
 
-from radicle.docket.api.schemas.common import Output
 from radicle.docket.api.schemas.tickets import TicketSummary
+from radicle.platform.api.schemas import Output
 
 
 class TimelineTicket(TicketSummary):
