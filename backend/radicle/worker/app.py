@@ -23,6 +23,7 @@ JOB_MODULES: tuple[str, ...] = (
     "radicle.platform.services.audit",
     "radicle.folio.services.rag",
     "radicle.folio.services.quality",
+    "radicle.folio.services.comment_events",
     "radicle.folio.services.views",
     "radicle.platform.services.events",
     "radicle.platform.services.email",
