@@ -23,6 +23,7 @@ TOKENS = (
     "--rdc-muted",
     "--rdc-accent",
     "--rdc-accent-fill",
+    "--rdc-on-accent",
     "--rdc-border",
     "--rdc-danger",
     "--rdc-warning",

@@ -77,6 +77,11 @@ describe('VisualFrame', () => {
 
   it('can preview the other mode', async () => {
     renderWithProviders(<VisualFrame code={SVG} title="Raíz" description="x" mode="dark" />);
-    expect((await frame()).getAttribute('srcdoc')).toContain(`--rdc-bg:${darkTheme.color.bg}`);
+    const doc = (await frame()).getAttribute('srcdoc') ?? '';
+    expect(doc).toContain(`--rdc-bg:${darkTheme.color.bg}`);
+    expect(doc).toContain(`--rdc-on-accent:${darkTheme.color.onAccent}`);
+    // The frame's color-scheme follows the theme, or Chrome paints it white in dark mode.
+    expect(doc).toContain('<html data-theme="dark"');
+    expect(doc).toContain(':root[data-theme="dark"]{color-scheme:dark}');
   });
 });

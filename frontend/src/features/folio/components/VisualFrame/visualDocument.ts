@@ -49,7 +49,10 @@ const HOST_SCRIPT = `(() => {
   new ResizeObserver(report).observe(root);
 })();`;
 
+// The color-scheme follows the theme: when it differs from the page's, Chrome paints the
+// iframe opaque white behind a transparent visual.
 const BASE =
+  ':root[data-theme="dark"]{color-scheme:dark}:root[data-theme="light"]{color-scheme:light}' +
   'html,body{margin:0;background:transparent;color:var(--rdc-text);' +
   'font-family:var(--rdc-font)}svg{display:block;max-width:100%;height:auto}' +
   '[data-reduced-motion="true"] *{animation:none!important;transition:none!important}';
