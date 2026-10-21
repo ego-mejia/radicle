@@ -34,7 +34,7 @@ async def _owner(db: AsyncSession, node: FolioNode) -> str | None:
     return str(owner) if owner else None
 
 
-async def _require_owner_or_admin(db: AsyncSession, user: User, node: FolioNode) -> FolioSpace:
+async def require_owner_or_admin(db: AsyncSession, user: User, node: FolioNode) -> FolioSpace:
     space = await db.get(FolioSpace, node.space_id)
     if space is None:  # pragma: no cover - a node always has its space
         raise Conflict("The page has no space.")
@@ -63,7 +63,7 @@ async def set_status(
             f"Status {status.value} can't be set by hand. Use {valid}.",
             errors=[{"field": "status", "message": "not settable"}],
         )
-    space = await _require_owner_or_admin(db, user, node)
+    space = await require_owner_or_admin(db, user, node)
     before = node.status
     node.status = status
     if status == NodeStatus.verified:
@@ -79,7 +79,7 @@ async def set_status(
 
 async def transfer_owner(db: AsyncSession, user: User, node: FolioNode, owner: str) -> FolioNode:
     """A new version with the same content and the new owner, so the history shows it."""
-    await _require_owner_or_admin(db, user, node)
+    await require_owner_or_admin(db, user, node)
     version = await publishing.current_version(db, node)
     if version is None:
         raise Conflict(
