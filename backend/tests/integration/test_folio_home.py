@@ -1,10 +1,12 @@
 """Folio's home (Folio 1.8): the default bento, resolved per reader."""
 
 from httpx import AsyncClient
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from radicle.folio.db.collab import FolioViewCountDaily
 from radicle.folio.db.models import FolioGlobalGrant
+from radicle.folio.services import views
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, METADATA
 
@@ -86,3 +88,33 @@ async def test_no_folio_role_no_home(client: AsyncClient, db: AsyncSession, team
     await db.execute(delete(FolioGlobalGrant))
     r = await client.get(f"{API}/home", headers=team.member.headers)
     assert r.status_code == 404 and "no access to Folio" in r.json()["detail"]
+
+
+async def test_most_read_comes_from_real_reads(
+    client: AsyncClient, db: AsyncSession, team: Team
+) -> None:
+    await _spaces(client, team)
+    first = await _doc(client, team, "eng", "Primero", kind="page")
+    second = await _doc(client, team, "eng", "Segundo", kind="page")
+    third = await _doc(client, team, "eng", "Tercero", kind="page")
+    for who in (team.member, team.admin, team.viewer):
+        await client.get(f"{API}/nodes/{first}", headers=who.headers)
+    await client.get(f"{API}/nodes/{second}", headers=team.member.headers)
+    await views.count_recent(db)
+    await views.count_recent(db)  # idempotent
+    counts = {
+        str(c.node_id): (c.views, c.unique_viewers)
+        for c in await db.scalars(select(FolioViewCountDaily))
+    }
+    assert counts == {first: (3, 3), second: (1, 1)}
+    home = (await client.get(f"{API}/home", headers=team.member.headers)).json()
+    assert [c["id"] for c in home["most_read"]] == [first, second, third]
+
+
+async def test_archived_docs_leave_the_home(client: AsyncClient, team: Team) -> None:
+    await _spaces(client, team)
+    post = await _doc(client, team, "eng", "Viejo anuncio", labels=["anuncio"])
+    await client.post(f"{API}/nodes/{post}/archive", headers=team.instance.headers)
+    home = (await client.get(f"{API}/home", headers=team.member.headers)).json()
+    assert home["announcement"] is None and home["latest_posts"] == []
+    assert {s["key"]: s["docs"] for s in home["spaces"]}["eng"] == 0
