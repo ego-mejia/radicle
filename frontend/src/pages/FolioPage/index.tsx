@@ -1,16 +1,20 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, Outlet, useNavigate } from '@tanstack/react-router';
-import { Inbox, ListChecks, LogOut, Shield, UserRound } from 'lucide-react';
+import { Inbox, ListChecks, LogOut, MessagesSquare, Shield, UserRound } from 'lucide-react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SuiteSwitch } from '../../components/layout/SuiteSwitch';
 import { Avatar } from '../../components/ui/Avatar';
 import { Menu } from '../../components/ui/Menu';
+import { ChatPanel } from '../../features/folio/components/ChatPanel';
 import { TopbarSearch } from '../../features/folio/components/TopbarSearch';
 import { NotificationBell } from '../../features/notifications/components/NotificationBell';
+import { useHotkey } from '../../hooks/useHotkey';
 import { useMe } from '../../hooks/useMe';
 import { useSuiteShortcuts } from '../../hooks/useSuiteShortcuts';
 import { logout } from '../../services/api/auth';
 import { fetchFolioMe, fetchSubmissions, folioKeys } from '../../services/api/folio';
+import { chatKeys, fetchChatAvailability } from '../../services/api/folioChat';
 import { fetchMyTasks, taskKeys } from '../../services/api/folioWork';
 import * as S from './style';
 
@@ -36,6 +40,15 @@ export function FolioPage() {
     refetchInterval: 60_000,
   });
   useSuiteShortcuts();
+  const { data: chat } = useQuery({
+    queryKey: chatKeys.availability,
+    queryFn: fetchChatAvailability,
+    staleTime: 5 * 60_000,
+  });
+  const [chatOpen, setChatOpen] = useState(false);
+  const toggleChat = useCallback(() => setChatOpen((open) => !open), []);
+  const closeChat = useCallback(() => setChatOpen(false), []);
+  useHotkey('a', toggleChat, !!chat?.available);
 
   const signOut = async () => {
     await logout();
@@ -77,6 +90,18 @@ export function FolioPage() {
                 <S.Count title={t('folio.tasks.dueCount', { count: dueSoon })}>{dueSoon}</S.Count>
               )}
             </S.AdminLink>
+            {chat?.available && (
+              <S.AdminLink
+                as="button"
+                type="button"
+                onClick={toggleChat}
+                aria-expanded={chatOpen}
+                title={t('folio.chat.shortcut')}
+              >
+                <MessagesSquare aria-hidden />
+                {t('folio.chat.open')}
+              </S.AdminLink>
+            )}
             <NotificationBell />
             <Menu
               align="end"
@@ -106,6 +131,7 @@ export function FolioPage() {
           <Outlet />
         </S.Content>
       </S.Shell>
+      {chat?.available && <ChatPanel open={chatOpen} onClose={closeChat} />}
     </>
   );
 }
