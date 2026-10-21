@@ -91,4 +91,8 @@ async def save_json(db: AsyncSession, node: FolioNode, doc: pycrdt.Doc[Any]) -> 
     row.content_json = content
     row.updated_at = utcnow()
     await db.flush()
+    # Here, not at the top: actions changes documents through the room, which uses this.
+    from radicle.folio.services import actions
+
+    await actions.sync(db, node, content, None)
     return True

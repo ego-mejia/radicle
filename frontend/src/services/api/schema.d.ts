@@ -671,6 +671,26 @@ export interface paths {
         patch: operations["patch_filter_api_v1_filters__filter_id__patch"];
         trace?: never;
     };
+    "/api/v1/folio/action-items/{item_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Check Off
+         * @description Check an item off (or back on). The document changes too, live if it is open.
+         */
+        patch: operations["check_off_api_v1_folio_action_items__item_id__patch"];
+        trace?: never;
+    };
     "/api/v1/folio/admin/grants": {
         parameters: {
             query?: never;
@@ -955,6 +975,27 @@ export interface paths {
          * @description What you read last, newest first.
          */
         get: operations["recents_api_v1_folio_me_recents_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/me/tasks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My Tasks
+         * @description Action items assigned to you in documents you can see, by due date; each says
+         *     whether it is overdue, due today, upcoming or has no date.
+         */
+        get: operations["my_tasks_api_v1_folio_me_tasks_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3666,6 +3707,11 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ActionItemPatch */
+        ActionItemPatch: {
+            /** Done */
+            done: boolean;
+        };
         /** AgentCreate */
         AgentCreate: {
             /** Display Name */
@@ -5213,6 +5259,38 @@ export interface components {
             emoji: string;
             /** Mine */
             mine: boolean;
+        };
+        /** FolioTaskOut */
+        FolioTaskOut: {
+            /**
+             * Bucket
+             * @enum {string}
+             */
+            bucket: "overdue" | "today" | "upcoming" | "no_date";
+            /** Done */
+            done: boolean;
+            /** Due */
+            due: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            node: components["schemas"]["NodeRef"];
+            /** Text */
+            text: string;
+            /** Updated At */
+            updated_at: string;
+            /**
+             * Url
+             * @description The document holding the item
+             */
+            url: string;
+        };
+        /** FolioTasksOut */
+        FolioTasksOut: {
+            /** Items */
+            items: components["schemas"]["FolioTaskOut"][];
         };
         /** FolioTemplateIn */
         FolioTemplateIn: {
@@ -10519,6 +10597,41 @@ export interface operations {
             };
         };
     };
+    check_off_api_v1_folio_action_items__item_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ActionItemPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioTaskOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_grants_api_v1_folio_admin_grants_get: {
         parameters: {
             query?: never;
@@ -11036,6 +11149,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_NodeRef_"];
+                };
+            };
+        };
+    };
+    my_tasks_api_v1_folio_me_tasks_get: {
+        parameters: {
+            query?: {
+                status?: "open" | "done" | "all";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioTasksOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
