@@ -2502,7 +2502,26 @@
       "sendNote": "Enviar"
     },
     "glossary": {
-      "source": "Fuente: {{title}}"
+      "source": "Fuente: {{title}}",
+      "title": "Glosario",
+      "suggestions": "Sugeridos por la IA",
+      "suggestionsHelp": "Términos que la IA encontró en docs Verified. Apruébalos para mostrar su definición a quienes leen.",
+      "suggest": "Sugerir desde docs Verified",
+      "suggested_one": "{{count}} sugerencia nueva",
+      "suggested_other": "{{count}} sugerencias nuevas",
+      "approve": "Aprobar {{term}}",
+      "reject": "Rechazar {{term}}",
+      "noSuggestions": "No hay sugerencias pendientes.",
+      "approved": "Términos aprobados",
+      "approvedHelp": "Quienes leen los ven subrayados en las páginas, con su definición al pasar el cursor.",
+      "remove": "Quitar {{term}}",
+      "none": "Todavía no hay términos.",
+      "term": "Término",
+      "aliases": "Alias",
+      "aliasesHint": "Otros nombres, separados por comas",
+      "definition": "Definición",
+      "add": "Agregar término",
+      "added": "Término agregado"
     }
   },
   "notifications": {
