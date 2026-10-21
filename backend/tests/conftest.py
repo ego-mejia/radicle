@@ -1,4 +1,5 @@
 import os
+import shutil
 
 # The app refuses to start without it (it encrypts secrets in the database).
 os.environ.setdefault("RADICLE_SECRET_KEY", "tests-only-secret-key-0123456789")
@@ -42,9 +43,19 @@ def run_alembic(url: str, *args: str) -> None:
         raise AssertionError(f"alembic {' '.join(args)} failed:\n{result.stderr[-3000:]}")
 
 
+POSTGRES_IMAGE = "radicle-postgres:16-pgvector"
+
+
 @pytest.fixture(scope="session")
 def postgres() -> Iterator[PostgresContainer]:
-    with PostgresContainer("postgres:16-alpine", driver="asyncpg") as container:
+    """The same PostgreSQL as docker compose: 16 on Alpine with pgvector (ADR 0037)."""
+    dockerfile = Path(__file__).resolve().parents[2] / "docker" / "postgres"
+    subprocess.run(
+        [shutil.which("docker") or "docker", "build", "-q", "-t", POSTGRES_IMAGE, str(dockerfile)],
+        check=True,
+        capture_output=True,
+    )
+    with PostgresContainer(POSTGRES_IMAGE, driver="asyncpg") as container:
         yield container
 
 

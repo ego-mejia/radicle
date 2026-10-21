@@ -9,8 +9,8 @@ El índice RAG de Folio guarda embeddings con pgvector. La imagen `postgres:16-a
 ## Imagen de la base
 
 - `docker-compose.yml` construye `docker/postgres/Dockerfile`: `postgres:16-alpine` con pgvector compilado de su versión publicada. Se queda en Alpine a propósito: cambiar a una imagen Debian sobre un volumen existente cambia la libc y con ella el orden de texto, lo que puede dejar índices de texto inconsistentes. Con la misma base el volumen de cada instalación sirve sin migrar datos.
-- Los tests usan `pgvector/pgvector:pg16`: siempre arrancan con una base nueva, así que la libc da igual.
-- La migración que crea `folio_chunks` hace `CREATE EXTENSION IF NOT EXISTS vector`. Si la extensión no está, falla con un mensaje que dice cómo reconstruir la imagen de la base.
+- Los tests construyen y usan esa misma imagen. Se descartó `pgvector/pgvector:pg16` (Debian): con su collation lingüística el texto se ordena distinto que en Alpine, y Docket compara su rank fraccional en SQL, así que los tests dejarían de probar lo que corre en producción.
+- La migración que crea `folio_chunks` hace `CREATE EXTENSION IF NOT EXISTS vector`. Si la extensión no está, falla con un mensaje que dice cómo reconstruir la imagen de la base. Una instalación existente solo necesita `docker compose up -d --build`: el volumen de datos sirve igual.
 
 ## Dimensión de los embeddings
 
