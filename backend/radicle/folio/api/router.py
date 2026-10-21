@@ -8,6 +8,7 @@ from pydantic import Field
 
 from radicle.folio.api import assets as assets_api
 from radicle.folio.api import catalogs as catalogs_api
+from radicle.folio.api import collab as collab_api
 from radicle.folio.api import drafts as drafts_api
 from radicle.folio.api import home as home_api
 from radicle.folio.api import organize as organize_api
@@ -139,3 +140,4 @@ router.include_router(home_api.router)
 router.include_router(organize_api.router)
 router.include_router(social_api.router)
 router.include_router(templates_api.router)
+router.include_router(collab_api.router)
