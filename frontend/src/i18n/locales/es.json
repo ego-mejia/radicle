@@ -2242,7 +2242,9 @@
       "verifyDaysHint": "Después de estos días una página Verified pasa a Outdated y su dueño recibe aviso (1 a 730).",
       "saved": "Configuración guardada",
       "ai": "IA en el editor",
-      "aiHint": "Resumir, reescribir y sugerir metadata al escribir en este space."
+      "aiHint": "Resumir, reescribir y sugerir metadata al escribir en este space.",
+      "readers": "Mostrar quién leyó en los analytics de página",
+      "readersHint": "Los dueños de página y los admins del space ven quién leyó cada página, no solo cuántos."
     },
     "tasks": {
       "title": "Mis tareas",
@@ -2584,7 +2586,24 @@
       "readersHidden": "Este space solo cuenta a sus lectores. Un admin del space puede mostrar sus nombres en los ajustes del space.",
       "noReaders": "Nadie la ha leído en este periodo.",
       "readerViews_one": "{{count}} vista",
-      "readerViews_other": "{{count}} vistas"
+      "readerViews_other": "{{count}} vistas",
+      "site": {
+        "active": "Personas activas",
+        "searches": "Búsquedas",
+        "notFound": "Búsquedas sin resultados",
+        "activity": "Lecturas por día",
+        "topPages": "Páginas más leídas",
+        "topSpaces": "Spaces más activos",
+        "noViews": "Nadie ha leído nada en este periodo.",
+        "viewsReaders": "{{views}} vistas · {{readers}} lectores",
+        "gaps": "Buscado sin encontrar",
+        "gapsHelp": "Lo que la gente buscó y Folio no tenía: la lista de qué documentar después.",
+        "noGaps": "Todas las búsquedas encontraron algo.",
+        "times_one": "{{count}} vez",
+        "times_other": "{{count}} veces",
+        "unanswered": "Preguntas del chat sin respuesta",
+        "tab": "Analytics"
+      }
     },
     "public": {
       "liveOnly": "Contenido en vivo de Radicle; ábrelo en Radicle para verlo."
