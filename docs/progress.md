@@ -752,3 +752,22 @@ Spec: `docs/folio/fase-2.md`. Decisión: [0038](decisions/0038-eventos-y-notific
 - **Tiempo real:** Yjs con `pycrdt` en el servidor y sala propia sobre su protocolo, sin pycrdt-websocket ([0039](decisions/0039-tiempo-real-con-pycrdt-sin-pycrdt-websocket.md)). WebSocket `/api/v1/folio/collab/{node_id}` solo para quien edita (sesión o bearer), una sala por documento en el proceso, máximo 50 editores. Los updates van a `folio_yupdates` y se compactan en `folio_ydocs` cada 30 s o al vaciarse la sala; el `content_json` del borrador se regenera cada 5 s. Los borradores de fase 1 se convierten la primera vez. Publicar toma el estado del Y.Doc. Las ediciones de agentes por REST o MCP entran al Y.Doc con su etiqueta. En el editor: carets y selecciones en el color de cada quien, avatares de presencia y punteros de mouse con nombre (≤30 por segundo, se ocultan tras 10 s quietos).
 - **Live docs:** `kind=live_doc`, siempre editables, sin publicar, metadata ni RAG. Snapshot cada 10 minutos con sus autores, historial con restaurar (`GET /nodes/{id}/snapshots`, `POST /snapshots/{id}/restore`) y en el MCP `create_live_doc` y `append_to_live_doc`.
 - **E2E:** `RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE` se puede subir para correrlos (las specs entran más de diez veces por minuto).
+
+## Folio fase 3: Contenido rico (en curso)
+
+Spec: `docs/folio/fase-3.md`.
+
+### 3.6 Databases
+
+Listo: #226, #227, #229, #231, #234, #237, #240, #245, #246, #248, #250, #254, #257, #258, #260, #262. Referencia en `docs/folio/databases.md`.
+
+- **Modelo:** nodo `kind=database` (migración 0046, downgrade reconstruye el enum), `folio_databases` (columnas y vistas en JSONB) y `folio_db_rows` (valores JSONB, rank fraccional, borrado suave). Nueve tipos de columna; un cambio de tipo convierte lo que cabe y la respuesta dice cuántos valores borró (`cleared`). Límites: 50 columnas, 20 vistas, 10,000 filas.
+- **API:** `GET/PATCH /databases/{id}`, `GET/POST /databases/{id}/rows?view` con filtros y orden en el servidor, `POST .../rows/batch` (hasta 100, todo o nada), `PATCH/DELETE /rows/{id}`. Los permisos siguen al nodo; las dos rutas GET están en `test_folio_leaks.py` y `test_restricted.py`.
+- **MCP:** `query_database` y `add_database_rows` (por nombre de columna), en el catálogo y en las pruebas de páginas restringidas y sin acceso.
+- **UI:** página de la database con barra de vistas (tabla, tarjetas y tablero agrupado por una columna select, con arrastre entre grupos), edición de celdas por tipo, agregar y borrar filas, editar vistas (filtros, orden, columnas visibles) y columnas (agregar, renombrar, cambiar tipo, opciones de los select). Bloque `databaseView` desde `/` y en la lectura, con aviso de sin acceso; en Markdown `::database{id=… view=…}`.
+- **Fuera de alcance:** las filas no entran a la búsqueda ni al RAG en esta fase.
+
+| Aceptación | Prueba |
+| --- | --- |
+| Inventario de AI Tools visto como tablero por estado | `test_folio_databases.py`, `test_folio_databases_api.py::test_build_and_read_a_board`, `tests/mcp/test_folio_mcp_databases.py` |
+
