@@ -5,6 +5,8 @@ import { assetUrl } from '../../../../../../services/api/folio';
 import type { DocNode, Heading } from '../../anchors';
 import { toneOf } from '../Inline/tone';
 import { EmbedCard } from '../../../EmbedCard';
+import { Diagram } from '../../../Diagram';
+import { Formula } from '../../../Formula';
 import { VisualFrame } from '../../../VisualFrame';
 import * as S from './style';
 
@@ -102,6 +104,12 @@ export function RichBlock({ node: n, headings, childPages, children }: Props) {
           description={String(a.description ?? '')}
         />
       );
+    case 'diagram':
+      return (
+        <Diagram source={String(a.source ?? '')} caption={a.caption ? String(a.caption) : null} />
+      );
+    case 'formula':
+      return <Formula latex={String(a.latex ?? '')} />;
     case 'embed':
       return <EmbedCard url={String(a.url)} title={a.title ? String(a.title) : null} />;
     case 'file':

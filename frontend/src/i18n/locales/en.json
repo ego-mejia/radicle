@@ -1795,7 +1795,10 @@
         "left_other": "{{count}} min left"
       },
       "actionItem": "Action item",
-      "due": "Due"
+      "due": "Due",
+      "diagram": "Diagram",
+      "diagramError": "This diagram doesn't compile:",
+      "formulaError": "This formula doesn't compile"
     },
     "editor": {
       "title": "Editor",
