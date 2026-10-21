@@ -451,10 +451,18 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
 - **Visual blocks.** From `/`: Mermaid diagrams, charts (also from the table above them), timelines, side-by-side comparisons, KaTeX formulas, a live list of pages by label, and the **Visual** block for your own animated SVG or HTML, sandboxed and following the light or dark theme. Agents add them over MCP (`insert_visual`, `insert_diagram`, `insert_chart`, `insert_timeline`).
 - **Whiteboards and databases.** Draw together on an Excalidraw whiteboard and drop it into any page. A database keeps rows with typed columns, seen as a table, cards or a board you drag cards across; embed any view in a page.
 - **Embeds.** Paste a YouTube or Figma link on its own line and it plays in the page; other links become a card with their preview.
+- **Tickets inside docs.** Paste a Docket key or link and it becomes a chip with the ticket's live status and assignee; the **Ticket table** block lists the tickets of a Docket RQL query. Select text and press **Create ticket** (or use the button on an action item) to open a ticket linked to that section. Each ticket in Docket has a **Docs** panel with the docs that mention or link it, and each milestone lists the docs that name it in their publishing metadata.
+- **From a build spec to its tickets.** On a build spec, **Create tickets** finds the deliverables (the deliverables table or numbered headings) and makes one Docket task per deliverable, with its acceptance criteria as a checklist and a link back to its section. Running it again only adds new ones. The **Ticket progress** block (`::progress{}`) shows each ticket's status, assignee and checklist live.
+- **Ask the docs.** **Ask** in the Folio bar (or <kbd>A</kbd>) answers from the docs you can read, cites every claim with `[n]`, and each source opens the doc at that section with the paragraph highlighted. When the docs don't say, it says so and suggests who to ask; **Folio → Admin → Chat** lists those questions so you know what to write next.
+- **AI in the editor.** **AI** summarizes the page; select text to rewrite it clearer, shorter, more formal or in another language; **Publish** suggests a description, labels and document type for empty fields. A **Glossary** of terms approved by an admin shows their definition when you hover over them. The AI only proposes: nothing changes until you accept it, and nothing shows without an AI provider or with AI off in the space.
 
 <p align="center">
   <img src="docs/images/folio-visual.png" alt="An animated visual block and a Mermaid diagram in a post" width="49%">
   <img src="docs/images/folio-database.png" alt="A database seen as a board grouped by status" width="49%">
+</p>
+<p align="center">
+  <img src="docs/images/folio-chat.png" alt="The docs chat answering with a citation that opens the highlighted section" width="49%">
+  <img src="docs/images/folio-build-spec.png" alt="A build spec's deliverables and the live progress of their Docket tickets" width="49%">
 </p>
 
 - **Search.** Type a question in the bar at the top and Folio finds the section that answers it, in English and Spanish. Hybrid search mixes words and meaning (with an AI provider for embeddings); filters narrow it by space, type, document type, language or label. The same RQL as Docket queries docs: `space = ai-tools AND #onboarding AND published >= -30d ORDER BY published DESC`.
@@ -462,7 +470,7 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
 <p align="center"><img src="docs/images/folio-search.png" alt="Search results with highlighted matches" width="820"></p>
 
 - **AI provider.** **Admin → Settings → AI provider** sets one provider for chat and embeddings (OpenAI, an OpenAI-compatible server such as Voyage, Ollama, or Anthropic for chat). The key is stored encrypted; **Test connection** shows the dimensions and latency. Without one, search uses words only.
-- **Folio's MCP.** `/mcp/folio` takes the same tokens as `/mcp`. Agents search (`search_docs`, `query_docs`), read pages in Markdown (`get_page`), learn what publishing needs (`get_metadata_schema`), write (`create_page`, `update_draft`) and send for approval (`submit_for_publication`, `list_my_submissions`). Admins pick which Folio tools each agent may use, as with Docket's.
+- **Folio's MCP.** `/mcp/folio` takes the same tokens as `/mcp`. Agents search (`search_docs`, `query_docs`), read pages in Markdown (`get_page`), learn what publishing needs (`get_metadata_schema`), write (`create_page`, `update_draft`) and send for approval (`submit_for_publication`, `list_my_submissions`). They also ask the docs (`ask_docs`), link docs to tickets (`link_ticket`, `get_docs_for_ticket`) and turn a build spec into tickets (`create_tickets_from_build_spec`, a dry run unless `dry_run=false`). Three prompts guide an agent working in a codebase: `weekly_changes_post`, `document_module` and `build_spec_from_discussion`; all of them end waiting for approval. Admins pick which Folio tools each agent may use, as with Docket's.
 
 ```bash
 claude mcp add --transport http radicle-folio https://radicle.example.com/mcp/folio \
@@ -544,7 +552,7 @@ Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning
 - [x] Phase 1: spaces and pages, the editor, publishing with versions, permissions, agent submissions with approval, RAG search and Folio's MCP.
 - [x] Phase 2: real-time editing with named carets and pointers, comments anchored to the text, mentions, notifications in the app and by email, reactions, following, sharing, action items and My tasks, live docs with snapshots, moving, copying and archiving pages, owners and statuses that expire, and the For you feed.
 - [x] Phase 3: templates for pages and spaces, the home editor, visual blocks (diagrams, charts, timelines, formulas and sandboxed visuals), whiteboards, databases and embeds.
-- [ ] Phase 4: tickets inside docs and chat with citations.
+- [x] Phase 4: tickets inside docs, build specs that make their tickets, links to milestones and areas, the docs chat with citations, AI in the editor with a glossary, and MCP prompts for agents writing from a codebase.
 - [ ] Phase 5: public pages, import and export, Slack and Teams, webhooks.
 
 **Stage 5: integrations**
