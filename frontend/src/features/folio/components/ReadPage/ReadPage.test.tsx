@@ -55,7 +55,7 @@ const TREE = [
 ];
 
 function api(node: object = NODE, space: object = SPACE) {
-  mockFetch({
+  return mockFetch({
     'GET /api/v1/folio/nodes/n1': { status: 200, body: node },
     'GET /api/v1/folio/spaces/docs': { status: 200, body: space },
     'GET /api/v1/folio/spaces/docs/tree': { status: 200, body: TREE },
@@ -74,6 +74,21 @@ function api(node: object = NODE, space: object = SPACE) {
 
 describe('ReadPage', () => {
   beforeEach(() => localStorage.clear());
+
+  it('counts the read, and shows analytics to space admins only', async () => {
+    const calls = api();
+    const { unmount } = renderWithProviders(<ReadPage nodeId="n1" />);
+    await screen.findByRole('button', { name: 'Comments' });
+    expect(screen.queryByRole('button', { name: 'Analytics' })).toBeNull();
+    expect(calls.find((c) => c.path === '/api/v1/folio/analytics/views')?.body).toEqual({
+      node_id: 'n1',
+    });
+    unmount();
+
+    api(NODE, { ...SPACE, permissions: ['view', 'admin'] });
+    renderWithProviders(<ReadPage nodeId="n1" />);
+    expect(await screen.findByRole('button', { name: 'Analytics' })).toBeInTheDocument();
+  });
 
   it('opens the comments beside the page', async () => {
     api();

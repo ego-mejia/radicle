@@ -2565,6 +2565,26 @@
       "definition": "Definición",
       "add": "Agregar término",
       "added": "Término agregado"
+    },
+    "analytics": {
+      "open": "Analytics",
+      "title": "Analytics de la página",
+      "range": "Periodo",
+      "days_one": "Último día",
+      "days_other": "Últimos {{count}} días",
+      "views": "Vistas",
+      "readers": "Lectores",
+      "uniqueReaders": "Lectores únicos",
+      "readingTime": "Tiempo de lectura",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min",
+      "chart_one": "Vistas del último día",
+      "chart_other": "Vistas de los últimos {{count}} días",
+      "whoRead": "Quién la leyó",
+      "readersHidden": "Este space solo cuenta a sus lectores. Un admin del space puede mostrar sus nombres en los ajustes del space.",
+      "noReaders": "Nadie la ha leído en este periodo.",
+      "readerViews_one": "{{count}} vista",
+      "readerViews_other": "{{count}} vistas"
     }
   },
   "notifications": {

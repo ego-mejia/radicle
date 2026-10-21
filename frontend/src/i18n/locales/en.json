@@ -2565,6 +2565,26 @@
       "definition": "Definition",
       "add": "Add term",
       "added": "Term added"
+    },
+    "analytics": {
+      "open": "Analytics",
+      "title": "Page analytics",
+      "range": "Range",
+      "days_one": "Last {{count}} day",
+      "days_other": "Last {{count}} days",
+      "views": "Views",
+      "readers": "Readers",
+      "uniqueReaders": "Unique readers",
+      "readingTime": "Reading time",
+      "minutes_one": "{{count}} min",
+      "minutes_other": "{{count}} min",
+      "chart_one": "Views over the last {{count}} day",
+      "chart_other": "Views over the last {{count}} days",
+      "whoRead": "Who read it",
+      "readersHidden": "This space only counts its readers. A space admin can show their names in the space settings.",
+      "noReaders": "Nobody has read it in this range.",
+      "readerViews_one": "{{count}} view",
+      "readerViews_other": "{{count}} views"
     }
   },
   "notifications": {
