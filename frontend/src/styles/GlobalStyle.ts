@@ -44,4 +44,10 @@ export const GlobalStyle = createGlobalStyle`
     background-color: ${({ theme }) => theme.color.accentSoft};
     text-decoration: underline 2px ${({ theme }) => theme.color.accent};
   }
+
+  /* Approved Folio glossary terms; hovering one shows its definition. */
+  ::highlight(folio-glossary) {
+    text-decoration: underline dotted 1px ${({ theme }) => theme.color.textMuted};
+    text-underline-offset: 3px;
+  }
 `;

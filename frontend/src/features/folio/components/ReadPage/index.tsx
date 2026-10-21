@@ -17,6 +17,7 @@ import { DatabasePage } from '../DatabasePage';
 import { DocContent } from '../DocContent';
 import { headingsOf, readingMinutes } from '../DocContent/anchors';
 import { FocusReader } from '../FocusReader';
+import { GlossaryTooltips } from '../GlossaryTooltips';
 import { MarginComments } from '../MarginComments';
 import { NodeMenu } from '../NodeMenu';
 import { PageMeta } from '../PageMeta';
@@ -91,6 +92,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
         contentRef={content}
         margin={
           <>
+            <GlossaryTooltips container={content} version={[page.content, focus]} />
             <MarginComments nodeId={n.id} canComment={canComment} />
             <SelectionComment
               container={content}
@@ -177,6 +179,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
           <div ref={content}>
             <DocContent doc={page.content} childPages={page.children} size="large" />
           </div>
+          <GlossaryTooltips container={content} version={page.content} />
           <SelectionComment
             container={content}
             mentions={discussion.mentions}
