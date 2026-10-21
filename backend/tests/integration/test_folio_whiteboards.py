@@ -76,12 +76,21 @@ async def test_two_people_draw_together_and_the_scene_is_kept(
         await settle(lambda: _ids(c) == ["note"])
 
 
+async def _saved_on_server(board: str, done: Any) -> None:
+    """Wait for the server's copy, then save it: the save on disconnect runs after the room
+    is gone, so a test that only leaves could look for the reindex job too early."""
+    room = collab.rooms.get(uuid.UUID(board))
+    assert room is not None
+    await settle(lambda: done(whiteboards.read(room.doc)))
+    await room.save()
+
+
 async def test_its_text_is_found_by_search(
     client: AsyncClient, db: AsyncSession, team: Team, board: str
 ) -> None:
     async with connected(client, board, team.instance.headers) as a:
         _draw(a, _element("note", "a1", type="text", text="Cola de facturación"))
-        await settle(lambda: collab.rooms.get(uuid.UUID(board)) is not None)
+        await _saved_on_server(board, lambda els: [e["id"] for e in els] == ["note"])
     await run_jobs(db)
     r = await client.get(
         f"{API}/search", params={"q": "facturación", "mode": "text"}, headers=team.member.headers
@@ -91,8 +100,11 @@ async def test_its_text_is_found_by_search(
     assert [h["node_id"] for h in hits] == [board] and "facturación" in hits[0]["snippet"]
     # Erasing the text takes it out of the index.
     async with connected(client, board, team.instance.headers) as b:
+        # Erase it once b has it: a write before the sync is concurrent, and Yjs may keep
+        # the other client's version of the key.
+        await settle(lambda: _ids(b) == ["note"])
         _draw(b, _element("note", "a1", type="text", text="", version=2, isDeleted=True))
-        await settle(lambda: whiteboards.read(b.doc) == [])
+        await _saved_on_server(board, lambda els: els == [])
     await run_jobs(db)
     r = await client.get(
         f"{API}/search", params={"q": "facturación", "mode": "text"}, headers=team.member.headers
