@@ -2472,6 +2472,24 @@
         "bug": "Bug",
         "draft": "Borrador"
       }
+    },
+    "chat": {
+      "title": "Pregunta a los docs",
+      "open": "Preguntar",
+      "shortcut": "Pregunta a los docs (A)",
+      "close": "Cerrar el chat",
+      "hint": "Pregunta lo que quieras sobre los docs. Cada respuesta cita la sección de donde sale.",
+      "placeholder": "¿Cómo conecto un agente?",
+      "question": "Tu pregunta",
+      "send": "Preguntar",
+      "thinking": "Buscando en los docs…",
+      "sources": "Fuentes",
+      "outdated": "Algunos de estos docs están marcados como desactualizados: revísalos antes de confiar en la respuesta.",
+      "helpful": "Me sirvió",
+      "notHelpful": "No me sirvió",
+      "note": "¿Qué faltó?",
+      "notePlaceholder": "¿Qué faltó o estuvo mal?",
+      "sendNote": "Enviar"
     }
   },
   "notifications": {

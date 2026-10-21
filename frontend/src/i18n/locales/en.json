@@ -2472,6 +2472,24 @@
         "bug": "Bug",
         "draft": "Draft"
       }
+    },
+    "chat": {
+      "title": "Ask the docs",
+      "open": "Ask",
+      "shortcut": "Ask the docs (A)",
+      "close": "Close the chat",
+      "hint": "Ask anything about the docs. Answers cite the section they come from.",
+      "placeholder": "How do I connect an agent?",
+      "question": "Your question",
+      "send": "Ask",
+      "thinking": "Looking in the docs…",
+      "sources": "Sources",
+      "outdated": "Some of these docs are marked Outdated: check them before relying on the answer.",
+      "helpful": "Helpful",
+      "notHelpful": "Not helpful",
+      "note": "What was missing?",
+      "notePlaceholder": "What was missing or wrong?",
+      "sendNote": "Send"
     }
   },
   "notifications": {
