@@ -13,8 +13,8 @@ from radicle.docket.api.schemas.users import (
     UserOut,
     UserPatch,
 )
-from radicle.docket.core import mcp_catalog
 from radicle.docket.db.models import User, UserKind
+from radicle.platform import mcp_tools
 from radicle.platform.api.deps import AppSettings, Db, InstanceAdmin
 from radicle.platform.api.pagination import DEFAULT_LIMIT, Limit, decode_cursor, encode_cursor
 from radicle.platform.api.schemas import Page
@@ -107,17 +107,15 @@ async def create_agent(
 @router.get("/mcp/tools", response_model=list[McpToolOut])
 async def list_mcp_tools(_: InstanceAdmin) -> list[McpToolOut]:
     """Every MCP tool with its group, for choosing what an agent may call."""
-    from radicle.docket.mcp.server import server
-
-    described = {tool.name: tool.description or "" for tool in await server.list_tools()}
+    described = await mcp_tools.descriptions()
     return [
         McpToolOut(
-            name=name,
-            group=mcp_catalog.GROUP_OF[name],
-            read_only=name in mcp_catalog.READ_ONLY,
-            description=described.get(name, ""),
+            name=tool.name,
+            group=tool.group,
+            read_only=tool.read_only,
+            description=described.get(tool.name, ""),
         )
-        for name in mcp_catalog.TOOLS
+        for tool in mcp_tools.catalog()
     ]
 
 

@@ -4,16 +4,17 @@ REST API in process, so it follows Folio's roles exactly like the web app."""
 from typing import Any
 
 from fastapi import FastAPI
-from mcp.server.mcpserver import Context, MCPServer
+from mcp.server.mcpserver import Context
 
 from radicle import __version__
 from radicle.platform.mcp import http
 from radicle.platform.mcp.api import api
+from radicle.platform.mcp.server import LimitedMCPServer
 
 INSTRUCTIONS = """Radicle Folio is the documentation suite of Radicle. Call whoami first to
 learn your handle and your global Folio role (reader, creator or admin)."""
 
-server = MCPServer(
+server = LimitedMCPServer(
     name="radicle-folio", title="Radicle Folio", version=__version__, instructions=INSTRUCTIONS
 )
 

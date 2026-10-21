@@ -68,3 +68,15 @@ async def test_whoami_explains_missing_access(client: AsyncClient, board: Team) 
 async def test_folio_mcp_rejects_missing_tokens(client: AsyncClient, board: Team) -> None:
     r = await client.post("/mcp/folio", json={})
     assert r.status_code == 401 and "Bearer" in r.json()["detail"]
+
+
+async def test_tool_limits_apply_on_folio_too(client: AsyncClient, board: Team) -> None:
+    r = await client.patch(
+        f"/api/v1/users/{board.agent.handle}",
+        headers=board.instance.headers,
+        json={"mcp_tools": ["get_ticket"]},
+    )
+    assert r.status_code == 200, r.text
+    async with folio_mcp(client, board.agent) as folio:
+        assert (await folio.list_tools()).tools == []
+        assert "turned off for this agent" in error_text(await folio.call_tool("whoami"))
