@@ -12,6 +12,7 @@ import radicle.folio.db.chat
 import radicle.folio.db.collab
 import radicle.folio.db.databases
 import radicle.folio.db.docket_links
+import radicle.folio.db.exports
 import radicle.folio.db.glossary
 import radicle.folio.db.imports
 import radicle.folio.db.models
