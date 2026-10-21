@@ -256,6 +256,12 @@ EXEMPT = {
     "/api/v1/audit.csv",
     "/api/v1/admin/assistant",
     "/api/v1/admin/ai",
+    # Instance admins only (test_webhooks_api.py); deliveries carry ids and titles, never
+    # ticket or page content.
+    "/api/v1/webhooks",
+    "/api/v1/webhooks/events",
+    "/api/v1/webhooks/{webhook_id}",
+    "/api/v1/webhooks/{webhook_id}/deliveries",
     "/api/v1/folio/health",
     "/api/v1/folio/me",
     "/api/v1/folio/admin/grants",
