@@ -21,6 +21,7 @@ import {
   revokeMyToken,
   updateMe,
 } from '../../../../services/api/auth';
+import { NotificationPreferences } from '../../../notifications/components/NotificationPreferences';
 import { TokenList } from '../../../admin/components/TokenList';
 import { TokenReveal } from '../../../admin/components/TokenReveal';
 import * as S from './style';
@@ -144,6 +145,8 @@ export function ProfileView() {
             </Field>
           </S.Prefs>
         </SettingsCard>
+
+        <NotificationPreferences />
 
         <SettingsCard title={t('profile.password')}>
           <S.Form
