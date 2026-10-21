@@ -2668,6 +2668,32 @@
         "addedBy": "Added by @{{handle}}",
         "deleteTitle": "Delete this event?",
         "deleteMessage": "“{{title}}” will be removed from the calendar."
+      },
+      "settings": {
+        "new": "New calendar",
+        "title": "Calendar settings",
+        "name": "Name",
+        "color": "Color",
+        "projects": "Docket projects",
+        "projectsHint": "Keys of the projects whose milestones it shows, like PA",
+        "deleteTitle": "Delete this calendar?",
+        "deleteMessage": "“{{name}}” and all its events will be deleted. Subscriptions to its feed stop working."
+      },
+      "color": {
+        "blue": "Blue",
+        "green": "Green",
+        "purple": "Purple",
+        "orange": "Orange",
+        "red": "Red",
+        "teal": "Teal",
+        "gray": "Gray"
+      },
+      "feed": {
+        "label": "Feed link",
+        "hint": "Paste it in Google Calendar or Outlook to subscribe. Anyone with the link can read the calendar.",
+        "rotate": "New link",
+        "copy": "Subscribe",
+        "copied": "Feed link copied. Paste it in Google Calendar or Outlook."
       }
     },
     "imports": {

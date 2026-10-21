@@ -2668,6 +2668,32 @@
         "addedBy": "Lo agregó @{{handle}}",
         "deleteTitle": "¿Borrar este evento?",
         "deleteMessage": "“{{title}}” se quitará del calendario."
+      },
+      "settings": {
+        "new": "Nuevo calendario",
+        "title": "Ajustes del calendario",
+        "name": "Nombre",
+        "color": "Color",
+        "projects": "Proyectos de Docket",
+        "projectsHint": "Claves de los proyectos cuyos milestones muestra, como PA",
+        "deleteTitle": "¿Borrar este calendario?",
+        "deleteMessage": "Se borrará “{{name}}” con todos sus eventos. Las suscripciones a su feed dejarán de funcionar."
+      },
+      "color": {
+        "blue": "Azul",
+        "green": "Verde",
+        "purple": "Morado",
+        "orange": "Naranja",
+        "red": "Rojo",
+        "teal": "Turquesa",
+        "gray": "Gris"
+      },
+      "feed": {
+        "label": "Link del feed",
+        "hint": "Pégalo en Google Calendar u Outlook para suscribirte. Quien tenga el link puede leer el calendario.",
+        "rotate": "Link nuevo",
+        "copy": "Suscribirse",
+        "copied": "Link del feed copiado. Pégalo en Google Calendar u Outlook."
       }
     },
     "imports": {
