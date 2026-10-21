@@ -7,6 +7,7 @@ import {
   patchInstanceSettings,
   ssoKeys,
 } from '../../../../services/api/sso';
+import { AiProviderSettings } from '../AiProviderSettings';
 import { AssistantSettings } from '../AssistantSettings';
 import * as S from './style';
 
@@ -35,6 +36,7 @@ export function InstanceSettingsTab() {
           {t('instance.emergency', { email: data.emergency_admin ?? '—' })}
         </S.Note>
       </SettingsCard>
+      <AiProviderSettings />
       <AssistantSettings />
     </>
   );

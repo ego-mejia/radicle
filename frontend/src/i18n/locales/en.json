@@ -1543,5 +1543,42 @@
     "copied": "Image copied: paste it into your LinkedIn post.",
     "downloaded": "Image downloaded: attach it to your LinkedIn post.",
     "post": "🎉 We just completed {{milestone}} in {{project}}! {{done}} tickets shipped, {{bugs}} bugs squashed and {{hours}} hours invested by {{team}}. Tracked with Radicle."
+  },
+  "aiProvider": {
+    "title": "AI provider",
+    "help": "One provider for chat and embeddings, shared by Docket and Folio. Without one, everything else keeps working.",
+    "provider": "Provider",
+    "providers": {
+      "none": "None",
+      "openai": "OpenAI",
+      "openai_compatible": "OpenAI-compatible",
+      "ollama": "Ollama",
+      "anthropic": "Anthropic"
+    },
+    "providerHints": {
+      "none": "No AI features.",
+      "openai": "Chat and embeddings.",
+      "openai_compatible": "Voyage, vLLM, LM Studio and others.",
+      "ollama": "Local models on your server.",
+      "anthropic": "Claude for chat; it has no embeddings API."
+    },
+    "chatModel": "Chat model",
+    "embeddingModel": "Embedding model",
+    "embeddingHint": "For search and the RAG index, e.g. text-embedding-3-small or nomic-embed-text.",
+    "dimensions": "Embedding dimensions",
+    "dimensionsHint": "Empty uses the model's own.",
+    "baseUrl": "Base URL",
+    "baseUrlHint": {
+      "openai": "Empty uses https://api.openai.com/v1.",
+      "openai_compatible": "Required, e.g. https://api.voyageai.com/v1.",
+      "ollama": "Empty uses http://localhost:11434.",
+      "anthropic": "Empty uses https://api.anthropic.com."
+    },
+    "apiKey": "API key",
+    "keyHint": "Stored encrypted and never shown again. Ollama does not need one.",
+    "keySaved": "A key is saved. Type a new one to replace it.",
+    "removeKey": "Remove key",
+    "test": "Test connection",
+    "saved": "AI provider saved"
   }
 }
