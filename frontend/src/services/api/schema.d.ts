@@ -851,7 +851,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Query Nodes
+         * @description Pages, folders and posts you can see that match the query; errors say where.
+         */
+        get: operations["query_nodes_api_v1_folio_nodes_get"];
         put?: never;
         /**
          * Create Node
@@ -4163,6 +4167,43 @@ export interface components {
              */
             public_comment?: string | null;
         };
+        /** DocOut */
+        DocOut: {
+            /** Created At */
+            created_at: string;
+            /** Icon */
+            icon: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            kind: components["schemas"]["NodeKind"];
+            /**
+             * Metadata
+             * @description Of the published version
+             */
+            metadata: {
+                [key: string]: unknown;
+            } | null;
+            /** Parent Id */
+            parent_id: string | null;
+            /** Published At */
+            published_at: string | null;
+            /** Slug */
+            slug: string;
+            /** Space */
+            space: string;
+            /** Title */
+            title: string;
+            /** Updated At */
+            updated_at: string;
+            /**
+             * Version
+             * @description Published version; null until first published
+             */
+            version: number | null;
+        };
         /** DraftIn */
         DraftIn: {
             /**
@@ -5137,6 +5178,11 @@ export interface components {
             /** Title */
             title: string;
         };
+        /**
+         * NodeKind
+         * @enum {string}
+         */
+        NodeKind: "page" | "folder" | "blog_post";
         /** NodeOut */
         NodeOut: {
             /**
@@ -5277,6 +5323,13 @@ export interface components {
         Page_DashboardOut_: {
             /** Items */
             items: components["schemas"]["DashboardOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[DocOut] */
+        Page_DocOut_: {
+            /** Items */
+            items: components["schemas"]["DocOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -9558,6 +9611,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MetadataSchemaOut"];
+                };
+            };
+        };
+    };
+    query_nodes_api_v1_folio_nodes_get: {
+        parameters: {
+            query?: {
+                /** @description RQL, e.g. space = ai-tools AND doc_type = how-to ORDER BY published DESC */
+                q?: string;
+                limit?: number;
+                cursor?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_DocOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
