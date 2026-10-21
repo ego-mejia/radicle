@@ -1789,7 +1789,29 @@
       }
     },
     "searchPage": {
-      "title": "Búsqueda"
+      "title": "Búsqueda",
+      "placeholder": "Palabras o una pregunta, p. ej. cómo conecto un agente",
+      "submit": "Buscar",
+      "hint": "La búsqueda encuentra la sección que te responde, en español e inglés.",
+      "none": "Nada coincide con “{{q}}”.",
+      "results": "Resultados",
+      "mode": "Cómo buscar",
+      "modes": {
+        "hybrid": "Híbrida",
+        "text": "Palabras",
+        "semantic": "Significado"
+      },
+      "matchedBy": {
+        "text": "palabras",
+        "semantic": "significado"
+      },
+      "filters": "Filtros",
+      "any": "Cualquiera",
+      "space": "Space",
+      "kind": "Tipo",
+      "docType": "Tipo de documento",
+      "language": "Idioma",
+      "label": "Label"
     },
     "approvals": {
       "title": "Aprobaciones",
