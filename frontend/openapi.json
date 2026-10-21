@@ -4007,6 +4007,214 @@
         "title": "FilterVisibility",
         "type": "string"
       },
+      "FolioAnchor": {
+        "properties": {
+          "offset": {
+            "description": "Where it starts in the page's plain text",
+            "title": "Offset",
+            "type": "integer"
+          },
+          "prefix": {
+            "description": "Up to 32 characters before it in the page's text",
+            "title": "Prefix",
+            "type": "string"
+          },
+          "quote": {
+            "description": "The anchored text as it reads now",
+            "title": "Quote",
+            "type": "string"
+          },
+          "suffix": {
+            "description": "Up to 32 characters after it",
+            "title": "Suffix",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quote",
+          "prefix",
+          "suffix",
+          "offset"
+        ],
+        "title": "FolioAnchor",
+        "type": "object"
+      },
+      "FolioAnchorIn": {
+        "additionalProperties": false,
+        "properties": {
+          "offset": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Offset",
+            "type": "integer"
+          },
+          "prefix": {
+            "default": "",
+            "maxLength": 64,
+            "title": "Prefix",
+            "type": "string"
+          },
+          "quote": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Quote",
+            "type": "string"
+          },
+          "suffix": {
+            "default": "",
+            "maxLength": 64,
+            "title": "Suffix",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quote"
+        ],
+        "title": "FolioAnchorIn",
+        "type": "object"
+      },
+      "FolioCommentIn": {
+        "additionalProperties": false,
+        "properties": {
+          "anchor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FolioAnchorIn"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "For an inline thread"
+          },
+          "body": {
+            "description": "Markdown; @handle mentions notify",
+            "title": "Body",
+            "type": "string"
+          },
+          "inline": {
+            "default": false,
+            "title": "Inline",
+            "type": "boolean"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Instead of anchor: inline on the first occurrence",
+            "title": "Quote"
+          },
+          "thread_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reply to this thread",
+            "title": "Thread Id"
+          }
+        },
+        "required": [
+          "body"
+        ],
+        "title": "FolioCommentIn",
+        "type": "object"
+      },
+      "FolioCommentOut": {
+        "properties": {
+          "author": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Handle; null when the person was removed",
+            "title": "Author"
+          },
+          "author_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author Name"
+          },
+          "body_md": {
+            "title": "Body Md",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "edited_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Edited At"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          },
+          "thread_id": {
+            "format": "uuid",
+            "title": "Thread Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "thread_id",
+          "author",
+          "author_name",
+          "body_md",
+          "created_at",
+          "edited_at",
+          "mine"
+        ],
+        "title": "FolioCommentOut",
+        "type": "object"
+      },
+      "FolioCommentPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "body": {
+            "title": "Body",
+            "type": "string"
+          }
+        },
+        "required": [
+          "body"
+        ],
+        "title": "FolioCommentPatch",
+        "type": "object"
+      },
       "FolioHealthOut": {
         "properties": {
           "status": {
@@ -4396,6 +4604,79 @@
           "name"
         ],
         "title": "FolioTemplatePatch",
+        "type": "object"
+      },
+      "FolioThreadOut": {
+        "properties": {
+          "anchor": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FolioAnchor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "comments": {
+            "items": {
+              "$ref": "#/components/schemas/FolioCommentOut"
+            },
+            "title": "Comments",
+            "type": "array"
+          },
+          "id": {
+            "description": "The thread's first comment",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "footer",
+              "inline"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "orphaned": {
+            "description": "Its anchored text was deleted; shown with its quote",
+            "title": "Orphaned",
+            "type": "boolean"
+          },
+          "resolved_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved At"
+          },
+          "resolved_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resolved By"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "anchor",
+          "orphaned",
+          "resolved_at",
+          "resolved_by",
+          "comments"
+        ],
+        "title": "FolioThreadOut",
         "type": "object"
       },
       "FormSchemaOut": {
@@ -7386,6 +7667,34 @@
           "next_cursor"
         ],
         "title": "Page[FolioTemplateOut]",
+        "type": "object"
+      },
+      "Page_FolioThreadOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/FolioThreadOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[FolioThreadOut]",
         "type": "object"
       },
       "Page_GrantOut_": {
@@ -17552,6 +17861,186 @@
         ]
       }
     },
+    "/api/v1/folio/comments/{comment_id}": {
+      "delete": {
+        "description": "Delete your own comment, or any as an admin of the space.",
+        "operationId": "delete_comment_api_v1_folio_comments__comment_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "comment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Comment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Comment",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "patch": {
+        "description": "Edit your own comment.",
+        "operationId": "edit_comment_api_v1_folio_comments__comment_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "comment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Comment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FolioCommentPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioThreadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Edit Comment",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/comments/{comment_id}/reopen": {
+      "post": {
+        "operationId": "reopen_comment_api_v1_folio_comments__comment_id__reopen_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "comment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Comment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioThreadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reopen Comment",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/comments/{comment_id}/resolve": {
+      "post": {
+        "description": "Resolve the comment's thread: it and its highlight hide, and it stays in history.",
+        "operationId": "resolve_comment_api_v1_folio_comments__comment_id__resolve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "comment_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Comment Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioThreadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resolve Comment",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/favorites/{target_type}/{target_id}": {
       "delete": {
         "operationId": "unfavorite_api_v1_folio_favorites__target_type___target_id__delete",
@@ -18194,6 +18683,114 @@
           }
         },
         "summary": "Upload Asset",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/nodes/{node_id}/comments": {
+      "get": {
+        "description": "The page's threads, oldest first, with their replies. Orphaned inline threads keep\ntheir quote.",
+        "operationId": "list_comments_api_v1_folio_nodes__node_id__comments_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_resolved",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Resolved",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_FolioThreadOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Comments",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "description": "A thread at the foot (default), an inline thread on `anchor` or on the first\noccurrence of `quote`, or a reply to `thread_id`. Returns the whole thread.",
+        "operationId": "add_comment_api_v1_folio_nodes__node_id__comments_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "node_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Node Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FolioCommentIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FolioThreadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Comment",
         "tags": [
           "folio",
           "folio"
