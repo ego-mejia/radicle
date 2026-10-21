@@ -45,7 +45,7 @@ describe('usePage', () => {
     mockFetch({
       'GET /api/v1/folio/nodes/n1': {
         status: 200,
-        body: { ...NODE, version: null, content_json: null, metadata: null },
+        body: { ...NODE, version: null, content_json: null, metadata: null, can_edit: true },
       },
       'GET /api/v1/folio/spaces/docs': {
         status: 200,

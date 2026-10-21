@@ -51,7 +51,7 @@ export function usePage(id: string) {
   return {
     node,
     space: space.data,
-    canEdit: space.data?.permissions.includes('create') ?? false,
+    canEdit: node.data?.can_edit ?? false,
     author: versions.data?.[0]?.author ?? null,
     draft,
     isDraft: !published,

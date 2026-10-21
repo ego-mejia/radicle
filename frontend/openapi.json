@@ -6071,6 +6071,16 @@
             "title": "Breadcrumbs",
             "type": "array"
           },
+          "can_delete": {
+            "description": "You may delete, archive or move it to another space",
+            "title": "Can Delete",
+            "type": "boolean"
+          },
+          "can_edit": {
+            "description": "You may edit its draft (space and page restrictions)",
+            "title": "Can Edit",
+            "type": "boolean"
+          },
           "content_json": {
             "anyOf": [
               {
@@ -6231,7 +6241,9 @@
           "content_json",
           "status",
           "verified_until",
-          "archived_at"
+          "archived_at",
+          "can_edit",
+          "can_delete"
         ],
         "title": "NodeOut",
         "type": "object"

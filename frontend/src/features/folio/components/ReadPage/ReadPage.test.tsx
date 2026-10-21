@@ -34,6 +34,8 @@ const NODE = {
   version: 2,
   status: 'verified',
   verified_until: null,
+  can_edit: true,
+  can_delete: true,
   archived_at: null,
   metadata: META,
   content_json: CONTENT,
@@ -115,7 +117,7 @@ describe('ReadPage', () => {
   });
 
   it('hides editing from readers', async () => {
-    api(NODE, { ...SPACE, permissions: ['view'] });
+    api({ ...NODE, can_edit: false, can_delete: false }, { ...SPACE, permissions: ['view'] });
     renderWithProviders(<ReadPage nodeId="n1" />);
     expect(await screen.findByText('Necesitas ser admin.')).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Edit' })).toBeNull();

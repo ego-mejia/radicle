@@ -133,3 +133,22 @@ async def test_readers_read_but_do_not_write(client: AsyncClient, team: Team, sp
     assert r.status_code == 403
     anonymous = AsyncClient(transport=client._transport, base_url="http://test")
     assert (await anonymous.get(f"{API}/spaces")).status_code == 401
+
+
+async def test_a_node_says_what_you_may_do_with_it(client: AsyncClient, team: Team) -> None:
+    i = team.instance.headers
+    await client.post(f"{API}/spaces", headers=i, json={"key": "perm", "name": "Perm"})
+    r = await client.post(
+        f"{API}/nodes", headers=i, json={"space": "perm", "kind": "page", "title": "Guía"}
+    )
+    page = r.json()
+    assert page["can_edit"] and page["can_delete"]
+    await publish(client, team, page["id"])
+    r = await client.put(
+        f"{API}/nodes/{page['id']}/restrictions",
+        headers=i,
+        json={"edit": [{"grantee_type": "user", "grantee": team.instance.handle}]},
+    )
+    assert r.status_code == 200, r.text
+    seen = (await client.get(f"{API}/nodes/{page['id']}", headers=team.member.headers)).json()
+    assert seen["can_edit"] is False and seen["can_delete"] is False

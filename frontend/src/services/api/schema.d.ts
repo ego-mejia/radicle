@@ -5648,6 +5648,16 @@ export interface components {
              */
             breadcrumbs: components["schemas"]["NodeRef"][];
             /**
+             * Can Delete
+             * @description You may delete, archive or move it to another space
+             */
+            can_delete: boolean;
+            /**
+             * Can Edit
+             * @description You may edit its draft (space and page restrictions)
+             */
+            can_edit: boolean;
+            /**
              * Content Json
              * @description Published content (TipTap)
              */
