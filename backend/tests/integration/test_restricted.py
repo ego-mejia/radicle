@@ -295,6 +295,8 @@ EXEMPT = {
     "/api/v1/folio/nodes/{node_id}/comments",
     # A doc linked to a restricted ticket: test_folio_tickets_api.py.
     "/api/v1/folio/nodes/{node_id}/ticket-links",
+    # A deliverable whose ticket is restricted: test_folio_build_spec.py.
+    "/api/v1/folio/nodes/{node_id}/build-spec/items",
     "/api/v1/folio/people",
     "/api/v1/folio/spaces/{key}/archived",
     "/api/v1/folio/watch/{target_type}/{target_id}",

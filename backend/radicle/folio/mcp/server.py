@@ -57,6 +57,7 @@ livedocs.register(server)
 databases.register(server)
 visuals.register(server)
 tickets.register(server)
+tickets.register_build_spec(server)
 chat.register(server)
 
 

@@ -90,6 +90,8 @@ COVERED = {
     "link_ticket",
     "unlink_ticket",
     "ask_docs",
+    "get_build_spec_items",
+    "create_tickets_from_build_spec",
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
@@ -140,9 +142,11 @@ async def test_restricted_pages_never_show_up(
             "add_database_rows": {"rows": [{"name": "x"}]},
             "link_ticket": {"key": "PA-1"},
             "unlink_ticket": {"key": "PA-1"},
+            "create_tickets_from_build_spec": {"project": "PA", "dry_run": False},
             **VISUAL_CALLS,
         }
-        for tool in ("get_page", "get_versions", "list_comments", "query_database", *writes):
+        reads = ("get_page", "get_versions", "list_comments", "query_database")
+        for tool in (*reads, "get_build_spec_items", *writes):
             args = {"id": ids["secret"]} | writes.get(tool, {})
             text = error_text(await folio.call_tool(tool, args))
             assert "not found" in text.lower(), (tool, text)
@@ -197,6 +201,8 @@ async def test_every_tool_explains_missing_access(
         "link_ticket": {"id": some_id, "key": "PA-1"},
         "unlink_ticket": {"id": some_id, "key": "PA-1"},
         "get_docs_for_ticket": {"key": "PA-1"},
+        "get_build_spec_items": {"id": some_id},
+        "create_tickets_from_build_spec": {"id": some_id, "project": "PA"},
         "ask_docs": {"question": "¿Cómo conecto un agente?"},
         **{tool: {"id": some_id} | args for tool, args in VISUAL_CALLS.items()},
     }
