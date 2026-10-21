@@ -86,6 +86,7 @@ export const EVERY_BLOCK: JSONContent = {
     node('embed', { url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', title: 'La demo' }),
     node('databaseView', { database: '6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14', view: 'board' }),
     node('whiteboard', { whiteboard: '0b7e2c41-5a3d-4f6e-9c8b-1d2e3f4a5b6c' }),
+    node('calendar', { calendar: '5d2f8a17-3c4b-4e6a-9f1d-2b7c8e9a0f13', view: 'week' }),
     node('visual', {
       format: 'svg',
       code: '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--accent)"/></svg>',

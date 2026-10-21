@@ -3,6 +3,7 @@
 
 import { DatabaseViewNode } from './databaseView';
 import { WhiteboardNode } from './whiteboard';
+import { CalendarNode } from './calendar';
 import { Embed } from './embed';
 import { TicketLink } from './ticket';
 import { VISUAL_NODES } from './visualNodes';
@@ -75,6 +76,7 @@ export function folioExtensions({ shared = false } = {}): AnyExtension[] {
     ...VISUAL_NODES,
     DatabaseViewNode,
     WhiteboardNode,
+    CalendarNode,
     Mention,
     Status,
     TicketLink,

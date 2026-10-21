@@ -24025,18 +24025,25 @@
     },
     "/api/v1/folio/calendars": {
       "get": {
-        "description": "A space's calendars, by name.",
+        "description": "A space's calendars, or those of every space you can see, by name.",
         "operationId": "list_calendars_api_v1_folio_calendars_get",
         "parameters": [
           {
-            "description": "The space's key",
+            "description": "The space's key; default every space",
             "in": "query",
             "name": "space",
-            "required": true,
+            "required": false,
             "schema": {
-              "description": "The space's key",
-              "title": "Space",
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The space's key; default every space",
+              "title": "Space"
             }
           }
         ],

@@ -1176,7 +1176,7 @@ export interface paths {
         };
         /**
          * List Calendars
-         * @description A space's calendars, by name.
+         * @description A space's calendars, or those of every space you can see, by name.
          */
         get: operations["list_calendars_api_v1_folio_calendars_get"];
         put?: never;
@@ -15266,9 +15266,9 @@ export interface operations {
     };
     list_calendars_api_v1_folio_calendars_get: {
         parameters: {
-            query: {
-                /** @description The space's key */
-                space: string;
+            query?: {
+                /** @description The space's key; default every space */
+                space?: string | null;
             };
             header?: never;
             path?: never;

@@ -41,6 +41,10 @@ async def test_events_over_rest(client: AsyncClient, db: AsyncSession, board: Te
     listed = await client.get(f"{API}/calendars", headers=v, params={"space": "eng"})
     assert [c["name"] for c in listed.json()["items"]] == ["Releases"]
     assert listed.json()["items"][0]["can_manage"] is False
+    everywhere = await client.get(f"{API}/calendars", headers=v)
+    assert [c["space"] for c in everywhere.json()["items"]] == ["eng"]
+    nothing = await client.get(f"{API}/calendars", headers=board.outsider.headers)
+    assert nothing.json()["items"] == []
     i = board.instance.headers
     r = await client.patch(f"{API}/calendars/{cal['id']}", headers=i, json={"name": "Lanzamientos"})
     assert r.json()["name"] == "Lanzamientos"

@@ -17,12 +17,14 @@ import { TicketTable } from '../../../TicketTable';
 import { TicketProgress } from '../../../TicketProgress';
 import { Timeline, type TimelineItem } from '../../../Timeline';
 import { WhiteboardEmbed } from '../../../WhiteboardEmbed';
+import { CalendarEmbed } from '../../../CalendarEmbed';
 import * as S from './style';
 
 export type ChildPage = { id: string; title: string; slug: string };
 
 const ACCOUNT_ONLY = new Set([
   'whiteboard',
+  'calendar',
   'databaseView',
   'pageList',
   'ticketTable',
@@ -139,6 +141,13 @@ export function RichBlock({ node: n, previous, headings, childPages, children }:
       return <Formula latex={String(a.latex ?? '')} />;
     case 'whiteboard':
       return <WhiteboardEmbed nodeId={String(a.whiteboard)} />;
+    case 'calendar':
+      return (
+        <CalendarEmbed
+          calendarId={String(a.calendar)}
+          view={a.view === 'week' ? 'week' : 'month'}
+        />
+      );
     case 'databaseView':
       return (
         <DatabaseView
