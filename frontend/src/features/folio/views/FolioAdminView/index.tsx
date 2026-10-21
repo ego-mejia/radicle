@@ -12,6 +12,7 @@ import { PageSpinner } from '../../../../components/ui/Spinner';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { useToast } from '../../../../hooks/useToast';
 import { Tabs } from '../../../../components/ui/Tabs';
+import { HomeEditor } from '../../components/HomeEditor';
 import { TemplatesAdmin } from '../../components/TemplatesAdmin';
 import {
   type FolioCatalog,
@@ -146,10 +147,11 @@ function AddGrant() {
   );
 }
 
-type Section = 'roles' | 'templates' | FolioCatalog;
+type Section = 'roles' | 'templates' | 'home' | FolioCatalog;
 const CATALOGS: FolioCatalog[] = ['doc-types', 'audiences', 'languages'];
 
-/** Folio, Admin: global roles (Folio 0.5) and the metadata catalogs (Folio 1.3). */
+/** Folio, Admin: global roles (Folio 0.5), the metadata catalogs (Folio 1.3), templates
+ * (Folio 3.1) and the home (Folio 3.2). */
 export function FolioAdminView() {
   const { t } = useTranslation();
   const { data: me } = useQuery({ queryKey: folioKeys.me, queryFn: fetchFolioMe });
@@ -167,6 +169,7 @@ export function FolioAdminView() {
           { id: 'roles', label: t('folio.catalogs.roles') },
           ...CATALOGS.map((c) => ({ id: c, label: t(`folio.catalogs.names.${c}`) })),
           { id: 'templates', label: t('folio.templates.title') },
+          { id: 'home', label: t('folio.homeEditor.title') },
         ]}
       />
       <F.Section>
@@ -174,6 +177,8 @@ export function FolioAdminView() {
           <GlobalRoles enabled={isAdmin} />
         ) : section === 'templates' ? (
           <TemplatesAdmin />
+        ) : section === 'home' ? (
+          <HomeEditor />
         ) : (
           <CatalogEditor key={section} catalog={section} />
         )}
