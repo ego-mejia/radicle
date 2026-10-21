@@ -1608,10 +1608,6 @@
   "folio": {
     "search": "Buscar en los docs",
     "searchSoon": "La búsqueda llega con los spaces y las páginas",
-    "homeTitle": "Folio",
-    "homeSubtitle": "La documentación de Radicle, para leerse como revista.",
-    "emptyTitle": "Folio está brotando",
-    "emptyText": "Los spaces y las páginas llegan pronto. Tu rol en Folio: {{role}}.",
     "roles": {
       "reader": "lector",
       "creator": "creador",
@@ -1642,7 +1638,34 @@
       "forbidden": "Solo los admins de Folio pueden gestionar los roles globales."
     },
     "home": {
-      "title": "Inicio"
+      "title": "Inicio",
+      "announcement": "Anuncio",
+      "aiTools": "AI Tools",
+      "latestPosts": "Últimos posts",
+      "mostRead": "Más leídos",
+      "spaces": "Spaces",
+      "read": "Leer",
+      "readDoc": "Leer {{title}}",
+      "minutes_one": "{{count}} min de lectura",
+      "minutes_other": "{{count}} min de lectura",
+      "docs_one": "{{count}} doc",
+      "docs_other": "{{count}} docs",
+      "kinds": {
+        "page": "Página",
+        "blog_post": "Blog post"
+      },
+      "nothingYet": "Todavía no hay nada publicado.",
+      "noSpaces": "Todavía no hay spaces.",
+      "emptyTitle": "Folio espera su primer doc",
+      "emptyReader": "Cuando alguien publique, aparecerá aquí.",
+      "emptyWriter": "Presiona Escribir para publicar el primero.",
+      "write": "Escribir",
+      "writeTitle": "Escribe un doc",
+      "space": "Space",
+      "kind": "Tipo",
+      "docTitle": "Título",
+      "startWriting": "Empezar a escribir",
+      "noWritableSpace": "Todavía no puedes escribir en ningún space. Un admin del space puede darte el permiso de crear."
     },
     "space": {
       "title": "Space"

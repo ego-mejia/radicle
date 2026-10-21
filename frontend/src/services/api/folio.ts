@@ -319,3 +319,14 @@ export async function queryDocs(
 ): Promise<{ items: FolioDoc[]; next_cursor?: string | null }> {
   return unwrap(await api.GET('/api/v1/folio/nodes', { params: { query: { q, limit, cursor } } }));
 }
+
+// --- home ----------------------------------------------------------------------------
+
+export type FolioHome = S['HomeOut'];
+export type FolioCard = S['CardOut'];
+export const folioHomeKey = ['folio', 'home'] as const;
+
+/** The home bento, every block already resolved for you. */
+export async function fetchHome(): Promise<FolioHome> {
+  return unwrap(await api.GET('/api/v1/folio/home'));
+}

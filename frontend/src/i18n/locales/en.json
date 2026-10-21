@@ -1608,10 +1608,6 @@
   "folio": {
     "search": "Search the docs",
     "searchSoon": "Search arrives with spaces and pages",
-    "homeTitle": "Folio",
-    "homeSubtitle": "Radicle's documentation, read like a magazine.",
-    "emptyTitle": "Folio is sprouting",
-    "emptyText": "Spaces and pages arrive soon. Your Folio role: {{role}}.",
     "roles": {
       "reader": "reader",
       "creator": "creator",
@@ -1642,7 +1638,34 @@
       "forbidden": "Only Folio admins can manage global roles."
     },
     "home": {
-      "title": "Home"
+      "title": "Home",
+      "announcement": "Announcement",
+      "aiTools": "AI Tools",
+      "latestPosts": "Latest posts",
+      "mostRead": "Most read",
+      "spaces": "Spaces",
+      "read": "Read",
+      "readDoc": "Read {{title}}",
+      "minutes_one": "{{count}} min read",
+      "minutes_other": "{{count}} min read",
+      "docs_one": "{{count}} doc",
+      "docs_other": "{{count}} docs",
+      "kinds": {
+        "page": "Page",
+        "blog_post": "Blog post"
+      },
+      "nothingYet": "Nothing published yet.",
+      "noSpaces": "No spaces yet.",
+      "emptyTitle": "Folio is waiting for its first doc",
+      "emptyReader": "When someone publishes, it shows up here.",
+      "emptyWriter": "Press Write to publish the first one.",
+      "write": "Write",
+      "writeTitle": "Write a doc",
+      "space": "Space",
+      "kind": "Type",
+      "docTitle": "Title",
+      "startWriting": "Start writing",
+      "noWritableSpace": "You can't write in any space yet. A space admin can give you the create permission."
     },
     "space": {
       "title": "Space"
