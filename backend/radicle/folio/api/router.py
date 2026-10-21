@@ -7,6 +7,7 @@ from fastapi import APIRouter, Response
 from pydantic import Field
 
 from radicle.folio.api import ai as ai_api
+from radicle.folio.api import analytics as analytics_api
 from radicle.folio.api import assets as assets_api
 from radicle.folio.api import build_spec as build_spec_api
 from radicle.folio.api import catalogs as catalogs_api
@@ -150,6 +151,7 @@ router.include_router(publishing_api.router)
 router.include_router(sharing_api.router)
 router.include_router(submissions_api.router)
 router.include_router(search_api.router)
+router.include_router(analytics_api.router)
 router.include_router(query_api.router)
 router.include_router(home_api.router)
 router.include_router(home_layouts_api.router)
