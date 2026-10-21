@@ -16,7 +16,7 @@ from radicle.platform.db.models import User
 
 router = APIRouter(tags=["folio"])
 
-Kind = Literal["page", "folder", "blog_post", "live_doc"]
+Kind = Literal["page", "folder", "blog_post", "live_doc", "database"]
 
 
 class SpaceOut(Output):

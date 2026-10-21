@@ -31,6 +31,8 @@ async def submit(
 ) -> FolioSubmission:
     """The agent's draft as a pending submission; an earlier pending one is superseded."""
     await access.require_edit(db, agent, node)
+    if node.kind == NodeKind.database:
+        raise _invalid("node", "Databases aren't published: add rows to them directly.")
     if node.kind == NodeKind.live_doc:
         raise _invalid(
             "node",

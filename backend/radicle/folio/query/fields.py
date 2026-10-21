@@ -42,7 +42,11 @@ FIELDS: dict[str, Field] = {
     for f in (
         Field("space", Kind.space, EQ, in_list=True, description="Space key, e.g. ai-tools"),
         Field(
-            "kind", Kind.enum, EQ, in_list=True, values=("page", "folder", "blog_post", "live_doc")
+            "kind",
+            Kind.enum,
+            EQ,
+            in_list=True,
+            values=("page", "folder", "blog_post", "live_doc", "database"),
         ),
         Field("doc_type", Kind.meta, EQ, in_list=True, empty=True, description="e.g. how-to"),
         Field("label", Kind.meta_list, EQ, in_list=True, empty=True, description="Also #label"),

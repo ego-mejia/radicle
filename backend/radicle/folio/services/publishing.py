@@ -115,6 +115,11 @@ async def publish(
             "written, and their history is in the snapshots.",
             errors=[{"field": "node", "message": "live doc"}],
         )
+    if node.kind == NodeKind.database:
+        raise ValidationFailed(
+            "Databases aren't published: whoever can see them reads their rows as they are.",
+            errors=[{"field": "node", "message": "database"}],
+        )
     if node.kind == NodeKind.folder:
         raise ValidationFailed(
             "Folders aren't published; publish their pages.",
