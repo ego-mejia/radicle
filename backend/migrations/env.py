@@ -9,7 +9,8 @@ from sqlalchemy.ext.asyncio import create_async_engine
 import radicle.folio.db.collab
 import radicle.folio.db.databases
 import radicle.folio.db.models
-import radicle.folio.db.templates  # noqa: F401  (ruff flags only the last of these)
+import radicle.folio.db.templates
+import radicle.folio.db.whiteboards  # noqa: F401  (ruff flags only the last of these)
 from radicle.docket.db.models import Base
 from radicle.platform.config import get_settings
 

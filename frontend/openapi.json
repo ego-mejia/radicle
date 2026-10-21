@@ -381,7 +381,8 @@
               "folder",
               "blog_post",
               "live_doc",
-              "database"
+              "database",
+              "whiteboard"
             ],
             "title": "Kind",
             "type": "string"
@@ -7034,7 +7035,8 @@
               "folder",
               "blog_post",
               "live_doc",
-              "database"
+              "database",
+              "whiteboard"
             ],
             "title": "Kind",
             "type": "string"
@@ -7953,7 +7955,8 @@
               "folder",
               "blog_post",
               "live_doc",
-              "database"
+              "database",
+              "whiteboard"
             ],
             "title": "Kind",
             "type": "string"
@@ -7995,7 +7998,8 @@
           "folder",
           "blog_post",
           "live_doc",
-          "database"
+          "database",
+          "whiteboard"
         ],
         "title": "NodeKind",
         "type": "string"
@@ -8140,7 +8144,8 @@
               "folder",
               "blog_post",
               "live_doc",
-              "database"
+              "database",
+              "whiteboard"
             ],
             "title": "Kind",
             "type": "string"
@@ -8325,7 +8330,8 @@
               "folder",
               "blog_post",
               "live_doc",
-              "database"
+              "database",
+              "whiteboard"
             ],
             "title": "Kind",
             "type": "string"
@@ -15261,7 +15267,8 @@
               "folder",
               "blog_post",
               "live_doc",
-              "database"
+              "database",
+              "whiteboard"
             ],
             "title": "Kind",
             "type": "string"

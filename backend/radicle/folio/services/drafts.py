@@ -42,6 +42,8 @@ def _require_content(node: FolioNode) -> None:
         raise _invalid("node", "Folders have no content; write in a page or blog post.")
     if node.kind == NodeKind.database:
         raise _invalid("node", "Databases have rows, not a draft: use /databases/{id}/rows.")
+    if node.kind == NodeKind.whiteboard:
+        raise _invalid("node", "Whiteboards have a scene, not a draft: use /whiteboards/{id}.")
 
 
 async def get_draft(db: AsyncSession, node: FolioNode) -> Draft:

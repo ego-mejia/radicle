@@ -120,6 +120,11 @@ async def publish(
             "Databases aren't published: whoever can see them reads their rows as they are.",
             errors=[{"field": "node", "message": "database"}],
         )
+    if node.kind == NodeKind.whiteboard:
+        raise ValidationFailed(
+            "Whiteboards aren't published: whoever can see them reads them as they are drawn.",
+            errors=[{"field": "node", "message": "whiteboard"}],
+        )
     if node.kind == NodeKind.folder:
         raise ValidationFailed(
             "Folders aren't published; publish their pages.",
