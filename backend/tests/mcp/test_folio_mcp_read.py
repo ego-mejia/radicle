@@ -69,6 +69,10 @@ COVERED = {
     "list_comments",
     "add_comment",
     "resolve_comment",
+    "list_my_tasks",
+    "set_task_done",
+    "watch",
+    "get_feed",
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
@@ -81,6 +85,7 @@ EXEMPT = {
     "list_my_submissions",
     "list_templates",
     "create_from_template",
+    "list_notifications",  # only your own, already filtered by each app's resolver
 }
 
 
