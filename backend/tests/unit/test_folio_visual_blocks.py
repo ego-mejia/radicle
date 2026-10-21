@@ -33,6 +33,8 @@ VISUAL = {"format": "svg", "code": "<svg></svg>", "description": "Un dibujo"}
         (block("formula"), "latex"),
         (block("comparison", block("comparisonSide", block("paragraph"))), "at least 2"),
         (block("pageList", label="x", limit=99), "at most 50"),
+        (block("databaseView", database="inventario"), "a database's id"),
+        (block("databaseView"), "database"),
     ],
 )
 def test_the_schema_says_what_is_wrong(node: dict, says: str) -> None:
@@ -48,6 +50,7 @@ def test_valid_blocks_pass() -> None:
         block("timeline", items=[{"date": "Q1", "title": "Beta"}]),
         block("formula", latex="\\sum_i x_i"),
         block("pageList", label="onboarding"),
+        block("databaseView", database="6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14"),
     ]
     assert schema.validate(doc(*nodes)) == doc(*nodes)
 

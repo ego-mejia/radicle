@@ -6,6 +6,7 @@ A document is `{"type": "doc", "content": [block, ...]}`. Every node has a `type
 or children are rejected with the JSON path of the first problem.
 """
 
+import uuid
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
@@ -103,6 +104,13 @@ def _check_timeline(path: str, attrs: dict[str, Any]) -> None:
 def _check_embed(path: str, attrs: dict[str, Any]) -> None:
     if not str(attrs.get("url", "")).startswith(("https://", "http://")):
         raise SchemaError(f"{path}.attrs.url", "embeds take http or https links")
+
+
+def _check_database_view(path: str, attrs: dict[str, Any]) -> None:
+    try:
+        uuid.UUID(str(attrs.get("database")))
+    except ValueError:
+        raise SchemaError(f"{path}.attrs.database", "must be a database's id (a uuid)") from None
 
 
 def _check_visual(path: str, attrs: dict[str, Any]) -> None:
@@ -229,6 +237,16 @@ NODES: dict[str, NodeSpec] = {
             "limit": Attr(int, minimum=1, maximum=50),
             "space": Attr((str, type(None)), max_length=40),
         },
+    ),
+    # A database's view inside a page (Folio 3.6); the reader without access to the
+    # database sees a placeholder, not its rows.
+    "databaseView": NodeSpec(
+        BLOCK,
+        attrs={
+            "database": Attr(str, required=True, max_length=36),
+            "view": Attr((str, type(None)), max_length=40),
+        },
+        check=_check_database_view,
     ),
     # A pasted link (Folio 3.7): a card, or an iframe for the providers that embed. The
     # title is kept so the text and the RAG index read something better than a URL.
