@@ -5,7 +5,7 @@ import type { components } from './schema';
 type S = components['schemas'];
 export type FolioArchived = S['ArchivedOut'];
 export type FolioCopyIn = S['CopyIn'];
-export type FolioReaction = S['radicle__folio__api__social__ReactionOut'];
+export type FolioReaction = S['FolioReactionOut'];
 export type FolioFavorites = S['FavoritesOut'];
 export type FolioSpacePatch = S['SpacePatch'];
 export type NodeStatus = FolioNode['status'];

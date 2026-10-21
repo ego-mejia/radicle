@@ -767,6 +767,67 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/comments/{comment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Comment
+         * @description Delete your own comment, or any as an admin of the space.
+         */
+        delete: operations["delete_comment_api_v1_folio_comments__comment_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Edit Comment
+         * @description Edit your own comment.
+         */
+        patch: operations["edit_comment_api_v1_folio_comments__comment_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/comments/{comment_id}/reopen": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reopen Comment */
+        post: operations["reopen_comment_api_v1_folio_comments__comment_id__reopen_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/comments/{comment_id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resolve Comment
+         * @description Resolve the comment's thread: it and its highlight hide, and it stays in history.
+         */
+        post: operations["resolve_comment_api_v1_folio_comments__comment_id__resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/favorites/{target_type}/{target_id}": {
         parameters: {
             query?: never;
@@ -1023,6 +1084,32 @@ export interface paths {
          * @description Upload an image, file or video to a page. Images lose EXIF and shrink to `resize`.
          */
         post: operations["upload_asset_api_v1_folio_nodes__node_id__assets_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/nodes/{node_id}/comments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Comments
+         * @description The page's threads, oldest first, with their replies. Orphaned inline threads keep
+         *     their quote.
+         */
+        get: operations["list_comments_api_v1_folio_nodes__node_id__comments_get"];
+        put?: never;
+        /**
+         * Add Comment
+         * @description A thread at the foot (default), an inline thread on `anchor` or on the first
+         *     occurrence of `quote`, or a reply to `thread_id`. Returns the whole thread.
+         */
+        post: operations["add_comment_api_v1_folio_nodes__node_id__comments_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4994,6 +5081,107 @@ export interface components {
          * @enum {string}
          */
         FilterVisibility: "private" | "project" | "instance";
+        /** FolioAnchor */
+        FolioAnchor: {
+            /**
+             * Offset
+             * @description Where it starts in the page's plain text
+             */
+            offset: number;
+            /**
+             * Prefix
+             * @description Up to 32 characters before it in the page's text
+             */
+            prefix: string;
+            /**
+             * Quote
+             * @description The anchored text as it reads now
+             */
+            quote: string;
+            /**
+             * Suffix
+             * @description Up to 32 characters after it
+             */
+            suffix: string;
+        };
+        /** FolioAnchorIn */
+        FolioAnchorIn: {
+            /**
+             * Offset
+             * @default 0
+             */
+            offset?: number;
+            /**
+             * Prefix
+             * @default
+             */
+            prefix?: string;
+            /** Quote */
+            quote: string;
+            /**
+             * Suffix
+             * @default
+             */
+            suffix?: string;
+        };
+        /** FolioCommentIn */
+        FolioCommentIn: {
+            /** @description For an inline thread */
+            anchor?: components["schemas"]["FolioAnchorIn"] | null;
+            /**
+             * Body
+             * @description Markdown; @handle mentions notify
+             */
+            body: string;
+            /**
+             * Inline
+             * @default false
+             */
+            inline?: boolean;
+            /**
+             * Quote
+             * @description Instead of anchor: inline on the first occurrence
+             */
+            quote?: string | null;
+            /**
+             * Thread Id
+             * @description Reply to this thread
+             */
+            thread_id?: string | null;
+        };
+        /** FolioCommentOut */
+        FolioCommentOut: {
+            /**
+             * Author
+             * @description Handle; null when the person was removed
+             */
+            author: string | null;
+            /** Author Name */
+            author_name: string | null;
+            /** Body Md */
+            body_md: string;
+            /** Created At */
+            created_at: string;
+            /** Edited At */
+            edited_at: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Mine */
+            mine: boolean;
+            /**
+             * Thread Id
+             * Format: uuid
+             */
+            thread_id: string;
+        };
+        /** FolioCommentPatch */
+        FolioCommentPatch: {
+            /** Body */
+            body: string;
+        };
         /** FolioHealthOut */
         FolioHealthOut: {
             /**
@@ -5145,6 +5333,32 @@ export interface components {
             structure?: {
                 [key: string]: unknown;
             } | null;
+        };
+        /** FolioThreadOut */
+        FolioThreadOut: {
+            anchor: components["schemas"]["FolioAnchor"] | null;
+            /** Comments */
+            comments: components["schemas"]["FolioCommentOut"][];
+            /**
+             * Id
+             * Format: uuid
+             * @description The thread's first comment
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "footer" | "inline";
+            /**
+             * Orphaned
+             * @description Its anchored text was deleted; shown with its quote
+             */
+            orphaned: boolean;
+            /** Resolved At */
+            resolved_at: string | null;
+            /** Resolved By */
+            resolved_by: string | null;
         };
         /** FormSchemaOut */
         FormSchemaOut: {
@@ -6212,6 +6426,13 @@ export interface components {
         Page_FolioTemplateOut_: {
             /** Items */
             items: components["schemas"]["FolioTemplateOut"][];
+            /** Next Cursor */
+            next_cursor: string | null;
+        };
+        /** Page[FolioThreadOut] */
+        Page_FolioThreadOut_: {
+            /** Items */
+            items: components["schemas"]["FolioThreadOut"][];
             /** Next Cursor */
             next_cursor: string | null;
         };
@@ -10513,6 +10734,132 @@ export interface operations {
             };
         };
     };
+    delete_comment_api_v1_folio_comments__comment_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    edit_comment_api_v1_folio_comments__comment_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FolioCommentPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioThreadOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reopen_comment_api_v1_folio_comments__comment_id__reopen_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioThreadOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    resolve_comment_api_v1_folio_comments__comment_id__resolve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                comment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioThreadOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     favorite_api_v1_folio_favorites__target_type___target_id__put: {
         parameters: {
             query?: never;
@@ -10961,6 +11308,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AssetOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_comments_api_v1_folio_nodes__node_id__comments_get: {
+        parameters: {
+            query?: {
+                include_resolved?: boolean;
+            };
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_FolioThreadOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_comment_api_v1_folio_nodes__node_id__comments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FolioCommentIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FolioThreadOut"];
                 };
             };
             /** @description Validation Error */
