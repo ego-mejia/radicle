@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, createLink } from '@tanstack/react-router';
 import { FolderKanban, Inbox, LayoutDashboard, LogOut, Shield, UserRound } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Logo } from '../../../../components/icons/Logo';
+import { SuiteSwitch } from '../../../../components/layout/SuiteSwitch';
 import { Avatar } from '../../../../components/ui/Avatar';
 import { Menu } from '../../../../components/ui/Menu';
 import { useMe } from '../../../../hooks/useMe';
@@ -10,7 +10,6 @@ import { logout } from '../../../../services/api/auth';
 import { fetchProjects, projectKeys } from '../../../../services/api/projects';
 import * as S from './style';
 
-const Brand = createLink(S.Brand);
 const NavLink = createLink(S.NavLink);
 
 type Props = { open: boolean; onClose: () => void };
@@ -35,10 +34,9 @@ export function Sidebar({ open, onClose }: Props) {
     <>
       <S.Scrim $open={open} onClick={onClose} />
       <S.Aside $open={open} onClick={(e) => (e.target as HTMLElement).closest('a') && onClose()}>
-        <Brand to="/">
-          <Logo size={26} />
-          {t('app.name')}
-        </Brand>
+        <S.Brand>
+          <SuiteSwitch current="docket" />
+        </S.Brand>
 
         <S.Section aria-label={t('nav.mainNav')}>
           <NavLink to="/" activeOptions={{ exact: true }} data-tour="nav.projects">

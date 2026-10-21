@@ -35,15 +35,8 @@ export const Scrim = styled.div<{ $open: boolean }>`
   }
 `;
 
-export const Brand = styled.a`
+export const Brand = styled.div`
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 6px;
-  font-weight: 700;
-  font-size: ${({ theme }) => theme.fontSize.lg};
-  color: ${({ theme }) => theme.color.text};
-  text-decoration: none;
 `;
 
 export const Section = styled.nav`

@@ -1580,5 +1580,25 @@
     "removeKey": "Quitar llave",
     "test": "Probar conexión",
     "saved": "Proveedor de IA guardado"
+  },
+  "suite": {
+    "switch": "Cambiar de app, ahora {{app}}",
+    "menu": "Apps de Radicle",
+    "switchTo": "Cambiar a",
+    "current": "App actual",
+    "admin": "Administración de la instancia",
+    "note": "Misma sesión y mismos usuarios en las dos apps.",
+    "apps": {
+      "docket": {
+        "name": "Radicle Docket",
+        "badge": "DOCKET",
+        "description": "Proyectos, tickets, sprints y reportes"
+      },
+      "folio": {
+        "name": "Radicle Folio",
+        "badge": "FOLIO",
+        "description": "Documentación, blog y conocimiento"
+      }
+    }
   }
 }
