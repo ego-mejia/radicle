@@ -140,6 +140,13 @@ def _check_whiteboard(path: str, attrs: dict[str, Any]) -> None:
         ) from None
 
 
+def _check_calendar(path: str, attrs: dict[str, Any]) -> None:
+    try:
+        uuid.UUID(str(attrs.get("calendar")))
+    except ValueError:
+        raise SchemaError(f"{path}.attrs.calendar", "must be a calendar's id (a uuid)") from None
+
+
 def _check_visual(path: str, attrs: dict[str, Any]) -> None:
     if not str(attrs.get("description", "")).strip():
         raise SchemaError(
@@ -294,6 +301,16 @@ NODES: dict[str, NodeSpec] = {
         BLOCK,
         attrs={"whiteboard": Attr(str, required=True, max_length=36)},
         check=_check_whiteboard,
+    ),
+    # A calendar of a space (Folio 5.8), month or week; the reader without access to it
+    # sees a placeholder.
+    "calendar": NodeSpec(
+        BLOCK,
+        attrs={
+            "calendar": Attr(str, required=True, max_length=36),
+            "view": Attr((str, type(None)), choices=("month", "week", None)),
+        },
+        check=_check_calendar,
     ),
     # A pasted link (Folio 3.7): a card, or an iframe for the providers that embed. The
     # title is kept so the text and the RAG index read something better than a URL.

@@ -20,7 +20,9 @@ _md = MarkdownIt("commonmark", {"html": False}).enable(["table", "strikethrough"
 
 _OPEN = re.compile(r"^(:{3,})(panel|expand|columns|column|compare|side)(\{.*\})?\s*$")
 _CLOSE = re.compile(r"^:{3,}\s*$")
-_LEAF = re.compile(r"^::(file|video|pages|database|whiteboard|embed|tickets|progress)(\{.*\})\s*$")
+_LEAF = re.compile(
+    r"^::(file|video|pages|database|whiteboard|calendar|embed|tickets|progress)(\{.*\})\s*$"
+)
 _INFO = re.compile(r"^(?P<name>[\w-]+)\s*(?P<attrs>\{.*\})?\s*$")
 _ACTION = re.compile(r"^::task\[(?P<label>.*)\](?P<attrs>\{[^}]*\})?\s*$")
 _FENCE = re.compile(r"^\s{0,3}(`{3,}|~{3,})")
@@ -546,6 +548,11 @@ def _convert(items: list[Any], parent: str = "doc") -> list[Node]:
                 out.append({"type": "ticketProgress", "attrs": {"title": title} if title else {}})
             elif name == "whiteboard" and attrs.get("id"):
                 out.append({"type": "whiteboard", "attrs": {"whiteboard": attrs["id"]}})
+            elif name == "calendar" and attrs.get("id"):
+                cal = {"calendar": attrs["id"]}
+                if attrs.get("view") in ("month", "week"):
+                    cal["view"] = attrs["view"]
+                out.append({"type": "calendar", "attrs": cal})
         else:
             out += _container(item, parent)
     return out
