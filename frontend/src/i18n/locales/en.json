@@ -176,7 +176,17 @@
     "moveCommentRequired": "Comment (required for this move)",
     "moveTo": "Move to {{status}}",
     "moreOptions": "More options to move to {{status}}",
-    "restrictedTicket": "Restricted ticket"
+    "restrictedTicket": "Restricted ticket",
+    "docs": {
+      "title": "Docs",
+      "none": "No Folio docs link to this ticket.",
+      "kinds": {
+        "mention": "mentions it",
+        "created_from_text": "created it",
+        "build_spec_item": "deliverable",
+        "manual": "linked"
+      }
+    }
   },
   "create": {
     "title": "Create ticket",
