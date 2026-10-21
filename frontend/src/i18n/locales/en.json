@@ -2502,7 +2502,26 @@
       "sendNote": "Send"
     },
     "glossary": {
-      "source": "Source: {{title}}"
+      "source": "Source: {{title}}",
+      "title": "Glossary",
+      "suggestions": "Suggested by the AI",
+      "suggestionsHelp": "Terms the AI found in Verified docs. Approve them to show their definition to readers.",
+      "suggest": "Suggest from Verified docs",
+      "suggested_one": "{{count}} new suggestion",
+      "suggested_other": "{{count}} new suggestions",
+      "approve": "Approve {{term}}",
+      "reject": "Reject {{term}}",
+      "noSuggestions": "No suggestions waiting.",
+      "approved": "Approved terms",
+      "approvedHelp": "Readers see these underlined in pages, with their definition on hover.",
+      "remove": "Remove {{term}}",
+      "none": "No terms yet.",
+      "term": "Term",
+      "aliases": "Aliases",
+      "aliasesHint": "Other names, separated by commas",
+      "definition": "Definition",
+      "add": "Add term",
+      "added": "Term added"
     }
   },
   "notifications": {
