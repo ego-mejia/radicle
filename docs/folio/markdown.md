@@ -15,7 +15,7 @@ Los documentos de Folio se guardan como JSON de TipTap (`backend/radicle/folio/s
 | Archivo | `::file{asset=<id> name="spec.pdf" type=application/pdf size=1024}` |
 | Video | `::video{src="https://…" caption="Demo"}` o `::video{asset=<id>}` |
 | Checklist | `- [ ]` y `- [x]` |
-| Visual (3.3) | Un bloque de código ` ```visual{format=svg title="…" description="…"} ` con el SVG o HTML; `format` es `svg` o `html` y la descripción es obligatoria |
+| Visual (3.3) | Un bloque de código ` ```visual{format=svg title="…" description="…"} ` con el SVG o HTML; `format` es `svg` o `html` y la descripción es obligatoria; hasta 512 KB de código, y para publicar necesita título |
 | Diagrama | ` ```mermaid ` con el código de Mermaid; opcional `{caption="…"}` |
 | Fórmula | ` ```math ` con LaTeX (KaTeX) |
 | Gráfica | ` ```chart{kind=bar title="…"} ` con una tabla GFM: la primera fila nombra las columnas, la primera columna son etiquetas y el resto números (`bar`, `line`, `area`, `pie`) |

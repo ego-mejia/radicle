@@ -16,7 +16,7 @@ from radicle.folio.db.models import (
     NodeKind,
     SubmissionStatus,
 )
-from radicle.folio.services import access, nodes, notices, publishing, schema
+from radicle.folio.services import access, nodes, notices, publishing, schema, visuals
 from radicle.folio.services.metadata import validate_metadata
 from radicle.platform.db.models import User, UserKind, utcnow
 from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
@@ -46,6 +46,7 @@ async def submit(
     if draft is None:
         raise _invalid("draft", "There is no draft to send. Write the page first.")
     metadata = await validate_metadata(db, node, draft.metadata_)
+    visuals.require_publishable(draft.content_json)
     await db.execute(
         update(FolioSubmission)
         .where(

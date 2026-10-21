@@ -1361,6 +1361,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/nodes/{node_id}/blocks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Add Block
+         * @description Add a block to the draft under a heading. Visuals are checked first.
+         */
+        post: operations["add_block_api_v1_folio_nodes__node_id__blocks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/nodes/{node_id}/comments": {
         parameters: {
             query?: never;
@@ -2103,6 +2123,26 @@ export interface paths {
         head?: never;
         /** Update Template */
         patch: operations["update_template_api_v1_folio_templates__template_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/folio/visuals/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check Visual
+         * @description What the sandbox would block in a visual, and how to make it follow the theme.
+         */
+        post: operations["check_visual_api_v1_folio_visuals_check_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/folio/watch/{target_type}/{target_id}": {
@@ -4425,6 +4465,29 @@ export interface components {
              * @enum {string}
              */
             op: "equal" | "added" | "removed";
+        };
+        /** BlockIn */
+        BlockIn: {
+            /**
+             * After Heading
+             * @description Add it at the end of this section; the end of the doc if not
+             */
+            after_heading?: string | null;
+            /**
+             * Block
+             * @description One block of the document schema (TipTap JSON)
+             */
+            block: {
+                [key: string]: unknown;
+            };
+        };
+        /** BlockOut */
+        BlockOut: {
+            /**
+             * Content Md
+             * @description The whole draft after adding the block
+             */
+            content_md: string;
         };
         /**
          * BlockedPolicy
@@ -9633,6 +9696,38 @@ export interface components {
             /** Title */
             title: string;
         };
+        /** VisualCheckIn */
+        VisualCheckIn: {
+            /** Code */
+            code: string;
+            /** Description */
+            description?: string | null;
+            /**
+             * Format
+             * @enum {string}
+             */
+            format: "svg" | "html";
+            /** Title */
+            title?: string | null;
+        };
+        /** VisualCheckOut */
+        VisualCheckOut: {
+            /**
+             * Problems
+             * @description What to fix before it goes in a page
+             */
+            problems: string[];
+            /**
+             * Valid
+             * @description False when a problem would stop it
+             */
+            valid: boolean;
+            /**
+             * Warnings
+             * @description What would make it better (tokens, description)
+             */
+            warnings: string[];
+        };
         /** VoteOut */
         VoteOut: {
             /** Vote Count */
@@ -12725,6 +12820,41 @@ export interface operations {
             };
         };
     };
+    add_block_api_v1_folio_nodes__node_id__blocks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                node_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BlockIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BlockOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_comments_api_v1_folio_nodes__node_id__comments_get: {
         parameters: {
             query?: {
@@ -14300,6 +14430,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FolioTemplateOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    check_visual_api_v1_folio_visuals_check_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VisualCheckIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VisualCheckOut"];
                 };
             };
             /** @description Validation Error */

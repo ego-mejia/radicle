@@ -14,7 +14,7 @@ from radicle.folio.db.models import (
     NodeKind,
     NodeStatus,
 )
-from radicle.folio.services import access, comments, convert, nodes, notices, rag, schema
+from radicle.folio.services import access, comments, convert, nodes, notices, rag, schema, visuals
 from radicle.folio.services.metadata import validate_metadata
 from radicle.platform.db.models import User, UserKind, utcnow
 from radicle.platform.errors import Conflict, Forbidden, ValidationFailed
@@ -135,6 +135,7 @@ async def publish(
             errors=[{"field": "draft", "message": "missing"}],
         )
     metadata = await validate_metadata(db, node, draft.metadata_)
+    visuals.require_publishable(draft.content_json)
     current = await current_version(db, node)
     if current is not None and draft.base_version_id != current.id and not confirm:
         raise Conflict(

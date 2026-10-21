@@ -20,7 +20,7 @@ VISUAL = {"format": "svg", "code": "<svg></svg>", "description": "Un dibujo"}
     [
         (block("visual", **(VISUAL | {"description": "  "})), "needs a description"),
         (block("visual", **(VISUAL | {"format": "pdf"})), "must be one of svg, html"),
-        (block("visual", **(VISUAL | {"code": "x" * 100_001})), "longer than 100000"),
+        (block("visual", **(VISUAL | {"code": "x" * 524_289})), "longer than 524288"),
         (block("chart", kind="bar", data=[["a", "b"]]), "header row and at least one"),
         (block("chart", kind="bar", data=[["a", "b"], ["x", "1"]]), "must be a number"),
         (block("chart", kind="bar", data=[["a", "b"], ["x", 1, 2]]), "every row has 2 cells"),
