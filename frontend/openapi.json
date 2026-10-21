@@ -4110,6 +4110,94 @@
         "title": "Health",
         "type": "object"
       },
+      "HitOut": {
+        "properties": {
+          "anchor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anchor"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "doc_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doc Type"
+          },
+          "matched_by": {
+            "description": "text, semantic or both",
+            "items": {
+              "type": "string"
+            },
+            "title": "Matched By",
+            "type": "array"
+          },
+          "node_id": {
+            "format": "uuid",
+            "title": "Node Id",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "section": {
+            "description": "Heading path of the best matching section",
+            "items": {
+              "type": "string"
+            },
+            "title": "Section",
+            "type": "array"
+          },
+          "snippet": {
+            "description": "Matching words between ** for text matches",
+            "title": "Snippet",
+            "type": "string"
+          },
+          "space": {
+            "title": "Space",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "url": {
+            "description": "Link to the page, at the section",
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_id",
+          "title",
+          "description",
+          "section",
+          "anchor",
+          "url",
+          "snippet",
+          "space",
+          "doc_type",
+          "score",
+          "matched_by"
+        ],
+        "title": "HitOut",
+        "type": "object"
+      },
       "InboxOut": {
         "properties": {
           "counts": {
@@ -8078,6 +8166,32 @@
           "values"
         ],
         "title": "SearchFields",
+        "type": "object"
+      },
+      "SearchOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HitOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "mode": {
+            "enum": [
+              "hybrid",
+              "text",
+              "semantic"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode",
+          "items"
+        ],
+        "title": "SearchOut",
         "type": "object"
       },
       "SearchPage": {
@@ -16806,6 +16920,247 @@
           }
         },
         "summary": "Restore",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/search": {
+      "get": {
+        "description": "Pages you can see, one result per page at its best section. Hybrid fuses text and\nsemantic search; without an AI provider it is text only.",
+        "operationId": "search_api_v1_folio_search_get",
+        "parameters": [
+          {
+            "description": "Words or a question",
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {
+              "description": "Words or a question",
+              "maxLength": 500,
+              "minLength": 1,
+              "title": "Q",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "default": "hybrid",
+              "enum": [
+                "hybrid",
+                "text",
+                "semantic"
+              ],
+              "title": "Mode",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "space",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Space"
+            }
+          },
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "page",
+                    "blog_post"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "doc_type",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Doc Type"
+            }
+          },
+          {
+            "in": "query",
+            "name": "label",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Label"
+            }
+          },
+          {
+            "in": "query",
+            "name": "author",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Author"
+            }
+          },
+          {
+            "in": "query",
+            "name": "owner",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Owner"
+            }
+          },
+          {
+            "in": "query",
+            "name": "audience",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Audience"
+            }
+          },
+          {
+            "in": "query",
+            "name": "language",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Language"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Search",
         "tags": [
           "folio",
           "folio"
