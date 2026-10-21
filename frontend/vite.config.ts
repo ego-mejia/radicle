@@ -1,8 +1,25 @@
+import { cpSync } from 'node:fs';
+import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
+
+/** Excalidraw's fonts, served by Radicle itself instead of a CDN (Folio 3.5). */
+function excalidrawFonts(): Plugin {
+  return {
+    name: 'radicle-excalidraw-fonts',
+    apply: 'build',
+    writeBundle(options) {
+      const from = new URL(
+        './node_modules/@excalidraw/excalidraw/dist/prod/fonts',
+        import.meta.url,
+      );
+      cpSync(from, resolve(options.dir ?? 'dist', 'assets/excalidraw/fonts'), { recursive: true });
+    },
+  };
+}
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), excalidrawFonts()],
   build: {
     // CodeMirror alone is ~180 kB gzipped and only loads when editing.
     chunkSizeWarningLimit: 600,
