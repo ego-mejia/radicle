@@ -2293,6 +2293,62 @@
         "title": "CategoryCounts",
         "type": "object"
       },
+      "ChatAvailabilityOut": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why it is off and who can turn it on",
+            "title": "Message"
+          }
+        },
+        "required": [
+          "available",
+          "message"
+        ],
+        "title": "ChatAvailabilityOut",
+        "type": "object"
+      },
+      "ChatFeedbackIn": {
+        "additionalProperties": false,
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "value": {
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value"
+        ],
+        "title": "ChatFeedbackIn",
+        "type": "object"
+      },
       "ChatIn": {
         "additionalProperties": false,
         "properties": {
@@ -2344,6 +2400,64 @@
           "content"
         ],
         "title": "ChatMessage",
+        "type": "object"
+      },
+      "ChatMessageOut": {
+        "properties": {
+          "citations": {
+            "items": {
+              "$ref": "#/components/schemas/CitationOut"
+            },
+            "title": "Citations",
+            "type": "array"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "feedback": {
+            "anyOf": [
+              {
+                "enum": [
+                  "up",
+                  "down"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedback"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "content",
+          "citations",
+          "feedback",
+          "created_at"
+        ],
+        "title": "ChatMessageOut",
         "type": "object"
       },
       "ChatOut": {
@@ -2408,6 +2522,141 @@
         "title": "ChatOut",
         "type": "object"
       },
+      "ChatQuestionIn": {
+        "additionalProperties": false,
+        "properties": {
+          "audience": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only docs for this audience",
+            "title": "Audience"
+          },
+          "content": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Content",
+            "type": "string"
+          },
+          "doc_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only docs of this type",
+            "title": "Doc Type"
+          },
+          "space": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only docs in this space",
+            "title": "Space"
+          }
+        },
+        "required": [
+          "content"
+        ],
+        "title": "ChatQuestionIn",
+        "type": "object"
+      },
+      "ChatSessionDetailOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/ChatMessageOut"
+            },
+            "title": "Messages",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "created_at",
+          "updated_at",
+          "messages"
+        ],
+        "title": "ChatSessionDetailOut",
+        "type": "object"
+      },
+      "ChatSessionIn": {
+        "additionalProperties": false,
+        "properties": {
+          "title": {
+            "default": "",
+            "maxLength": 80,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "title": "ChatSessionIn",
+        "type": "object"
+      },
+      "ChatSessionOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ChatSessionOut",
+        "type": "object"
+      },
       "ChecklistItemOut": {
         "properties": {
           "assignee": {
@@ -2461,6 +2710,73 @@
           "checked"
         ],
         "title": "ChecklistPatch",
+        "type": "object"
+      },
+      "CitationOut": {
+        "properties": {
+          "anchor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The section's anchor; None for the page's start",
+            "title": "Anchor"
+          },
+          "n": {
+            "description": "The [n] the answer uses",
+            "title": "N",
+            "type": "integer"
+          },
+          "node_id": {
+            "format": "uuid",
+            "title": "Node Id",
+            "type": "string"
+          },
+          "outdated": {
+            "description": "The doc is marked Outdated: show a warning",
+            "title": "Outdated",
+            "type": "boolean"
+          },
+          "section": {
+            "title": "Section",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "url": {
+            "description": "Link to the page at the section",
+            "title": "Url",
+            "type": "string"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "n",
+          "node_id",
+          "version",
+          "anchor",
+          "title",
+          "section",
+          "url",
+          "outdated"
+        ],
+        "title": "CitationOut",
         "type": "object"
       },
       "Classification": {
@@ -9281,6 +9597,34 @@
         "title": "Page[BoardOut]",
         "type": "object"
       },
+      "Page_ChatSessionOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ChatSessionOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[ChatSessionOut]",
+        "type": "object"
+      },
       "Page_CommentOut_": {
         "properties": {
           "items": {
@@ -10119,6 +10463,34 @@
           "next_cursor"
         ],
         "title": "Page[TokenOut]",
+        "type": "object"
+      },
+      "Page_UnansweredOut_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UnansweredOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "Page[UnansweredOut]",
         "type": "object"
       },
       "Page_UserOut_": {
@@ -16181,6 +16553,58 @@
         "title": "TypeChangeIn",
         "type": "object"
       },
+      "UnansweredOut": {
+        "properties": {
+          "answer": {
+            "title": "Answer",
+            "type": "string"
+          },
+          "asked_at": {
+            "format": "date-time",
+            "title": "Asked At",
+            "type": "string"
+          },
+          "feedback": {
+            "anyOf": [
+              {
+                "enum": [
+                  "up",
+                  "down"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedback"
+          },
+          "feedback_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Feedback Note"
+          },
+          "question": {
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question",
+          "answer",
+          "feedback",
+          "feedback_note",
+          "asked_at"
+        ],
+        "title": "UnansweredOut",
+        "type": "object"
+      },
       "UserCreate": {
         "additionalProperties": false,
         "properties": {
@@ -19954,6 +20378,53 @@
         ]
       }
     },
+    "/api/v1/folio/admin/chat/unanswered": {
+      "get": {
+        "description": "Folio admins: questions the docs didn't answer, or whose answer got a thumbs down.",
+        "operationId": "unanswered_questions_api_v1_folio_admin_chat_unanswered_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_UnansweredOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unanswered Questions",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/admin/grants": {
       "get": {
         "description": "Global Folio roles: everyone first, then groups and users. Folio admins only.",
@@ -20637,6 +21108,271 @@
           }
         },
         "summary": "Get Asset",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/chat/availability": {
+      "get": {
+        "description": "Whether the chat shows at all: it needs an AI provider with a chat model.",
+        "operationId": "chat_availability_api_v1_folio_chat_availability_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatAvailabilityOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Chat Availability",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/chat/messages/{message_id}/feedback": {
+      "post": {
+        "description": "Thumbs up or down on one of your answers, with an optional note.",
+        "operationId": "give_chat_feedback_api_v1_folio_chat_messages__message_id__feedback_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Message Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatFeedbackIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatMessageOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Give Chat Feedback",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/chat/sessions": {
+      "get": {
+        "description": "Your chat sessions, the most recent first.",
+        "operationId": "list_chat_sessions_api_v1_folio_chat_sessions_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_ChatSessionOut_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Chat Sessions",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      },
+      "post": {
+        "description": "A new, empty session; its title comes from the first question if you leave it out.",
+        "operationId": "create_chat_session_api_v1_folio_chat_sessions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatSessionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatSessionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Chat Session",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/chat/sessions/{session_id}": {
+      "get": {
+        "description": "A session of yours with its questions and answers.",
+        "operationId": "get_chat_session_api_v1_folio_chat_sessions__session_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Session Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatSessionDetailOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Chat Session",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/chat/sessions/{session_id}/messages": {
+      "post": {
+        "description": "Ask the docs. The answer streams as server-sent events: `delta` with `{text}` as it is\nwritten, then `done` with the saved message and its citations, or `error`.",
+        "operationId": "ask_in_chat_session_api_v1_folio_chat_sessions__session_id__messages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "session_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Session Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatQuestionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "text/event-stream": {}
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ask In Chat Session",
         "tags": [
           "folio",
           "folio"

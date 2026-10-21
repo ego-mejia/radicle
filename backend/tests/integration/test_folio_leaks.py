@@ -102,6 +102,8 @@ def _urls(s: dict) -> dict[str, list[str]]:
         "/api/v1/folio/ai/availability": [f"{API}/ai/availability?space=docs"],
         # test_folio_glossary.py checks a term whose source page is restricted.
         "/api/v1/folio/glossary": [f"{API}/glossary"],
+        "/api/v1/folio/chat/availability": [f"{API}/chat/availability"],
+        "/api/v1/folio/chat/sessions": [f"{API}/chat/sessions"],
     }
 
 
@@ -124,6 +126,10 @@ EXEMPT = {
     # Docket tickets, read with Docket's access: test_restricted.py covers them.
     "/api/v1/folio/tickets/preview",
     "/api/v1/folio/tickets/query",
+    # Only its owner sees a chat session; the admin list is for Folio admins (403 for the
+    # rest). test_folio_chat_api.py covers both, and retrieval its restricted pages.
+    "/api/v1/folio/chat/sessions/{session_id}",
+    "/api/v1/folio/admin/chat/unanswered",
 }
 
 
