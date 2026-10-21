@@ -35,6 +35,7 @@ VISUAL = {"format": "svg", "code": "<svg></svg>", "description": "Un dibujo"}
         (block("pageList", label="x", limit=99), "at most 50"),
         (block("databaseView", database="inventario"), "a database's id"),
         (block("databaseView"), "database"),
+        (block("whiteboard", whiteboard="mapa"), "a whiteboard's id"),
         (block("chart", kind="bar"), "header row"),
         (block("chart", kind="bar", source="table", data=[["a", "b"], ["x", 1]]), "has no data"),
         (block("chart", kind="bar", source="sheet"), "must be one of table"),
@@ -57,6 +58,7 @@ def test_valid_blocks_pass() -> None:
         block("formula", latex="\\sum_i x_i"),
         block("pageList", label="onboarding"),
         block("databaseView", database="6f1c3a52-9d2e-4b8a-a1f0-3c5e7d9b2a14"),
+        block("whiteboard", whiteboard="0b7e2c41-5a3d-4f6e-9c8b-1d2e3f4a5b6c"),
     ]
     assert schema.validate(doc(*nodes)) == doc(*nodes)
 
