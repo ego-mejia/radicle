@@ -7,6 +7,8 @@ import { FolioAdminView } from './views/FolioAdminView';
 import { FolioApprovalsView } from './views/FolioApprovalsView';
 import { FolioCalendarView } from './views/FolioCalendarView';
 import { FolioEditView } from './views/FolioEditView';
+import { FolioFavoritesView } from './views/FolioFavoritesView';
+import { FolioForYouView } from './views/FolioForYouView';
 import { FolioHistoryView } from './views/FolioHistoryView';
 import { FolioHomeView } from './views/FolioHomeView';
 import { FolioPage } from '../../pages/FolioPage';
@@ -114,6 +116,18 @@ const folioApprovalsRoute = createRoute({
   component: FolioApprovalsView,
 });
 
+const folioForYouRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/for-you',
+  component: FolioForYouView,
+});
+
+const folioFavoritesRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/favorites',
+  component: FolioFavoritesView,
+});
+
 const folioTasksRoute = createRoute({
   getParentRoute: () => folioLayout,
   path: '/folio/tasks',
@@ -132,4 +146,6 @@ export const folioRouteTree = folioLayout.addChildren([
   folioSearchRoute,
   folioApprovalsRoute,
   folioTasksRoute,
+  folioForYouRoute,
+  folioFavoritesRoute,
 ]);
