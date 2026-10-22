@@ -2996,6 +2996,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/spaces/{key}/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Decisions
+         * @description The space's published architecture decisions you can see, newest first. By default
+         *     only the current ones: a replaced decision is hidden and counted in `hidden_replaced`.
+         */
+        get: operations["list_decisions_api_v1_folio_spaces__key__decisions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/spaces/{key}/grants": {
         parameters: {
             query?: never;
@@ -7399,6 +7420,42 @@ export interface components {
              * @description Required to reject: what to fix
              */
             comment?: string | null;
+        };
+        /** DecisionListOut */
+        DecisionListOut: {
+            /** Hidden Replaced */
+            hidden_replaced: number;
+            /** Items */
+            items: components["schemas"]["DecisionRowOut"][];
+            /** Projects */
+            projects: components["schemas"]["Count"][];
+            /** Topics */
+            topics: components["schemas"]["Count"][];
+            /** Total */
+            total: number;
+        };
+        /** DecisionRowOut */
+        DecisionRowOut: {
+            /** Description */
+            description: string;
+            node: components["schemas"]["NodeRef"];
+            /** Number */
+            number: number;
+            /** Project */
+            project: string | null;
+            /** Published At */
+            published_at: string | null;
+            /** Replaced By */
+            replaced_by: number | null;
+            /** Replaces */
+            replaces: number | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "accepted" | "proposed" | "replaced";
+            /** Topic */
+            topic: string | null;
         };
         /** DependencyOut */
         DependencyOut: {
@@ -19342,6 +19399,44 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_ArchivedOut_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_decisions_api_v1_folio_spaces__key__decisions_get: {
+        parameters: {
+            query?: {
+                topic?: string | null;
+                project?: string | null;
+                status?: "current" | "all" | "accepted" | "proposed" | "replaced";
+                q?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DecisionListOut"];
                 };
             };
             /** @description Validation Error */

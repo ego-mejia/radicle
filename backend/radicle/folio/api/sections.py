@@ -1,4 +1,4 @@
-"""The Specs section of a space over REST (RAD-57)."""
+"""The Specs and Architecture decisions sections of a space over REST (RAD-57)."""
 
 from typing import Literal
 
@@ -44,6 +44,26 @@ class SpecListOut(Output):
     projects: list[Count]
     features: list[Count]
     owners: list[OwnerCount]
+
+
+class DecisionRowOut(Output):
+    node: NodeRef
+    number: int
+    description: str
+    topic: str | None
+    project: str | None
+    status: Literal["accepted", "proposed", "replaced"]
+    replaces: int | None
+    replaced_by: int | None
+    published_at: UtcDatetime | None
+
+
+class DecisionListOut(Output):
+    items: list[DecisionRowOut]
+    total: int
+    hidden_replaced: int
+    topics: list[Count]
+    projects: list[Count]
 
 
 @router.get("/spaces/{key}/specs", response_model=SpecListOut)
@@ -96,4 +116,53 @@ async def list_specs(
         projects=[Count(value=v, count=c) for v, c in found.projects],
         features=[Count(value=v, count=c) for v, c in found.features],
         owners=[OwnerCount(handle=h, name=n or h, count=c) for h, n, c in found.owners],
+    )
+
+
+@router.get("/spaces/{key}/decisions", response_model=DecisionListOut)
+async def list_decisions(
+    key: str,
+    principal: CurrentPrincipal,
+    db: Db,
+    topic: str | None = Query(default=None, max_length=40),
+    project: str | None = None,
+    status: Literal["current", "all", "accepted", "proposed", "replaced"] = "current",
+    q: str | None = Query(default=None, max_length=200),
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+) -> DecisionListOut:
+    """The space's published architecture decisions you can see, newest first. By default
+    only the current ones: a replaced decision is hidden and counted in `hidden_replaced`."""
+    (await authz.authorize(db, principal.user, "folio", "folio.read")).raise_if_denied()
+    space = await spaces.get_space(db, principal.user, key)
+    found = await sections.list_decisions(
+        db,
+        principal.user,
+        space,
+        topic=topic,
+        project=project,
+        status=status,
+        q=q,
+        limit=limit,
+        offset=offset,
+    )
+    return DecisionListOut(
+        items=[
+            DecisionRowOut(
+                node=_ref(d.node),
+                number=d.number,
+                description=str(d.metadata.get("description") or ""),
+                topic=d.topic,
+                project=d.project,
+                status=d.status,
+                replaces=d.replaces,
+                replaced_by=d.replaced_by,
+                published_at=d.node.published_at,
+            )
+            for d in found.items
+        ],
+        total=found.total,
+        hidden_replaced=found.hidden_replaced,
+        topics=[Count(value=v, count=c) for v, c in found.topics],
+        projects=[Count(value=v, count=c) for v, c in found.projects],
     )

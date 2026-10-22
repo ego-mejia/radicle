@@ -1,4 +1,4 @@
-"""The Specs section of a space (RAD-57)."""
+"""The Specs and Architecture decisions sections of a space (RAD-57)."""
 
 from httpx import AsyncClient
 
@@ -23,6 +23,7 @@ async def _page(client: AsyncClient, team: Team, title: str, md: str, metadata: 
 
 
 SPEC_META = METADATA | {"doc_type": "build-spec"}
+ADR_META = METADATA | {"doc_type": "decision-log"}
 
 
 async def test_specs_table(client: AsyncClient, board: Team) -> None:
@@ -83,3 +84,56 @@ async def test_specs_errors_and_permissions(client: AsyncClient, board: Team) ->
     r = await client.get(f"{API}/spaces/eng/specs", headers=m, params={"status": "lost"})
     assert r.status_code == 422
     assert (await client.get(f"{API}/spaces/nope/specs", headers=m)).status_code == 404
+
+
+async def test_decisions_table(client: AsyncClient, board: Team) -> None:
+    i, m = board.instance.headers, board.member.headers
+    await client.post(f"{API}/spaces", headers=i, json={"key": "eng", "name": "Ingeniería"})
+    first = await _page(
+        client, board, "Búsqueda solo de texto", "Hola", ADR_META | {"decision_topic": "Datos"}
+    )
+    await _page(
+        client,
+        board,
+        "Plugins sin código de servidor",
+        "Hola",
+        ADR_META | {"decision_topic": "Arquitectura", "decision_status": "proposed"},
+    )
+    await _page(
+        client,
+        board,
+        "pgvector para la búsqueda",
+        "Hola",
+        ADR_META | {"decision_topic": "Datos", "decision_replaces": first, "docket_project": "PA"},
+    )
+
+    url = f"{API}/spaces/eng/decisions"
+    out = (await client.get(url, headers=m)).json()
+    assert [(d["number"], d["status"]) for d in out["items"]] == [(3, "accepted"), (2, "proposed")]
+    assert out["hidden_replaced"] == 1 and out["items"][0]["replaces"] == 1
+    assert out["topics"] == [{"value": "Datos", "count": 2}, {"value": "Arquitectura", "count": 1}]
+
+    out = (await client.get(url, headers=m, params={"status": "all", "topic": "Datos"})).json()
+    assert [(d["number"], d["replaced_by"]) for d in out["items"]] == [(3, None), (1, 3)]
+    out = (await client.get(url, headers=m, params={"status": "replaced"})).json()
+    assert [d["node"]["title"] for d in out["items"]] == ["Búsqueda solo de texto"]
+    out = (await client.get(url, headers=m, params={"project": "pa", "q": "pgvector"})).json()
+    assert out["total"] == 1
+    assert (await client.get(url, headers=m, params={"status": "x"})).status_code == 422
+
+
+async def test_decision_metadata_is_checked(client: AsyncClient, board: Team) -> None:
+    i = board.instance.headers
+    await client.post(f"{API}/spaces", headers=i, json={"key": "eng", "name": "Ingeniería"})
+    r = await client.post(
+        f"{API}/nodes", headers=i, json={"space": "eng", "kind": "page", "title": "ADR"}
+    )
+    nid = r.json()["id"]
+    bad = ADR_META | {"decision_status": "maybe", "decision_replaces": "nope"}
+    await client.put(
+        f"{API}/nodes/{nid}/draft", headers=i, json={"content_md": "x", "metadata": bad}
+    )
+    r = await client.post(f"{API}/nodes/{nid}/publish", headers=i, json={})
+    assert r.status_code == 422
+    fields = {e["field"] for e in r.json()["errors"]}
+    assert {"decision_status", "decision_replaces"} <= fields
