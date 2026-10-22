@@ -2983,6 +2983,14 @@
         "proposed": "In discussion",
         "replaced": "Replaced"
       }
+    },
+    "guides": {
+      "path": "New here? Follow them in order",
+      "read": "Read",
+      "next": "Up next",
+      "pending": "Not read yet",
+      "all": "All guides",
+      "categories": "Categories"
     }
   },
   "notifications": {
