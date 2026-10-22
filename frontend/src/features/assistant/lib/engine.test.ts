@@ -53,11 +53,24 @@ describe('Radi engine', () => {
     expect(radi.current).toBe('thinking');
   });
 
-  it('draws happy eyes as half moons', () => {
+  it('draws each eye as one path, half moons included', () => {
     const radi = new Engine();
     radi.setExpression('happy');
     const svg = renderRadi(radi.rig, run(radi, 1));
-    expect(svg.match(/<mask /g)).toHaveLength(2);
-    expect(svg).toContain('fill="#000"');
+    expect(svg.match(/<path d="M[^"]+" fill="#FFFFFF"/g)).toHaveLength(2);
+    expect(svg).not.toContain('<mask');
+  });
+
+  it('turns his head, so the far eye narrows', () => {
+    const width = (svg: string, eye: number) => {
+      const eyes = svg.match(/<path d="M[^"]+" fill="#FFFFFF"/g)!;
+      const xs = eyes[eye]!.match(/[\d.]+(?= )/g)!.map(Number);
+      return Math.max(...xs) - Math.min(...xs);
+    };
+    const radi = new Engine();
+    radi.look(400, 0);
+    const svg = renderRadi(radi.rig, run(radi, 2));
+    // Looking right turns the right eye away from the viewer.
+    expect(width(svg, 1)).toBeLessThan(width(svg, 0) * 0.7);
   });
 });

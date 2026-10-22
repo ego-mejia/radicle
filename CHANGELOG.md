@@ -13,6 +13,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Changed
 
+- Radi gira la cabeza: sus ojos y su brillo van sobre una esfera y se proyectan con perspectiva, así que el ojo lejano se achica al mirar de lado (técnica del Bible Strong avatar lab).
 - El parser, la gramática y las fechas de RQL viven en `platform/query`, compartidos por Docket y Folio.
 - Screenshots del README actualizados (logo con el switch de suite, tarjetas con área y milestone) y nuevos de Folio.
 - El logo es Radi: su cuadro verde con sus ojos.
