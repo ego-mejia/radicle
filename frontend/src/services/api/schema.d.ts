@@ -3020,6 +3020,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/spaces/{key}/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Overview
+         * @description Counts of what you can open, the sections with their counts, and who takes part.
+         */
+        get: operations["get_overview_api_v1_folio_spaces__key__overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/spaces/{key}/posts": {
         parameters: {
             query?: never;
@@ -3033,6 +3053,26 @@ export interface paths {
          */
         get: operations["list_posts_api_v1_folio_spaces__key__posts_get"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/spaces/{key}/sections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Put Sections
+         * @description Order the space's sections and show or hide each. Space admins only.
+         */
+        put: operations["put_sections_api_v1_folio_spaces__key__sections_put"];
         post?: never;
         delete?: never;
         options?: never;
@@ -11202,6 +11242,48 @@ export interface components {
              */
             verify_days: number;
         };
+        /** SpaceOverviewOut */
+        SpaceOverviewOut: {
+            /**
+             * Everyone Role
+             * @description What everyone may do here, if anything
+             */
+            everyone_role: ("admin" | "editor" | "reader") | null;
+            /** Folders */
+            folders: number;
+            /**
+             * Pages
+             * @description Pages you can open, folders apart
+             */
+            pages: number;
+            /**
+             * Participants
+             * @description Admins first
+             */
+            participants: components["schemas"]["SpaceParticipantOut"][];
+            /**
+             * Sections
+             * @description In order, hidden ones included
+             */
+            sections: components["schemas"]["SpaceSectionOut"][];
+        };
+        /** SpaceParticipantOut */
+        SpaceParticipantOut: {
+            /** Handle */
+            handle: string;
+            /**
+             * Kind
+             * @description human or agent
+             */
+            kind: string;
+            /** Name */
+            name: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "admin" | "editor" | "reader";
+        };
         /** SpacePatch */
         SpacePatch: {
             /**
@@ -11228,6 +11310,47 @@ export interface components {
              * @description Days a Verified page stays verified (1 to 730)
              */
             verify_days?: number | null;
+        };
+        /** SpaceSectionIn */
+        SpaceSectionIn: {
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "specs" | "decisions" | "guides" | "docs";
+            /**
+             * Visible
+             * @default true
+             */
+            visible?: boolean;
+        };
+        /** SpaceSectionOut */
+        SpaceSectionOut: {
+            /**
+             * Count
+             * @description Published pages you can open in this section
+             */
+            count: number;
+            /**
+             * Doc Types
+             * @description Published pages of these doc types are listed
+             */
+            doc_types: string[];
+            /**
+             * Key
+             * @enum {string}
+             */
+            key: "specs" | "decisions" | "guides" | "docs";
+            /** Visible */
+            visible: boolean;
+        };
+        /** SpaceSectionsIn */
+        SpaceSectionsIn: {
+            /**
+             * Sections
+             * @description In the order to show them; any you leave out come last, shown
+             */
+            sections: components["schemas"]["SpaceSectionIn"][];
         };
         /** SprintComplete */
         SprintComplete: {
@@ -19221,6 +19344,37 @@ export interface operations {
             };
         };
     };
+    get_overview_api_v1_folio_spaces__key__overview_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpaceOverviewOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_posts_api_v1_folio_spaces__key__posts_get: {
         parameters: {
             query?: {
@@ -19243,6 +19397,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Page_NodeRef_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    put_sections_api_v1_folio_spaces__key__sections_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SpaceSectionsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpaceSectionOut"][];
                 };
             };
             /** @description Validation Error */

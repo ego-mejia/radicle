@@ -15176,6 +15176,95 @@
         "title": "SpaceOut",
         "type": "object"
       },
+      "SpaceOverviewOut": {
+        "properties": {
+          "everyone_role": {
+            "anyOf": [
+              {
+                "enum": [
+                  "admin",
+                  "editor",
+                  "reader"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What everyone may do here, if anything",
+            "title": "Everyone Role"
+          },
+          "folders": {
+            "title": "Folders",
+            "type": "integer"
+          },
+          "pages": {
+            "description": "Pages you can open, folders apart",
+            "title": "Pages",
+            "type": "integer"
+          },
+          "participants": {
+            "description": "Admins first",
+            "items": {
+              "$ref": "#/components/schemas/SpaceParticipantOut"
+            },
+            "title": "Participants",
+            "type": "array"
+          },
+          "sections": {
+            "description": "In order, hidden ones included",
+            "items": {
+              "$ref": "#/components/schemas/SpaceSectionOut"
+            },
+            "title": "Sections",
+            "type": "array"
+          }
+        },
+        "required": [
+          "pages",
+          "folders",
+          "sections",
+          "participants",
+          "everyone_role"
+        ],
+        "title": "SpaceOverviewOut",
+        "type": "object"
+      },
+      "SpaceParticipantOut": {
+        "properties": {
+          "handle": {
+            "title": "Handle",
+            "type": "string"
+          },
+          "kind": {
+            "description": "human or agent",
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "admin",
+              "editor",
+              "reader"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "handle",
+          "name",
+          "kind",
+          "role"
+        ],
+        "title": "SpaceParticipantOut",
+        "type": "object"
+      },
       "SpacePatch": {
         "additionalProperties": false,
         "properties": {
@@ -15251,6 +15340,88 @@
           }
         },
         "title": "SpacePatch",
+        "type": "object"
+      },
+      "SpaceSectionIn": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "enum": [
+              "specs",
+              "decisions",
+              "guides",
+              "docs"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "visible": {
+            "default": true,
+            "title": "Visible",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "title": "SpaceSectionIn",
+        "type": "object"
+      },
+      "SpaceSectionOut": {
+        "properties": {
+          "count": {
+            "description": "Published pages you can open in this section",
+            "title": "Count",
+            "type": "integer"
+          },
+          "doc_types": {
+            "description": "Published pages of these doc types are listed",
+            "items": {
+              "type": "string"
+            },
+            "title": "Doc Types",
+            "type": "array"
+          },
+          "key": {
+            "enum": [
+              "specs",
+              "decisions",
+              "guides",
+              "docs"
+            ],
+            "title": "Key",
+            "type": "string"
+          },
+          "visible": {
+            "title": "Visible",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "doc_types",
+          "visible",
+          "count"
+        ],
+        "title": "SpaceSectionOut",
+        "type": "object"
+      },
+      "SpaceSectionsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "sections": {
+            "description": "In the order to show them; any you leave out come last, shown",
+            "items": {
+              "$ref": "#/components/schemas/SpaceSectionIn"
+            },
+            "title": "Sections",
+            "type": "array"
+          }
+        },
+        "required": [
+          "sections"
+        ],
+        "title": "SpaceSectionsIn",
         "type": "object"
       },
       "SprintComplete": {
@@ -30119,6 +30290,50 @@
         ]
       }
     },
+    "/api/v1/folio/spaces/{key}/overview": {
+      "get": {
+        "description": "Counts of what you can open, the sections with their counts, and who takes part.",
+        "operationId": "get_overview_api_v1_folio_spaces__key__overview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpaceOverviewOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Overview",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
     "/api/v1/folio/spaces/{key}/posts": {
       "get": {
         "description": "Blog posts, newest first.",
@@ -30188,6 +30403,64 @@
           }
         },
         "summary": "List Posts",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/spaces/{key}/sections": {
+      "put": {
+        "description": "Order the space's sections and show or hide each. Space admins only.",
+        "operationId": "put_sections_api_v1_folio_spaces__key__sections_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SpaceSectionsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SpaceSectionOut"
+                  },
+                  "title": "Response Put Sections Api V1 Folio Spaces  Key  Sections Put",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Sections",
         "tags": [
           "folio",
           "folio"

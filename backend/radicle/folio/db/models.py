@@ -121,6 +121,9 @@ class FolioSpace(Base):
     ai_enabled: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
     # Whether a page's analytics name its readers or only count them (Folio 5.9).
     show_readers: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    # Sections the space shows, in order: [{"key": "specs", "visible": true}, ...]. Null keeps
+    # the default (RAD-57).
+    sections: Mapped[list[dict[str, Any]] | None] = mapped_column(JSONB)
     created_by: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
     )
