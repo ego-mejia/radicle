@@ -2911,6 +2911,12 @@
       "none": "No matches",
       "searchForMore_one": "Search to see the {{count}} remaining",
       "searchForMore_other": "Search to see the {{count}} remaining"
+    },
+    "sectionDocs": {
+      "error": "The pages of this section didn't load",
+      "empty": "No pages here yet",
+      "noMatch": "No page title matches “{{q}}”",
+      "emptyHint": "Pages show up here once they are published with this section's doc type."
     }
   },
   "notifications": {
