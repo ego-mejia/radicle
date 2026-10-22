@@ -93,6 +93,7 @@ COVERED = {
     "get_build_spec_items",
     "create_tickets_from_build_spec",
     "get_page_analytics",
+    "export_page",
 }
 # whoami, spaces and the schema hold no page; create_page makes a new one, and
 # list_my_submissions lists only the caller's own.
@@ -156,6 +157,7 @@ async def test_restricted_pages_never_show_up(
             "list_comments",
             "query_database",
             "get_page_analytics",
+            "export_page",
         )
         for tool in (*reads, "get_build_spec_items", *writes):
             args = {"id": ids["secret"]} | writes.get(tool, {})
