@@ -2899,6 +2899,18 @@
       "spaces": "Spaces",
       "admin": "Folio admin",
       "menu": "Open menu"
+    },
+    "filters": {
+      "all": "All",
+      "chosen_one": "{{count}} chosen",
+      "chosen_other": "{{count}} chosen",
+      "search": "Search among {{count}}",
+      "selected": "Selected",
+      "mostUsed": "Most used",
+      "results": "Results",
+      "none": "No matches",
+      "searchForMore_one": "Search to see the {{count}} remaining",
+      "searchForMore_other": "Search to see the {{count}} remaining"
     }
   },
   "notifications": {

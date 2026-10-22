@@ -2899,6 +2899,18 @@
       "spaces": "Spaces",
       "admin": "Admin de Folio",
       "menu": "Abrir menú"
+    },
+    "filters": {
+      "all": "Todos",
+      "chosen_one": "{{count}} elegido",
+      "chosen_other": "{{count}} elegidos",
+      "search": "Buscar entre {{count}}",
+      "selected": "Seleccionados",
+      "mostUsed": "Más usados",
+      "results": "Resultados",
+      "none": "Sin resultados",
+      "searchForMore_one": "Busca para ver el {{count}} restante",
+      "searchForMore_other": "Busca para ver los {{count}} restantes"
     }
   },
   "notifications": {
