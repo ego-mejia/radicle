@@ -12231,6 +12231,124 @@
         "title": "PermissionsPut",
         "type": "object"
       },
+      "PluginIn": {
+        "additionalProperties": false,
+        "properties": {
+          "manifest": {
+            "additionalProperties": true,
+            "description": "The plugin's JSON manifest (ADR 0043)",
+            "title": "Manifest",
+            "type": "object"
+          }
+        },
+        "required": [
+          "manifest"
+        ],
+        "title": "PluginIn",
+        "type": "object"
+      },
+      "PluginOut": {
+        "properties": {
+          "author": {
+            "title": "Author",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "hooks": {
+            "description": "The hooks it brings, e.g. folio.register_blocks",
+            "items": {
+              "type": "string"
+            },
+            "title": "Hooks",
+            "type": "array"
+          },
+          "installed_at": {
+            "title": "Installed At",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "manifest": {
+            "additionalProperties": true,
+            "title": "Manifest",
+            "type": "object"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "version",
+          "description",
+          "author",
+          "enabled",
+          "hooks",
+          "manifest",
+          "installed_at",
+          "updated_at"
+        ],
+        "title": "PluginOut",
+        "type": "object"
+      },
+      "PluginPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "title": "PluginPatch",
+        "type": "object"
+      },
+      "PluginsOut": {
+        "properties": {
+          "hooks": {
+            "description": "Hooks this instance knows",
+            "items": {
+              "type": "string"
+            },
+            "title": "Hooks",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PluginOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "hooks"
+        ],
+        "title": "PluginsOut",
+        "type": "object"
+      },
       "PreferenceIn": {
         "additionalProperties": false,
         "properties": {
@@ -20522,6 +20640,154 @@
         "summary": "Test Assistant",
         "tags": [
           "assistant"
+        ]
+      }
+    },
+    "/api/v1/admin/plugins": {
+      "get": {
+        "description": "Installed plugins, and the hooks a manifest may use.",
+        "operationId": "list_plugins_api_v1_admin_plugins_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PluginsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Plugins",
+        "tags": [
+          "plugins"
+        ]
+      },
+      "post": {
+        "description": "Install a plugin; a manifest with an installed key replaces it (an update).",
+        "operationId": "install_plugin_api_v1_admin_plugins_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PluginIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PluginOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Install Plugin",
+        "tags": [
+          "plugins"
+        ]
+      }
+    },
+    "/api/v1/admin/plugins/{key}": {
+      "delete": {
+        "operationId": "delete_plugin_api_v1_admin_plugins__key__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Plugin",
+        "tags": [
+          "plugins"
+        ]
+      },
+      "patch": {
+        "description": "Turn a plugin on or off; off, what it brings leaves the apps but stays saved.",
+        "operationId": "patch_plugin_api_v1_admin_plugins__key__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PluginPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PluginOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Patch Plugin",
+        "tags": [
+          "plugins"
         ]
       }
     },

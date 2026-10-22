@@ -21,6 +21,7 @@ from radicle.platform.db.models.notifications import (
     NotificationPreference,
     OutboxEvent,
 )
+from radicle.platform.db.models.plugins import Plugin
 from radicle.platform.db.models.sso import AuthSource, InstanceSetting, SsoProvider
 from radicle.platform.db.models.users import ApiToken, Session, User, UserKind
 
@@ -50,6 +51,7 @@ __all__ = [
     "Notification",
     "NotificationPreference",
     "OutboxEvent",
+    "Plugin",
     "Session",
     "SsoProvider",
     "User",
