@@ -2910,13 +2910,41 @@
       "results": "Results",
       "none": "No matches",
       "searchForMore_one": "Search to see the {{count}} remaining",
-      "searchForMore_other": "Search to see the {{count}} remaining"
+      "searchForMore_other": "Search to see the {{count}} remaining",
+      "remove": "Remove {{label}}",
+      "clear": "Clear"
     },
     "sectionDocs": {
       "error": "The pages of this section didn't load",
       "empty": "No pages here yet",
       "noMatch": "No page title matches “{{q}}”",
       "emptyHint": "Pages show up here once they are published with this section's doc type."
+    },
+    "specsTable": {
+      "project": "Project",
+      "allProjects": "All projects",
+      "feature": "Feature",
+      "pickProject": "Pick a project to see its features",
+      "statusLabel": "Status",
+      "owner": "Owner",
+      "spec": "Spec",
+      "progress": "Progress",
+      "updated": "Updated",
+      "saveView": "Save as view",
+      "viewCopied": "Link to this view copied",
+      "count_one": "{{count}} spec",
+      "count_other": "{{count}} specs",
+      "empty": "No build specs in this space yet.",
+      "noMatch": "No spec matches these filters.",
+      "failed": "The specs could not be loaded. Try again.",
+      "ticketsDone": "{{done}} of {{total}} tickets done",
+      "more": "Show {{count}} more",
+      "status": {
+        "live": "In progress",
+        "planned": "Planned",
+        "done": "Done",
+        "outdated": "Outdated"
+      }
     }
   },
   "notifications": {
