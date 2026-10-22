@@ -33,8 +33,8 @@ async def test_an_agent_links_finds_and_unlinks(client: AsyncClient, board: Team
         link = payload(await folio.call_tool("link_ticket", args))
         assert link["kind"] == "manual" and link["ticket"]["key"] == "PA-1"
         docs = payload(await folio.call_tool("get_docs_for_ticket", {"key": "PA-1"}))
-        assert {d["kind"] for d in docs} == {"mention", "manual"}
-        assert {d["section"] for d in docs} == {None, "conecta-un-agente"}
+        # Mentioned and linked on purpose: the doc shows once, with the section it links.
+        assert [(d["kind"], d["section"]) for d in docs] == [("manual", "conecta-un-agente")]
         for tool, extra in (("link_ticket", {"id": page}), ("get_docs_for_ticket", {})):
             text = error_text(await folio.call_tool(tool, {"key": "PA-2", **extra}))
             assert "not found" in text and "SECRETO" not in text
