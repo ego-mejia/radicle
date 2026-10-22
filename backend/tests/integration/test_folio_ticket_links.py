@@ -83,6 +83,17 @@ async def test_link_and_unlink_by_hand(db: AsyncSession, board: Team, page: Foli
     assert await ticket_links.links_for_node(db, fernando, page) == []
 
 
+async def test_a_doc_shows_once_on_its_ticket(
+    client: AsyncClient, db: AsyncSession, board: Team, page: FolioNode
+) -> None:
+    await publish(client, board, str(page.id), "# Conecta un agente\n\nVer PA-1.")
+    fernando = await _user(db, "fernando")
+    await ticket_links.link(db, fernando, page, "PA-1", anchor="conecta-un-agente")
+    docs = await ticket_links.docs_for_ticket(db, fernando, "PA-1")
+    assert [d.node.id for d in docs] == [page.id]
+    assert docs[0].link.kind == TicketLinkKind.manual and docs[0].link.anchor == "conecta-un-agente"
+
+
 async def test_create_a_ticket_from_a_selection(
     client: AsyncClient, db: AsyncSession, board: Team, page: FolioNode
 ) -> None:

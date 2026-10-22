@@ -142,7 +142,9 @@ async def unlink_key(db: AsyncSession, user: User, node: FolioNode, key: str) ->
 
 
 async def docs_for_ticket(db: AsyncSession, user: User, key: str) -> list[LinkedDoc]:
-    """Docs linked to a ticket that the reader may see, newest link first."""
+    """Docs linked to a ticket that the reader may see, each once, newest first. A doc
+    that both names the ticket and links it on purpose shows the deliberate link, which can
+    point at a section; a bare mention only when it is all there is."""
     ticket = await _ticket(db, user, key)
     rows = await db.execute(
         select(FolioTicketLink, FolioNode, FolioSpace.key)
@@ -151,7 +153,14 @@ async def docs_for_ticket(db: AsyncSession, user: User, key: str) -> list[Linked
         .where(FolioTicketLink.ticket_id == ticket.id, await access.node_filter(db, user))
         .order_by(FolioTicketLink.created_at.desc(), FolioTicketLink.id)
     )
-    return [LinkedDoc(link, node, space) for link, node, space in rows]
+    by_node: dict[uuid.UUID, LinkedDoc] = {}
+    for link, node, space in rows:
+        seen = by_node.get(node.id)
+        if seen is None or (
+            seen.link.kind == TicketLinkKind.mention and link.kind != TicketLinkKind.mention
+        ):
+            by_node[node.id] = LinkedDoc(link, node, space)
+    return list(by_node.values())  # a doc keeps the place of its newest link
 
 
 def keys_in(text: str) -> list[str]:
