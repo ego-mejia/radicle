@@ -2889,6 +2889,29 @@
       "sent": "Enviado",
       "failed": "Falló",
       "skipped": "Omitido"
-    }
+    },
+    "chat": "Slack y Teams",
+    "chatHelp": "Publica eventos en canales y responde /radicle search y /radicle ask con los permisos de quien pregunta. Pega la URL de comandos en Slack (slash command) o Teams (outgoing webhook); en Slack pega también la URL de eventos para las vistas previas de links.",
+    "newChat": "Conectar Slack o Teams",
+    "kind": "Tipo",
+    "slack": "Slack",
+    "teams": "Teams",
+    "botToken": "Token del bot",
+    "botTokenHint": "En OAuth & Permissions, empieza con xoxb-.",
+    "signingSecret": "Signing secret",
+    "teamsSecret": "Secreto del outgoing webhook",
+    "teamsSecretHint": "Teams lo muestra una vez al crear el outgoing webhook.",
+    "channel": "Canal {{n}}",
+    "slackChannelHint": "El id del canal, p. ej. C0123ABCD.",
+    "teamsChannelHint": "La URL del incoming webhook del canal.",
+    "removeChannel": "Quitar el canal {{n}}",
+    "addChannel": "Agregar un canal",
+    "commandUrl": "URL de comandos",
+    "eventsUrl": "URL de eventos",
+    "testChannel": "Mandar una prueba a {{channel}}",
+    "linkTitle": "Conectar Slack o Teams",
+    "linkHelp": "Radicle te mandó aquí desde /radicle. Conecta esa cuenta del chat con la tuya, así sus respuestas muestran lo que tú puedes ver en Radicle.",
+    "linkConfirm": "Conectar mi cuenta",
+    "linked": "Listo: {{name}} ahora responde con tu cuenta de Radicle. Vuelve al chat y corre /radicle de nuevo."
   }
 }

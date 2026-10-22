@@ -1,3 +1,4 @@
+import { ChatCard } from './components/ChatCard';
 import { WebhooksCard } from './components/WebhooksCard';
 import * as S from './style';
 
@@ -5,6 +6,7 @@ import * as S from './style';
 export function IntegrationsTab() {
   return (
     <S.Stack>
+      <ChatCard />
       <WebhooksCard />
     </S.Stack>
   );
