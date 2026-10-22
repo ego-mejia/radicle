@@ -12,10 +12,16 @@ export const Hero = styled.section`
   padding-bottom: 28px;
   background: ${({ theme }) => theme.color.hero};
   color: ${({ theme }) => theme.color.heroText};
-  border-radius: 18px;
   display: flex;
   flex-direction: column;
   gap: 18px;
+  /* Edge to edge across the content column: cancel the shell's top padding and reach both
+     sides of the column (100cqw is the column, measured by FolioPage's container). */
+  margin: -${({ theme }) => theme.space.xl} calc((100% - 100cqw) / 2) 0;
+
+  @media (max-width: 600px) {
+    margin-top: -${({ theme }) => theme.space.lg};
+  }
 `;
 
 export const Top = styled.div`
