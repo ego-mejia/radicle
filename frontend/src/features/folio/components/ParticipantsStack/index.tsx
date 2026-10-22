@@ -29,7 +29,7 @@ export function ParticipantsStack({ participants, everyoneRole }: Props) {
                   handle={p.handle}
                   name={p.name}
                   kind={p.kind === 'agent' ? 'agent' : 'human'}
-                  size={26}
+                  size={28}
                 />
               </S.Ring>
             ))}

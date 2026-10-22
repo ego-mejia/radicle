@@ -5,6 +5,8 @@ export const Main = styled.div`
   flex-direction: column;
   min-width: 0;
   min-height: 100vh;
+  /* The space hero measures this column to run edge to edge (SpaceHero). */
+  container-type: inline-size;
 `;
 
 /** The slim bar over the content: same height and ground as Docket's top bar. */

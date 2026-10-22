@@ -33,7 +33,7 @@ export const Stack = styled.span`
 export const Ring = styled.span<{ $admin: boolean }>`
   display: inline-flex;
   border-radius: ${({ theme }) => theme.radius.full};
-  margin-left: -6px;
+  margin-left: -5px;
   box-shadow:
     0 0 0 2px ${({ theme }) => theme.color.hero},
     ${({ $admin, theme }) => ($admin ? `0 0 0 4px ${theme.color.accentFill}` : '0 0 0 0 transparent')};
@@ -44,9 +44,9 @@ export const Ring = styled.span<{ $admin: boolean }>`
 `;
 
 export const More = styled.span`
-  width: 26px;
-  height: 26px;
-  margin-left: -6px;
+  width: 28px;
+  height: 28px;
+  margin-left: -5px;
   border-radius: ${({ theme }) => theme.radius.full};
   background: ${({ theme }) => theme.color.surface2};
   color: ${({ theme }) => theme.color.text};
