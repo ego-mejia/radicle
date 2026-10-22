@@ -3033,6 +3033,34 @@
         "permissions": "Permissions"
       },
       "settingsHint": "How long a Verified page stays verified, the editor's AI, readers in analytics, and exporting the whole space."
+    },
+    "permissions": {
+      "title": "Who can do what here",
+      "hint": "Admin includes every other permission. Restrictions on a page still apply.",
+      "who": "Who",
+      "remove": "Remove",
+      "removeWho": "Remove {{who}}",
+      "everyone": "Everyone",
+      "group": "Group {{name}}",
+      "kind": "Kind",
+      "name": "Handle or group",
+      "kinds": {
+        "user": "Person or agent",
+        "group": "Group",
+        "everyone": "Everyone"
+      },
+      "add": "Add",
+      "save": "Save permissions",
+      "saved": "Permissions saved",
+      "p": {
+        "view": "Read",
+        "comment": "Comment",
+        "create": "Write",
+        "delete_own": "Delete own",
+        "delete_any": "Delete any",
+        "export": "Export",
+        "admin": "Admin"
+      }
     }
   },
   "notifications": {

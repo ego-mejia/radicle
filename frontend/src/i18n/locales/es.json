@@ -3033,6 +3033,34 @@
         "permissions": "Permisos"
       },
       "settingsHint": "Cuánto dura una página Verified, la IA del editor, los lectores en analytics y exportar todo el space."
+    },
+    "permissions": {
+      "title": "Quién puede hacer qué aquí",
+      "hint": "Admin incluye todos los demás permisos. Las restricciones de cada página siguen aplicando.",
+      "who": "Quién",
+      "remove": "Quitar",
+      "removeWho": "Quitar a {{who}}",
+      "everyone": "Todo el equipo",
+      "group": "Grupo {{name}}",
+      "kind": "Tipo",
+      "name": "Handle o grupo",
+      "kinds": {
+        "user": "Persona o agente",
+        "group": "Grupo",
+        "everyone": "Todo el equipo"
+      },
+      "add": "Agregar",
+      "save": "Guardar permisos",
+      "saved": "Permisos guardados",
+      "p": {
+        "view": "Leer",
+        "comment": "Comentar",
+        "create": "Escribir",
+        "delete_own": "Borrar lo suyo",
+        "delete_any": "Borrar todo",
+        "export": "Exportar",
+        "admin": "Admin"
+      }
     }
   },
   "notifications": {
