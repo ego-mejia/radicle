@@ -147,6 +147,18 @@ def _check_calendar(path: str, attrs: dict[str, Any]) -> None:
         raise SchemaError(f"{path}.attrs.calendar", "must be a calendar's id (a uuid)") from None
 
 
+PLUGIN_DATA_KEYS = 20
+
+
+def _check_plugin_block(path: str, attrs: dict[str, Any]) -> None:
+    data = attrs.get("data") or {}
+    if not isinstance(data, dict) or len(data) > PLUGIN_DATA_KEYS:
+        raise SchemaError(f"{path}.attrs.data", f"is up to {PLUGIN_DATA_KEYS} fields of text")
+    for key, value in data.items():
+        if not isinstance(key, str) or not isinstance(value, str) or len(value) > 2000:
+            raise SchemaError(f"{path}.attrs.data.{key}", "is text of at most 2000 characters")
+
+
 def _check_visual(path: str, attrs: dict[str, Any]) -> None:
     if not str(attrs.get("description", "")).strip():
         raise SchemaError(
@@ -311,6 +323,17 @@ NODES: dict[str, NodeSpec] = {
             "view": Attr((str, type(None)), choices=("month", "week", None)),
         },
         check=_check_calendar,
+    ),
+    # A block a plugin brings (Folio 5.7, ADR 0043): which plugin and block, and the
+    # values of its fields; drawn in the Visual's sandbox, or a notice if it's off.
+    "pluginBlock": NodeSpec(
+        BLOCK,
+        attrs={
+            "plugin": Attr(str, required=True, max_length=80),
+            "block": Attr(str, required=True, max_length=40),
+            "data": Attr((dict, type(None))),
+        },
+        check=_check_plugin_block,
     ),
     # A pasted link (Folio 3.7): a card, or an iframe for the providers that embed. The
     # title is kept so the text and the RAG index read something better than a URL.

@@ -40,8 +40,10 @@ def _field(raw: Any, where: str) -> dict[str, Any]:
     if not isinstance(raw, dict):
         raise plugins.invalid(where, f"{where} is {{key, label, kind}}.")
     key = _text(raw, "key", 40, f"{where}.key", required=True)
-    if not FIELD_KEY.match(key):
-        raise plugins.invalid(f"{where}.key", f"{where}.key is lowercase, like due_date.")
+    if not FIELD_KEY.match(key) or key == "id":
+        raise plugins.invalid(
+            f"{where}.key", f"{where}.key is lowercase, like due_date, and not id."
+        )
     kind = raw.get("kind", "text")
     if kind not in KINDS:
         raise plugins.invalid(f"{where}.kind", f"{where}.kind is one of {', '.join(KINDS)}.")

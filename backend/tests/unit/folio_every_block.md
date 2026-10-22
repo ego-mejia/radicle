@@ -98,6 +98,8 @@ más rápido
 
 ::calendar{id=5d2f8a17-3c4b-4e6a-9f1d-2b7c8e9a0f13 view=week}
 
+::plugin{id=radicle.countdown/countdown title="Lanzamiento V1" date=2026-12-15}
+
 ::tickets{rql="project = PA AND status != Done" title=Pendientes limit=10}
 
 ::progress{title="Avance de la fase"}
