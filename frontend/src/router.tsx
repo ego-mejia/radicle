@@ -1,11 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query';
-import {
-  createRootRouteWithContext,
-  createRoute,
-  createRouter,
-  Outlet,
-  redirect,
-} from '@tanstack/react-router';
+import { createRoute, createRouter, redirect } from '@tanstack/react-router';
 import { AdminView } from './features/admin/views/AdminView';
 import { LinkChatView } from './features/integrations/views/LinkChatView';
 import { LoginView } from './features/auth/views/LoginView';
@@ -27,27 +21,16 @@ import { ProjectsView } from './features/projects/views/ProjectsView';
 import { SettingsView } from './features/settings/views/SettingsView';
 import { TemplateEditorView } from './features/templates/views/TemplateEditorView';
 import { TicketPageView } from './features/tickets/views/TicketPageView';
-import { FolioAdminView } from './features/folio/views/FolioAdminView';
-import { FolioApprovalsView } from './features/folio/views/FolioApprovalsView';
-import { FolioTasksView } from './features/folio/views/FolioTasksView';
-import { FolioTemplateView } from './features/folio/views/FolioTemplateView';
-import { FolioEditView } from './features/folio/views/FolioEditView';
-import { FolioHistoryView } from './features/folio/views/FolioHistoryView';
-import { FolioReadView } from './features/folio/views/FolioReadView';
-import { FolioSearchView } from './features/folio/views/FolioSearchView';
-import { FolioCalendarView } from './features/folio/views/FolioCalendarView';
-import { FolioSpaceView } from './features/folio/views/FolioSpaceView';
-import { FolioHomeView } from './features/folio/views/FolioHomeView';
 import { FolioPrintView } from './features/folio/views/FolioPrintView';
 import { FolioPublicView } from './features/folio/views/FolioPublicView';
 import { AppPage } from './pages/AppPage';
-import { FolioPage } from './pages/FolioPage';
 import { AuthPage } from './pages/AuthPage';
 import { authKeys, fetchMe, fetchSetupStatus } from './services/api/auth';
-import { fetchFolioMe, folioKeys } from './services/api/folio';
 import { isApiError } from './services/api/client';
+import { folioRouteTree } from './features/folio/routes';
+import { rootRoute, str } from './routerRoot';
 
-type RouterContext = { queryClient: QueryClient };
+export type { FolioSearchParams } from './features/folio/routes';
 
 export type BoardSearch = {
   type?: string;
@@ -60,10 +43,6 @@ export type BoardSearch = {
   qf?: string;
   lane?: string;
 };
-
-const str = (value: unknown) => (typeof value === 'string' && value ? value : undefined);
-
-const rootRoute = createRootRouteWithContext<RouterContext>()({ component: Outlet });
 
 async function needsSetup(queryClient: QueryClient): Promise<boolean> {
   const status = await queryClient.fetchQuery({
@@ -115,108 +94,6 @@ const appLayout = createRoute({
       throw redirect({ to: '/login', search: { next: location.href } });
     }
   },
-});
-
-/** Folio's shell: signed in like Docket, and hidden (back to Docket) without a Folio role. */
-const folioLayout = createRoute({
-  getParentRoute: () => rootRoute,
-  id: 'folio',
-  component: FolioPage,
-  beforeLoad: async ({ context, location }) => {
-    try {
-      await context.queryClient.ensureQueryData({ queryKey: authKeys.me, queryFn: fetchMe });
-    } catch (error) {
-      if (!isApiError(error, 401)) throw error;
-      throw redirect({ to: '/login', search: { next: location.href } });
-    }
-    const folio = await context.queryClient.fetchQuery({
-      queryKey: folioKeys.me,
-      queryFn: fetchFolioMe,
-      staleTime: 60_000,
-    });
-    if (!folio) throw redirect({ to: '/' });
-  },
-});
-
-const folioHomeRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio',
-  component: FolioHomeView,
-});
-
-const folioAdminRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio/admin',
-  component: FolioAdminView,
-});
-
-const folioTemplateRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio/admin/templates/$id',
-  component: FolioTemplateView,
-});
-
-const folioSpaceRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio/s/$key',
-  component: FolioSpaceView,
-});
-
-const folioCalendarRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio/s/$key/calendar',
-  component: FolioCalendarView,
-});
-
-/** `$page` is `<id>-<slug>`; only the id matters, so renamed pages keep their links. */
-const folioReadRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio/p/$page',
-  component: FolioReadView,
-});
-
-const folioEditRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio/p/$page/edit',
-  component: FolioEditView,
-});
-
-const folioHistoryRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio/p/$page/history',
-  component: FolioHistoryView,
-  validateSearch: (search: Record<string, unknown>): { from?: number; to?: number } => ({
-    from: typeof search.from === 'number' ? search.from : undefined,
-    to: typeof search.to === 'number' ? search.to : undefined,
-  }),
-});
-
-export type FolioSearchParams = { q?: string; mode?: 'hybrid' | 'text' | 'semantic'; rql?: string };
-
-const folioSearchRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio/search',
-  component: FolioSearchView,
-  validateSearch: (search: Record<string, unknown>): FolioSearchParams => ({
-    q: str(search.q),
-    mode:
-      search.mode === 'text' || search.mode === 'semantic' || search.mode === 'hybrid'
-        ? search.mode
-        : undefined,
-    rql: str(search.rql),
-  }),
-});
-
-const folioApprovalsRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio/approvals',
-  component: FolioApprovalsView,
-});
-
-const folioTasksRoute = createRoute({
-  getParentRoute: () => folioLayout,
-  path: '/folio/tasks',
-  component: FolioTasksView,
 });
 
 const boardSearch = (search: Record<string, unknown>): BoardSearch => ({
@@ -464,19 +341,7 @@ const routeTree = rootRoute.addChildren([
     adminRoute,
     templateRoute,
   ]),
-  folioLayout.addChildren([
-    folioHomeRoute,
-    folioAdminRoute,
-    folioTemplateRoute,
-    folioSpaceRoute,
-    folioCalendarRoute,
-    folioReadRoute,
-    folioEditRoute,
-    folioHistoryRoute,
-    folioSearchRoute,
-    folioApprovalsRoute,
-    folioTasksRoute,
-  ]),
+  folioRouteTree,
 ]);
 
 export function createAppRouter(queryClient: QueryClient) {
