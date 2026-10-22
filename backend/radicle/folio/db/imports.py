@@ -56,7 +56,8 @@ class FolioImport(Base):
 
 
 class FolioExternalRef(Base):
-    """The node an imported page became; unique per source and the source's own id."""
+    """The node an imported page became in a space; unique per source, the source's own id
+    and the space, so the same export imported into two spaces makes two pages."""
 
     __tablename__ = "folio_external_refs"
 
@@ -64,6 +65,9 @@ class FolioExternalRef(Base):
         _enum(ImportSource, "folio_import_source"), primary_key=True
     )
     external_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    space_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("folio_spaces.id", ondelete="CASCADE"), primary_key=True
+    )
     node_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("folio_nodes.id", ondelete="CASCADE"), index=True
     )

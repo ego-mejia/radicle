@@ -99,6 +99,21 @@ async def test_acceptance_a_confluence_space_comes_in_once(
     assert len(await _titles(db, space)) == 4
 
 
+async def test_the_same_export_into_another_space_makes_its_own_pages(
+    client: AsyncClient, db: AsyncSession, team: Team, space: FolioSpace
+) -> None:
+    fernando = await _user(db, "fernando")
+    data = zipped("confluence")
+    await _import(db, fernando, space, ImportSource.confluence, "ENG.zip", data)
+    i = team.instance.headers
+    await client.post(f"{API}/spaces", headers=i, json={"key": "copia", "name": "Copia"})
+    other = await db.scalar(select(FolioSpace).where(FolioSpace.key == "copia"))
+    assert other is not None
+    item = await _import(db, fernando, other, ImportSource.confluence, "ENG.zip", data)
+    assert item.stats["created"] == 4 and item.stats["updated"] == 0
+    assert len(await _titles(db, other)) == 4 and len(await _titles(db, space)) == 4
+
+
 async def test_complete_pages_are_published_and_databases_get_rows(
     db: AsyncSession, team: Team, space: FolioSpace
 ) -> None:
