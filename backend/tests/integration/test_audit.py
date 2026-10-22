@@ -9,8 +9,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from radicle.docket.db.models import AuditEntry, utcnow
 from radicle.platform.db.models import AuditApp
 from radicle.platform.services import audit
-from tests.conftest import ADMIN_PASSWORD, Team, make_project, new_ticket, patch_ticket
-from tests.integration.folio_helpers import agent_can_write, agent_submits
+from tests.conftest import (
+    ADMIN_PASSWORD,
+    Team,
+    make_project,
+    new_ticket,
+    patch_ticket,
+    run_jobs,
+)
+from tests.folio_import_fixtures import zipped
+from tests.integration.folio_helpers import agent_can_write, agent_submits, publish
 
 API = "/api/v1"
 
@@ -21,7 +29,7 @@ async def logged(client: AsyncClient, team: Team, **params: object) -> list[dict
     return r.json()["items"]
 
 
-async def every_action(client: AsyncClient, team: Team) -> None:
+async def every_action(client: AsyncClient, db: AsyncSession, team: Team) -> None:
     """Run each action of the catalog once, through the API."""
     i, a = team.instance.headers, team.admin.headers
     other = AsyncClient(transport=client._transport, base_url="http://test")
@@ -155,6 +163,30 @@ async def every_action(client: AsyncClient, team: Team) -> None:
     rule_id = (await client.post(f"{API}/automation/rules", headers=i, json=rule)).json()["id"]
     await client.put(f"{API}/automation/rules/{rule_id}", headers=i, json=rule | {"name": "R2"})
     await client.delete(f"{API}/automation/rules/{rule_id}", headers=i)
+    page = (
+        await client.post(
+            f"{API}/folio/nodes", headers=i, json={"space": "audit", "kind": "page", "title": "G"}
+        )
+    ).json()["id"]
+    await publish(client, team, page)
+    view = {"view": [{"grantee_type": "user", "grantee": team.instance.handle}]}
+    await client.put(f"{API}/folio/nodes/{page}/restrictions", headers=i, json=view)
+    await client.put(f"{API}/folio/nodes/{page}/restrictions", headers=i, json={"view": []})
+    link = (await client.post(f"{API}/folio/public-links", headers=i, json={"node": page})).json()
+    await client.delete(f"{API}/folio/public-links/{link['id']}", headers=i)
+    await client.post(f"{API}/folio/exports", headers=i, json={"node": page, "format": "markdown"})
+    upload = {"file": ("ENG.zip", zipped("confluence"))}
+    made = (
+        await client.post(
+            f"{API}/folio/imports",
+            headers=i,
+            files=upload,
+            data={"source": "confluence", "space": "audit"},
+        )
+    ).json()
+    await client.post(f"{API}/folio/imports/{made['id']}/dry-run", headers=i, json={})
+    await client.post(f"{API}/folio/imports/{made['id']}/run", headers=i)
+    await run_jobs(db)
     await client.post(
         f"{API}/tickets/bulk",
         headers=team.member.headers,
@@ -167,8 +199,10 @@ async def every_action(client: AsyncClient, team: Team) -> None:
     assert r.status_code == 200, r.text
 
 
-async def test_every_action_of_the_catalog_is_logged(client: AsyncClient, board: Team) -> None:
-    await every_action(client, board)
+async def test_every_action_of_the_catalog_is_logged(
+    client: AsyncClient, db: AsyncSession, board: Team
+) -> None:
+    await every_action(client, db, board)
     entries = []
     cursor = None
     while True:
@@ -192,8 +226,10 @@ async def test_every_action_of_the_catalog_is_logged(client: AsyncClient, board:
     )
 
 
-async def test_filters_csv_and_project_admins(client: AsyncClient, board: Team) -> None:
-    await every_action(client, board)
+async def test_filters_csv_and_project_admins(
+    client: AsyncClient, db: AsyncSession, board: Team
+) -> None:
+    await every_action(client, db, board)
     logins = await logged(client, board, action="user")
     assert logins and all(e["action"].startswith("user.") for e in logins)
     mine = await logged(client, board, actor="ana", project="PA")
