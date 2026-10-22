@@ -33,9 +33,10 @@ export function pluginBlockItems(): BlockItem[] {
   return items;
 }
 
-/** The values a block's HTML gets as window.radicle.data, before its own code. */
-export function pluginCode(html: string, data: Record<string, string>): string {
-  const json = JSON.stringify({ data }).replace(/</g, '\\u003c');
+/** What a block's HTML gets before its own code: its values as window.radicle.data and the
+ * reader's language (en, es) as window.radicle.lang. The sandbox can't read the app's. */
+export function pluginCode(html: string, data: Record<string, string>, lang = 'en'): string {
+  const json = JSON.stringify({ data, lang }).replace(/</g, '\\u003c');
   return `<script>window.radicle=${json};</script>${html}`;
 }
 

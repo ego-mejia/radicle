@@ -39,7 +39,7 @@ Un plugin es un manifiesto JSON que el admin de la instancia instala en **Admin 
   - solo tokens `--rdc-*`;
   - hasta 512 KB.
 
-  Los valores de los campos llegan como `window.radicle.data`.
+  Los valores de los campos llegan como `window.radicle.data`, y el idioma de quien lee (`en` o `es`) como `window.radicle.lang`: el sandbox no ve el de la app.
 
 ## En las páginas
 

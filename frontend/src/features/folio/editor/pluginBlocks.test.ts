@@ -24,9 +24,9 @@ describe('plugin blocks', () => {
   });
 
   it('hands the values to the HTML without letting them close the script', () => {
-    const code = pluginCode('<p>x</p>', { title: '</script><b>' });
+    const code = pluginCode('<p>x</p>', { title: '</script><b>' }, 'es');
     expect(code).toBe(
-      '<script>window.radicle={"data":{"title":"\\u003c/script>\\u003cb>"}};</script><p>x</p>',
+      '<script>window.radicle={"data":{"title":"\\u003c/script>\\u003cb>"},"lang":"es"};</script><p>x</p>',
     );
   });
 });
