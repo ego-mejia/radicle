@@ -245,6 +245,9 @@ def block(node: Node, depth: int = 0) -> str:
         return "::database" + _attrs(id=attrs["database"], view=attrs.get("view"))
     if kind == "whiteboard":
         return "::whiteboard" + _attrs(id=attrs["whiteboard"])
+    if kind == "pluginBlock":
+        data = attrs.get("data") or {}
+        return "::plugin" + _attrs(id=f"{attrs['plugin']}/{attrs['block']}", **data)
     if kind == "calendar":
         return "::calendar" + _attrs(id=attrs["calendar"], view=attrs.get("view"))
     if kind == "embed":
