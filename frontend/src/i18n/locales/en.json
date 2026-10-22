@@ -2796,6 +2796,24 @@
         "done": "Done",
         "failed": "Failed"
       }
+    },
+    "export": {
+      "button": "Export",
+      "working": "Exporting…",
+      "ready": "{{name}} is ready.",
+      "failed": "The export failed.",
+      "format": {
+        "pdf": "PDF",
+        "docx": "Word",
+        "html": "HTML site",
+        "markdown": "Markdown"
+      },
+      "hint": {
+        "pdf": "As it looks in Folio",
+        "docx": ".docx",
+        "html": "Opens from disk",
+        "markdown": "Zip with front matter"
+      }
     }
   },
   "notifications": {
