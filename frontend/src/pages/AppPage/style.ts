@@ -1,14 +1,6 @@
 import styled from 'styled-components';
 
-export const Shell = styled.div`
-  display: grid;
-  grid-template-columns: 232px minmax(0, 1fr);
-  min-height: 100%;
-
-  @media (max-width: 860px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
-`;
+export { AppShell as Shell } from '../../components/layout/AppSidebar/style';
 
 export const Main = styled.div`
   display: flex;
