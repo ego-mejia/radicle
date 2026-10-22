@@ -2912,6 +2912,26 @@
     "linkTitle": "Connect Slack or Teams",
     "linkHelp": "Radicle sent you here from /radicle. Connect that chat account to yours, so its answers show what you can see in Radicle.",
     "linkConfirm": "Connect my account",
-    "linked": "Done: {{name}} now answers with your Radicle account. Go back to the chat and run /radicle again."
+    "linked": "Done: {{name}} now answers with your Radicle account. Go back to the chat and run /radicle again.",
+    "rules": "Automation rules",
+    "rulesHelp": "When an event happens, or every hour or day, run actions with your permissions: notify a person or a channel, change a page's status, add a label, create a Docket ticket, archive. A rule never triggers itself in a loop.",
+    "newRule": "New rule",
+    "startFrom": "Start from",
+    "blankRule": "A blank rule",
+    "trigger": "Trigger",
+    "triggerHint": "{\"type\": \"event\", \"event\": \"page.outdated\"} or {\"type\": \"schedule\", \"every\": \"day\", \"select\": \"folio.pages\", \"params\": {\"rql\": \"…\"}}",
+    "actions": "Actions",
+    "actionsHint": "A list such as [{\"type\": \"notify_channel\", \"integration\": \"…\", \"route\": 0}].",
+    "badJson": "The trigger or the actions aren't valid JSON.",
+    "pause": "Pause {{name}}",
+    "resume": "Resume {{name}}",
+    "runs": "Runs of {{name}}",
+    "noRuns": "It hasn't run yet.",
+    "runStatus": {
+      "pending": "Running",
+      "sent": "Done",
+      "failed": "Failed",
+      "skipped": "Skipped"
+    }
   }
 }
