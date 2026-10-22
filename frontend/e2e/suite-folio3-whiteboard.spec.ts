@@ -109,7 +109,8 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test('create a whiteboard and land on its canvas', async () => {
-  await admin.goto('/folio/s/e2e-wb');
+  // Creating kinds other than a page lives in Manage › Pages (RAD-57).
+  await admin.goto('/folio/s/e2e-wb/admin');
   await admin.getByRole('button', { name: 'New whiteboard' }).click();
   const dialog = admin.getByRole('dialog', { name: 'New whiteboard' });
   await dialog.getByLabel('Title').fill('Arquitectura de pagos');
@@ -178,7 +179,8 @@ test('it goes inside a page from the / menu and readers see it there', async () 
   await api('POST', `/folio/nodes/${node.id}/publish`, {});
 
   await ana.goto(`/folio/p/${node.id}-${node.slug}`);
-  await expect(ana.getByRole('link', { name: 'Arquitectura de pagos' })).toBeVisible();
+  // Exact: the page's pager also links to it as "Previous Arquitectura de pagos".
+  await expect(ana.getByRole('link', { name: 'Arquitectura de pagos', exact: true })).toBeVisible();
   await expect(ana.locator('.excalidraw')).toBeVisible();
   await expect(ana.getByText("You can't see this whiteboard.")).toHaveCount(0);
 });

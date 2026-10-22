@@ -99,7 +99,8 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test('create a live doc and land in the shared editor', async () => {
-  await admin.goto('/folio/s/e2e-live');
+  // Creating kinds other than a page lives in Manage › Pages (RAD-57).
+  await admin.goto('/folio/s/e2e-live/admin');
   await admin.getByRole('button', { name: 'New live doc' }).click();
   const dialog = admin.getByRole('dialog', { name: 'New live doc' });
   await dialog.getByLabel('Title').fill('Minuta en vivo');
