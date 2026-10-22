@@ -1,4 +1,5 @@
 import { ChatCard } from './components/ChatCard';
+import { RulesCard } from './components/RulesCard';
 import { WebhooksCard } from './components/WebhooksCard';
 import * as S from './style';
 
@@ -8,6 +9,7 @@ export function IntegrationsTab() {
     <S.Stack>
       <ChatCard />
       <WebhooksCard />
+      <RulesCard />
     </S.Stack>
   );
 }

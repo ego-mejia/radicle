@@ -2912,6 +2912,26 @@
     "linkTitle": "Conectar Slack o Teams",
     "linkHelp": "Radicle te mandó aquí desde /radicle. Conecta esa cuenta del chat con la tuya, así sus respuestas muestran lo que tú puedes ver en Radicle.",
     "linkConfirm": "Conectar mi cuenta",
-    "linked": "Listo: {{name}} ahora responde con tu cuenta de Radicle. Vuelve al chat y corre /radicle de nuevo."
+    "linked": "Listo: {{name}} ahora responde con tu cuenta de Radicle. Vuelve al chat y corre /radicle de nuevo.",
+    "rules": "Reglas de automatización",
+    "rulesHelp": "Cuando pasa un evento, o cada hora o día, corre acciones con tus permisos: avisar a una persona o a un canal, cambiar el estado de una página, agregar un label, crear un ticket en Docket, archivar. Una regla nunca se dispara a sí misma en loop.",
+    "newRule": "Nueva regla",
+    "startFrom": "Empezar desde",
+    "blankRule": "Una regla en blanco",
+    "trigger": "Disparador",
+    "triggerHint": "{\"type\": \"event\", \"event\": \"page.outdated\"} o {\"type\": \"schedule\", \"every\": \"day\", \"select\": \"folio.pages\", \"params\": {\"rql\": \"…\"}}",
+    "actions": "Acciones",
+    "actionsHint": "Una lista como [{\"type\": \"notify_channel\", \"integration\": \"…\", \"route\": 0}].",
+    "badJson": "El disparador o las acciones no son JSON válido.",
+    "pause": "Pausar {{name}}",
+    "resume": "Reanudar {{name}}",
+    "runs": "Ejecuciones de {{name}}",
+    "noRuns": "Todavía no ha corrido.",
+    "runStatus": {
+      "pending": "Corriendo",
+      "sent": "Hecho",
+      "failed": "Falló",
+      "skipped": "Omitido"
+    }
   }
 }
