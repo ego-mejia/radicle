@@ -3007,7 +3007,11 @@
       "staleSince": "Su verificación venció el {{date}}. Revísala para que la gente pueda seguir confiando en ella.",
       "staleText": "Revísala para que la gente pueda seguir confiando en ella.",
       "update": "Actualizarla",
-      "seeChanges": "Ver cambios"
+      "seeChanges": "Ver cambios",
+      "staleDocsTitle_one": "{{count}} página de referencia quedó vieja.",
+      "staleDocsTitle_other": "{{count}} páginas de referencia quedaron viejas.",
+      "staleDocsText": "La más antigua es «{{title}}». Revísala para que la gente pueda seguir confiando en la documentación.",
+      "seePage": "Ver la página"
     },
     "docsSection": {
       "general": "General"

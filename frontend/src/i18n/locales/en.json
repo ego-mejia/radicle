@@ -3007,7 +3007,11 @@
       "staleSince": "Its verification expired on {{date}}. Review it so people can keep trusting it.",
       "staleText": "Review it so people can keep trusting it.",
       "update": "Update it",
-      "seeChanges": "See changes"
+      "seeChanges": "See changes",
+      "staleDocsTitle_one": "{{count}} reference page went stale.",
+      "staleDocsTitle_other": "{{count}} reference pages went stale.",
+      "staleDocsText": "The oldest is “{{title}}”. Review it so people can keep trusting the docs.",
+      "seePage": "See the page"
     },
     "docsSection": {
       "general": "General"
