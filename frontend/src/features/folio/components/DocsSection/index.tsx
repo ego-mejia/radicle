@@ -48,13 +48,16 @@ export function DocsSection({ space, notice }: Props) {
       <EmptyState title={t('folio.sectionDocs.empty')} text={t('folio.sectionDocs.emptyHint')} />
     );
 
+  const general = t('folio.docsSection.general');
   const names = tree.data ? folders(tree.data) : new Map<string, string>();
   const groups = new Map<string, FolioDoc[]>();
   for (const doc of docs.data) {
-    const group = (doc.parent_id && names.get(doc.parent_id)) || t('folio.docsSection.general');
+    const group = (doc.parent_id && names.get(doc.parent_id)) || general;
     groups.set(group, [...(groups.get(group) ?? []), doc]);
   }
-  const ordered = [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
+  const ordered = [...groups.entries()].sort(
+    ([a], [b]) => Number(a === general) - Number(b === general) || a.localeCompare(b),
+  );
 
   return (
     <S.Wrap>

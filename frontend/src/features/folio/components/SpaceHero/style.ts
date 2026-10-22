@@ -12,6 +12,7 @@ export const Hero = styled.section`
   padding-bottom: 28px;
   background: ${({ theme }) => theme.color.hero};
   color: ${({ theme }) => theme.color.heroText};
+  border-radius: 18px;
   display: flex;
   flex-direction: column;
   gap: 18px;

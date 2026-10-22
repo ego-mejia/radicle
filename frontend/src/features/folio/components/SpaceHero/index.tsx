@@ -89,10 +89,18 @@ export function SpaceHero({ space, active, onWrite, onSearch, query = '' }: Prop
         {!isSection && overview.data && (
           <S.Stats>
             <span>
-              <Trans i18nKey="folio.spaceHome.pages" count={overview.data.pages} />
+              <Trans
+                i18nKey="folio.spaceHome.pages"
+                count={overview.data.pages}
+                components={{ b: <b /> }}
+              />
             </span>
             <span>
-              <Trans i18nKey="folio.spaceHome.folders" count={overview.data.folders} />
+              <Trans
+                i18nKey="folio.spaceHome.folders"
+                count={overview.data.folders}
+                components={{ b: <b /> }}
+              />
             </span>
             {overview.data.participants.length > 0 && (
               <ParticipantsStack

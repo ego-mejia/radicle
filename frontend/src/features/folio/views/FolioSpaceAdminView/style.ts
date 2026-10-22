@@ -17,7 +17,8 @@ export const Head = styled.header`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.space.md};
-  border-bottom: 1px solid ${({ theme }) => theme.color.border};
+  border: 1px solid ${({ theme }) => theme.color.border};
+  border-radius: 16px;
   background: ${({ theme }) => theme.color.surface};
 
   h1 {

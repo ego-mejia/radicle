@@ -45,7 +45,8 @@ describe('DocsSection', () => {
     renderWithProviders(<DocsSection space="eng" notice={<p>Aviso de Radi</p>} />);
     expect(await screen.findByRole('heading', { name: 'Platform' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Folio' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'General' })).toBeInTheDocument();
+    const headings = screen.getAllByRole('heading').map((h) => h.textContent);
+    expect(headings).toEqual(['Folio', 'Platform', 'General']);
     expect(screen.getByRole('link', { name: /events/ })).toHaveAttribute('href', '/folio/p/a-a');
     expect(screen.getByText('Aviso de Radi')).toBeInTheDocument();
   });
