@@ -51,6 +51,8 @@ describe('SpaceHero', () => {
       '/folio/s/eng/specs',
     );
     expect(screen.queryByRole('link', { name: /Guides/ })).not.toBeInTheDocument();
+    expect(screen.getByText('12').tagName).toBe('B');
+    expect(screen.queryByText(/<b>/)).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: /All 8/ })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByRole('link', { name: 'Manage' })).toHaveAttribute(
       'href',
