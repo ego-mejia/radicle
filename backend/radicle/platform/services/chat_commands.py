@@ -12,6 +12,7 @@ import base64
 import hashlib
 import hmac
 import json
+import re
 import time
 import uuid
 from collections.abc import Awaitable, Callable
@@ -185,6 +186,14 @@ async def run(db: AsyncSession, user: User, text: str) -> str:
         return exc.detail
 
 
+BOLD = re.compile(r"\*\*(.+?)\*\*")
+
+
+def slack_text(text: str) -> str:
+    """Commands answer in Markdown; Slack's mrkdwn marks bold with one asterisk."""
+    return BOLD.sub(r"*\1*", text)
+
+
 async def slack_command(
     db: AsyncSession, integration: Integration, form: dict[str, str]
 ) -> dict[str, Any]:
@@ -206,7 +215,8 @@ async def slack_command(
             response_url=form.get("response_url", ""),
         )
         return {"response_type": "ephemeral", "text": f"On it: {rest}"}
-    return {"response_type": "ephemeral", "text": await run(db, user, form.get("text", ""))}
+    reply = await run(db, user, form.get("text", ""))
+    return {"response_type": "ephemeral", "text": slack_text(reply)}
 
 
 @queue.handler(ASK_JOB)
@@ -216,7 +226,7 @@ async def answer_later(
     user = await db.get(User, uuid.UUID(user_id))
     if user is None or not response_url.startswith("https://hooks.slack.com/"):
         return
-    reply = await run(db, user, text)
+    reply = slack_text(await run(db, user, text))
     body = json.dumps({"response_type": "ephemeral", "text": reply}).encode()
     await safe_fetch.post(response_url, body, {"Content-Type": "application/json"})
 

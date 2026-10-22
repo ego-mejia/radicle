@@ -94,6 +94,8 @@ async def test_slack_runs_commands_as_the_user_with_that_email(
     assert "On it: qué tal" in r.json()["text"]
     await run_jobs(db)
     assert slack.replies == [{"response_type": "ephemeral", "text": "fernando: qué tal"}]
+    r = await client.post(url, **_slack_request("whoami **hola** y **adiós**"))
+    assert r.json()["text"] == "fernando: *hola* y *adiós*"  # Slack's bold
     r = await client.post(url, **_slack_request("bailar"))
     assert "/radicle whoami" in r.json()["text"]
     r = await client.post(url, **_slack_request("whoami"))
