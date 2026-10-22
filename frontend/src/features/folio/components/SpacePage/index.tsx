@@ -7,23 +7,16 @@ import { Button } from '../../../../components/ui/Button';
 import { EmptyState } from '../../../../components/ui/EmptyState';
 import { PageSpinner } from '../../../../components/ui/Spinner';
 import { useErrorMessage } from '../../../../hooks/useErrorMessage';
-import {
-  assetUrl,
-  fetchPosts,
-  fetchSpace,
-  fetchTree,
-  folioKeys,
-} from '../../../../services/api/folio';
+import { fetchPosts, fetchSpace, fetchTree, folioKeys } from '../../../../services/api/folio';
 import { type NewKind, NewNodeDialog } from '../NewNodeDialog';
 import { SpaceTree } from '../SpaceTree';
 import { StatusBadge } from '../StatusBadge';
 import { ArchivedList } from '../ArchivedList';
 import { MyShortcuts } from '../MyShortcuts';
-import { ExportMenu } from '../ExportMenu';
-import { SpaceSettings } from '../SpaceSettings';
 import * as S from './style';
 
-/** A space: its cover and description, the page tree and its blog posts. */
+/** Manage › Pages: what to create, the page tree and the blog posts. The space's title,
+ * description and settings live in the hero and the other Manage tabs. */
 export function SpacePage({ spaceKey }: { spaceKey: string }) {
   const { t } = useTranslation();
   const errorMessage = useErrorMessage();
@@ -41,51 +34,38 @@ export function SpacePage({ spaceKey }: { spaceKey: string }) {
   if (space.isPending) return <PageSpinner />;
   if (space.isError)
     return <EmptyState title={t('folio.space.notFound')} text={errorMessage(space.error)} />;
-  const s = space.data;
-  const canCreate = s.permissions.includes('create');
+  const canCreate = space.data.permissions.includes('create');
 
   return (
     <S.Page>
-      <S.Cover $image={s.cover_asset_id ? assetUrl(s.cover_asset_id) : null}>
-        <S.CoverInner>
-          <S.Mark aria-hidden>{s.icon || s.name.slice(0, 1).toUpperCase()}</S.Mark>
-          <S.Heading>
-            {s.kind === 'personal' && <S.Kind>{t('folio.space.personal')}</S.Kind>}
-            <h1>{s.name}</h1>
-            {s.description && <p>{s.description}</p>}
-          </S.Heading>
-          {s.permissions.includes('admin') && <SpaceSettings space={s} />}
-          {s.permissions.includes('export') && <ExportMenu target={{ space: s.key }} />}
-          {canCreate && (
-            <S.Actions>
-              <Button variant="primary" onClick={() => setCreating('page')}>
-                <FilePlus aria-hidden />
-                {t('folio.space.new.page')}
-              </Button>
-              <Button onClick={() => setCreating('blog_post')}>
-                <PenLine aria-hidden />
-                {t('folio.space.new.blog_post')}
-              </Button>
-              <Button onClick={() => setCreating('live_doc')}>
-                <Radio aria-hidden />
-                {t('folio.space.new.live_doc')}
-              </Button>
-              <Button onClick={() => setCreating('folder')}>
-                <FolderPlus aria-hidden />
-                {t('folio.space.new.folder')}
-              </Button>
-              <Button onClick={() => setCreating('database')}>
-                <Table2 aria-hidden />
-                {t('folio.space.new.database')}
-              </Button>
-              <Button onClick={() => setCreating('whiteboard')}>
-                <Shapes aria-hidden />
-                {t('folio.space.new.whiteboard')}
-              </Button>
-            </S.Actions>
-          )}
-        </S.CoverInner>
-      </S.Cover>
+      {canCreate && (
+        <S.Actions>
+          <Button variant="primary" onClick={() => setCreating('page')}>
+            <FilePlus aria-hidden />
+            {t('folio.space.new.page')}
+          </Button>
+          <Button onClick={() => setCreating('blog_post')}>
+            <PenLine aria-hidden />
+            {t('folio.space.new.blog_post')}
+          </Button>
+          <Button onClick={() => setCreating('live_doc')}>
+            <Radio aria-hidden />
+            {t('folio.space.new.live_doc')}
+          </Button>
+          <Button onClick={() => setCreating('folder')}>
+            <FolderPlus aria-hidden />
+            {t('folio.space.new.folder')}
+          </Button>
+          <Button onClick={() => setCreating('database')}>
+            <Table2 aria-hidden />
+            {t('folio.space.new.database')}
+          </Button>
+          <Button onClick={() => setCreating('whiteboard')}>
+            <Shapes aria-hidden />
+            {t('folio.space.new.whiteboard')}
+          </Button>
+        </S.Actions>
+      )}
 
       <S.Body>
         <S.Side>
