@@ -32,6 +32,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      default:
+        # The worker's browser opens the print view here: Chromium forces HTTPS for a
+        # bare "app" (.app is an HSTS-preloaded domain), so it needs another name.
+        aliases: [radicle-web]
     restart: unless-stopped
 
   # Background jobs (template sync, image variants, bulk edits). Same image as app;
@@ -43,7 +48,7 @@ services:
       <<: *app-env
       RADICLE_MIGRATE: "false"
       # PDF exports: the worker's browser opens the app's print view here.
-      RADICLE_INTERNAL_URL: http://app:8000
+      RADICLE_INTERNAL_URL: http://radicle-web:8000
     volumes:
       - attachments:/data/attachments
     depends_on:

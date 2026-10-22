@@ -32,6 +32,7 @@ export function FolioPrintView() {
   if (!print.data) return null;
   return (
     <S.Pages data-print-ready={ready ? '' : undefined}>
+      <S.PrintBody />
       {print.data.pages.map((page) => (
         <S.Sheet key={page.id}>
           <PublicArticle page={page} env={{ assetUrl: (id) => printAssetUrl(token, id) }} />

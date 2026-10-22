@@ -1,4 +1,13 @@
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
+
+// Printed with backgrounds: the sheet below the last page must be the page's color, not
+// the app's.
+export const PrintBody = createGlobalStyle`
+  html,
+  body {
+    background: ${({ theme }) => theme.color.surface};
+  }
+`;
 
 export const Pages = styled.div`
   background: ${({ theme }) => theme.color.surface};
