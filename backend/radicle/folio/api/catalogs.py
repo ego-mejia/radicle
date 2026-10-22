@@ -71,6 +71,15 @@ FIELDS = [
         name="docket_milestones", required=False, rule="Up to 20 milestone names of that project"
     ),
     FieldRule(name="docket_areas", required=False, rule="Up to 20 area names of that project"),
+    FieldRule(
+        name="decision_status",
+        required=False,
+        rule="For a decision log: accepted, proposed or replaced",
+    ),
+    FieldRule(name="decision_topic", required=False, rule="For a decision log: up to 40 chars"),
+    FieldRule(
+        name="decision_replaces", required=False, rule="Id of the decision this one replaces"
+    ),
 ]
 
 

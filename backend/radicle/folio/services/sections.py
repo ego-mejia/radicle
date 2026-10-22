@@ -1,6 +1,7 @@
-"""The Specs section of a space (RAD-57): the published build specs the reader can see, with
-what the table filters on. A spec's status comes from the tickets it created (Folio 4.3),
-as far as the reader can see them in Docket (ADR 0045)."""
+"""The Specs and Architecture decisions sections of a space (RAD-57): the published build
+specs and decision logs the reader can see, with what the tables filter on. A spec's status
+comes from the tickets it created (Folio 4.3) with the reader's Docket access; a decision's
+number is its order of first publication in the space (ADR 0045)."""
 
 import uuid
 from collections import Counter
@@ -15,12 +16,15 @@ import radicle.docket.public as docket
 from radicle.folio.db.docket_links import FolioTicketLink, TicketLinkKind
 from radicle.folio.db.models import FolioNode, FolioSpace, FolioVersion, NodeStatus
 from radicle.folio.services import access
+from radicle.folio.services.metadata import DECISION_STATUSES
 from radicle.platform.db.models import User
 from radicle.platform.errors import ValidationFailed
 
 SPEC_TYPE = "build-spec"
+DECISION_TYPE = "decision-log"
 MAX_ROWS = 500
 SPEC_STATUSES = ("planned", "live", "done", "outdated")
+DECISION_FILTERS = ("current", "all", *DECISION_STATUSES)
 
 
 @dataclass
@@ -47,6 +51,25 @@ class Specs:
     projects: list[tuple[str, int]]
     features: list[tuple[str, int]]
     owners: list[tuple[str, str, int]]
+
+
+@dataclass
+class Decision(Page):
+    number: int = 0
+    topic: str | None = None
+    project: str | None = None
+    status: str = "accepted"
+    replaces: int | None = None
+    replaced_by: int | None = None
+
+
+@dataclass
+class Decisions:
+    items: list[Decision]
+    total: int
+    hidden_replaced: int
+    topics: list[tuple[str, int]]
+    projects: list[tuple[str, int]]
 
 
 def _invalid(field_name: str, message: str) -> ValidationFailed:
@@ -172,3 +195,63 @@ async def _progress(db: AsyncSession, user: User, specs: list[Spec]) -> None:
             spec.status = "live"
         else:
             spec.status = "planned"
+
+
+async def list_decisions(
+    db: AsyncSession,
+    user: User,
+    space: FolioSpace,
+    *,
+    topic: str | None = None,
+    project: str | None = None,
+    status: str = "current",
+    q: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+) -> Decisions:
+    if status not in DECISION_FILTERS:
+        raise _invalid(
+            "status", f"Unknown status {status}. Use one of: {', '.join(DECISION_FILTERS)}."
+        )
+    pages = await _published(db, user, space, DECISION_TYPE)
+    decisions = [
+        Decision(
+            p.node,
+            p.metadata,
+            p.owner_name,
+            number=i,
+            topic=p.metadata.get("decision_topic") or None,
+            project=p.metadata.get("docket_project") or None,
+            status=p.metadata.get("decision_status") or "accepted",
+        )
+        for i, p in enumerate(pages, start=1)
+    ]
+    by_id = {str(d.node.id): d for d in decisions}
+    for d in decisions:
+        old = by_id.get(str(d.metadata.get("decision_replaces") or ""))
+        if old is not None and old is not d:
+            d.replaces = old.number
+            old.replaced_by = d.number
+            old.status = "replaced"
+    topics = Counter(d.topic for d in decisions if d.topic)
+    projects = Counter(d.project for d in decisions if d.project)
+    replaced = [d for d in decisions if d.status == "replaced"]
+    rows = [
+        d
+        for d in decisions
+        if (not topic or d.topic == topic)
+        and (not project or d.project == project.strip().upper())
+        and (
+            status == "all"
+            or (d.status != "replaced" if status == "current" else d.status == status)
+        )
+        and (not q or _matches(d, q))
+    ]
+    rows.sort(key=lambda d: d.number, reverse=True)
+    return Decisions(
+        items=rows[offset : offset + limit],
+        total=len(rows),
+        hidden_replaced=len(replaced) if status == "current" else 0,
+        topics=sorted(topics.items(), key=lambda kv: (-kv[1], kv[0])),
+        projects=sorted(projects.items(), key=lambda kv: (-kv[1], kv[0])),
+    )

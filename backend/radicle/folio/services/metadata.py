@@ -3,6 +3,7 @@ document type, labels, an owner, audiences and a language. Validation lives here
 app, the API and the MCP get the same rules and the same list of missing fields."""
 
 import re
+import uuid
 from collections.abc import Callable
 from typing import Any
 
@@ -21,6 +22,7 @@ FIELDS = ("title", "description", "doc_type", "labels", "owner", "audiences", "l
 # Optional links to Docket (Folio 4.4): the doc shows in those milestones and areas.
 PROJECT_RE = re.compile(r"^[A-Z][A-Z0-9]{1,9}$")
 MAX_DOCKET_NAMES = 20
+DECISION_STATUSES = ("accepted", "proposed", "replaced")
 
 
 class MetadataIncomplete(ValidationFailed):
@@ -102,6 +104,7 @@ async def validate_metadata(
     out["language"] = language
 
     _docket_fields(metadata, out, fail)
+    _decision_fields(metadata, out, fail)
 
     if errors:
         raise MetadataIncomplete(errors)
@@ -131,3 +134,27 @@ def _docket_fields(
             out[field] = clean
     if project:
         out["docket_project"] = project
+
+
+def _decision_fields(
+    metadata: dict[str, Any], out: dict[str, Any], fail: Callable[[str, str], None]
+) -> None:
+    """decision_status, decision_topic and decision_replaces (ADR 0045), kept only when set.
+    They describe an architecture decision; any doc type may carry them, but only decision
+    logs are listed in that section."""
+    status = str(metadata.get("decision_status") or "").strip()
+    if status and status not in DECISION_STATUSES:
+        fail("decision_status", f"one of {', '.join(DECISION_STATUSES)}")
+    elif status:
+        out["decision_status"] = status
+    topic = str(metadata.get("decision_topic") or "").strip()
+    if len(topic) > 40:
+        fail("decision_topic", "up to 40 characters")
+    elif topic:
+        out["decision_topic"] = topic
+    replaces = str(metadata.get("decision_replaces") or "").strip()
+    if replaces:
+        try:
+            out["decision_replaces"] = str(uuid.UUID(replaces))
+        except ValueError:
+            fail("decision_replaces", "the id of the decision this one replaces")
