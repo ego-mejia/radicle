@@ -21,6 +21,15 @@ RUN uv sync --frozen --no-dev
 
 # --- runtime ---------------------------------------------------------------------------
 FROM python:3.12-slim AS runtime
+# Chromium prints Folio's PDF exports (5.2). It adds about 300 MB to the image; build with
+# --build-arg PDF=false to leave it out, and PDF exports then fail with a clear message.
+ARG PDF=true
+RUN if [ "$PDF" = "true" ]; then \
+      apt-get update \
+      && apt-get install -y --no-install-recommends chromium fonts-liberation fonts-noto-color-emoji \
+      && rm -rf /var/lib/apt/lists/*; \
+    fi
+ENV RADICLE_CHROMIUM_PATH=/usr/bin/chromium
 RUN groupadd --system radicle && useradd --system --gid radicle --home /app radicle \
     && mkdir -p /data/attachments && chown -R radicle:radicle /data
 ENV PATH="/opt/venv/bin:$PATH" \

@@ -14,8 +14,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from radicle.folio.db.exports import ExportFormat, ExportScope, ExportStatus, FolioExport
 from radicle.folio.db.models import FolioNode, FolioSpace, NodeKind
 from radicle.folio.services import access
-from radicle.folio.services.exporting import writers
-from radicle.folio.services.exporting.pages import collect
+from radicle.folio.services.exporting import print_link, writers
+from radicle.folio.services.exporting.pages import ExportPage, collect
 from radicle.platform.db.models import User, utcnow
 from radicle.platform.errors import Forbidden, NotFound, ValidationFailed
 from radicle.platform.services import queue
@@ -118,3 +118,19 @@ async def run_export(db: AsyncSession, export_id: str, **_: Any) -> None:
     row = await db.get(FolioExport, uuid.UUID(export_id))
     if row is not None and row.status == ExportStatus.queued:
         await run(db, row)
+
+
+# --- the print view the worker opens for a PDF -------------------------------------------
+
+
+async def print_view(
+    db: AsyncSession, token: str, now: float | None = None
+) -> tuple[FolioExport, FolioSpace, list[ExportPage]]:
+    """What a print token shows: the export's pages as its author sees them."""
+    export_id = print_link.export_of(token, now)
+    row = await db.get(FolioExport, export_id) if export_id else None
+    user = await db.get(User, row.created_by) if row else None
+    space = await db.get(FolioSpace, row.space_id) if row else None
+    if row is None or user is None or space is None:
+        raise NotFound("This print link doesn't exist or expired.")
+    return row, space, await collect(db, user, space, row.node_id)

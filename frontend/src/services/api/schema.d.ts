@@ -2604,6 +2604,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/print/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read Print
+         * @description The pages of an export being printed. The token comes with the export's job.
+         */
+        get: operations["read_print_api_v1_folio_print__token__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/print/{token}/assets/{asset_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Print Asset */
+        get: operations["read_print_asset_api_v1_folio_print__token__assets__asset_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/pub/{token}": {
         parameters: {
             query?: never;
@@ -9895,6 +9932,15 @@ export interface components {
             shortcuts: boolean;
             /** Theme */
             theme: string;
+        };
+        /** PrintOut */
+        PrintOut: {
+            /**
+             * Pages
+             * @description In tree order, as the export's author sees
+             */
+            pages: components["schemas"]["PublicPageOut"][];
+            space: components["schemas"]["PublicSpaceOut"];
         };
         /**
          * Priority
@@ -18046,6 +18092,67 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["Page_FolioPersonOut_"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_print_api_v1_folio_print__token__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PrintOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    read_print_asset_api_v1_folio_print__token__assets__asset_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+                asset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

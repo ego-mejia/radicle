@@ -90,23 +90,29 @@ def asset_ids(doc: dict[str, Any]) -> list[str]:
     return found
 
 
+async def owned_asset(db: AsyncSession, pages: list[ExportPage], raw: str) -> FolioAsset | None:
+    """The asset if it is one of these pages' files or covers; never another page's file,
+    even if a document names its id."""
+    try:
+        asset = await db.get(FolioAsset, uuid.UUID(raw))
+    except ValueError:
+        return None
+    if asset is None:
+        return None
+    mine = asset.node_id in {p.node.id for p in pages}
+    return asset if mine or asset.id in {p.node.cover_asset_id for p in pages} else None
+
+
 async def load_assets(db: AsyncSession, pages: list[ExportPage]) -> dict[str, ExportAsset]:
-    """The files of these pages (and their covers) that belong to them, by id."""
+    """The files of these pages (and their covers), by id."""
     ids: list[str] = []
     for p in pages:
         if p.node.cover_asset_id:
             ids.append(str(p.node.cover_asset_id))
         ids += asset_ids(p.version.content_json)
-    page_ids = {p.node.id for p in pages}
-    covers = {p.node.cover_asset_id for p in pages}
     out: dict[str, ExportAsset] = {}
     for raw in dict.fromkeys(ids):
-        try:
-            asset = await db.get(FolioAsset, uuid.UUID(raw))
-        except ValueError:
-            continue
-        # Never another page's file, even if a document names its id.
-        if asset is None or (asset.node_id not in page_ids and asset.id not in covers):
-            continue
-        out[raw] = ExportAsset(asset, await get_storage().get(asset.storage_key))
+        asset = await owned_asset(db, pages, raw)
+        if asset is not None:
+            out[raw] = ExportAsset(asset, await get_storage().get(asset.storage_key))
     return out

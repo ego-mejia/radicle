@@ -346,6 +346,10 @@ EXEMPT = {
     "/api/v1/folio/exports",
     "/api/v1/folio/exports/{export_id}",
     "/api/v1/folio/exports/{export_id}/download",
+    # The print view of an export, by a signed token that lasts minutes; it shows what the
+    # export's author sees: test_folio_exports.py.
+    "/api/v1/folio/print/{token}",
+    "/api/v1/folio/print/{token}/assets/{asset_id}",
     "/api/v1/mcp/tools",
     "/api/v1/projects/{key}/member-candidates",
     "/api/v1/openapi.json",

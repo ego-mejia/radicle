@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from radicle.folio.db.exports import ExportFormat, ExportStatus
 from radicle.folio.db.models import FolioNode, FolioSpace
 from radicle.folio.services import exports
+from radicle.folio.services.exporting import browser
 from radicle.platform.db.models import User
 from radicle.platform.errors import Forbidden, NotFound, ValidationFailed
 from tests.conftest import Team, run_jobs
@@ -161,10 +162,63 @@ async def test_who_may_export_and_what(db: AsyncSession, team: Team, guides: dic
 
 
 async def test_a_failure_is_reported_on_the_export(
-    db: AsyncSession, team: Team, guides: dict
+    db: AsyncSession, team: Team, guides: dict, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    async def no_browser(url: str) -> bytes:
+        raise RuntimeError("Chromium is not installed")
+
+    monkeypatch.setattr(browser, "pdf", no_browser)
     admin = await _user(db, team.instance.handle)
     row = await exports.create_export(db, admin, guides["space"], ExportFormat.pdf)
     await run_jobs(db)
     await db.refresh(row)
-    assert row.status == ExportStatus.failed and "not available" in row.stats["error"]
+    assert row.status == ExportStatus.failed and "Chromium" in row.stats["error"]
+
+
+async def test_a_pdf_prints_the_print_view_its_author_sees(
+    client: AsyncClient, db: AsyncSession, team: Team, guides: dict, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    opened: list[str] = []
+
+    async def fake_pdf(url: str) -> bytes:
+        opened.append(url)
+        return b"%PDF-1.7 printed"
+
+    monkeypatch.setattr(browser, "pdf", fake_pdf)
+    luis = await _user(db, team.member.handle)
+    row = await exports.create_export(db, luis, guides["space"], ExportFormat.pdf)
+    await run_jobs(db)
+    await db.refresh(row)
+    assert row.status == ExportStatus.done and row.filename == "guias.pdf", row.stats
+    assert (await exports.download(db, luis, row.id))[1].startswith(b"%PDF")
+    token = opened[0].rsplit("/print/", 1)[1]
+
+    view = await client.get(f"{API}/print/{token}")  # the browser has no account
+    assert view.status_code == 200, view.text
+    assert [p["title"] for p in view.json()["pages"]] == ["Conectar un agente"]
+    image = await client.get(f"{API}/print/{token}/assets/{guides['asset']}")
+    assert image.status_code == 200 and image.content.startswith(b"\x89PNG")
+    other = await client.get(f"{API}/print/{token}/assets/00000000-0000-0000-0000-000000000000")
+    assert other.status_code == 404
+    assert (await client.get(f"{API}/print/{token[:-2]}xx")).status_code == 404
+
+
+async def test_word_carries_a_picture_of_each_visual(
+    client: AsyncClient, db: AsyncSession, team: Team, guides: dict, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    async def fake_shots(codes: list[str]) -> list[bytes | None]:
+        return [_png() for _ in codes]
+
+    monkeypatch.setattr(browser, "shots", fake_shots)
+    svg = '<svg viewBox="0 0 10 10"><rect width="10" height="10"/></svg>'
+    md = f'```visual{{format=svg title="Flujo" description="El flujo del token"}}\n{svg}\n```\n'
+    await publish(client, team, guides["guide"], md)
+    admin = await _user(db, team.instance.handle)
+    row = await exports.create_export(
+        db, admin, await _node(db, guides["guide"]), ExportFormat.docx
+    )
+    await run_jobs(db)
+    await db.refresh(row)
+    doc = Document(io.BytesIO((await exports.download(db, admin, row.id))[1]))
+    assert len(doc.inline_shapes) == 1
+    assert "El flujo del token" in [p.text for p in doc.paragraphs]
