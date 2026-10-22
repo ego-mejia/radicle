@@ -11,7 +11,7 @@ type Props = { plugin: string; block: string; data?: Record<string, string> | nu
 /** A plugin's block (Folio 5.7) in the Visual's sandbox with its values; a notice when
  * the plugin is off or gone. */
 export function PluginFrame({ plugin, block, data }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const blocks = usePluginBlocks();
   if (blocks.isPending) return <PageSpinner />;
   const def = blocks.byId.get(`${plugin}/${block}`);
@@ -22,5 +22,10 @@ export function PluginFrame({ plugin, block, data }: Props) {
         {t('folio.plugin.off', { plugin })}
       </S.Off>
     );
-  return <VisualFrame code={pluginCode(def.html, data ?? {})} description={def.name} />;
+  return (
+    <VisualFrame
+      code={pluginCode(def.html, data ?? {}, i18n.language.slice(0, 2))}
+      description={def.name}
+    />
+  );
 }

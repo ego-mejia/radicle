@@ -32,7 +32,9 @@ describe('PluginBlockEditor', () => {
     await userEvent.selectOptions(screen.getByLabelText('Tamaño (optional)'), 'M');
     expect(update).toHaveBeenLastCalledWith({ data: { title: 'V1', size: 'M' } });
     const frame = document.querySelector('iframe');
-    expect(frame?.getAttribute('srcdoc')).toContain('window.radicle={"data":{"title":"V1"}}');
+    expect(frame?.getAttribute('srcdoc')).toContain(
+      'window.radicle={"data":{"title":"V1"},"lang":"en"}',
+    );
     expect(frame).toHaveAttribute('sandbox', 'allow-scripts');
   });
 
