@@ -2815,6 +2815,9 @@
         "html": "Abre desde el disco",
         "markdown": "Zip con front matter"
       }
+    },
+    "plugin": {
+      "off": "Este bloque viene del plugin {{plugin}}, que está apagado. Un admin puede encenderlo en Admin → Plugins."
     }
   },
   "notifications": {

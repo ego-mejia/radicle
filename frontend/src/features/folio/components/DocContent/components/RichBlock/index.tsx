@@ -18,6 +18,7 @@ import { TicketProgress } from '../../../TicketProgress';
 import { Timeline, type TimelineItem } from '../../../Timeline';
 import { WhiteboardEmbed } from '../../../WhiteboardEmbed';
 import { CalendarEmbed } from '../../../CalendarEmbed';
+import { PluginFrame } from '../../../PluginFrame';
 import * as S from './style';
 
 export type ChildPage = { id: string; title: string; slug: string };
@@ -25,6 +26,7 @@ export type ChildPage = { id: string; title: string; slug: string };
 const ACCOUNT_ONLY = new Set([
   'whiteboard',
   'calendar',
+  'pluginBlock',
   'databaseView',
   'pageList',
   'ticketTable',
@@ -141,6 +143,14 @@ export function RichBlock({ node: n, previous, headings, childPages, children }:
       return <Formula latex={String(a.latex ?? '')} />;
     case 'whiteboard':
       return <WhiteboardEmbed nodeId={String(a.whiteboard)} />;
+    case 'pluginBlock':
+      return (
+        <PluginFrame
+          plugin={String(a.plugin)}
+          block={String(a.block)}
+          data={(a.data as Record<string, string> | null) ?? null}
+        />
+      );
     case 'calendar':
       return (
         <CalendarEmbed

@@ -2815,6 +2815,9 @@
         "html": "Opens from disk",
         "markdown": "Zip with front matter"
       }
+    },
+    "plugin": {
+      "off": "This block comes from the plugin {{plugin}}, which is off. An admin can turn it on in Admin → Plugins."
     }
   },
   "notifications": {

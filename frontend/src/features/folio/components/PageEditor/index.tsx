@@ -36,6 +36,7 @@ import { mediaBlocks } from './media';
 import * as S from './style';
 import { useAutosave } from '../../hooks/useAutosave';
 import { useComments } from '../../hooks/useComments';
+import { usePluginBlocks } from '../../hooks/usePluginBlocks';
 import { useCollab, type Collab, type Me } from '../../hooks/useCollab';
 import { collabExtensions } from '../../editor/collab';
 import { colorFor } from '../../editor/presence';
@@ -107,6 +108,7 @@ function Loaded({ node, draft, onPublish, extensions, room }: LoadedProps) {
   const bodyEl = useRef<HTMLDivElement>(null);
   const pageEl = useRef<HTMLDivElement>(null);
   const discussion = useComments(node.id);
+  usePluginBlocks(); // fills the / menu with the plugin blocks that are on
 
   const body = useAutosave(async (doc: Record<string, unknown>) => {
     const saved = await saveDraft(node.id, { content_json: doc });

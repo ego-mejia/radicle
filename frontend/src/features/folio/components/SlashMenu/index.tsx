@@ -55,7 +55,7 @@ export const SlashMenu = forwardRef<SlashMenuHandle, Props>(function SlashMenu(
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => command(item)}
         >
-          {t(`folio.editor.blocks.${item.key}`)}
+          {item.label ?? t(`folio.editor.blocks.${item.key}`)}
         </S.Item>
       ))}
     </S.Menu>
