@@ -3011,6 +3011,28 @@
     },
     "docsSection": {
       "general": "General"
+    },
+    "sectionsEditor": {
+      "title": "Sections of this space",
+      "hint": "Choose which sections the space's portada shows, and in what order.",
+      "count_one": "{{count}} page",
+      "count_other": "{{count}} pages",
+      "up": "Move {{name}} up",
+      "down": "Move {{name}} down",
+      "save": "Save sections",
+      "saved": "Sections saved"
+    },
+    "spaceAdmin": {
+      "title": "Manage {{space}}",
+      "back": "Back to {{space}}",
+      "tabsLabel": "Manage the space",
+      "tabs": {
+        "pages": "Pages",
+        "sections": "Sections",
+        "settings": "Settings",
+        "permissions": "Permissions"
+      },
+      "settingsHint": "How long a Verified page stays verified, the editor's AI, readers in analytics, and exporting the whole space."
     }
   },
   "notifications": {
