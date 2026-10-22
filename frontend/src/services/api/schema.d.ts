@@ -3080,6 +3080,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/folio/spaces/{key}/specs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Specs
+         * @description The space's published build specs you can see, newest first, with their tickets'
+         *     progress and the counts the filters show. `feature` only applies with `project`.
+         */
+        get: operations["list_specs_api_v1_folio_spaces__key__specs_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/folio/spaces/{key}/tree": {
         parameters: {
             query?: never;
@@ -7014,6 +7035,13 @@ export interface components {
              */
             space?: string | null;
         };
+        /** Count */
+        Count: {
+            /** Count */
+            count: number;
+            /** Value */
+            value: string;
+        };
         /** CustomFieldCreate */
         CustomFieldCreate: {
             /**
@@ -9665,6 +9693,15 @@ export interface components {
          * @enum {string}
          */
         Origin: "team" | "user";
+        /** OwnerCount */
+        OwnerCount: {
+            /** Count */
+            count: number;
+            /** Handle */
+            handle: string;
+            /** Name */
+            name: string;
+        };
         /** OwnerIn */
         OwnerIn: {
             /**
@@ -11351,6 +11388,46 @@ export interface components {
              * @description In the order to show them; any you leave out come last, shown
              */
             sections: components["schemas"]["SpaceSectionIn"][];
+        };
+        /** SpecListOut */
+        SpecListOut: {
+            /** Features */
+            features: components["schemas"]["Count"][];
+            /** Items */
+            items: components["schemas"]["SpecRowOut"][];
+            /** Owners */
+            owners: components["schemas"]["OwnerCount"][];
+            /** Projects */
+            projects: components["schemas"]["Count"][];
+            /** Total */
+            total: number;
+        };
+        /** SpecRowOut */
+        SpecRowOut: {
+            /** Description */
+            description: string;
+            /** Features */
+            features: string[];
+            node: components["schemas"]["NodeRef"];
+            /** Owner */
+            owner: string | null;
+            /** Owner Name */
+            owner_name: string | null;
+            /** Project */
+            project: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "planned" | "live" | "done" | "outdated";
+            /** Tickets Done */
+            tickets_done: number;
+            /** Tickets In Progress */
+            tickets_in_progress: number;
+            /** Tickets Total */
+            tickets_total: number;
+            /** Updated At */
+            updated_at: string;
         };
         /** SprintComplete */
         SprintComplete: {
@@ -19432,6 +19509,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SpaceSectionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_specs_api_v1_folio_spaces__key__specs_get: {
+        parameters: {
+            query?: {
+                /** @description Docket project key, e.g. RAD */
+                project?: string | null;
+                /** @description Docket areas of that project */
+                feature?: string[];
+                status?: ("planned" | "live" | "done" | "outdated") | null;
+                /** @description Owner handle */
+                owner?: string | null;
+                q?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SpecListOut"];
                 };
             };
             /** @description Validation Error */

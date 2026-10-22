@@ -303,6 +303,7 @@ EXEMPT = {
     "/api/v1/folio/templates",
     "/api/v1/folio/link-preview",
     "/api/v1/folio/page-list",
+    "/api/v1/folio/spaces/{key}/specs",
     "/api/v1/folio/ai/availability",
     "/api/v1/folio/glossary",
     "/api/v1/folio/chat/availability",
