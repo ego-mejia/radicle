@@ -18,16 +18,17 @@ Folio usaba una barra superior y Docket un sidebar. Al cambiar de app el selecto
 ### Portada del space y secciones
 
 - La home de un space es una portada: hero oscuro con título, descripción, páginas, carpetas y participantes (los admins se distinguen), una búsqueda limitada al space, pastillas de secciones y el contenido en bento.
-- Una sección es una vista filtrada del space por tipo de documento. Propuesta inicial (la refina quien implemente la portada):
+- Una sección es una vista filtrada del space por tipo de documento. Cada una tiene una clave en inglés que es también su ruta (`/folio/s/$key/specs`, `/decisions`, `/guides`, `/docs`):
 
 | Sección | Tipos de documento | Vista |
 | --- | --- | --- |
-| Specs | `build-spec` | Tabla con filtros proyecto → feature, estado y dueño |
-| Decisiones de arquitectura | `decision-log` | Tabla con filtros de tema, proyecto y estado |
-| Guías | `how-to` | Camino de primeros pasos y guías por categoría |
-| Documentación | `reference` | Módulos y referencia |
+| Specs (`specs`) | `build-spec` | Tabla con filtros proyecto → feature, estado y dueño |
+| Decisiones de arquitectura (`decisions`) | `decision-log` | Tabla con filtros de tema, proyecto y estado |
+| Guías (`guides`) | `how-to`, `guide` | Camino de primeros pasos (label `getting-started`) y guías por categoría (sus labels) |
+| Documentación (`docs`) | `reference` | Un módulo por carpeta, con sus páginas |
 
-- Las secciones son configurables por space: un admin elige cuáles se muestran y en qué orden. Un space sin configurar muestra las secciones que tienen al menos un documento.
+- Las secciones son configurables por space: un admin elige cuáles se muestran y en qué orden (`folio_spaces.sections`, migración 0065; `PUT /folio/spaces/{key}/sections`). Un space sin configurar muestra las cuatro en ese orden: las pastillas del hero enseñan qué cabe en el space aunque una sección esté vacía, y una sección vacía explica cómo llenarla. La portada solo pinta tarjetas de secciones con páginas.
+- `GET /folio/spaces/{key}/overview` da las páginas y carpetas que la persona puede abrir, cada sección con su conteo y los participantes por rol (admin, editor, lector; los grupos se expanden y los agentes cuentan).
 - "Administrar" abre el modo admin del space: páginas, permisos, secciones y ajustes.
 
 ### Lectura
