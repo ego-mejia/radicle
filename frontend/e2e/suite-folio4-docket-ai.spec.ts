@@ -172,7 +172,8 @@ test("a ticket's Docs panel lists the doc that mentions it", async () => {
 test('the chat answers with a citation that opens the section', async () => {
   test.skip(!FAKE_AI, 'Set RADICLE_E2E_FAKE_AI_URL so Radicle can reach the fake model.');
   await admin.goto('/folio');
-  await admin.getByRole('button', { name: 'Ask', exact: true }).first().click();
+  // Radi's button opens the docs chat in Folio (RAD-57).
+  await admin.getByRole('button', { name: 'Ask Radi for help' }).click();
   const chat = admin.getByRole('complementary', { name: 'Ask the docs' });
   const ask = chat.getByLabel('Your question');
   await ask.fill('¿Cómo conecto el agente de soporte?');
