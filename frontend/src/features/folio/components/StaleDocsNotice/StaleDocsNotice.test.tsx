@@ -40,7 +40,7 @@ describe('StaleDocsNotice', () => {
       'href',
       '/folio/p/a-a',
     );
-    const url = decodeURIComponent(calls[0].path).replace(/\+/g, ' ');
+    const url = decodeURIComponent(calls[0]?.path ?? '').replace(/\+/g, ' ');
     expect(url).toContain('status = outdated');
     expect(url).toContain('space = eng');
   });

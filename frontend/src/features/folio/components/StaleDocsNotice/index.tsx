@@ -28,13 +28,13 @@ export function StaleDocsNotice({ space }: { space: string }) {
       (await queryDocs(sectionQuery(space, 'docs', 'status = outdated', 'updated ASC'), 20)).items,
   });
   const docs = stale.data ?? [];
-  if (!docs.length) return null;
+  const first = docs[0];
+  if (!first) return null;
   const key = keyOf(
     space,
     docs.map((d) => d.id),
   );
   if (hiddenKey === key || dismissed(key)) return null;
-  const first = docs[0];
   const page = `${first.id}-${first.slug}`;
   const dismiss = () => {
     try {
