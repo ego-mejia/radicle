@@ -2991,6 +2991,16 @@
       "pending": "Not read yet",
       "all": "All guides",
       "categories": "Categories"
+    },
+    "radi": {
+      "name": "Radi",
+      "subtitle": "Help with Folio",
+      "tools": "What Radi did",
+      "writeDraft": "Write a draft with this",
+      "draft": "draft",
+      "draftReady": "Draft ready:",
+      "draftTitle": "Draft from Radi",
+      "openDraft": "Open the draft"
     }
   },
   "notifications": {

@@ -2991,6 +2991,16 @@
       "pending": "Pendiente",
       "all": "Todas las guías",
       "categories": "Categorías"
+    },
+    "radi": {
+      "name": "Radi",
+      "subtitle": "Ayuda con Folio",
+      "tools": "Lo que hizo Radi",
+      "writeDraft": "Escribir un borrador con esto",
+      "draft": "borrador",
+      "draftReady": "Borrador listo:",
+      "draftTitle": "Borrador de Radi",
+      "openDraft": "Abrir el borrador"
     }
   },
   "notifications": {

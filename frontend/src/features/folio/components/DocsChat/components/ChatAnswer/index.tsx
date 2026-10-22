@@ -7,12 +7,18 @@ import { MarkdownView } from '../../../../../../components/Markdown/MarkdownView
 import { Button, IconButton } from '../../../../../../components/ui/Button';
 import { type ChatMessage, sendChatFeedback } from '../../../../../../services/api/folioChat';
 import { linkCitations, pageOf } from '../../citations';
+import { DraftFromAnswer } from '../DraftFromAnswer';
+import { ToolChips } from '../ToolChips';
 import * as S from './style';
 
-type Props = { message: ChatMessage };
+type Props = {
+  message: ChatMessage;
+  /** The question it answers; with it, Radi shows his tools and can write a draft. */
+  question?: string;
+};
 
 /** One answer: its text with linked citations, the sources it used, and thumbs. */
-export function ChatAnswer({ message }: Props) {
+export function ChatAnswer({ message, question }: Props) {
   const { t } = useTranslation();
   const [feedback, setFeedback] = useState(message.feedback);
   const [noting, setNoting] = useState(false);
@@ -26,6 +32,9 @@ export function ChatAnswer({ message }: Props) {
 
   return (
     <S.Answer>
+      {question !== undefined && message.citations.length > 0 && (
+        <ToolChips question={question} citations={message.citations} />
+      )}
       <MarkdownView>{linkCitations(message.content, message.citations)}</MarkdownView>
       {outdated && (
         <S.Warning role="note">
@@ -51,6 +60,9 @@ export function ChatAnswer({ message }: Props) {
             </S.Source>
           ))}
         </S.Sources>
+      )}
+      {question !== undefined && message.citations.length > 0 && (
+        <DraftFromAnswer question={question} message={message} />
       )}
       <S.Feedback>
         <IconButton

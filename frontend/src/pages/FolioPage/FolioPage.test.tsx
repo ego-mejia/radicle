@@ -19,13 +19,13 @@ function setup(role: 'admin' | 'creator' | 'reader') {
 }
 
 describe('FolioPage', () => {
-  it('puts the sidebar on the left and search, Ask and Write over the content', async () => {
+  it('puts the sidebar on the left, search and Write over the content, and Radi', async () => {
     setup('creator');
     const aside = await screen.findByRole('complementary');
     expect(within(aside).getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/folio');
     const bar = screen.getByRole('banner');
     expect(within(bar).getByPlaceholderText('Search the docs')).toBeInTheDocument();
-    expect(await within(bar).findByRole('button', { name: /Ask/ })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Ask Radi for help' })).toBeInTheDocument();
     expect(within(bar).getByRole('button', { name: /Write/ })).toBeInTheDocument();
     expect(
       within(bar).getByRole('button', { name: 'Open menu', hidden: true }),
@@ -35,7 +35,7 @@ describe('FolioPage', () => {
   it('has no Write for readers', async () => {
     setup('reader');
     const bar = await screen.findByRole('banner');
-    await within(bar).findByRole('button', { name: /Ask/ });
+    await screen.findByRole('button', { name: 'Ask Radi for help' });
     expect(within(bar).queryByRole('button', { name: /Write/ })).not.toBeInTheDocument();
   });
 });
