@@ -10,6 +10,7 @@ import type { DecisionFilters, SpecFilters } from '../../../../services/api/foli
 import type { SpaceSectionKey } from '../../../../services/api/folioSpaces';
 import { DecisionsTable } from '../../components/DecisionsTable';
 import { NewNodeDialog } from '../../components/NewNodeDialog';
+import { GuidesSection } from '../../components/GuidesSection';
 import { SectionDocs } from '../../components/SectionDocs';
 import { SpaceHero } from '../../components/SpaceHero';
 import { SpecsTable } from '../../components/SpecsTable';
@@ -58,6 +59,8 @@ export function FolioSectionView({ section }: { section: SpaceSectionKey }) {
               setQ(f.q ?? '');
             }}
           />
+        ) : section === 'guides' && !q ? (
+          <GuidesSection space={key} />
         ) : (
           <SectionDocs space={key} section={section} q={q} />
         )}

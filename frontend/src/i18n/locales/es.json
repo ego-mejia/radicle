@@ -2980,6 +2980,14 @@
         "proposed": "En discusión",
         "replaced": "Reemplazada"
       }
+    },
+    "guides": {
+      "path": "¿Recién llegas? Síguelas en orden",
+      "read": "Leída",
+      "next": "Sigue esta",
+      "pending": "Pendiente",
+      "all": "Todas las guías",
+      "categories": "Categorías"
     }
   },
   "notifications": {

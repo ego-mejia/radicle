@@ -10,7 +10,12 @@ export const SECTIONS: Record<SpaceSectionKey, { path: string; docTypes: string[
 };
 
 /** The RQL that lists a section's published pages in a space, newest first. */
-export function sectionQuery(space: string, key: SpaceSectionKey, extra = ''): string {
+export function sectionQuery(
+  space: string,
+  key: SpaceSectionKey,
+  extra = '',
+  order = 'published DESC',
+): string {
   const types = SECTIONS[key].docTypes.join(', ');
-  return `space = ${space} AND doc_type in (${types})${extra ? ` AND ${extra}` : ''} ORDER BY published DESC`;
+  return `space = ${space} AND doc_type in (${types})${extra ? ` AND ${extra}` : ''} ORDER BY ${order}`;
 }
