@@ -60,7 +60,7 @@ class Action:
 
 _actions: dict[str, Action] = {}
 _selectors: dict[str, Select] = {}
-_examples: list[dict[str, Any]] = []
+_examples: dict[str, dict[str, Any]] = {}
 
 
 def action(name: str, label: str, *, check: Check | None = None) -> Callable[[Run], Run]:
@@ -85,14 +85,18 @@ def selector(name: str) -> Callable[[Select], Select]:
 
 
 def example(name: str, description: str, trigger: dict[str, Any], steps: list[Any]) -> None:
-    """A ready-made rule admins start from (fields left empty are theirs to fill)."""
-    _examples.append(
-        {"name": name, "description": description, "trigger": trigger, "actions": steps}
-    )
+    """A ready-made rule admins start from (fields left empty are theirs to fill). Keyed by
+    name, so registering an app twice (main and the worker both do) lists it once."""
+    _examples[name] = {
+        "name": name,
+        "description": description,
+        "trigger": trigger,
+        "actions": steps,
+    }
 
 
 def examples() -> list[dict[str, Any]]:
-    return list(_examples)
+    return list(_examples.values())
 
 
 def actions() -> dict[str, str]:
