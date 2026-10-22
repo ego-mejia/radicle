@@ -27,9 +27,17 @@ class PluginOut(Output):
     updated_at: UtcDatetime
 
 
+class PluginExampleOut(Output):
+    key: str
+    name: str
+    description: str
+    installed: bool
+
+
 class PluginsOut(Output):
     items: list[PluginOut]
     hooks: list[str] = Field(description="Hooks this instance knows")
+    examples: list[PluginExampleOut] = Field(description="Plugins that ship with Radicle")
 
 
 class PluginIn(Input):
@@ -59,13 +67,29 @@ def _out(p: Plugin) -> PluginOut:
 async def list_plugins(admin: InstanceAdmin, db: Db) -> PluginsOut:
     """Installed plugins, and the hooks a manifest may use."""
     rows = await plugins.list_plugins(db)
-    return PluginsOut(items=[_out(p) for p in rows], hooks=plugins.hook_names())
+    installed = {p.key for p in rows}
+    examples = [
+        PluginExampleOut(
+            key=m["key"],
+            name=m["name"],
+            description=m.get("description", ""),
+            installed=m["key"] in installed,
+        )
+        for m in plugins.examples()
+    ]
+    return PluginsOut(items=[_out(p) for p in rows], hooks=plugins.hook_names(), examples=examples)
 
 
 @router.post("/admin/plugins", response_model=PluginOut, status_code=201)
 async def install_plugin(body: PluginIn, admin: InstanceAdmin, db: Db) -> PluginOut:
     """Install a plugin; a manifest with an installed key replaces it (an update)."""
     return _out(await plugins.install(db, admin, body.manifest))
+
+
+@router.post("/admin/plugins/examples/{key}", response_model=PluginOut, status_code=201)
+async def install_example(key: str, admin: InstanceAdmin, db: Db) -> PluginOut:
+    """Install a plugin that ships with Radicle, such as radicle.countdown."""
+    return _out(await plugins.install_example(db, admin, key))
 
 
 @router.patch("/admin/plugins/{key}", response_model=PluginOut)

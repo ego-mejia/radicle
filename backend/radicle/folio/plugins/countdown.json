@@ -1,0 +1,22 @@
+{
+  "key": "radicle.countdown",
+  "name": "Cuenta regresiva",
+  "version": "1.0.0",
+  "description": "Un bloque que cuenta los días que faltan para una fecha: un lanzamiento, una entrega, un evento.",
+  "author": "Radicle",
+  "hooks": {
+    "folio.register_blocks": [
+      {
+        "type": "countdown",
+        "name": "Cuenta regresiva",
+        "description": "Cuántos días faltan para una fecha.",
+        "icon": "⏳",
+        "fields": [
+          {"key": "title", "label": "Título", "kind": "text", "default": "Lanzamiento"},
+          {"key": "date", "label": "Fecha", "kind": "date", "required": true}
+        ],
+        "html": "<style>body{margin:0;font-family:var(--rdc-font);color:var(--rdc-text)}.card{display:flex;align-items:center;gap:20px;padding:20px 24px;border:1px solid var(--rdc-border);border-radius:var(--rdc-radius);background:var(--rdc-surface)}.n{font-size:48px;font-weight:700;color:var(--rdc-accent);min-width:2ch;text-align:right;font-variant-numeric:tabular-nums}.t{font-size:18px;font-weight:600}.s{color:var(--rdc-muted);font-size:14px}@media (prefers-reduced-motion:no-preference){.n{animation:pop .6s ease-out}}@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}</style><div class=\"card\"><div class=\"n\" id=\"n\">–</div><div><div class=\"t\" id=\"t\"></div><div class=\"s\" id=\"s\"></div></div></div><script>(function(){var d=(window.radicle&&window.radicle.data)||{};var es=(navigator.language||'es').slice(0,2)==='es';document.getElementById('t').textContent=d.title||(es?'Lanzamiento':'Launch');var when=d.date?new Date(d.date+'T00:00:00'):null;var n=document.getElementById('n'),s=document.getElementById('s');if(!when||isNaN(when)){n.textContent='?';s.textContent=es?'Elige una fecha':'Pick a date';return}var today=new Date();today.setHours(0,0,0,0);var days=Math.round((when-today)/864e5);n.textContent=Math.abs(days);var f=when.toLocaleDateString(navigator.language,{day:'numeric',month:'long',year:'numeric'});s.textContent=days>0?(es?'días para el '+f:'days until '+f):days===0?(es?'¡Es hoy!':'It is today!'):(es?'días desde el '+f:'days since '+f)})();</script>"
+      }
+    ]
+  }
+}

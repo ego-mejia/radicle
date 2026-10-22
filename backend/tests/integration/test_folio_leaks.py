@@ -160,6 +160,7 @@ EXEMPT = {
     # export's author sees: test_folio_exports.py.
     "/api/v1/folio/print/{token}",
     "/api/v1/folio/print/{token}/assets/{asset_id}",
+    "/api/v1/folio/plugin-blocks",  # plugins' editor blocks (ADR 0043); no page data
 }
 
 
