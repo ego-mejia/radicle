@@ -16,12 +16,6 @@ export const Top = styled.div`
   gap: ${({ theme }) => theme.space.md};
 `;
 
-export const Actions = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.space.sm};
-`;
-
 export const Heading = styled.h1`
   margin: 0;
   font-size: ${({ theme }) => theme.fontSize.xxl};

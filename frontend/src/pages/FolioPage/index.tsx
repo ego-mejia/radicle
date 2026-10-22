@@ -1,44 +1,27 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link, Outlet, useNavigate } from '@tanstack/react-router';
-import { Inbox, ListChecks, LogOut, MessagesSquare, Shield, UserRound } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Outlet } from '@tanstack/react-router';
+import { Menu as MenuIcon, MessagesSquare } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SuiteSwitch } from '../../components/layout/SuiteSwitch';
-import { Avatar } from '../../components/ui/Avatar';
-import { Menu } from '../../components/ui/Menu';
+import { AppShell } from '../../components/layout/AppSidebar/style';
+import { IconButton } from '../../components/ui/Button';
 import { ChatPanel } from '../../features/folio/components/ChatPanel';
+import { FolioSidebar } from '../../features/folio/components/FolioSidebar';
 import { TopbarSearch } from '../../features/folio/components/TopbarSearch';
+import { WriteButton } from '../../features/folio/views/FolioHomeView/components/WriteButton';
 import { NotificationBell } from '../../features/notifications/components/NotificationBell';
 import { useHotkey } from '../../hooks/useHotkey';
-import { useMe } from '../../hooks/useMe';
 import { useSuiteShortcuts } from '../../hooks/useSuiteShortcuts';
-import { logout } from '../../services/api/auth';
-import { fetchFolioMe, fetchSubmissions, folioKeys } from '../../services/api/folio';
+import { fetchFolioMe, folioKeys } from '../../services/api/folio';
 import { chatKeys, fetchChatAvailability } from '../../services/api/folioChat';
-import { fetchMyTasks, taskKeys } from '../../services/api/folioWork';
 import * as S from './style';
 
-/** Folio's shell (Folio 0.5): the suite switch, search (from phase 1) and your avatar. */
+/** Folio's shell (ADR 0044): the sidebar on the left, as in Docket, and a slim bar with
+ * search, notifications and Write over the content. */
 export function FolioPage() {
   const { t } = useTranslation();
-  const me = useMe();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const [navOpen, setNavOpen] = useState(false);
   const { data: folio } = useQuery({ queryKey: folioKeys.me, queryFn: fetchFolioMe });
-  const { data: tasks } = useQuery({
-    queryKey: taskKeys.list('open'),
-    queryFn: () => fetchMyTasks('open'),
-    refetchInterval: 60_000,
-  });
-  const dueSoon = (tasks ?? []).filter(
-    (t) => t.bucket === 'overdue' || t.bucket === 'today',
-  ).length;
-  const { data: pending } = useQuery({
-    queryKey: folioKeys.submissions('pending'),
-    queryFn: () => fetchSubmissions('pending'),
-    enabled: folio?.role === 'admin',
-    refetchInterval: 60_000,
-  });
   useSuiteShortcuts();
   const { data: chat } = useQuery({
     queryKey: chatKeys.availability,
@@ -49,88 +32,44 @@ export function FolioPage() {
   const toggleChat = useCallback(() => setChatOpen((open) => !open), []);
   const closeChat = useCallback(() => setChatOpen(false), []);
   useHotkey('a', toggleChat, !!chat?.available);
-
-  const signOut = async () => {
-    await logout();
-    queryClient.clear();
-    await navigate({ to: '/login', search: { next: undefined } });
-  };
+  const writer = folio?.role === 'admin' || folio?.role === 'creator';
 
   return (
     <>
       <S.SkipLink href="#content">{t('nav.skip')}</S.SkipLink>
-      <S.Shell>
-        <S.Bar>
-          <S.BarInner>
-            <SuiteSwitch current="folio" />
+      <AppShell>
+        <FolioSidebar open={navOpen} onClose={() => setNavOpen(false)} />
+        <S.Main>
+          <S.Bar>
+            <S.MenuButton>
+              <IconButton label={t('folio.nav.menu')} onClick={() => setNavOpen(true)}>
+                <MenuIcon />
+              </IconButton>
+            </S.MenuButton>
             <S.Search>
               <TopbarSearch />
             </S.Search>
-            {folio?.role === 'admin' && (
-              <S.AdminLink as={Link} to="/folio/approvals">
-                <Inbox aria-hidden />
-                {t('folio.approvals.link')}
-                {!!pending?.length && (
-                  <S.Count title={t('folio.approvals.pendingCount', { count: pending.length })}>
-                    {pending.length}
-                  </S.Count>
-                )}
-              </S.AdminLink>
-            )}
-            {folio?.role === 'admin' && (
-              <S.AdminLink as={Link} to="/folio/admin">
-                <Shield aria-hidden />
-                {t('folio.admin.link')}
-              </S.AdminLink>
-            )}
-            <S.AdminLink as={Link} to="/folio/tasks">
-              <ListChecks aria-hidden />
-              {t('folio.tasks.link')}
-              {!!dueSoon && (
-                <S.Count title={t('folio.tasks.dueCount', { count: dueSoon })}>{dueSoon}</S.Count>
+            <S.Actions>
+              {chat?.available && (
+                <S.Ask
+                  type="button"
+                  onClick={toggleChat}
+                  aria-expanded={chatOpen}
+                  title={t('folio.chat.shortcut')}
+                >
+                  <MessagesSquare aria-hidden />
+                  {t('folio.chat.open')}
+                </S.Ask>
               )}
-            </S.AdminLink>
-            {chat?.available && (
-              <S.AdminLink
-                as="button"
-                type="button"
-                onClick={toggleChat}
-                aria-expanded={chatOpen}
-                title={t('folio.chat.shortcut')}
-              >
-                <MessagesSquare aria-hidden />
-                {t('folio.chat.open')}
-              </S.AdminLink>
-            )}
-            <NotificationBell />
-            <Menu
-              align="end"
-              trigger={
-                <S.Profile aria-label={t('nav.profile')}>
-                  <Avatar handle={me.handle} name={me.display_name} size={36} />
-                </S.Profile>
-              }
-              items={[
-                {
-                  key: 'profile',
-                  label: t('nav.profile'),
-                  icon: <UserRound />,
-                  onSelect: () => void navigate({ to: '/me' }),
-                },
-                {
-                  key: 'logout',
-                  label: t('nav.logout'),
-                  icon: <LogOut />,
-                  onSelect: () => void signOut(),
-                },
-              ]}
-            />
-          </S.BarInner>
-        </S.Bar>
-        <S.Content id="content" tabIndex={-1}>
-          <Outlet />
-        </S.Content>
-      </S.Shell>
+              <NotificationBell />
+              {writer && <WriteButton />}
+            </S.Actions>
+          </S.Bar>
+          <S.Content id="content" tabIndex={-1}>
+            <Outlet />
+          </S.Content>
+        </S.Main>
+      </AppShell>
       {chat?.available && <ChatPanel open={chatOpen} onClose={closeChat} />}
     </>
   );
