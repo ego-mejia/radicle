@@ -27,6 +27,7 @@ export const Trigger = styled.button`
   }
 
   > svg:last-child {
+    margin-left: auto;
     width: 14px;
     height: 14px;
     color: ${({ theme }) => theme.color.textMuted};

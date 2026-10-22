@@ -1,40 +1,52 @@
 import styled from 'styled-components';
 
-export const Shell = styled.div`
-  min-height: 100vh;
+export const Main = styled.div`
   display: flex;
   flex-direction: column;
-  background: ${({ theme }) => theme.color.bg};
+  min-width: 0;
+  min-height: 100vh;
 `;
 
+/** The slim bar over the content: same height and ground as Docket's top bar. */
 export const Bar = styled.header`
   position: sticky;
   top: 0;
   z-index: 30;
-  background: ${({ theme }) => theme.color.surface};
-  border-bottom: 1px solid ${({ theme }) => theme.color.border};
-`;
-
-export const BarInner = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: ${({ theme }) => `${theme.space.md} ${theme.space.xxl}`};
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: ${({ theme }) => theme.space.lg};
+  gap: ${({ theme }) => theme.space.md};
+  min-height: 52px;
+  padding: ${({ theme }) => `${theme.space.sm} ${theme.space.xl}`};
+  background: ${({ theme }) => theme.color.bg};
+  border-bottom: 1px solid ${({ theme }) => theme.color.border};
 
   @media (max-width: 600px) {
-    padding: ${({ theme }) => `${theme.space.sm} ${theme.space.lg}`};
+    padding: ${({ theme }) => `${theme.space.sm} ${theme.space.md}`};
+  }
+`;
+
+export const MenuButton = styled.div`
+  display: none;
+
+  @media (max-width: 860px) {
+    display: block;
   }
 `;
 
 export const Search = styled.div`
   flex: 1 1 280px;
+  max-width: 560px;
   min-width: 0;
 `;
 
-export const AdminLink = styled.a`
+export const Actions = styled.div`
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.space.sm};
+`;
+
+export const Ask = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -42,43 +54,30 @@ export const AdminLink = styled.a`
   padding: 0 12px;
   border: 1px solid ${({ theme }) => theme.color.border};
   border-radius: ${({ theme }) => theme.radius.lg};
+  background: ${({ theme }) => theme.color.surface};
   color: ${({ theme }) => theme.color.text};
+  font: inherit;
   font-size: ${({ theme }) => theme.fontSize.md};
-  text-decoration: none;
+  cursor: pointer;
 
   &:hover,
-  &[data-status='active'] {
+  &[aria-expanded='true'] {
     background: ${({ theme }) => theme.color.surface2};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.color.accent};
+    outline-offset: 2px;
   }
 
   svg {
     width: 16px;
     height: 16px;
   }
-`;
 
-export const Count = styled.span`
-  min-width: 20px;
-  padding: 0 6px;
-  border-radius: ${({ theme }) => theme.radius.full};
-  background: ${({ theme }) => theme.color.accentFill};
-  color: ${({ theme }) => theme.color.onAccent};
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: 600;
-  text-align: center;
-`;
-
-export const Profile = styled.button`
-  display: inline-flex;
-  padding: 0;
-  border: 0;
-  border-radius: ${({ theme }) => theme.radius.full};
-  background: none;
-  cursor: pointer;
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.color.accent};
-    outline-offset: 2px;
+  @media (max-width: 600px) {
+    font-size: 0;
+    gap: 0;
   }
 `;
 
@@ -89,6 +88,10 @@ export const Content = styled.main`
   margin: 0 auto;
   box-sizing: border-box;
   padding: ${({ theme }) => `${theme.space.xl} ${theme.space.xxl}`};
+
+  &:focus {
+    outline: none;
+  }
 
   @media (max-width: 600px) {
     padding: ${({ theme }) => theme.space.lg};

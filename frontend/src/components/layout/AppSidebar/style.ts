@@ -49,8 +49,14 @@ export const Scrim = styled.div<{ $open: boolean }>`
   }
 `;
 
+/** The suite switch fills the column, so it is the same size in every app. */
 export const Brand = styled.div`
   display: flex;
+
+  > * {
+    flex: 1;
+    min-width: 0;
+  }
 `;
 
 export const Section = styled.nav`
