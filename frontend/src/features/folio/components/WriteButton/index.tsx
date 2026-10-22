@@ -3,17 +3,17 @@ import { useNavigate } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../../../../../../components/ui/Button';
-import { Field, FormError } from '../../../../../../components/ui/Field';
-import { Input, Select } from '../../../../../../components/ui/Input';
-import { Modal } from '../../../../../../components/ui/Modal';
+import { Button } from '../../../../components/ui/Button';
+import { Field, FormError } from '../../../../components/ui/Field';
+import { Input, Select } from '../../../../components/ui/Input';
+import { Modal } from '../../../../components/ui/Modal';
 import {
   createFromTemplate,
   createNode,
   fetchSpaces,
   folioKeys,
-} from '../../../../../../services/api/folio';
-import { TemplatePicker } from '../../../../components/TemplatePicker';
+} from '../../../../services/api/folio';
+import { TemplatePicker } from '../TemplatePicker';
 import * as S from './style';
 
 type Kind = 'page' | 'blog_post';
