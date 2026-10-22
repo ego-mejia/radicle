@@ -10,14 +10,15 @@ import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { fetchSpace, folioKeys } from '../../../../services/api/folio';
 import { ExportMenu } from '../../components/ExportMenu';
 import { SpacePage } from '../../components/SpacePage';
+import { SpacePermissions } from '../../components/SpacePermissions';
 import { SpaceSectionsEditor } from '../../components/SpaceSectionsEditor';
 import { SpaceSettings } from '../../components/SpaceSettings';
 import * as S from './style';
 
-type Tab = 'pages' | 'sections' | 'settings';
+type Tab = 'pages' | 'permissions' | 'sections' | 'settings';
 
-/** "Manage" (RAD-57): the space's admin mode, with its pages and tree, which sections the
- * portada shows, and its settings. */
+/** "Manage" (RAD-57): the space's admin mode, with its pages and tree, who may do what,
+ * which sections the portada shows, and its settings. */
 export function FolioSpaceAdminView() {
   const { t } = useTranslation();
   const errorMessage = useErrorMessage();
@@ -33,6 +34,7 @@ export function FolioSpaceAdminView() {
     { id: 'pages', label: t('folio.spaceAdmin.tabs.pages') },
     ...(isAdmin
       ? [
+          { id: 'permissions' as const, label: t('folio.spaceAdmin.tabs.permissions') },
           { id: 'sections' as const, label: t('folio.spaceAdmin.tabs.sections') },
           { id: 'settings' as const, label: t('folio.spaceAdmin.tabs.settings') },
         ]
@@ -50,6 +52,11 @@ export function FolioSpaceAdminView() {
         <Tabs label={t('folio.spaceAdmin.tabsLabel')} tabs={tabs} value={tab} onChange={setTab} />
       </S.Head>
       {tab === 'pages' && <SpacePage spaceKey={s.key} />}
+      {tab === 'permissions' && (
+        <S.Body>
+          <SpacePermissions space={s.key} />
+        </S.Body>
+      )}
       {tab === 'sections' && (
         <S.Body>
           <SpaceSectionsEditor space={s.key} />
