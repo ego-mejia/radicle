@@ -1,4 +1,5 @@
 import { createRoute, redirect } from '@tanstack/react-router';
+import { createElement } from 'react';
 import { rootRoute, str } from '../../routerRoot';
 import { authKeys, fetchMe } from '../../services/api/auth';
 import { isApiError } from '../../services/api/client';
@@ -14,6 +15,8 @@ import { FolioHomeView } from './views/FolioHomeView';
 import { FolioPage } from '../../pages/FolioPage';
 import { FolioReadView } from './views/FolioReadView';
 import { FolioSearchView } from './views/FolioSearchView';
+import { FolioSectionView } from './views/FolioSectionView';
+import { FolioSpaceAdminView } from './views/FolioSpaceAdminView';
 import { FolioSpaceView } from './views/FolioSpaceView';
 import { FolioTasksView } from './views/FolioTasksView';
 import { FolioTemplateView } from './views/FolioTemplateView';
@@ -63,6 +66,25 @@ const folioSpaceRoute = createRoute({
   getParentRoute: () => folioLayout,
   path: '/folio/s/$key',
   component: FolioSpaceView,
+});
+
+/** A space's sections (RAD-57): pages of one doc type, each with its own view. */
+const sectionRoute = (section: 'specs' | 'decisions' | 'guides' | 'docs') =>
+  createRoute({
+    getParentRoute: () => folioLayout,
+    path: `/folio/s/$key/${section}`,
+    component: () => createElement(FolioSectionView, { section }),
+  });
+const folioSpecsRoute = sectionRoute('specs');
+const folioDecisionsRoute = sectionRoute('decisions');
+const folioGuidesRoute = sectionRoute('guides');
+const folioDocsRoute = sectionRoute('docs');
+
+/** "Manage": the space's admin mode, with its pages, permissions, sections and settings. */
+const folioSpaceAdminRoute = createRoute({
+  getParentRoute: () => folioLayout,
+  path: '/folio/s/$key/admin',
+  component: FolioSpaceAdminView,
 });
 
 const folioCalendarRoute = createRoute({
@@ -145,6 +167,11 @@ export const folioRouteTree = folioLayout.addChildren([
   folioAdminRoute,
   folioTemplateRoute,
   folioSpaceRoute,
+  folioSpecsRoute,
+  folioDecisionsRoute,
+  folioGuidesRoute,
+  folioDocsRoute,
+  folioSpaceAdminRoute,
   folioCalendarRoute,
   folioReadRoute,
   folioEditRoute,

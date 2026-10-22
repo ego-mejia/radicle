@@ -2911,6 +2911,12 @@
       "none": "Sin resultados",
       "searchForMore_one": "Busca para ver el {{count}} restante",
       "searchForMore_other": "Busca para ver los {{count}} restantes"
+    },
+    "sectionDocs": {
+      "error": "No cargaron las páginas de esta sección",
+      "empty": "Todavía no hay páginas aquí",
+      "noMatch": "Ningún título coincide con “{{q}}”",
+      "emptyHint": "Las páginas aparecen aquí cuando se publican con el tipo de documento de esta sección."
     }
   },
   "notifications": {
