@@ -7,7 +7,7 @@ type P3 = [number, number, number];
 /** Camera distance in drawing units: lower means stronger perspective. */
 const FOCAL = 420;
 /** How far the head turns toward the pointer at full gaze, in degrees. */
-const TURN = 38;
+const TURN = 24;
 const RAD = Math.PI / 180;
 
 /**
