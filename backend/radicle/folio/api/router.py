@@ -27,6 +27,7 @@ from radicle.folio.api import livedocs as livedocs_api
 from radicle.folio.api import organize as organize_api
 from radicle.folio.api import page_list as page_list_api
 from radicle.folio.api import people as people_api
+from radicle.folio.api import print_view as print_view_api
 from radicle.folio.api import public_links as public_links_api
 from radicle.folio.api import publishing as publishing_api
 from radicle.folio.api import query as query_api
@@ -180,4 +181,5 @@ router.include_router(calendars_api.router)
 router.include_router(chat_api.router)
 router.include_router(public_links_api.router)
 router.include_router(exports_api.router)
+router.include_router(print_view_api.router)
 router.include_router(imports_api.router)

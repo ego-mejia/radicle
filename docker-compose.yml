@@ -42,6 +42,8 @@ services:
     environment:
       <<: *app-env
       RADICLE_MIGRATE: "false"
+      # PDF exports: the worker's browser opens the app's print view here.
+      RADICLE_INTERNAL_URL: http://app:8000
     volumes:
       - attachments:/data/attachments
     depends_on:

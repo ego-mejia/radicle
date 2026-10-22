@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     smtp_password: str | None = None
     smtp_from: str = "Radicle <radicle@localhost>"
     smtp_tls: bool = True  # STARTTLS; port 465 uses implicit TLS
+    # PDF exports: the worker opens the app's print view in headless Chromium. The app's
+    # address as the worker reaches it (base_url when unset) and the browser to use
+    # (Playwright's own when unset).
+    internal_url: str | None = None
+    chromium_path: str | None = None
 
     @property
     def secure_cookies(self) -> bool:

@@ -12312,6 +12312,27 @@
         "title": "PreferencesOut",
         "type": "object"
       },
+      "PrintOut": {
+        "properties": {
+          "pages": {
+            "description": "In tree order, as the export's author sees",
+            "items": {
+              "$ref": "#/components/schemas/PublicPageOut"
+            },
+            "title": "Pages",
+            "type": "array"
+          },
+          "space": {
+            "$ref": "#/components/schemas/PublicSpaceOut"
+          }
+        },
+        "required": [
+          "space",
+          "pages"
+        ],
+        "title": "PrintOut",
+        "type": "object"
+      },
       "Priority": {
         "enum": [
           "highest",
@@ -28281,6 +28302,96 @@
           }
         },
         "summary": "People",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/print/{token}": {
+      "get": {
+        "description": "The pages of an export being printed. The token comes with the export's job.",
+        "operationId": "read_print_api_v1_folio_print__token__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrintOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Print",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/print/{token}/assets/{asset_id}": {
+      "get": {
+        "operationId": "read_print_asset_api_v1_folio_print__token__assets__asset_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "asset_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Asset Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Print Asset",
         "tags": [
           "folio",
           "folio"

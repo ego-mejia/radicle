@@ -156,6 +156,10 @@ EXEMPT = {
     # the pages its author can't see, and test_folio_exports_api.py someone else's export.
     "/api/v1/folio/exports/{export_id}",
     "/api/v1/folio/exports/{export_id}/download",
+    # The print view of an export, by a signed token that lasts minutes; it shows what the
+    # export's author sees: test_folio_exports.py.
+    "/api/v1/folio/print/{token}",
+    "/api/v1/folio/print/{token}/assets/{asset_id}",
 }
 
 
