@@ -407,15 +407,16 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
 
 <p align="center"><img src="docs/images/folio-home.png" alt="Folio home" width="900"></p>
 
+- **Navigation.** A fixed sidebar like Docket's, with the app switch in the same place: Home, Search, For you, My tasks, Approvals, Favorites and your spaces. On a phone it opens as a drawer.
 - **Home.** A magazine-like front page: the featured doc, the latest announcement, AI Tools, the latest posts, the most read and every space with its doc count. **Write** starts a page or a blog post in any space where you can create.
-- **Spaces and pages.** Each team gets a space with a tree of pages and folders (drag to reorder or nest them) and a blog. Everyone also has a personal space.
+- **Spaces.** Each space opens on its front page: what it holds, its pages and folders, who takes part (admins ringed in lime), a search inside the space and its sections: **Specs**, **Architecture decisions**, **Guides** and **Docs**, which space admins can show, hide and reorder. Specs filter by Docket project and then its features; decisions show the current ones first. **Manage** opens the space's pages, permissions, sections and settings. Everyone also has a personal space.
 
 <p align="center">
-  <img src="docs/images/folio-space.png" alt="A space with its tree and blog posts" width="49%">
-  <img src="docs/images/folio-read.png" alt="Reading a page as a magazine" width="49%">
+  <img src="docs/images/folio-space.png" alt="A space's front page with its sections" width="49%">
+  <img src="docs/images/folio-specs.png" alt="Specs filtered by project, then by its features" width="49%">
 </p>
 
-- **Reading.** Pages read like a magazine, with an "On this page" index, the owner, status, type, language and labels. **Focus mode** leaves just the text and a progress bar, and it remembers your choice. Light and dark, like the rest of Radicle.
+- **Reading.** Pages read like a magazine, with a path back to their space and section, previous and next in their folder, an "On this page" index, the owner, status, type, language and labels. **Focus mode** leaves just the text and a progress bar, and it remembers your choice. Light and dark, like the rest of Radicle.
 - **Writing.** A full-screen editor saves your draft as you type. Press <kbd>/</kbd> for any block (headings, lists, checklists, tables, code, panels, expands, columns, images, files and video), or write Markdown shortcuts. Paste or drop images to upload them.
 
 <p align="center">
@@ -453,7 +454,7 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
 - **Embeds.** Paste a YouTube or Figma link on its own line and it plays in the page; other links become a card with their preview.
 - **Tickets inside docs.** Paste a Docket key or link and it becomes a chip with the ticket's live status and assignee; the **Ticket table** block lists the tickets of a Docket RQL query. Select text and press **Create ticket** (or use the button on an action item) to open a ticket linked to that section. Each ticket in Docket has a **Docs** panel with the docs that mention or link it, and each milestone lists the docs that name it in their publishing metadata.
 - **From a build spec to its tickets.** On a build spec, **Create tickets** finds the deliverables (the deliverables table or numbered headings) and makes one Docket task per deliverable, with its acceptance criteria as a checklist and a link back to its section. Running it again only adds new ones. The **Ticket progress** block (`::progress{}`) shows each ticket's status, assignee and checklist live.
-- **Ask the docs.** **Ask** in the Folio bar (or <kbd>A</kbd>) answers from the docs you can read, cites every claim with `[n]`, and each source opens the doc at that section with the paragraph highlighted. When the docs don't say, it says so and suggests who to ask; **Folio → Admin → Chat** lists those questions so you know what to write next.
+- **Ask the docs.** **Radi**, the green button at the bottom right of Folio (or <kbd>A</kbd>), answers from the docs you can read, cites every claim with `[n]`, and each source opens the doc at that section with the paragraph highlighted. When the docs don't say, it says so and suggests who to ask; **Folio → Admin → Chat** lists those questions so you know what to write next.
 - **AI in the editor.** **AI** summarizes the page; select text to rewrite it clearer, shorter, more formal or in another language; **Publish** suggests a description, labels and document type for empty fields. A **Glossary** of terms approved by an admin shows their definition when you hover over them. The AI only proposes: nothing changes until you accept it, and nothing shows without an AI provider or with AI off in the space.
 
 <p align="center">

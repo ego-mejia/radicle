@@ -922,3 +922,19 @@ Pendiente:
 - Teams no muestra vistas previas de links, y su `/radicle ask` contesta en la misma petición, así que con un modelo lento se puede pasar del tiempo.
 - Los avisos que manda Radicle a Slack y Teams están en inglés.
 
+## Navegación de Folio (RAD-57)
+
+Cerrada el 22 de octubre de 2026. Diseño iterado en el canvas de diseño y probado en un MVP navegable; ADR 0044 (navegación con sidebar fijo y secciones) y ADR 0045 (tablas de Specs y Decisiones de arquitectura).
+
+- **Shell:** sidebar fijo como el de Docket (#437, #440, #444); el switch de suite queda en la misma caja en las dos apps (prueba E2E con ±1 px). Inicio, Buscar, Para ti, Mis tareas, Aprobaciones, Favoritos, spaces, Admin de Folio y el usuario; en el teléfono es un cajón. Para ti y Favoritos (#439). Rutas de Folio en su archivo (#435).
+- **Space como portada (K2):** hero negro de borde a borde con conteos y participantes (admins con anillo lima), búsqueda dentro del space, pastillas de secciones y bento (#433, #436, #442, #443, #447, #463).
+- **Secciones configurables:** Specs, Decisiones de arquitectura, Guías y Documentación, cada una por tipo de doc (migración 0065).
+  - Specs: tabla con filtros proyecto → feature (áreas de Docket), estado y dueño, con un selector que escala y pastillas que se quitan (#434, #441, #445, #446).
+  - Decisiones de arquitectura: vigentes por default, qué reemplaza a qué (#438, #448).
+  - Guías con el camino de primeros pasos (#450) y Documentación por módulo (#452), con la sugerencia de Radi sobre páginas vencidas (#460, #461).
+- **Modo admin (Administrar):** Páginas, Permisos, Secciones y Ajustes (#454, #456, #459).
+- **Lectura:** ruta Space / Sección / carpetas / página y anterior/siguiente (#449).
+- **Radi en Folio:** el botón de Radi abre el chat de los docs con citas, las herramientas que usó y "Escribir un borrador con esto" (#451); la tarjeta oscura de sugerencias (#453, #455).
+- **Arreglos al cerrar:** el diálogo Escribir se queda abierto sobre el editor porque el botón ahora vive en la barra (#465); WriteButton pasa a los componentes compartidos (#462).
+- **Pruebas:** `e2e/suite-folio-navigation.spec.ts` (#464) y las pruebas de live docs y whiteboards ajustadas a Administrar (#466). Suite de Playwright completa sobre un stack aislado: 52 de 52. Backend: 1,564 pruebas pasan con 95% de cobertura; frontend: 571 pruebas y el build.
+

@@ -378,15 +378,16 @@ Docket (el tracker de tickets) y Folio comparten personas, grupos, agentes y el 
 
 <p align="center"><img src="docs/images/folio-home.png" alt="Home de Folio" width="900"></p>
 
+- **Navegación.** Un sidebar fijo como el de Docket, con el switch de apps en el mismo lugar: Inicio, Buscar, Para ti, Mis tareas, Aprobaciones, Favoritos y tus spaces. En el teléfono se abre como cajón.
 - **Home.** Una portada tipo revista: el doc destacado, el último anuncio, AI Tools, los últimos posts, lo más leído y cada space con su número de docs. **Write** empieza una página o un blog post en cualquier space donde puedas crear.
-- **Spaces y páginas.** Cada equipo tiene un space con un árbol de páginas y folders (arrástralos para reordenarlos o anidarlos) y un blog. Cada persona tiene además su space personal.
+- **Spaces.** Cada space abre en su portada: qué contiene, sus páginas y carpetas, quién participa (los admins con anillo lima), una búsqueda dentro del space y sus secciones: **Specs**, **Decisiones de arquitectura**, **Guías** y **Documentación**, que los admins del space muestran, esconden y reordenan. Los specs se filtran por proyecto de Docket y luego por sus features; las decisiones muestran primero las vigentes. **Administrar** abre las páginas, permisos, secciones y ajustes del space. Cada persona tiene además su space personal.
 
 <p align="center">
-  <img src="docs/images/folio-space.png" alt="Un space con su árbol y sus blog posts" width="49%">
-  <img src="docs/images/folio-read.png" alt="Lectura de una página como revista" width="49%">
+  <img src="docs/images/folio-space.png" alt="La portada de un space con sus secciones" width="49%">
+  <img src="docs/images/folio-specs.png" alt="Specs filtrados por proyecto y luego por sus features" width="49%">
 </p>
 
-- **Lectura.** Las páginas se leen como revista, con el índice "On this page", el dueño, estado, tipo, idioma y labels. El **modo enfoque** deja solo el texto y una barra de progreso, y recuerda tu elección. En claro y oscuro, como todo Radicle.
+- **Lectura.** Las páginas se leen como revista, con la ruta de regreso a su space y sección, la anterior y la siguiente de su carpeta, el índice "On this page", el dueño, estado, tipo, idioma y labels. El **modo enfoque** deja solo el texto y una barra de progreso, y recuerda tu elección. En claro y oscuro, como todo Radicle.
 - **Escritura.** Un editor a pantalla completa guarda tu borrador mientras escribes. Presiona <kbd>/</kbd> para cualquier bloque (encabezados, listas, checklists, tablas, código, paneles, expandibles, columnas, imágenes, archivos y video) o usa atajos de Markdown. Pega o suelta imágenes para subirlas.
 
 <p align="center">
@@ -429,7 +430,7 @@ Docket (el tracker de tickets) y Folio comparten personas, grupos, agentes y el 
 - **Embeds.** Pega un link de YouTube o Figma en su propia línea y se ve dentro de la página; los demás links quedan como tarjeta con su vista previa.
 - **Tickets dentro de los docs.** Pega una clave o un link de Docket y se vuelve un chip con el estado y el responsable del ticket en vivo; el bloque **Tabla de tickets** lista los tickets de una consulta RQL de Docket. Selecciona texto y presiona **Crear ticket** (o usa el botón de un action item) para abrir un ticket ligado a esa sección. Cada ticket en Docket tiene un panel **Docs** con los docs que lo mencionan o lo ligan, y cada milestone lista los docs que lo nombran en su metadata.
 - **Del build spec a sus tickets.** En un build spec, **Crear tickets** encuentra los entregables (la tabla de entregables o los encabezados numerados) y crea una tarea de Docket por cada uno, con sus criterios de aceptación como checklist y un link a su sección. Volver a correrlo solo agrega los nuevos. El bloque **Avance de tickets** (`::progress{}`) muestra el estado, el responsable y el checklist de cada ticket en vivo.
-- **Pregunta a los docs.** **Preguntar** en la barra de Folio (o <kbd>A</kbd>) responde con los docs que puedes leer, cita cada afirmación con `[n]` y cada fuente abre el doc en esa sección con el párrafo resaltado. Si los docs no lo dicen, lo dice y sugiere a quién preguntar; **Folio → Admin → Chat** junta esas preguntas para saber qué escribir.
+- **Pregunta a los docs.** **Radi**, el botón verde abajo a la derecha en Folio (o <kbd>A</kbd>), responde con los docs que puedes leer, cita cada afirmación con `[n]` y cada fuente abre el doc en esa sección con el párrafo resaltado. Si los docs no lo dicen, lo dice y sugiere a quién preguntar; **Folio → Admin → Chat** junta esas preguntas para saber qué escribir.
 - **IA en el editor.** **IA** resume la página; selecciona texto para reescribirlo más claro, más corto, más formal o en otro idioma; **Publicar** sugiere descripción, labels y tipo de documento para los campos vacíos. Un **Glosario** de términos que aprueba un admin muestra su definición al pasar el cursor. La IA solo propone: nada cambia hasta que lo aceptas, y nada aparece sin proveedor de IA o con la IA apagada en el space.
 
 <p align="center">
