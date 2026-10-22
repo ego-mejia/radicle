@@ -3001,6 +3001,9 @@
       "draftReady": "Borrador listo:",
       "draftTitle": "Borrador de Radi",
       "openDraft": "Abrir el borrador"
+    },
+    "docsSection": {
+      "general": "General"
     }
   },
   "notifications": {

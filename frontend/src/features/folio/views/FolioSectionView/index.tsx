@@ -9,6 +9,7 @@ import { fetchSpace, folioKeys } from '../../../../services/api/folio';
 import type { DecisionFilters, SpecFilters } from '../../../../services/api/folioSections';
 import type { SpaceSectionKey } from '../../../../services/api/folioSpaces';
 import { DecisionsTable } from '../../components/DecisionsTable';
+import { DocsSection } from '../../components/DocsSection';
 import { NewNodeDialog } from '../../components/NewNodeDialog';
 import { GuidesSection } from '../../components/GuidesSection';
 import { SectionDocs } from '../../components/SectionDocs';
@@ -61,6 +62,8 @@ export function FolioSectionView({ section }: { section: SpaceSectionKey }) {
           />
         ) : section === 'guides' && !q ? (
           <GuidesSection space={key} />
+        ) : section === 'docs' && !q ? (
+          <DocsSection space={key} />
         ) : (
           <SectionDocs space={key} section={section} q={q} />
         )}
