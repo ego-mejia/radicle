@@ -416,6 +416,24 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
   <img src="docs/images/folio-specs.png" alt="Specs filtered by project, then by its features" width="49%">
 </p>
 
+<p align="center">
+  <img src="docs/images/folio-decisions.png" alt="Architecture decisions, current ones first" width="49%">
+  <img src="docs/images/folio-guides.png" alt="Guides with a getting-started path" width="49%">
+</p>
+
+- **Radi in Folio.** Radi's green button sits bottom right in Folio too, with Folio's own tools: it searches the docs you can see, answers citing the exact section, and writes a draft for you. On the Docs section, a dark card from Radi tells you when a reference page went stale and offers to update it.
+- **Manage.** **Manage** on a space opens its admin mode: pages, permissions, which sections show and in what order, and settings.
+
+<p align="center">
+  <img src="docs/images/folio-docs-radi.png" alt="Docs grouped by module, with Radi's card about a stale page" width="49%">
+  <img src="docs/images/folio-radi.png" alt="Radi answering in Folio with citations" width="49%">
+</p>
+<p align="center">
+  <img src="docs/images/folio-manage.png" alt="A space's admin mode" width="49%">
+  <img src="docs/images/folio-reader-nav.png" alt="Reading a page with its path, index and previous and next" width="49%">
+</p>
+<p align="center"><img src="docs/images/folio-mobile.png" alt="Folio's sidebar as a drawer on a phone" width="300"></p>
+
 - **Reading.** Pages read like a magazine, with a path back to their space and section, previous and next in their folder, an "On this page" index, the owner, status, type, language and labels. **Focus mode** leaves just the text and a progress bar, and it remembers your choice. Light and dark, like the rest of Radicle.
 - **Writing.** A full-screen editor saves your draft as you type. Press <kbd>/</kbd> for any block (headings, lists, checklists, tables, code, panels, expands, columns, images, files and video), or write Markdown shortcuts. Paste or drop images to upload them.
 
@@ -589,6 +607,14 @@ Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning
 - [ ] SAML single sign-on (only OpenID Connect today).
 - [ ] Roles beyond admin, member and viewer.
 - [ ] More languages for the UI and the public form (English and Spanish today).
+
+**Folio: next fixes** (from the new navigation; each has its ticket)
+
+- [ ] Dark mode: the space hero almost blends into the page, and Radi's card looks grey instead of standing out (RAD-69).
+- [ ] The project filter in Specs and Architecture decisions shows the key (RAD) instead of the name (Folio) (RAD-70).
+- [ ] Tell when a reference page went stale because the code it documents changed, not only when its verification expired (RAD-71).
+- [ ] Save Specs and decisions views per person instead of copying a link (RAD-72).
+- [ ] The next calendar event on a space's front page (RAD-73).
 
 **Known issues and small fixes** (good first contributions)
 

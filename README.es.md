@@ -387,6 +387,24 @@ Docket (el tracker de tickets) y Folio comparten personas, grupos, agentes y el 
   <img src="docs/images/folio-specs.png" alt="Specs filtrados por proyecto y luego por sus features" width="49%">
 </p>
 
+<p align="center">
+  <img src="docs/images/folio-decisions.png" alt="Decisiones de arquitectura, primero las vigentes" width="49%">
+  <img src="docs/images/folio-guides.png" alt="Guías con un camino de primeros pasos" width="49%">
+</p>
+
+- **Radi en Folio.** El botón verde de Radi también está abajo a la derecha en Folio, con las herramientas de Folio: busca en los docs que puedes ver, responde citando la sección exacta y te escribe un borrador. En la sección Documentación, una tarjeta oscura de Radi te avisa cuando una página de referencia quedó vieja y ofrece actualizarla.
+- **Administrar.** **Administrar** en un space abre su modo admin: páginas, permisos, qué secciones se ven y en qué orden, y ajustes.
+
+<p align="center">
+  <img src="docs/images/folio-docs-radi.png" alt="Documentación por módulo, con la tarjeta de Radi sobre una página vieja" width="49%">
+  <img src="docs/images/folio-radi.png" alt="Radi respondiendo en Folio con citas" width="49%">
+</p>
+<p align="center">
+  <img src="docs/images/folio-manage.png" alt="El modo admin de un space" width="49%">
+  <img src="docs/images/folio-reader-nav.png" alt="Leyendo una página con su ruta, índice, anterior y siguiente" width="49%">
+</p>
+<p align="center"><img src="docs/images/folio-mobile.png" alt="El sidebar de Folio como cajón en el teléfono" width="300"></p>
+
 - **Lectura.** Las páginas se leen como revista, con la ruta de regreso a su space y sección, la anterior y la siguiente de su carpeta, el índice "On this page", el dueño, estado, tipo, idioma y labels. El **modo enfoque** deja solo el texto y una barra de progreso, y recuerda tu elección. En claro y oscuro, como todo Radicle.
 - **Escritura.** Un editor a pantalla completa guarda tu borrador mientras escribes. Presiona <kbd>/</kbd> para cualquier bloque (encabezados, listas, checklists, tablas, código, paneles, expandibles, columnas, imágenes, archivos y video) o usa atajos de Markdown. Pega o suelta imágenes para subirlas.
 
@@ -560,6 +578,14 @@ Las etapas 1 a 4 están completas: core y MCP, configuración y trabajo diario, 
 - [ ] SSO con SAML (hoy solo OpenID Connect).
 - [ ] Roles además de admin, member y viewer.
 - [ ] Más idiomas para la UI y el formulario público (hoy inglés y español).
+
+**Folio: siguientes arreglos** (de la nueva navegación; cada uno tiene su ticket)
+
+- [ ] Modo oscuro: el hero del space casi se confunde con la página, y la tarjeta de Radi se ve gris en vez de destacar (RAD-69).
+- [ ] El filtro de proyecto en Specs y Decisiones de arquitectura muestra la clave (RAD) en lugar del nombre (Folio) (RAD-70).
+- [ ] Avisar que una página de referencia quedó vieja cuando cambia el código que documenta, no solo cuando vence su verificación (RAD-71).
+- [ ] Guardar vistas de Specs y Decisiones por persona en vez de copiar un link (RAD-72).
+- [ ] El próximo evento del calendario en la portada del space (RAD-73).
 
 **Pendientes y arreglos chicos** (buenas primeras contribuciones)
 
