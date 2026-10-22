@@ -8,13 +8,23 @@ import { AuditLog } from '../../../audit/components/AuditLog';
 import { AgentsTab } from '../../components/AgentsTab';
 import { GroupsTab } from '../../components/GroupsTab';
 import { InstanceSettingsTab } from '../../components/InstanceSettingsTab';
+import { IntegrationsTab } from '../../components/IntegrationsTab';
 import { SsoTab } from '../../components/SsoTab';
 import { ProjectsTab } from '../../components/ProjectsTab';
 import { TemplatesTab } from '../../components/TemplatesTab';
 import { UsersTab } from '../../components/UsersTab';
 import * as S from './style';
 
-type Tab = 'users' | 'agents' | 'groups' | 'projects' | 'templates' | 'sso' | 'audit' | 'settings';
+type Tab =
+  | 'users'
+  | 'agents'
+  | 'groups'
+  | 'projects'
+  | 'templates'
+  | 'sso'
+  | 'integrations'
+  | 'audit'
+  | 'settings';
 const TABS: Tab[] = [
   'users',
   'agents',
@@ -22,6 +32,7 @@ const TABS: Tab[] = [
   'projects',
   'templates',
   'sso',
+  'integrations',
   'audit',
   'settings',
 ];
@@ -52,6 +63,7 @@ export function AdminView() {
         {current === 'projects' && <ProjectsTab />}
         {current === 'templates' && <TemplatesTab />}
         {current === 'sso' && <SsoTab />}
+        {current === 'integrations' && <IntegrationsTab />}
         {current === 'audit' && <AuditLog />}
         {current === 'settings' && <InstanceSettingsTab />}
       </S.Stack>

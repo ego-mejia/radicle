@@ -530,7 +530,8 @@
     },
     "kind": "Kind",
     "tokenTitle": "Your new token",
-    "tokenDone": "Done, I copied it"
+    "tokenDone": "Done, I copied it",
+    "integrations": "Integrations"
   },
   "settings": {
     "general": "General",
@@ -2840,6 +2841,35 @@
         "task_assigned": "{{actor}} assigned you a task in '{{page}}'",
         "page_outdated": "'{{page}}' is outdated"
       }
+    }
+  },
+  "integrations": {
+    "webhooks": "Webhooks",
+    "webhooksHelp": "Radicle POSTs the events you pick to your receiver, signed with HMAC-SHA256 in the Radicle-Signature header. Failed deliveries retry for six hours.",
+    "newWebhook": "New webhook",
+    "name": "Name",
+    "url": "Receiver URL",
+    "urlHint": "A public https address. Radicle won't connect inside your network.",
+    "space": "Only this space",
+    "spaceHint": "A space key; empty means every space.",
+    "events": "Events",
+    "eventsHint": "Pick none to get every event.",
+    "allEvents": "every event",
+    "off": "Off",
+    "secretOnce": "Signing secret for {{name}}. Copy it now: it isn't shown again.",
+    "ping": "Ping {{name}}",
+    "log": "Deliveries of {{name}}",
+    "rotate": "New secret for {{name}}",
+    "delete": "Delete {{name}}",
+    "deliveries": "Deliveries of {{name}}",
+    "noDeliveries": "Nothing sent yet.",
+    "attempts_one": "{{count}} attempt",
+    "attempts_other": "{{count}} attempts",
+    "status": {
+      "pending": "Pending",
+      "sent": "Sent",
+      "failed": "Failed",
+      "skipped": "Skipped"
     }
   }
 }
