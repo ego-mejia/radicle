@@ -1828,7 +1828,10 @@
       },
       "pageList": "Pages labeled {{label}}",
       "pageListEmpty": "No published pages you can see have this label yet.",
-      "pageListFailed": "The list couldn't load."
+      "pageListFailed": "The list couldn't load.",
+      "pager": "More in this folder",
+      "prev": "Previous",
+      "next": "Next"
     },
     "editor": {
       "title": "Editor",

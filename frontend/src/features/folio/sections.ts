@@ -14,3 +14,10 @@ export function sectionQuery(space: string, key: SpaceSectionKey, extra = ''): s
   const types = SECTIONS[key].docTypes.join(', ');
   return `space = ${space} AND doc_type in (${types})${extra ? ` AND ${extra}` : ''} ORDER BY published DESC`;
 }
+
+/** The section a page belongs to, by its doc type; undefined when none shows it. */
+export function sectionFor(docType: unknown): SpaceSectionKey | undefined {
+  if (typeof docType !== 'string') return undefined;
+  const keys = Object.keys(SECTIONS) as SpaceSectionKey[];
+  return keys.find((k) => SECTIONS[k].docTypes.includes(docType));
+}

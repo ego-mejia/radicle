@@ -1828,7 +1828,10 @@
       },
       "pageList": "Páginas con el label {{label}}",
       "pageListEmpty": "Aún no hay páginas publicadas que puedas ver con este label.",
-      "pageListFailed": "No se pudo cargar la lista."
+      "pageListFailed": "No se pudo cargar la lista.",
+      "pager": "Más en esta carpeta",
+      "prev": "Anterior",
+      "next": "Siguiente"
     },
     "editor": {
       "title": "Editor",

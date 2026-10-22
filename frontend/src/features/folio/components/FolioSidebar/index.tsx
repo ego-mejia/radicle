@@ -25,11 +25,11 @@ import { useThemeMode } from '../../../../hooks/useThemeMode';
 import { logout } from '../../../../services/api/auth';
 import {
   fetchFolioMe,
+  fetchNode,
   fetchSpaces,
   fetchSubmissions,
   folioKeys,
   nodeIdFrom,
-  type FolioNode,
 } from '../../../../services/api/folio';
 import { fetchMyTasks, taskKeys } from '../../../../services/api/folioWork';
 import { NewSpaceDialog } from '../NewSpaceDialog';
@@ -39,15 +39,19 @@ const NavLink = createLink(S.NavLink);
 
 type Props = { open: boolean; onClose: () => void };
 
-/** The space you are in: from the URL in a space, from the cached page while reading. */
+/** The space you are in: from the URL in a space, from the page (shared query) while reading. */
 function useCurrentSpace(): string | undefined {
-  const client = useQueryClient();
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const space = /^\/folio\/s\/([^/]+)/.exec(path);
-  if (space?.[1]) return decodeURIComponent(space[1]);
-  const page = /^\/folio\/p\/([^/]+)/.exec(path);
-  if (page?.[1]) return client.getQueryData<FolioNode>(folioKeys.node(nodeIdFrom(page[1])))?.space;
-  return undefined;
+  const space = /^\/folio\/s\/([^/]+)/.exec(path)?.[1];
+  const segment = /^\/folio\/p\/([^/]+)/.exec(path)?.[1];
+  const id = segment ? nodeIdFrom(segment) : '';
+  const { data: page } = useQuery({
+    queryKey: folioKeys.node(id),
+    queryFn: () => fetchNode(id),
+    enabled: !!id,
+  });
+  if (space) return decodeURIComponent(space);
+  return id ? page?.space : undefined;
 }
 
 /** Folio's sidebar (ADR 0044): the same column as Docket's, so the suite switch never moves.
