@@ -94,7 +94,12 @@ const folioHistoryRoute = createRoute({
   }),
 });
 
-export type FolioSearchParams = { q?: string; mode?: 'hybrid' | 'text' | 'semantic'; rql?: string };
+export type FolioSearchParams = {
+  q?: string;
+  mode?: 'hybrid' | 'text' | 'semantic';
+  rql?: string;
+  space?: string;
+};
 
 const folioSearchRoute = createRoute({
   getParentRoute: () => folioLayout,
@@ -107,6 +112,7 @@ const folioSearchRoute = createRoute({
         ? search.mode
         : undefined,
     rql: str(search.rql),
+    space: str(search.space),
   }),
 });
 

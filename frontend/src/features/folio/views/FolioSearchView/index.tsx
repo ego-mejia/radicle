@@ -25,11 +25,16 @@ const MODES: SearchMode[] = ['hybrid', 'text', 'semantic'];
 export function FolioSearchView() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const params = useSearch({ strict: false }) as { q?: string; mode?: SearchMode; rql?: string };
+  const params = useSearch({ strict: false }) as {
+    q?: string;
+    mode?: SearchMode;
+    rql?: string;
+    space?: string;
+  };
   const q = params.q ?? '';
   const mode = params.mode ?? 'hybrid';
   const [draft, setDraft] = useState(q);
-  const [filters, setFilters] = useState<Filters>({});
+  const [filters, setFilters] = useState<Filters>(params.space ? { space: params.space } : {});
   const go = (next: { q?: string; mode?: SearchMode; rql?: string }) =>
     void navigate({ to: '/folio/search', search: { q, mode, rql: params.rql, ...next } });
 
