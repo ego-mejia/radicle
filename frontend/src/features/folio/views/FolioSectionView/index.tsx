@@ -15,6 +15,7 @@ import { GuidesSection } from '../../components/GuidesSection';
 import { SectionDocs } from '../../components/SectionDocs';
 import { SpaceHero } from '../../components/SpaceHero';
 import { SpecsTable } from '../../components/SpecsTable';
+import { StaleDocsNotice } from '../../components/StaleDocsNotice';
 import * as S from './style';
 
 /** One section of a space (RAD-57): its hero and its pages. Specs and architecture
@@ -63,7 +64,10 @@ export function FolioSectionView({ section }: { section: SpaceSectionKey }) {
         ) : section === 'guides' && !q ? (
           <GuidesSection space={key} />
         ) : section === 'docs' && !q ? (
-          <DocsSection space={key} />
+          <DocsSection
+            space={key}
+            notice={canCreate ? <StaleDocsNotice space={key} /> : undefined}
+          />
         ) : (
           <SectionDocs space={key} section={section} q={q} />
         )}
