@@ -2818,6 +2818,74 @@
     },
     "plugin": {
       "off": "Este bloque viene del plugin {{plugin}}, que está apagado. Un admin puede encenderlo en Admin → Plugins."
+    },
+    "spaceHome": {
+      "kicker": "Space",
+      "follow": "Seguir",
+      "following": "Siguiendo",
+      "followed": "Sigues {{space}}: lo nuevo aparece en Para ti",
+      "unfollowed": "Ya no sigues {{space}}",
+      "manage": "Administrar",
+      "write": "Escribir aquí",
+      "search": "Busca en {{space}} o pregúntale a Radi",
+      "searchButton": "Buscar",
+      "searchLabel": "Buscar en {{space}}",
+      "pages_one": "<b>{{count}}</b> página",
+      "pages_other": "<b>{{count}}</b> páginas",
+      "folders_one": "<b>{{count}}</b> carpeta",
+      "folders_other": "<b>{{count}}</b> carpetas",
+      "sections": "Secciones de {{space}}",
+      "all": "Todo",
+      "people": {
+        "open": "Ver quién participa: {{summary}}",
+        "summary": "{{admins}} admins y {{count}} más",
+        "title": "Quién participa",
+        "admins_one": "{{count}} admin",
+        "admins_other": "{{count}} admins",
+        "others_one": "{{count}} participante",
+        "others_other": "{{count}} participantes",
+        "role": {
+          "admin": "Admins",
+          "editor": "Editores",
+          "reader": "Lectores"
+        },
+        "everyone": {
+          "reader": "Todo el equipo puede leer este space.",
+          "editor": "Todo el equipo puede escribir en este space.",
+          "admin": "Todo el equipo administra este space."
+        }
+      }
+    },
+    "sections": {
+      "specs": {
+        "label": "Specs",
+        "title": "Specs",
+        "description": "Qué construimos en cada etapa, con sus entregables y el avance de sus tickets.",
+        "cta": "Nuevo build spec",
+        "search": "Buscar en los specs"
+      },
+      "decisions": {
+        "label": "Decisiones de arquitectura",
+        "title": "Decisiones de arquitectura",
+        "description": "Qué decidimos, por qué y qué opciones descartamos. Para que nadie tenga que preguntar por qué está hecho así.",
+        "cta": "Registrar decisión",
+        "search": "¿Por qué usamos…?"
+      },
+      "guides": {
+        "label": "Guías",
+        "title": "Guías",
+        "description": "Cómo se hacen las cosas en el equipo, paso a paso. Si algo falta, pregúntale a Radi o escribe la guía.",
+        "cta": "Nueva guía",
+        "search": "¿Cómo despliego…?"
+      },
+      "docs": {
+        "label": "Documentación",
+        "title": "Documentación",
+        "description": "La referencia del sistema, módulo por módulo: qué hace cada parte, su API y sus diagramas.",
+        "cta": "Documentar un módulo",
+        "search": "Busca un módulo, endpoint o tool"
+      },
+      "crumbLabel": "Ruta"
     }
   },
   "notifications": {

@@ -31,7 +31,10 @@ type Palette = Record<
   | 'catProgress'
   | 'catDone'
   | 'radi'
-  | 'radiEye',
+  | 'radiEye'
+  | 'hero'
+  | 'heroText'
+  | 'heroMuted',
   string
 >;
 
@@ -69,6 +72,10 @@ export const lightTheme: Theme = {
     // Radi, the mascot: the logo is his green with his eyes.
     radi: '#7BC62D',
     radiEye: '#FFFFFF',
+    // The dark band at the top of a Folio space and its sections (RAD-57), in both themes.
+    hero: '#0F1012',
+    heroText: '#F9FAFB',
+    heroMuted: '#C9CDD3',
   },
   fonts,
   space,
@@ -99,6 +106,9 @@ export const darkTheme: Theme = {
     catDone: '#65A30D',
     radi: '#7BC62D',
     radiEye: '#FFFFFF',
+    hero: '#08090A',
+    heroText: '#F9FAFB',
+    heroMuted: '#C9CDD3',
   },
 };
 
