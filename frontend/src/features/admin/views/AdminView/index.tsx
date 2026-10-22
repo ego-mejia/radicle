@@ -9,6 +9,7 @@ import { AgentsTab } from '../../components/AgentsTab';
 import { GroupsTab } from '../../components/GroupsTab';
 import { InstanceSettingsTab } from '../../components/InstanceSettingsTab';
 import { IntegrationsTab } from '../../components/IntegrationsTab';
+import { PluginsTab } from '../../components/PluginsTab';
 import { SsoTab } from '../../components/SsoTab';
 import { ProjectsTab } from '../../components/ProjectsTab';
 import { TemplatesTab } from '../../components/TemplatesTab';
@@ -23,6 +24,7 @@ type Tab =
   | 'templates'
   | 'sso'
   | 'integrations'
+  | 'plugins'
   | 'audit'
   | 'settings';
 const TABS: Tab[] = [
@@ -33,6 +35,7 @@ const TABS: Tab[] = [
   'templates',
   'sso',
   'integrations',
+  'plugins',
   'audit',
   'settings',
 ];
@@ -64,6 +67,7 @@ export function AdminView() {
         {current === 'templates' && <TemplatesTab />}
         {current === 'sso' && <SsoTab />}
         {current === 'integrations' && <IntegrationsTab />}
+        {current === 'plugins' && <PluginsTab />}
         {current === 'audit' && <AuditLog />}
         {current === 'settings' && <InstanceSettingsTab />}
       </S.Stack>

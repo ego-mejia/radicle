@@ -531,7 +531,8 @@
     "kind": "Tipo",
     "tokenTitle": "Tu token nuevo",
     "tokenDone": "Listo, ya lo copié",
-    "integrations": "Integraciones"
+    "integrations": "Integraciones",
+    "plugins": "Plugins"
   },
   "settings": {
     "general": "General",
@@ -2933,5 +2934,24 @@
       "failed": "Falló",
       "skipped": "Omitido"
     }
+  },
+  "plugins": {
+    "installed": "Plugins instalados",
+    "help": "Los plugins agregan bloques al editor de Folio, dibujados en sandbox: sin red y sin acceso a la página ni a los datos de nadie. Solo los admins de la instancia los instalan.",
+    "none": "Todavía no hay plugins. Instala el ejemplo de abajo, o uno desde su manifiesto.",
+    "off": "Apagado",
+    "turnOff": "Apagar",
+    "turnOn": "Encender",
+    "delete": "Borrar {{name}}",
+    "deleteTitle": "¿Borrar este plugin?",
+    "deleteMessage": "Se quitará {{name}}. Las páginas que usan sus bloques los conservan, pero quien lee verá un aviso en su lugar.",
+    "examples": "Ejemplos",
+    "examplesHelp": "Plugins que vienen con Radicle.",
+    "install": "Instalar",
+    "isInstalled": "Instalado",
+    "fromManifest": "Instalar desde un manifiesto",
+    "manifestHelp": "Pega el manifiesto JSON del plugin (ADR 0043). Instalar uno con una key que ya tienes lo actualiza.",
+    "manifest": "Manifiesto",
+    "notJson": "Eso no es JSON válido. Pega el manifiesto completo, de { a }."
   }
 }

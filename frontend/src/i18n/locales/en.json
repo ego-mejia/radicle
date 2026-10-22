@@ -531,7 +531,8 @@
     "kind": "Kind",
     "tokenTitle": "Your new token",
     "tokenDone": "Done, I copied it",
-    "integrations": "Integrations"
+    "integrations": "Integrations",
+    "plugins": "Plugins"
   },
   "settings": {
     "general": "General",
@@ -2933,5 +2934,24 @@
       "failed": "Failed",
       "skipped": "Skipped"
     }
+  },
+  "plugins": {
+    "installed": "Installed plugins",
+    "help": "Plugins bring new blocks for Folio's editor, drawn in a sandbox: no network, no access to the page or to anyone's data. Only instance admins install them.",
+    "none": "No plugins yet. Install the example below, or one from its manifest.",
+    "off": "Off",
+    "turnOff": "Turn off",
+    "turnOn": "Turn on",
+    "delete": "Delete {{name}}",
+    "deleteTitle": "Delete this plugin?",
+    "deleteMessage": "{{name}} will be removed. Pages that use its blocks keep them, but readers see a notice instead.",
+    "examples": "Examples",
+    "examplesHelp": "Plugins that ship with Radicle.",
+    "install": "Install",
+    "isInstalled": "Installed",
+    "fromManifest": "Install from a manifest",
+    "manifestHelp": "Paste the plugin's JSON manifest (ADR 0043). Installing one with a key you already have updates it.",
+    "manifest": "Manifest",
+    "notJson": "That isn't valid JSON. Paste the whole manifest, from { to }."
   }
 }
