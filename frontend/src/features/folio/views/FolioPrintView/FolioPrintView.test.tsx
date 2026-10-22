@@ -10,7 +10,9 @@ import { act, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ThemeModeProvider } from '../../../../contexts/ThemeModeContext';
 import { makeClient, mockFetch } from '../../../../test/renderWithProviders';
+import i18n from '../../../../i18n';
 import { FolioPrintView, SETTLE_MS } from '.';
+import { printLanguage } from './language';
 
 const page = (id: string, title: string) => ({
   id,
@@ -75,5 +77,28 @@ describe('FolioPrintView', () => {
       await vi.advanceTimersByTimeAsync(SETTLE_MS + 10);
     });
     expect(container.querySelector('[data-print-ready]')).not.toBeNull();
+  });
+
+  it('prints in the language of the doc, not the browser', async () => {
+    await i18n.changeLanguage('en');
+    mockFetch({
+      'GET /api/v1/folio/print/es': {
+        status: 200,
+        body: {
+          space: { name: 'Guías', description: '', icon: null, cover_asset_id: null },
+          pages: [{ ...page('a', 'Uno'), metadata: { language: 'es' } }],
+        },
+      },
+    });
+    renderAt('/print/es');
+    expect(await screen.findByRole('heading', { name: 'Uno' })).toBeVisible();
+    await vi.waitFor(() => expect(i18n.language).toBe('es'));
+    await i18n.changeLanguage('en');
+  });
+
+  it('keeps the browser language when the doc names none it knows', () => {
+    expect(printLanguage({ language: 'es-MX' })).toBe('es');
+    expect(printLanguage({ language: 'fr' })).toBeNull();
+    expect(printLanguage(undefined)).toBeNull();
   });
 });

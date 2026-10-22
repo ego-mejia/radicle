@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
+import i18n from '../../../../i18n';
 import { fetchPrint, printAssetUrl } from '../../../../services/api/folioPublic';
 import { PublicArticle } from '../../components/PublicArticle';
+import { printLanguage } from './language';
 import * as S from './style';
 
 /** Time for lazily loaded diagrams, formulas and charts to draw before printing. */
@@ -17,6 +19,8 @@ export function FolioPrintView() {
 
   useEffect(() => {
     if (!print.data) return;
+    const lang = printLanguage(print.data.pages[0]?.metadata);
+    if (lang && lang !== i18n.language) void i18n.changeLanguage(lang);
     let done = false;
     const timer = window.setTimeout(async () => {
       await document.fonts?.ready;
