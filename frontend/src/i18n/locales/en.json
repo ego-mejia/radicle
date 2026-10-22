@@ -3000,7 +3000,14 @@
       "draft": "draft",
       "draftReady": "Draft ready:",
       "draftTitle": "Draft from Radi",
-      "openDraft": "Open the draft"
+      "openDraft": "Open the draft",
+      "suggestion": "Suggestion from Radi",
+      "dismiss": "Dismiss",
+      "staleTitle": "This page went stale.",
+      "staleSince": "Its verification expired on {{date}}. Review it so people can keep trusting it.",
+      "staleText": "Review it so people can keep trusting it.",
+      "update": "Update it",
+      "seeChanges": "See changes"
     },
     "docsSection": {
       "general": "General"

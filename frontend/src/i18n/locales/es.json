@@ -3000,7 +3000,14 @@
       "draft": "borrador",
       "draftReady": "Borrador listo:",
       "draftTitle": "Borrador de Radi",
-      "openDraft": "Abrir el borrador"
+      "openDraft": "Abrir el borrador",
+      "suggestion": "Sugerencia de Radi",
+      "dismiss": "Descartar",
+      "staleTitle": "Esta página quedó vieja.",
+      "staleSince": "Su verificación venció el {{date}}. Revísala para que la gente pueda seguir confiando en ella.",
+      "staleText": "Revísala para que la gente pueda seguir confiando en ella.",
+      "update": "Actualizarla",
+      "seeChanges": "Ver cambios"
     },
     "docsSection": {
       "general": "General"
