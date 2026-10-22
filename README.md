@@ -63,7 +63,7 @@
 | 🔒 **Serious access control** | Groups, a permission matrix per project, restricted tickets that are invisible everywhere (search, boards, reports, MCP), OpenID Connect SSO and an append-only audit log. |
 | 🗺️ **Plan and see** | Kanban and Scrum boards, sprints, a timeline with forecasts, ten agile and general reports and drag-and-drop dashboards. |
 | 🟢 **A guide inside** | Radi, the mascot, answers how-to questions from the usage guide and, with an LLM of your choice, walks you through the screen step by step. |
-| 📚 **Docs next to the tickets** | **Folio**, the second app, keeps the team's documentation: spaces, a block editor, versions, per-page permissions, search that understands questions, and an MCP so agents read and propose docs that an admin approves. |
+| 📚 **Docs next to the tickets** | **Folio**, the second app, keeps the team's documentation: spaces, a block editor, versions, per-page permissions, search and a chat that answer with citations, real-time editing, templates, visual blocks, whiteboards and databases, links to Docket tickets, public pages, import from Confluence and Notion, export to PDF, Slack and Teams, webhooks, calendars, analytics, and an MCP so agents read and propose docs that an admin approves. |
 | ⚡ **Fast to work in** | A query language (RQL), a command palette, keyboard shortcuts for everything and light and dark themes. In English and Spanish. |
 | 🏠 **Yours** | One `docker compose up`. PostgreSQL, your server, your data. |
 
@@ -376,7 +376,7 @@ Resources: `radicle://guide/rql` and `radicle://projects/{key}/schema`. Agents f
 
 </details>
 
-**Folio** has its own MCP server at `/mcp/folio`, with the same tokens. For now it has `whoami`, which tells the agent its global Folio role; tools to read, search and propose docs come with Folio's phase 1.
+**Folio** has its own MCP server at `/mcp/folio`, with the same tokens; its tools are in [Folio's MCP](#15-folio-your-teams-docs).
 
 ### 14. Keyboard, command palette and themes
 
@@ -465,12 +465,29 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
   <img src="docs/images/folio-build-spec.png" alt="A build spec's deliverables and the live progress of their Docket tickets" width="49%">
 </p>
 
+- **Public pages.** **Share → Public link** gives a page or a whole space a read-only link that opens without an account, in the magazine view, with no people data and hidden from search engines by default. Restricted pages never show through it, and **Revoke** turns it into a 404. Only the space's admins create them.
+- **Export.** **Export** on a page or a space downloads a PDF that looks like the reader (printed by headless Chromium, so visuals, diagrams and formulas come out as on screen), a Word file, a static HTML site that opens from disk, or Markdown with front matter. Build with `--build-arg PDF=false` to leave Chromium out (about 290 MB).
+- **Import.** **Folio → Admin → Import** brings in a Confluence space (HTML export), a Notion export (Markdown and CSV, where CSVs become databases), Word files or folders of Markdown. A dry run shows every page, its authors (matched by email), labels and files before anything is created; pages arrive as drafts, and importing the same export again into the same space updates them instead of duplicating them.
+- **Slack, Teams, webhooks and rules.** **Admin → Integrations** posts what happens in a space to Slack or Teams channels, answers `/radicle search` and `/radicle ask` (the docs chat, with citations, as the person asking), and previews Folio links pasted in Slack for people who can see them. Webhooks send signed events (`page.published`, `page.outdated`, `submission.created`…) with retries and a delivery log. Automation rules run on an event or a schedule and notify a channel or a person, change a page's status, add a label, open a Docket ticket or archive; one ready-made rule tells a channel when a page goes out of date.
+- **Calendars.** Each space can have calendars with month and week views, events by category (release, vacation, on-call…), people, and the milestones of Docket projects. Subscribe from Google Calendar or Outlook with its iCal link, or embed a calendar in a page or on the home.
+- **Plugins.** **Admin → Plugins** installs JSON plugins that add editor blocks, drawn in the same sandbox as the Visual block (no network, no access to the page). The **Countdown** example installs with one click.
+- **Analytics.** Owners and space admins see each page's views, unique readers and reading time; **Folio → Admin → Analytics** shows the most read pages and active spaces, the searches that found nothing and the chat questions without an answer: what to document next. Agents get the same list with `get_search_gaps`.
+
+<p align="center">
+  <img src="docs/images/folio-public.png" alt="A page opened through its public link, without an account" width="49%">
+  <img src="docs/images/folio-import.png" alt="The dry run of a Confluence import" width="49%">
+</p>
+<p align="center">
+  <img src="docs/images/folio-integrations.png" alt="Admin, Integrations: Slack, webhooks and automation rules" width="49%">
+  <img src="docs/images/folio-calendar.png" alt="A space's release calendar with Docket milestones" width="49%">
+</p>
+
 - **Search.** Type a question in the bar at the top and Folio finds the section that answers it, in English and Spanish. Hybrid search mixes words and meaning (with an AI provider for embeddings); filters narrow it by space, type, document type, language or label. The same RQL as Docket queries docs: `space = ai-tools AND #onboarding AND published >= -30d ORDER BY published DESC`.
 
 <p align="center"><img src="docs/images/folio-search.png" alt="Search results with highlighted matches" width="820"></p>
 
 - **AI provider.** **Admin → Settings → AI provider** sets one provider for chat and embeddings (OpenAI, an OpenAI-compatible server such as Voyage, Ollama, or Anthropic for chat). The key is stored encrypted; **Test connection** shows the dimensions and latency. Without one, search uses words only.
-- **Folio's MCP.** `/mcp/folio` takes the same tokens as `/mcp`. Agents search (`search_docs`, `query_docs`), read pages in Markdown (`get_page`), learn what publishing needs (`get_metadata_schema`), write (`create_page`, `update_draft`) and send for approval (`submit_for_publication`, `list_my_submissions`). They also ask the docs (`ask_docs`), link docs to tickets (`link_ticket`, `get_docs_for_ticket`) and turn a build spec into tickets (`create_tickets_from_build_spec`, a dry run unless `dry_run=false`). Three prompts guide an agent working in a codebase: `weekly_changes_post`, `document_module` and `build_spec_from_discussion`; all of them end waiting for approval. Admins pick which Folio tools each agent may use, as with Docket's.
+- **Folio's MCP.** `/mcp/folio` takes the same tokens as `/mcp`. Agents search (`search_docs`, `query_docs`), read pages in Markdown (`get_page`), learn what publishing needs (`get_metadata_schema`), write (`create_page`, `update_draft`) and send for approval (`submit_for_publication`, `list_my_submissions`). They also ask the docs (`ask_docs`), link docs to tickets (`link_ticket`, `get_docs_for_ticket`) and turn a build spec into tickets (`create_tickets_from_build_spec`, a dry run unless `dry_run=false`). They export a page (`export_page`), read and add calendar events (`list_calendar_events`, `add_calendar_event`) and see a page's readers and what people search without finding (`get_page_analytics`, `get_search_gaps`). Three prompts guide an agent working in a codebase: `weekly_changes_post`, `document_module` and `build_spec_from_discussion`; all of them end waiting for approval. Admins pick which Folio tools each agent may use, as with Docket's.
 
 ```bash
 claude mcp add --transport http radicle-folio https://radicle.example.com/mcp/folio \
@@ -553,7 +570,7 @@ Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning
 - [x] Phase 2: real-time editing with named carets and pointers, comments anchored to the text, mentions, notifications in the app and by email, reactions, following, sharing, action items and My tasks, live docs with snapshots, moving, copying and archiving pages, owners and statuses that expire, and the For you feed.
 - [x] Phase 3: templates for pages and spaces, the home editor, visual blocks (diagrams, charts, timelines, formulas and sandboxed visuals), whiteboards, databases and embeds.
 - [x] Phase 4: tickets inside docs, build specs that make their tickets, links to milestones and areas, the docs chat with citations, AI in the editor with a glossary, and MCP prompts for agents writing from a codebase.
-- [ ] Phase 5: public pages, import and export, Slack and Teams, webhooks.
+- [x] Phase 5: public pages, export to PDF, Word, HTML and Markdown, import from Confluence, Notion, Word and Markdown, Slack and Teams, webhooks, automation rules, plugins, calendars with an iCal feed, analytics and Folio's audit.
 
 **Stage 5: integrations**
 
