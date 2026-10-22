@@ -30,7 +30,7 @@ export function CreateTicketDialog({ nodeId, text, anchor, onClose }: Props) {
   const toast = useToast();
   const queryClient = useQueryClient();
   const [title, setTitle] = useState(() => firstLine(text));
-  const target = useTicketTarget();
+  const target = useTicketTarget(nodeId);
   const chosen = target.project;
   const create = useMutation({
     mutationFn: () =>

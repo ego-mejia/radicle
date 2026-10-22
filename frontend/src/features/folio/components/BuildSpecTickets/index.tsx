@@ -35,7 +35,7 @@ function Wizard({ nodeId, onClose }: { nodeId: string; onClose: () => void }) {
   const { t } = useTranslation();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const target = useTicketTarget();
+  const target = useTicketTarget(nodeId);
   // Deliverables left out by hand; the rest of the new ones are sent.
   const [skipped, setSkipped] = useState<Set<string>>(new Set());
   const items = useQuery({

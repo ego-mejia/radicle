@@ -1,7 +1,7 @@
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useRef } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { mockFetch, renderWithProviders } from '../../../../test/renderWithProviders';
 import { rangeOf } from '../../hooks/textAnchor';
 import { SelectionComment } from '../SelectionComment';
@@ -71,6 +71,31 @@ describe('CreateTicketDialog', () => {
       area: 'Backend',
       milestone: 'V1',
     });
+  });
+
+  it("starts on the doc's own Docket project", async () => {
+    const other = { ...PROJECT, key: 'PB', name: 'ProyectoB' };
+    const calls = mockFetch({
+      'GET /api/v1/projects': { status: 200, body: { items: [PROJECT, other] } },
+      'GET /api/v1/projects/PA': { status: 200, body: PROJECT },
+      'GET /api/v1/projects/PB': { status: 200, body: other },
+      [`GET /api/v1/folio/nodes/${NODE}`]: {
+        status: 200,
+        body: { id: NODE, metadata: { docket_project: 'pb' } },
+      },
+      [`POST /api/v1/folio/nodes/${NODE}/tickets`]: {
+        status: 201,
+        body: { id: 'l1', kind: 'created_from_text', ticket: { key: 'PB-2' }, restricted: false },
+      },
+    });
+    renderWithProviders(<Page />);
+    select(await screen.findByTestId('page'), 'Documentar el token');
+    await userEvent.click(await screen.findByRole('button', { name: 'Create ticket' }));
+    await screen.findByRole('dialog', { name: 'Create ticket' });
+    await vi.waitFor(() => expect(screen.getByLabelText('Project')).toHaveValue('PB'));
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }));
+    expect(await screen.findByText('PB-2 created and linked to this section.')).toBeVisible();
+    expect(calls.find((c) => c.method === 'POST')?.body).toMatchObject({ project: 'PB' });
   });
 
   it("shows Docket's reason when it refuses", async () => {
