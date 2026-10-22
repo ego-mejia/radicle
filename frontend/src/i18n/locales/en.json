@@ -2871,6 +2871,29 @@
       "sent": "Sent",
       "failed": "Failed",
       "skipped": "Skipped"
-    }
+    },
+    "chat": "Slack and Teams",
+    "chatHelp": "Post events on channels, and answer /radicle search and /radicle ask with the permissions of whoever asks. Paste the command URL in Slack (slash command) or Teams (outgoing webhook); in Slack, paste the events URL too for link previews.",
+    "newChat": "Connect Slack or Teams",
+    "kind": "Kind",
+    "slack": "Slack",
+    "teams": "Teams",
+    "botToken": "Bot token",
+    "botTokenHint": "OAuth & Permissions, starts with xoxb-.",
+    "signingSecret": "Signing secret",
+    "teamsSecret": "Outgoing webhook secret",
+    "teamsSecretHint": "Teams shows it once when you create the outgoing webhook.",
+    "channel": "Channel {{n}}",
+    "slackChannelHint": "The channel id, e.g. C0123ABCD.",
+    "teamsChannelHint": "The channel's incoming webhook URL.",
+    "removeChannel": "Remove channel {{n}}",
+    "addChannel": "Add a channel",
+    "commandUrl": "Command URL",
+    "eventsUrl": "Events URL",
+    "testChannel": "Send a test to {{channel}}",
+    "linkTitle": "Connect Slack or Teams",
+    "linkHelp": "Radicle sent you here from /radicle. Connect that chat account to yours, so its answers show what you can see in Radicle.",
+    "linkConfirm": "Connect my account",
+    "linked": "Done: {{name}} now answers with your Radicle account. Go back to the chat and run /radicle again."
   }
 }
