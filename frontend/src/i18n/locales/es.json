@@ -3011,6 +3011,28 @@
     },
     "docsSection": {
       "general": "General"
+    },
+    "sectionsEditor": {
+      "title": "Secciones de este space",
+      "hint": "Elige qué secciones muestra la portada del space y en qué orden.",
+      "count_one": "{{count}} página",
+      "count_other": "{{count}} páginas",
+      "up": "Subir {{name}}",
+      "down": "Bajar {{name}}",
+      "save": "Guardar secciones",
+      "saved": "Secciones guardadas"
+    },
+    "spaceAdmin": {
+      "title": "Administrar {{space}}",
+      "back": "Volver a {{space}}",
+      "tabsLabel": "Administrar el space",
+      "tabs": {
+        "pages": "Páginas",
+        "sections": "Secciones",
+        "settings": "Ajustes",
+        "permissions": "Permisos"
+      },
+      "settingsHint": "Cuánto dura una página Verified, la IA del editor, los lectores en analytics y exportar todo el space."
     }
   },
   "notifications": {
