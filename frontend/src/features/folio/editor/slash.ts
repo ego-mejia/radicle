@@ -7,6 +7,7 @@ import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
 import i18n from '../../../i18n';
 import { SlashMenu, type SlashMenuHandle } from '../components/SlashMenu';
 import { BLOCKS, findBlocks, type BlockItem } from './blocks';
+import { pluginBlockItems } from './pluginBlocks';
 
 type Options = { items: BlockItem[] };
 
@@ -57,7 +58,9 @@ export const SlashCommand = Extension.create<Options>({
         char: '/',
         allowSpaces: true,
         items: ({ query }) =>
-          findBlocks(this.options.items, query, (key) => i18n.t(`folio.editor.blocks.${key}`)),
+          findBlocks([...this.options.items, ...pluginBlockItems()], query, (key) =>
+            i18n.t(`folio.editor.blocks.${key}`),
+          ),
         command: ({ editor, range, props }) => {
           props.run(editor.chain().focus().deleteRange(range)).run();
         },

@@ -4,6 +4,7 @@
 import { DatabaseViewNode } from './databaseView';
 import { WhiteboardNode } from './whiteboard';
 import { CalendarNode } from './calendar';
+import { PluginBlockNode } from './pluginBlocks';
 import { Embed } from './embed';
 import { TicketLink } from './ticket';
 import { VISUAL_NODES } from './visualNodes';
@@ -77,6 +78,7 @@ export function folioExtensions({ shared = false } = {}): AnyExtension[] {
     DatabaseViewNode,
     WhiteboardNode,
     CalendarNode,
+    PluginBlockNode,
     Mention,
     Status,
     TicketLink,

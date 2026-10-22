@@ -6,6 +6,8 @@ import type { PanelKind } from './schema';
 
 export type BlockItem = {
   key: string;
+  /** Shown as is (plugin blocks); the rest are i18n keys under folio.editor.blocks. */
+  label?: string;
   /** Extra words that find it, in both languages. */
   keywords: string;
   run: (chain: ChainedCommands) => ChainedCommands;
@@ -179,7 +181,7 @@ export const BLOCKS: BlockItem[] = [
 export function findBlocks(items: BlockItem[], query: string, label: (key: string) => string) {
   const words = query.toLowerCase().split(/\s+/).filter(Boolean);
   return items.filter((item) => {
-    const text = `${label(item.key)} ${item.keywords}`.toLowerCase();
+    const text = `${item.label ?? label(item.key)} ${item.keywords}`.toLowerCase();
     return words.every((word) => text.includes(word));
   });
 }
