@@ -2952,6 +2952,34 @@
       "seeAll_other": "Ver las {{count}}",
       "recent": "Recién actualizado",
       "empty": "Este space todavía no tiene páginas. Escribe la primera."
+    },
+    "decisionsTable": {
+      "topic": "Tema",
+      "project": "Proyecto",
+      "statusLabel": "Estado",
+      "decision": "Decisión",
+      "replaces": "Reemplaza a",
+      "date": "Fecha",
+      "count_one": "{{count}} decisión",
+      "count_other": "{{count}} decisiones",
+      "hidden_one": "{{count}} reemplazada oculta",
+      "hidden_other": "{{count}} reemplazadas ocultas",
+      "empty": "Aún no hay decisiones de arquitectura. Registra la primera con su contexto y las opciones que descartaron.",
+      "noMatch": "Ninguna decisión cumple estos filtros.",
+      "failed": "No pudimos cargar las decisiones. Intenta de nuevo.",
+      "replacedBy": "Reemplazada por la {{number}}",
+      "filter": {
+        "current": "Vigentes",
+        "accepted": "Aceptadas",
+        "proposed": "En discusión",
+        "replaced": "Reemplazadas",
+        "all": "Todas"
+      },
+      "status": {
+        "accepted": "Aceptada",
+        "proposed": "En discusión",
+        "replaced": "Reemplazada"
+      }
     }
   },
   "notifications": {

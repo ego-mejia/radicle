@@ -2952,6 +2952,34 @@
       "seeAll_other": "See all {{count}}",
       "recent": "Recently updated",
       "empty": "This space has no pages yet. Write the first one."
+    },
+    "decisionsTable": {
+      "topic": "Topic",
+      "project": "Project",
+      "statusLabel": "Status",
+      "decision": "Decision",
+      "replaces": "Replaces",
+      "date": "Date",
+      "count_one": "{{count}} decision",
+      "count_other": "{{count}} decisions",
+      "hidden_one": "{{count}} replaced decision hidden",
+      "hidden_other": "{{count}} replaced decisions hidden",
+      "empty": "No architecture decisions here yet. Record the first one with its context and the options you ruled out.",
+      "noMatch": "No decision matches these filters.",
+      "failed": "The decisions could not be loaded. Try again.",
+      "replacedBy": "Replaced by {{number}}",
+      "filter": {
+        "current": "Current",
+        "accepted": "Accepted",
+        "proposed": "In discussion",
+        "replaced": "Replaced",
+        "all": "All"
+      },
+      "status": {
+        "accepted": "Accepted",
+        "proposed": "In discussion",
+        "replaced": "Replaced"
+      }
     }
   },
   "notifications": {
