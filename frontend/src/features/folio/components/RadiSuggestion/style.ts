@@ -81,7 +81,7 @@ export const Dismiss = styled.button`
   padding: 0;
   border: 0;
   border-radius: ${({ theme }) => theme.radius.full};
-  background: ${({ theme }) => theme.color.border};
+  background: ${({ theme }) => (theme.mode === 'dark' ? theme.color.border : theme.color.textMuted)};
   color: inherit;
   cursor: pointer;
 
