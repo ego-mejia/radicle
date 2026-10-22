@@ -9,7 +9,7 @@ import { Radi } from '../../features/assistant/components/Radi';
 import { ChatPanel } from '../../features/folio/components/ChatPanel';
 import { FolioSidebar } from '../../features/folio/components/FolioSidebar';
 import { TopbarSearch } from '../../features/folio/components/TopbarSearch';
-import { WriteButton } from '../../features/folio/views/FolioHomeView/components/WriteButton';
+import { WriteButton } from '../../features/folio/components/WriteButton';
 import { NotificationBell } from '../../features/notifications/components/NotificationBell';
 import { useHotkey } from '../../hooks/useHotkey';
 import { useSuiteShortcuts } from '../../hooks/useSuiteShortcuts';
