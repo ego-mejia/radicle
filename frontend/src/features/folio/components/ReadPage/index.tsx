@@ -18,6 +18,7 @@ import { DatabasePage } from '../DatabasePage';
 import { ActionItemTickets } from '../ActionItemTickets';
 import { BuildSpecTickets } from '../BuildSpecTickets';
 import { DocContent } from '../DocContent';
+import { ExportMenu } from '../ExportMenu';
 import { headingsOf, readingMinutes } from '../DocContent/anchors';
 import { FocusReader } from '../FocusReader';
 import { GlossaryTooltips } from '../GlossaryTooltips';
@@ -168,6 +169,9 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
               <PenLine aria-hidden />
               {t('folio.reader.edit')}
             </Link>
+          )}
+          {n.version != null && page.space?.permissions.includes('export') && (
+            <ExportMenu target={{ node: n.id }} />
           )}
           {n.can_edit && <NodeMenu node={n} />}
         </S.Actions>

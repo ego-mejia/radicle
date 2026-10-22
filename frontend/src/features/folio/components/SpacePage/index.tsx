@@ -19,6 +19,7 @@ import { SpaceTree } from '../SpaceTree';
 import { StatusBadge } from '../StatusBadge';
 import { ArchivedList } from '../ArchivedList';
 import { MyShortcuts } from '../MyShortcuts';
+import { ExportMenu } from '../ExportMenu';
 import { SpaceSettings } from '../SpaceSettings';
 import * as S from './style';
 
@@ -54,6 +55,7 @@ export function SpacePage({ spaceKey }: { spaceKey: string }) {
             {s.description && <p>{s.description}</p>}
           </S.Heading>
           {s.permissions.includes('admin') && <SpaceSettings space={s} />}
+          {s.permissions.includes('export') && <ExportMenu target={{ space: s.key }} />}
           {canCreate && (
             <S.Actions>
               <Button variant="primary" onClick={() => setCreating('page')}>

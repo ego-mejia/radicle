@@ -2796,6 +2796,24 @@
         "done": "Lista",
         "failed": "Falló"
       }
+    },
+    "export": {
+      "button": "Exportar",
+      "working": "Exportando…",
+      "ready": "{{name}} está listo.",
+      "failed": "La exportación falló.",
+      "format": {
+        "pdf": "PDF",
+        "docx": "Word",
+        "html": "Sitio HTML",
+        "markdown": "Markdown"
+      },
+      "hint": {
+        "pdf": "Como se ve en Folio",
+        "docx": ".docx",
+        "html": "Abre desde el disco",
+        "markdown": "Zip con front matter"
+      }
     }
   },
   "notifications": {
