@@ -5,10 +5,16 @@ import { IconButton } from '../../../../components/ui/Button';
 import { DocsChat } from '../DocsChat';
 import * as S from './style';
 
-type Props = { open: boolean; onClose: () => void };
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  /** Told while an answer is on its way, so Radi can look busy. */
+  onPending?: (pending: boolean) => void;
+};
 
-/** The docs chat beside any Folio page; `a` opens it, Escape closes it. */
-export function ChatPanel({ open, onClose }: Props) {
+/** Radi in Folio (RAD-57): the docs chat beside any Folio page, answering only from the
+ * docs you can see, with its sources and the tools it used. `a` opens it, Escape closes it. */
+export function ChatPanel({ open, onClose, onPending }: Props) {
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -24,13 +30,16 @@ export function ChatPanel({ open, onClose }: Props) {
   return (
     <S.Panel aria-label={t('folio.chat.title')} hidden={!open}>
       <S.Header>
-        <h2>{t('folio.chat.title')}</h2>
+        <S.Who>
+          <h2>{t('folio.radi.name')}</h2>
+          <small>{t('folio.radi.subtitle')}</small>
+        </S.Who>
         <IconButton label={t('folio.chat.close')} onClick={onClose}>
           <X aria-hidden />
         </IconButton>
       </S.Header>
       <S.Body>
-        <DocsChat autoFocus={open} />
+        <DocsChat autoFocus={open} tools onPending={onPending} />
       </S.Body>
     </S.Panel>
   );

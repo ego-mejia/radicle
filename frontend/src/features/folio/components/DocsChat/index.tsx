@@ -25,10 +25,20 @@ type Props = {
   /** Only docs in this space. */
   space?: string;
   autoFocus?: boolean;
+  /** Radi's tools and "write a draft" under each answer (the Radi panel). */
+  tools?: boolean;
+  /** Told when an answer starts and ends, so Radi can look busy. */
+  onPending?: (pending: boolean) => void;
 };
 
 /** Ask the docs (Folio 4.5): answers written only from the docs you can see, with sources. */
-export function DocsChat({ compact = false, space, autoFocus = false }: Props) {
+export function DocsChat({
+  compact = false,
+  space,
+  autoFocus = false,
+  tools = false,
+  onPending,
+}: Props) {
   const { t } = useTranslation();
   const errorMessage = useErrorMessage();
   const queryClient = useQueryClient();
@@ -58,6 +68,7 @@ export function DocsChat({ compact = false, space, autoFocus = false }: Props) {
   useEffect(() => {
     if (autoFocus) input.current?.focus();
   }, [autoFocus]);
+  useEffect(() => onPending?.(ask.isPending), [ask.isPending, onPending]);
   useEffect(() => {
     end.current?.scrollIntoView?.({ block: 'end' });
   }, [lines, partial]);
@@ -78,7 +89,11 @@ export function DocsChat({ compact = false, space, autoFocus = false }: Props) {
           line.kind === 'question' ? (
             <S.Question key={i}>{line.text}</S.Question>
           ) : line.kind === 'answer' ? (
-            <ChatAnswer key={i} message={line.message} />
+            <ChatAnswer
+              key={i}
+              message={line.message}
+              question={tools ? questionBefore(lines, i) : undefined}
+            />
           ) : (
             <S.Error key={i} role="alert">
               {line.text}
@@ -120,4 +135,12 @@ export function DocsChat({ compact = false, space, autoFocus = false }: Props) {
       </S.Compose>
     </S.Chat>
   );
+}
+
+function questionBefore(lines: Line[], index: number): string {
+  for (let i = index - 1; i >= 0; i--) {
+    const line = lines[i];
+    if (line?.kind === 'question') return line.text;
+  }
+  return '';
 }

@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { Outlet } from '@tanstack/react-router';
-import { Menu as MenuIcon, MessagesSquare } from 'lucide-react';
+import { Menu as MenuIcon } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppShell } from '../../components/layout/AppSidebar/style';
 import { IconButton } from '../../components/ui/Button';
+import { Radi } from '../../features/assistant/components/Radi';
 import { ChatPanel } from '../../features/folio/components/ChatPanel';
 import { FolioSidebar } from '../../features/folio/components/FolioSidebar';
 import { TopbarSearch } from '../../features/folio/components/TopbarSearch';
@@ -31,6 +32,7 @@ export function FolioPage() {
   const [chatOpen, setChatOpen] = useState(false);
   const toggleChat = useCallback(() => setChatOpen((open) => !open), []);
   const closeChat = useCallback(() => setChatOpen(false), []);
+  const [thinking, setThinking] = useState(false);
   useHotkey('a', toggleChat, !!chat?.available);
   const writer = folio?.role === 'admin' || folio?.role === 'creator';
 
@@ -50,17 +52,6 @@ export function FolioPage() {
               <TopbarSearch />
             </S.Search>
             <S.Actions>
-              {chat?.available && (
-                <S.Ask
-                  type="button"
-                  onClick={toggleChat}
-                  aria-expanded={chatOpen}
-                  title={t('folio.chat.shortcut')}
-                >
-                  <MessagesSquare aria-hidden />
-                  {t('folio.chat.open')}
-                </S.Ask>
-              )}
               <NotificationBell />
               {writer && <WriteButton />}
             </S.Actions>
@@ -70,7 +61,16 @@ export function FolioPage() {
           </S.Content>
         </S.Main>
       </AppShell>
-      {chat?.available && <ChatPanel open={chatOpen} onClose={closeChat} />}
+      {chat?.available && (
+        <>
+          <ChatPanel open={chatOpen} onClose={closeChat} onPending={setThinking} />
+          <Radi
+            open={chatOpen}
+            mood={thinking ? 'thinking' : chatOpen ? 'listening' : 'idle'}
+            onClick={toggleChat}
+          />
+        </>
+      )}
     </>
   );
 }

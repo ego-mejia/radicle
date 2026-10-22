@@ -37,3 +37,13 @@ export const Body = styled.div`
   min-height: 0;
   padding: ${({ theme }) => theme.space.lg};
 `;
+
+export const Who = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  small {
+    color: ${({ theme }) => theme.color.textMuted};
+    font-size: ${({ theme }) => theme.fontSize.sm};
+  }
+`;
