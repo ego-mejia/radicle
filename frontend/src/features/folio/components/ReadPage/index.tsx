@@ -26,6 +26,7 @@ import { MarginComments } from '../MarginComments';
 import { NodeMenu } from '../NodeMenu';
 import { PageMeta } from '../PageMeta';
 import { PageQuality } from '../PageQuality';
+import { StalePageSuggestion } from '../StalePageSuggestion';
 import { PageSocial } from '../PageSocial';
 import { PagePager } from '../PagePager';
 import { PageToc } from '../PageToc';
@@ -208,6 +209,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
       <S.Layout>
         <S.Article>
           {page.isDraft && <S.DraftNote role="note">{t('folio.reader.draftNote')}</S.DraftNote>}
+          {!page.isDraft && <StalePageSuggestion node={n} />}
           {meta.doc_type ? <S.Tag>{String(meta.doc_type)}</S.Tag> : null}
           <S.Title>
             {n.icon && <span aria-hidden>{n.icon} </span>}
