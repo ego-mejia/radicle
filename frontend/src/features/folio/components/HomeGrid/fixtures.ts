@@ -41,6 +41,8 @@ export function block(
     cards: [],
     spaces: [],
     markdown: '',
+    calendar: null,
+    view: 'month',
     ...extra,
   };
 }

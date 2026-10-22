@@ -7965,7 +7965,7 @@
             "type": "string"
           },
           "type": {
-            "description": "featured, announcement, posts, query, for_you, most_read, spaces, text, search, chat",
+            "description": "featured, announcement, posts, query, for_you, most_read, spaces, text, search, chat, calendar",
             "title": "Type",
             "type": "string"
           },
@@ -7995,6 +7995,18 @@
       },
       "HomeBlockOut": {
         "properties": {
+          "calendar": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "calendar blocks: its id",
+            "title": "Calendar"
+          },
           "cards": {
             "items": {
               "$ref": "#/components/schemas/CardOut"
@@ -8030,6 +8042,12 @@
             "title": "Type",
             "type": "string"
           },
+          "view": {
+            "default": "month",
+            "description": "calendar blocks: month or week",
+            "title": "View",
+            "type": "string"
+          },
           "w": {
             "title": "W",
             "type": "integer"
@@ -8053,7 +8071,9 @@
           "title",
           "cards",
           "spaces",
-          "markdown"
+          "markdown",
+          "calendar",
+          "view"
         ],
         "title": "HomeBlockOut",
         "type": "object"

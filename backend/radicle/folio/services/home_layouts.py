@@ -11,6 +11,7 @@ Blocks and their config:
 - spaces: {"title"?}
 - text: {"markdown"} up to 5,000 characters
 - search: {} and chat: {} (the docs chat, shown only when it is on: Folio 4.5)
+- calendar: {"calendar": id, "view": "month" | "week"} (Folio 5.8)
 """
 
 import uuid
@@ -21,6 +22,7 @@ from typing import Any
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from radicle.folio.db.calendars import FolioCalendar
 from radicle.folio.db.models import FolioNode
 from radicle.folio.db.templates import FolioHomeLayout
 from radicle.folio.query.compiler import Context, compile_query
@@ -45,6 +47,7 @@ TYPES = (
     "text",
     "search",
     "chat",
+    "calendar",
 )
 LIMITS = {"posts": (6, 12), "query": (6, 20), "for_you": (5, 12), "most_read": (5, 12)}
 
@@ -140,6 +143,16 @@ async def _config(
                 compile_query(parse(rql), Context(user_id=uuid.uuid4(), now=utcnow()))
             except RQLError as exc:
                 errors.add(f"{where}.rql", exc.detail, position=exc.position)
+    elif kind == "calendar":
+        out["view"] = "week" if raw.get("view") == "week" else "month"
+        try:
+            calendar_id = uuid.UUID(str(raw.get("calendar")))
+        except ValueError:
+            errors.add(f"{where}.calendar", "Pick one of the spaces' calendars.")
+            return out | {"calendar": None}
+        if await db.get(FolioCalendar, calendar_id) is None:
+            errors.add(f"{where}.calendar", "That calendar doesn't exist anymore.")
+        out["calendar"] = str(calendar_id)
     elif kind == "text":
         markdown = str(raw.get("markdown") or "")
         if len(markdown) > MAX_TEXT:

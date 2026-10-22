@@ -113,3 +113,34 @@ async def test_the_chat_block_shows_when_the_chat_is_on(
 ) -> None:
     blocks = await _blocks(client, team)
     assert blocks["chat"]["type"] == "chat"
+
+
+async def test_a_calendar_block_shows_to_who_can_see_it(
+    client: AsyncClient, team: Team, docs: dict
+) -> None:
+    i = team.instance.headers
+    grants = [{"grantee_type": "user", "grantee": team.instance.handle, "permissions": ["admin"]}]
+    await client.put(f"{API}/spaces/vacio/grants", headers=i, json={"grants": grants})
+    cals = {}
+    for space in ("docs", "vacio"):
+        r = await client.post(
+            f"{API}/calendars", headers=i, json={"space": space, "name": f"Cal {space}"}
+        )
+        cals[space] = r.json()["id"]
+    await _publish_layout(
+        client,
+        team,
+        _block("open", "calendar", 0, calendar=cals["docs"], view="week"),
+        _block("hidden", "calendar", 2, calendar=cals["vacio"]),
+    )
+    member = await _blocks(client, team)
+    assert member["open"]["calendar"] == cals["docs"] and member["open"]["view"] == "week"
+    assert "hidden" not in member
+    admin = await _blocks(client, team, "instance")
+    assert admin["hidden"]["view"] == "month"
+    r = await client.put(
+        f"{API}/admin/home/draft",
+        headers=i,
+        json={"blocks": [_block("x", "calendar", 0, calendar="nope")]},
+    )
+    assert r.status_code == 422 and "calendars" in r.text

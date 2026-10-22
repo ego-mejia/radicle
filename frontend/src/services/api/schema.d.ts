@@ -8428,7 +8428,7 @@ export interface components {
             id: string;
             /**
              * Type
-             * @description featured, announcement, posts, query, for_you, most_read, spaces, text, search, chat
+             * @description featured, announcement, posts, query, for_you, most_read, spaces, text, search, chat, calendar
              */
             type: string;
             /** W */
@@ -8440,6 +8440,11 @@ export interface components {
         };
         /** HomeBlockOut */
         HomeBlockOut: {
+            /**
+             * Calendar
+             * @description calendar blocks: its id
+             */
+            calendar: string | null;
             /** Cards */
             cards: components["schemas"]["CardOut"][];
             /** H */
@@ -8457,6 +8462,12 @@ export interface components {
              * @description featured, announcement, posts, query, for_you, ...
              */
             type: string;
+            /**
+             * View
+             * @description calendar blocks: month or week
+             * @default month
+             */
+            view: string;
             /** W */
             w: number;
             /** X */

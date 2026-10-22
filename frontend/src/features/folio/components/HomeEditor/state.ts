@@ -14,6 +14,7 @@ export const PALETTE = [
   'spaces',
   'text',
   'search',
+  'calendar',
 ] as const;
 
 const SIZES: Record<string, [number, number]> = {
@@ -27,6 +28,7 @@ const SIZES: Record<string, [number, number]> = {
   text: [6, 2],
   search: [12, 1],
   chat: [6, 4],
+  calendar: [8, 6],
 };
 
 /** What react-grid-layout reports after a drag or resize. */

@@ -6,6 +6,13 @@ import { HomeGrid } from '.';
 import { inGridOrder } from './order';
 
 vi.mock('../DocsChat', () => ({ DocsChat: () => <p>chat</p> }));
+vi.mock('../CalendarEmbed', () => ({
+  CalendarEmbed: (p: { calendarId: string; view: string }) => (
+    <p>
+      {p.calendarId} {p.view}
+    </p>
+  ),
+}));
 
 const SPACE = { key: 'eng', name: 'Ingeniería', kind: 'team' as const, icon: null, docs: 3 };
 
@@ -24,6 +31,7 @@ describe('HomeGrid', () => {
           block('text', 9, 4, 3, { title: 'Hello', markdown: '**Bienvenidos**' }),
           block('search', 0, 6, 12),
           block('chat', 0, 8, 12),
+          block('calendar', 0, 12, 8, { calendar: 'c1', view: 'week' }),
         ]}
       />,
     );
@@ -42,6 +50,7 @@ describe('HomeGrid', () => {
     );
     expect(screen.getByRole('search', { name: 'Search the docs' })).toBeInTheDocument();
     expect(container.querySelector('[data-block="chat"]')).toHaveTextContent('chat');
+    expect(container.querySelector('[data-block="calendar"]')).toHaveTextContent('c1 week');
   });
 
   it('lays blocks out top to bottom, then left to right', async () => {
