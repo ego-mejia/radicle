@@ -282,6 +282,7 @@ EXEMPT = {
     "/api/v1/folio/spaces",
     "/api/v1/folio/me/personal-space",
     "/api/v1/folio/spaces/{key}",
+    "/api/v1/folio/spaces/{key}/overview",
     "/api/v1/folio/spaces/{key}/tree",
     "/api/v1/folio/spaces/{key}/posts",
     "/api/v1/folio/nodes/{node_id}",

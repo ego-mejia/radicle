@@ -35,6 +35,7 @@ from radicle.folio.api import query as query_api
 from radicle.folio.api import search as search_api
 from radicle.folio.api import sharing as sharing_api
 from radicle.folio.api import social as social_api
+from radicle.folio.api import space_overview as space_overview_api
 from radicle.folio.api import spaces as spaces_api
 from radicle.folio.api import submissions as submissions_api
 from radicle.folio.api import tasks as tasks_api
@@ -150,6 +151,7 @@ async def delete_grant(grant_id: uuid.UUID, principal: CurrentPrincipal, db: Db)
 
 
 router.include_router(spaces_api.router)
+router.include_router(space_overview_api.router)
 router.include_router(drafts_api.router)
 router.include_router(assets_api.router)
 router.include_router(catalogs_api.router)
