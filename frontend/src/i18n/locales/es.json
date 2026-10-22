@@ -2945,6 +2945,13 @@
         "done": "Terminado",
         "outdated": "Outdated"
       }
+    },
+    "portada": {
+      "startHere": "Empieza aquí",
+      "seeAll_one": "Ver {{count}}",
+      "seeAll_other": "Ver las {{count}}",
+      "recent": "Recién actualizado",
+      "empty": "Este space todavía no tiene páginas. Escribe la primera."
     }
   },
   "notifications": {
