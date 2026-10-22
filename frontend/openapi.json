@@ -12231,6 +12231,151 @@
         "title": "PermissionsPut",
         "type": "object"
       },
+      "PluginBlockField": {
+        "properties": {
+          "default": {
+            "title": "Default",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "text",
+              "textarea",
+              "number",
+              "date",
+              "select"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Options",
+            "type": "array"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "kind",
+          "required",
+          "default",
+          "options"
+        ],
+        "title": "PluginBlockField",
+        "type": "object"
+      },
+      "PluginBlockOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/PluginBlockField"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "html": {
+            "description": "Drawn in the Visual block's sandbox, with the data",
+            "title": "Html",
+            "type": "string"
+          },
+          "icon": {
+            "title": "Icon",
+            "type": "string"
+          },
+          "id": {
+            "description": "plugin/type, as pages name the block",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "plugin": {
+            "title": "Plugin",
+            "type": "string"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "plugin",
+          "type",
+          "name",
+          "description",
+          "icon",
+          "fields",
+          "html"
+        ],
+        "title": "PluginBlockOut",
+        "type": "object"
+      },
+      "PluginBlocksOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PluginBlockOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "PluginBlocksOut",
+        "type": "object"
+      },
+      "PluginExampleOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "installed": {
+            "title": "Installed",
+            "type": "boolean"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "description",
+          "installed"
+        ],
+        "title": "PluginExampleOut",
+        "type": "object"
+      },
       "PluginIn": {
         "additionalProperties": false,
         "properties": {
@@ -12326,6 +12471,14 @@
       },
       "PluginsOut": {
         "properties": {
+          "examples": {
+            "description": "Plugins that ship with Radicle",
+            "items": {
+              "$ref": "#/components/schemas/PluginExampleOut"
+            },
+            "title": "Examples",
+            "type": "array"
+          },
           "hooks": {
             "description": "Hooks this instance knows",
             "items": {
@@ -12344,7 +12497,8 @@
         },
         "required": [
           "items",
-          "hooks"
+          "hooks",
+          "examples"
         ],
         "title": "PluginsOut",
         "type": "object"
@@ -20705,6 +20859,49 @@
         ]
       }
     },
+    "/api/v1/admin/plugins/examples/{key}": {
+      "post": {
+        "description": "Install a plugin that ships with Radicle, such as radicle.countdown.",
+        "operationId": "install_example_api_v1_admin_plugins_examples__key__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PluginOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Install Example",
+        "tags": [
+          "plugins"
+        ]
+      }
+    },
     "/api/v1/admin/plugins/{key}": {
       "delete": {
         "operationId": "delete_plugin_api_v1_admin_plugins__key__delete",
@@ -28588,6 +28785,29 @@
           }
         },
         "summary": "People",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/plugin-blocks": {
+      "get": {
+        "description": "Blocks of the plugins that are on; a turned-off plugin's blocks are not here.",
+        "operationId": "list_plugin_blocks_api_v1_folio_plugin_blocks_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PluginBlocksOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Plugin Blocks",
         "tags": [
           "folio",
           "folio"

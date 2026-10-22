@@ -25,10 +25,28 @@ MANIFEST_MAX = 2_000_000  # bytes of JSON
 # raises ValidationFailed saying what is wrong.
 Validator = Callable[[Any], Any]
 _hooks: dict[str, Validator] = {}
+# Plugins that ship with the apps, by key, for an admin to install in one click.
+_examples: dict[str, dict[str, Any]] = {}
 
 
 def hook(name: str, validate: Validator) -> None:
     _hooks[name] = validate
+
+
+def example(manifest: dict[str, Any]) -> None:
+    _examples[str(manifest["key"])] = manifest
+
+
+def examples() -> list[dict[str, Any]]:
+    return [_examples[k] for k in sorted(_examples)]
+
+
+async def install_example(db: AsyncSession, actor: User, key: str) -> Plugin:
+    manifest = _examples.get(key)
+    if manifest is None:
+        known = ", ".join(sorted(_examples)) or "none"
+        raise NotFound(f"No example plugin {key}. Examples: {known}.", code="plugin_not_found")
+    return await install(db, actor, manifest)
 
 
 def hook_names() -> list[str]:

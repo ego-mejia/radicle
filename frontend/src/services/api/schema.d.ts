@@ -110,6 +110,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/plugins/examples/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Install Example
+         * @description Install a plugin that ships with Radicle, such as radicle.countdown.
+         */
+        post: operations["install_example_api_v1_admin_plugins_examples__key__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/plugins/{key}": {
         parameters: {
             query?: never;
@@ -2641,6 +2661,26 @@ export interface paths {
          * @description For @mentions: active people and agents who can read Folio, best matches first.
          */
         get: operations["people_api_v1_folio_people_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/folio/plugin-blocks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Plugin Blocks
+         * @description Blocks of the plugins that are on; a turned-off plugin's blocks are not here.
+         */
+        get: operations["list_plugin_blocks_api_v1_folio_plugin_blocks_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -9951,6 +9991,65 @@ export interface components {
                 [key: string]: boolean;
             };
         };
+        /** PluginBlockField */
+        PluginBlockField: {
+            /** Default */
+            default: string;
+            /** Key */
+            key: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "text" | "textarea" | "number" | "date" | "select";
+            /** Label */
+            label: string;
+            /** Options */
+            options: string[];
+            /** Required */
+            required: boolean;
+        };
+        /** PluginBlockOut */
+        PluginBlockOut: {
+            /** Description */
+            description: string;
+            /** Fields */
+            fields: components["schemas"]["PluginBlockField"][];
+            /**
+             * Html
+             * @description Drawn in the Visual block's sandbox, with the data
+             */
+            html: string;
+            /** Icon */
+            icon: string;
+            /**
+             * Id
+             * @description plugin/type, as pages name the block
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Plugin */
+            plugin: string;
+            /** Type */
+            type: string;
+        };
+        /** PluginBlocksOut */
+        PluginBlocksOut: {
+            /** Items */
+            items: components["schemas"]["PluginBlockOut"][];
+        };
+        /** PluginExampleOut */
+        PluginExampleOut: {
+            /** Description */
+            description: string;
+            /** Installed */
+            installed: boolean;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+        };
         /** PluginIn */
         PluginIn: {
             /**
@@ -9996,6 +10095,11 @@ export interface components {
         };
         /** PluginsOut */
         PluginsOut: {
+            /**
+             * Examples
+             * @description Plugins that ship with Radicle
+             */
+            examples: components["schemas"]["PluginExampleOut"][];
             /**
              * Hooks
              * @description Hooks this instance knows
@@ -13116,6 +13220,37 @@ export interface operations {
                 "application/json": components["schemas"]["PluginIn"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    install_example_api_v1_admin_plugins_examples__key__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             201: {
@@ -18326,6 +18461,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_plugin_blocks_api_v1_folio_plugin_blocks_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginBlocksOut"];
                 };
             };
         };

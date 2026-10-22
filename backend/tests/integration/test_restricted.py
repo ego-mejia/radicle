@@ -335,6 +335,7 @@ EXEMPT = {
     "/api/v1/folio/calendars",
     "/api/v1/folio/calendars/{calendar_id}",
     "/api/v1/folio/calendars/{calendar_id}/events",
+    "/api/v1/folio/plugin-blocks",
     # Folio pages hold no Docket tickets beyond a key (ticket chips aren't resolved there).
     "/api/v1/folio/public-links",
     # Without an account, by token: no Docket data at all; test_folio_public_links_api.py
