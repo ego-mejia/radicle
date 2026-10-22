@@ -11,7 +11,16 @@ from sqlalchemy import ColumnElement, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from radicle.folio.db.models import FolioNode, FolioSpace, NodeKind
-from radicle.folio.services import access, chat, doc_query, feed, home_layouts, spaces, views
+from radicle.folio.services import (
+    access,
+    calendars,
+    chat,
+    doc_query,
+    feed,
+    home_layouts,
+    spaces,
+    views,
+)
 from radicle.folio.services.home import (
     ANNOUNCEMENT_LABELS,
     FEATURED_LABELS,
@@ -23,6 +32,7 @@ from radicle.folio.services.home import (
     _published,
 )
 from radicle.platform.db.models import User
+from radicle.platform.errors import NotFound
 from radicle.platform.query.errors import RQLError
 
 
@@ -40,6 +50,9 @@ class Block:
     markdown: str = ""
     # chat: whether the docs chat is on (Folio 4.5)
     live: bool = False
+    # calendar: its id and view, when the viewer may see it (Folio 5.8)
+    calendar: str | None = None
+    view: str = "month"
 
     @property
     def empty(self) -> bool:
@@ -47,6 +60,8 @@ class Block:
             return False
         if self.type == "chat":
             return not self.live
+        if self.type == "calendar":
+            return self.calendar is None
         return not (self.cards or self.spaces or self.markdown.strip())
 
 
@@ -154,6 +169,13 @@ async def resolve(
             block.spaces = await _spaces(db, user, visible)
         elif kind == "text":
             block.markdown = str(config.get("markdown", ""))
+        elif kind == "calendar":
+            block.view = str(config.get("view", "month"))
+            try:
+                found = await calendars.get_calendar(db, user, uuid.UUID(str(config["calendar"])))
+                block.calendar = str(found.id)
+            except (KeyError, ValueError, NotFound):
+                block.calendar = None
         elif kind == "chat":
             if chat_on is None:
                 chat_on = await chat.unavailable(db) is None

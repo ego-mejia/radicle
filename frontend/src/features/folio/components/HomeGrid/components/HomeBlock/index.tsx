@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { MarkdownView } from '../../../../../../components/Markdown/MarkdownView';
 import type { FolioHomeBlock } from '../../../../../../services/api/folio';
+import { CalendarEmbed } from '../../../CalendarEmbed';
 import { DocsChat } from '../../../DocsChat';
 import { DocList } from '../DocList';
 import { Featured } from '../Featured';
@@ -54,6 +55,14 @@ export function HomeBlock({ block }: { block: FolioHomeBlock }) {
           <DocsChat compact />
         </S.Chat>
       );
+    case 'calendar':
+      // The API sends it only to who may see the calendar.
+      return block.calendar ? (
+        <CalendarEmbed
+          calendarId={block.calendar}
+          view={block.view === 'week' ? 'week' : 'month'}
+        />
+      ) : null;
     default:
       return null; // a type this build doesn't know stays out
   }

@@ -67,6 +67,8 @@ class HomeBlockOut(Output):
     cards: list[CardOut]
     spaces: list[SpaceCountOut]
     markdown: str
+    calendar: str | None = Field(default=None, description="calendar blocks: its id")
+    view: str = Field(default="month", description="calendar blocks: month or week")
 
 
 HomeOut.model_rebuild()
@@ -88,6 +90,8 @@ def block_out(b: home_blocks.Block) -> HomeBlockOut:
         cards=[_card(c) for c in b.cards],
         spaces=[SpaceCountOut.model_validate(s, from_attributes=True) for s in b.spaces],
         markdown=b.markdown,
+        calendar=b.calendar,
+        view=b.view,
     )
 
 

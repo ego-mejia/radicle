@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Field } from '../../../../../../components/ui/Field';
 import { Input, Select, Textarea } from '../../../../../../components/ui/Input';
 import { type HomeLayoutBlock, fetchSpaces, folioKeys } from '../../../../../../services/api/folio';
+import { calendarKeys, fetchCalendars } from '../../../../../../services/api/folioCalendars';
 import type { BlockError } from '../../errors';
 import { NodePicker } from './components/NodePicker';
 import * as S from './style';
@@ -24,6 +25,11 @@ export function BlockConfig({ block, errors, onChange }: Props) {
     queryKey: folioKeys.spaces,
     queryFn: fetchSpaces,
     enabled: block.type === 'posts',
+  });
+  const { data: calendars = [] } = useQuery({
+    queryKey: calendarKeys.list(null),
+    queryFn: () => fetchCalendars(),
+    enabled: block.type === 'calendar',
   });
   const text = (key: string) => (typeof config[key] === 'string' ? (config[key] as string) : '');
   const error = (field: string) => {
@@ -131,6 +137,32 @@ export function BlockConfig({ block, errors, onChange }: Props) {
             onChange={(e) => onChange({ markdown: e.target.value })}
           />
         </Field>
+      )}
+      {block.type === 'calendar' && (
+        <>
+          <Field label={t('folio.calendar.block.choose')} error={error('calendar')}>
+            <Select
+              value={text('calendar')}
+              onChange={(e) => onChange({ calendar: e.target.value })}
+            >
+              <option value="">{t('folio.calendar.block.choose')}</option>
+              {calendars.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name} · {c.space}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label={t('folio.calendar.block.view')}>
+            <Select
+              value={text('view') || 'month'}
+              onChange={(e) => onChange({ view: e.target.value })}
+            >
+              <option value="month">{t('folio.calendar.show.month')}</option>
+              <option value="week">{t('folio.calendar.show.week')}</option>
+            </Select>
+          </Field>
+        </>
       )}
       {block.type === 'search' && <S.Muted>{t('folio.homeEditor.config.nothing')}</S.Muted>}
     </S.Panel>

@@ -33,6 +33,24 @@ describe('BlockConfig', () => {
     expect(onChange).toHaveBeenLastCalledWith({ limit: 4 });
   });
 
+  it('picks the calendar and view of a calendar block', async () => {
+    mockFetch({
+      'GET /api/v1/folio/calendars': {
+        status: 200,
+        body: { items: [{ id: 'c1', name: 'Releases', space: 'eng' }] },
+      },
+    });
+    const onChange = vi.fn();
+    renderWithProviders(<BlockConfig block={block('calendar')} errors={[]} onChange={onChange} />);
+    await userEvent.selectOptions(
+      await screen.findByLabelText('Choose a calendar'),
+      await screen.findByRole('option', { name: 'Releases · eng' }),
+    );
+    expect(onChange).toHaveBeenLastCalledWith({ calendar: 'c1' });
+    await userEvent.selectOptions(screen.getByLabelText('View'), 'week');
+    expect(onChange).toHaveBeenLastCalledWith({ view: 'week' });
+  });
+
   it('shows where the RQL is wrong', async () => {
     const errors = [{ field: 'config.rql', message: 'Unknown field spaec', position: 0 }];
     renderWithProviders(
