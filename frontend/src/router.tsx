@@ -7,6 +7,7 @@ import {
   redirect,
 } from '@tanstack/react-router';
 import { AdminView } from './features/admin/views/AdminView';
+import { LinkChatView } from './features/integrations/views/LinkChatView';
 import { LoginView } from './features/auth/views/LoginView';
 import { SetupView } from './features/auth/views/SetupView';
 import { BoardSettingsView } from './features/board/views/BoardSettingsView';
@@ -391,6 +392,15 @@ const profileRoute = createRoute({
   component: ProfileView,
 });
 
+const linkChatRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/integrations/link',
+  validateSearch: (search: Record<string, unknown>): { token?: string } => ({
+    token: typeof search.token === 'string' ? search.token : undefined,
+  }),
+  component: LinkChatView,
+});
+
 const adminRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/admin',
@@ -450,6 +460,7 @@ const routeTree = rootRoute.addChildren([
     ticketRoute,
     myTicketsRoute,
     profileRoute,
+    linkChatRoute,
     adminRoute,
     templateRoute,
   ]),
