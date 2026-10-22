@@ -3001,6 +3001,9 @@
       "draftReady": "Draft ready:",
       "draftTitle": "Draft from Radi",
       "openDraft": "Open the draft"
+    },
+    "docsSection": {
+      "general": "General"
     }
   },
   "notifications": {
