@@ -2886,6 +2886,19 @@
         "search": "Busca un módulo, endpoint o tool"
       },
       "crumbLabel": "Ruta"
+    },
+    "nav": {
+      "home": "Inicio",
+      "search": "Buscar",
+      "forYou": "Para ti",
+      "forYouHint": "Lo que publicaron las personas y spaces que sigues, y lo más leído de la semana.",
+      "forYouEmpty": "Nada nuevo todavía. Sigue un space o a una persona para ver sus posts aquí.",
+      "favoritesHint": "Los spaces y páginas que marcaste, y lo último que leíste.",
+      "favoritesEmpty": "Marca un space o una página con la estrella para encontrarlo aquí.",
+      "space": "Space",
+      "spaces": "Spaces",
+      "admin": "Admin de Folio",
+      "menu": "Abrir menú"
     }
   },
   "notifications": {

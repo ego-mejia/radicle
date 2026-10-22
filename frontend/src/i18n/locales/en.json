@@ -2886,6 +2886,19 @@
         "search": "Search a module, endpoint or tool"
       },
       "crumbLabel": "Path"
+    },
+    "nav": {
+      "home": "Home",
+      "search": "Search",
+      "forYou": "For you",
+      "forYouHint": "What the people and spaces you follow published, then the most read this week.",
+      "forYouEmpty": "Nothing new yet. Follow a space or a person to see their posts here.",
+      "favoritesHint": "Spaces and pages you starred, then what you read last.",
+      "favoritesEmpty": "Star a space or a page to find it here.",
+      "space": "Space",
+      "spaces": "Spaces",
+      "admin": "Folio admin",
+      "menu": "Open menu"
     }
   },
   "notifications": {
