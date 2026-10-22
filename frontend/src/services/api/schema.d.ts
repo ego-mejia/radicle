@@ -86,6 +86,51 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/plugins": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Plugins
+         * @description Installed plugins, and the hooks a manifest may use.
+         */
+        get: operations["list_plugins_api_v1_admin_plugins_get"];
+        put?: never;
+        /**
+         * Install Plugin
+         * @description Install a plugin; a manifest with an installed key replaces it (an update).
+         */
+        post: operations["install_plugin_api_v1_admin_plugins_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/plugins/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Plugin */
+        delete: operations["delete_plugin_api_v1_admin_plugins__key__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Patch Plugin
+         * @description Turn a plugin on or off; off, what it brings leaves the apps but stays saved.
+         */
+        patch: operations["patch_plugin_api_v1_admin_plugins__key__patch"];
+        trace?: never;
+    };
     "/api/v1/admin/settings": {
         parameters: {
             query?: never;
@@ -9906,6 +9951,59 @@ export interface components {
                 [key: string]: boolean;
             };
         };
+        /** PluginIn */
+        PluginIn: {
+            /**
+             * Manifest
+             * @description The plugin's JSON manifest (ADR 0043)
+             */
+            manifest: {
+                [key: string]: unknown;
+            };
+        };
+        /** PluginOut */
+        PluginOut: {
+            /** Author */
+            author: string;
+            /** Description */
+            description: string;
+            /** Enabled */
+            enabled: boolean;
+            /**
+             * Hooks
+             * @description The hooks it brings, e.g. folio.register_blocks
+             */
+            hooks: string[];
+            /** Installed At */
+            installed_at: string;
+            /** Key */
+            key: string;
+            /** Manifest */
+            manifest: {
+                [key: string]: unknown;
+            };
+            /** Name */
+            name: string;
+            /** Updated At */
+            updated_at: string;
+            /** Version */
+            version: string;
+        };
+        /** PluginPatch */
+        PluginPatch: {
+            /** Enabled */
+            enabled: boolean;
+        };
+        /** PluginsOut */
+        PluginsOut: {
+            /**
+             * Hooks
+             * @description Hooks this instance knows
+             */
+            hooks: string[];
+            /** Items */
+            items: components["schemas"]["PluginOut"][];
+        };
         /** PreferenceIn */
         PreferenceIn: {
             /** App */
@@ -12982,6 +13080,123 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AssistantTestOut"];
+                };
+            };
+        };
+    };
+    list_plugins_api_v1_admin_plugins_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginsOut"];
+                };
+            };
+        };
+    };
+    install_plugin_api_v1_admin_plugins_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PluginIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_plugin_api_v1_admin_plugins__key__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_plugin_api_v1_admin_plugins__key__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PluginPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PluginOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

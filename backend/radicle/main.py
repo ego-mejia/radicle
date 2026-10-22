@@ -55,6 +55,7 @@ from radicle.platform.api import automation as automation_api
 from radicle.platform.api import hooks as hooks_api
 from radicle.platform.api import integrations as integrations_api
 from radicle.platform.api import notifications as notifications_api
+from radicle.platform.api import plugins as plugins_api
 from radicle.platform.api import webhooks as webhooks_api
 from radicle.platform.config import get_settings
 from radicle.platform.crypto import require_key
@@ -135,6 +136,7 @@ def create_app() -> FastAPI:
         ai_api,
         notifications_api,
         webhooks_api,
+        plugins_api,
         integrations_api,
         hooks_api,
         automation_api,

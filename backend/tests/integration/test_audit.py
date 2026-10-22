@@ -19,6 +19,9 @@ from tests.conftest import (
 )
 from tests.folio_import_fixtures import zipped
 from tests.integration.folio_helpers import agent_can_write, agent_submits, publish
+from tests.integration.plugin_helpers import manifest, test_hook
+
+__all__ = ["test_hook"]
 
 API = "/api/v1"
 
@@ -187,6 +190,9 @@ async def every_action(client: AsyncClient, db: AsyncSession, team: Team) -> Non
     await client.post(f"{API}/folio/imports/{made['id']}/dry-run", headers=i, json={})
     await client.post(f"{API}/folio/imports/{made['id']}/run", headers=i)
     await run_jobs(db)
+    await client.post(f"{API}/admin/plugins", headers=i, json={"manifest": manifest()})
+    await client.patch(f"{API}/admin/plugins/acme.widgets", headers=i, json={"enabled": False})
+    await client.delete(f"{API}/admin/plugins/acme.widgets", headers=i)
     await client.post(
         f"{API}/tickets/bulk",
         headers=team.member.headers,
@@ -200,7 +206,7 @@ async def every_action(client: AsyncClient, db: AsyncSession, team: Team) -> Non
 
 
 async def test_every_action_of_the_catalog_is_logged(
-    client: AsyncClient, db: AsyncSession, board: Team
+    client: AsyncClient, db: AsyncSession, board: Team, test_hook: None
 ) -> None:
     await every_action(client, db, board)
     entries = []
@@ -227,7 +233,7 @@ async def test_every_action_of_the_catalog_is_logged(
 
 
 async def test_filters_csv_and_project_admins(
-    client: AsyncClient, db: AsyncSession, board: Team
+    client: AsyncClient, db: AsyncSession, board: Team, test_hook: None
 ) -> None:
     await every_action(client, db, board)
     logins = await logged(client, board, action="user")

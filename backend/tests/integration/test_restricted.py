@@ -256,6 +256,7 @@ EXEMPT = {
     "/api/v1/audit.csv",
     "/api/v1/admin/assistant",
     "/api/v1/admin/ai",
+    "/api/v1/admin/plugins",  # manifests, for instance admins (ADR 0043)
     # Instance admins only (test_webhooks_api.py); deliveries carry ids and titles, never
     # ticket or page content.
     "/api/v1/webhooks",
