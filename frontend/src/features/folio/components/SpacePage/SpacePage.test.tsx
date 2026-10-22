@@ -41,11 +41,9 @@ function api(space: object = SPACE) {
 }
 
 describe('SpacePage', () => {
-  it('shows the space, its tree and its posts', async () => {
+  it('shows the tree and the posts, without repeating the space title', async () => {
     api();
     renderWithProviders(<SpacePage spaceKey="docs" />);
-    expect(await screen.findByRole('heading', { name: 'Ingeniería' })).toBeInTheDocument();
-    expect(screen.getByText('Cómo construimos Radicle.')).toBeInTheDocument();
     expect(await screen.findByRole('link', { name: 'Deploy' })).toHaveAttribute(
       'href',
       '/folio/p/p1-deploy',
@@ -55,6 +53,7 @@ describe('SpacePage', () => {
       '/folio/p/b1-novedades',
     );
     expect(screen.getByRole('button', { name: 'Move Deploy' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Ingeniería' })).toBeNull();
   });
 
   it('creates a folder in the space', async () => {
@@ -76,9 +75,8 @@ describe('SpacePage', () => {
   it('hides writing to readers', async () => {
     api({ ...SPACE, permissions: ['view'] });
     renderWithProviders(<SpacePage spaceKey="docs" />);
-    expect(await screen.findByRole('heading', { name: 'Ingeniería' })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'New page' })).toBeNull();
     expect(await screen.findByRole('link', { name: 'Deploy' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'New page' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Move Deploy' })).toBeNull();
   });
 
