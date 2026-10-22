@@ -40,8 +40,13 @@ export function WriteButton() {
       template
         ? createFromTemplate({ template, space: chosen, kind, title: title.trim() })
         : createNode({ space: chosen, kind, title: title.trim() }),
-    onSuccess: (node) =>
-      navigate({ to: '/folio/p/$page/edit', params: { page: `${node.id}-${node.slug}` } }),
+    onSuccess: (node) => {
+      // The button lives in the shell's bar, so it stays mounted: close and reset it.
+      setOpen(false);
+      setTitle('');
+      setTemplate(null);
+      void navigate({ to: '/folio/p/$page/edit', params: { page: `${node.id}-${node.slug}` } });
+    },
   });
 
   return (

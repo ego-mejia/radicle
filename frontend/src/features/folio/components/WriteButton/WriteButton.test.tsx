@@ -35,6 +35,8 @@ describe('WriteButton', () => {
         title: 'My page',
       }),
     );
+    // It stays mounted in the shell's bar, so the dialog must close itself.
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
   });
 
   it('explains when no space lets you write', async () => {
