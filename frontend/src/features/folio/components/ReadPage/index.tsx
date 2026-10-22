@@ -27,12 +27,14 @@ import { NodeMenu } from '../NodeMenu';
 import { PageMeta } from '../PageMeta';
 import { PageQuality } from '../PageQuality';
 import { PageSocial } from '../PageSocial';
+import { PagePager } from '../PagePager';
 import { PageToc } from '../PageToc';
 import { RootsArt } from '../RootsArt';
 import { SelectionComment } from '../SelectionComment';
 import * as S from './style';
 import { usePage } from '../../hooks/usePage';
 import { usePageView } from '../../hooks/usePageView';
+import { SECTIONS, sectionFor } from '../../sections';
 
 // Charts load only when someone opens a page's analytics.
 const PageAnalytics = lazy(() =>
@@ -87,6 +89,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
 
   const n = node.data;
   const meta = page.metadata ?? {};
+  const section = sectionFor(meta.doc_type);
   const owner = meta.owner ? String(meta.owner) : null;
   const description = meta.description ? String(meta.description) : '';
   const params = { page: `${n.id}-${n.slug}` };
@@ -133,6 +136,17 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
           <Link to="/folio/s/$key" params={{ key: n.space }}>
             {page.space?.name ?? n.space}
           </Link>
+          {section && (
+            <span>
+              <span aria-hidden>/</span>
+              <Link
+                to={`/folio/s/$key/${SECTIONS[section].path}` as '/folio/s/$key/specs'}
+                params={{ key: n.space }}
+              >
+                {t(`folio.sections.${section}.label`)}
+              </Link>
+            </span>
+          )}
           {n.breadcrumbs.map((b) => (
             <span key={b.id}>
               <span aria-hidden>/</span>
@@ -141,6 +155,10 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
               </Link>
             </span>
           ))}
+          <span>
+            <span aria-hidden>/</span>
+            <strong aria-current="page">{n.title}</strong>
+          </span>
         </S.Crumbs>
         <S.Actions>
           <button type="button" aria-pressed={comments} onClick={() => setComments(!comments)}>
@@ -215,6 +233,7 @@ export function ReadPage({ nodeId }: { nodeId: string }) {
             </ActionItemTickets>
           </div>
           <GlossaryTooltips container={content} version={page.content} />
+          <PagePager space={n.space} nodeId={n.id} />
           <SelectionComment
             container={content}
             mentions={discussion.mentions}

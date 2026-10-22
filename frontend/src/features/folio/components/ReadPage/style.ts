@@ -42,6 +42,11 @@ export const Crumbs = styled.nav`
   a:hover {
     color: ${({ theme }) => theme.color.text};
   }
+
+  strong {
+    color: ${({ theme }) => theme.color.text};
+    font-weight: 600;
+  }
 `;
 
 export const Actions = styled.div`
