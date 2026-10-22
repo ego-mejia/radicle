@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { EmptyState } from '../../../../components/ui/EmptyState';
 import { PageSpinner } from '../../../../components/ui/Spinner';
 import { nodeIdFrom } from '../../../../services/api/folio';
-import { fetchPublic, publicKeys } from '../../../../services/api/folioPublic';
-import { PublicArticle } from './components/PublicArticle';
+import { fetchPublic, publicAssetUrl, publicKeys } from '../../../../services/api/folioPublic';
+import { PublicArticle } from '../../components/PublicArticle';
 import * as S from './style';
 
 /** A page or a space shared by a public link: read-only, without an account or the app's
@@ -81,7 +81,17 @@ export function FolioPublicView() {
           </S.Nav>
         )}
         {view.data.page ? (
-          <PublicArticle token={token} page={view.data.page} />
+          <PublicArticle
+            page={view.data.page}
+            env={{
+              assetUrl: (id) => publicAssetUrl(token, id),
+              pageLink: (c) => (
+                <Link to="/pub/$token/$page" params={{ token, page: `${c.id}-${c.slug}` }}>
+                  {c.title}
+                </Link>
+              ),
+            }}
+          />
         ) : (
           <S.Index>
             <h1>{space.name}</h1>

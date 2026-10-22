@@ -37,6 +37,7 @@ import { FolioSearchView } from './features/folio/views/FolioSearchView';
 import { FolioCalendarView } from './features/folio/views/FolioCalendarView';
 import { FolioSpaceView } from './features/folio/views/FolioSpaceView';
 import { FolioHomeView } from './features/folio/views/FolioHomeView';
+import { FolioPrintView } from './features/folio/views/FolioPrintView';
 import { FolioPublicView } from './features/folio/views/FolioPublicView';
 import { AppPage } from './pages/AppPage';
 import { FolioPage } from './pages/FolioPage';
@@ -420,9 +421,17 @@ const publicPageRoute = createRoute({
   component: FolioPublicView,
 });
 
+/** An export being printed to PDF by the worker's browser, by a short-lived token. */
+const printRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/print/$token',
+  component: FolioPrintView,
+});
+
 const routeTree = rootRoute.addChildren([
   publicRoute,
   publicPageRoute,
+  printRoute,
   authLayout.addChildren([setupRoute, loginRoute]),
   appLayout.addChildren([
     projectsRoute,

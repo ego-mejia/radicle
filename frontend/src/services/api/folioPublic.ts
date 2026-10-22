@@ -3,6 +3,8 @@ import type { components } from './schema';
 
 export type PublicView = components['schemas']['PublicViewOut'];
 export type PublicNode = components['schemas']['PublicNodeOut'];
+export type PublicPage = components['schemas']['PublicPageOut'];
+export type PrintView = components['schemas']['PrintOut'];
 export type PublicLink = components['schemas']['PublicLinkOut'];
 
 export const publicKeys = {
@@ -47,4 +49,13 @@ export async function revokePublicLink(id: string): Promise<void> {
       params: { path: { link_id: id } },
     }),
   );
+}
+
+/** The pages of an export being printed to PDF, by its short-lived token. */
+export async function fetchPrint(token: string): Promise<PrintView> {
+  return unwrap(await api.GET('/api/v1/folio/print/{token}', { params: { path: { token } } }));
+}
+
+export function printAssetUrl(token: string, assetId: string): string {
+  return `/api/v1/folio/print/${encodeURIComponent(token)}/assets/${assetId}`;
 }
