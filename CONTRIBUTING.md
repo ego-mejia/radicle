@@ -25,6 +25,18 @@ Thanks for wanting to help! 🌱 Radicle is a community project. Bug reports, do
 - **Pick an issue**: look for the `good first issue` and `help wanted` labels, or the [known issues in the README](README.md#%EF%B8%8F-roadmap-and-known-issues). Comment on the issue so others know you are on it.
 - **Improve the docs or translations**: the UI is in English and Spanish (`frontend/src/i18n/locales/`), and both READMEs welcome fixes.
 
+### Fixes we'd love help with
+
+These came out of Folio's new navigation. Each one has its ticket in Radicle's own tracker; say which one you're taking in your PR.
+
+| Ticket | Fix | Size |
+| --- | --- | --- |
+| RAD-69 | Dark mode: give the space hero and Radi's suggestion card enough contrast against the page. | Small, frontend |
+| RAD-70 | Show the project's name (Folio), not its key (RAD), in the Specs and Architecture decisions filters. | Small, frontend |
+| RAD-71 | Mark a reference page stale when the code module it documents changes, not only when its verification expires. Needs an ADR. | Medium, backend and frontend |
+| RAD-72 | Saved views per person for Specs and Architecture decisions, listed in Favorites. | Medium, backend and frontend |
+| RAD-73 | The next calendar event as a card on a space's front page. | Small, frontend |
+
 ## Ground rules for pull requests
 
 Small and focused PRs get reviewed fast and break less. Every PR must:
