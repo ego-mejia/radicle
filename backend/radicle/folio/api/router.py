@@ -33,6 +33,7 @@ from radicle.folio.api import public_links as public_links_api
 from radicle.folio.api import publishing as publishing_api
 from radicle.folio.api import query as query_api
 from radicle.folio.api import search as search_api
+from radicle.folio.api import sections as sections_api
 from radicle.folio.api import sharing as sharing_api
 from radicle.folio.api import social as social_api
 from radicle.folio.api import space_overview as space_overview_api
@@ -173,6 +174,7 @@ router.include_router(people_api.router)
 router.include_router(livedocs_api.router)
 router.include_router(links_api.router)
 router.include_router(page_list_api.router)
+router.include_router(sections_api.router)
 router.include_router(databases_api.router)
 router.include_router(visuals_api.router)
 router.include_router(whiteboards_api.router)

@@ -54,6 +54,7 @@ def _urls(s: dict) -> dict[str, list[str]]:
         "/api/v1/folio/spaces/{key}": [f"{API}/spaces/docs"],
         "/api/v1/folio/spaces/{key}/overview": [f"{API}/spaces/docs/overview"],
         "/api/v1/folio/spaces/{key}/tree": [f"{API}/spaces/docs/tree"],
+        "/api/v1/folio/spaces/{key}/specs": [f"{API}/spaces/docs/specs"],
         "/api/v1/folio/spaces/{key}/posts": [f"{API}/spaces/docs/posts"],
         "/api/v1/folio/spaces/{key}/grants": [f"{API}/spaces/docs/grants"],
         "/api/v1/folio/nodes/{node_id}": [f"{API}/nodes/{p}", f"{API}/nodes/{c}"],

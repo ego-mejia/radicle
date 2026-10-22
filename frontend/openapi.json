@@ -3967,6 +3967,24 @@
         "title": "CopyIn",
         "type": "object"
       },
+      "Count": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "value": {
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "value",
+          "count"
+        ],
+        "title": "Count",
+        "type": "object"
+      },
       "CustomFieldCreate": {
         "additionalProperties": false,
         "properties": {
@@ -10892,6 +10910,29 @@
         "title": "Origin",
         "type": "string"
       },
+      "OwnerCount": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "handle": {
+            "title": "Handle",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "handle",
+          "name",
+          "count"
+        ],
+        "title": "OwnerCount",
+        "type": "object"
+      },
       "OwnerIn": {
         "additionalProperties": false,
         "properties": {
@@ -15422,6 +15463,143 @@
           "sections"
         ],
         "title": "SpaceSectionsIn",
+        "type": "object"
+      },
+      "SpecListOut": {
+        "properties": {
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/Count"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/SpecRowOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "owners": {
+            "items": {
+              "$ref": "#/components/schemas/OwnerCount"
+            },
+            "title": "Owners",
+            "type": "array"
+          },
+          "projects": {
+            "items": {
+              "$ref": "#/components/schemas/Count"
+            },
+            "title": "Projects",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "projects",
+          "features",
+          "owners"
+        ],
+        "title": "SpecListOut",
+        "type": "object"
+      },
+      "SpecRowOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "features": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "node": {
+            "$ref": "#/components/schemas/NodeRef"
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner"
+          },
+          "owner_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Owner Name"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project"
+          },
+          "status": {
+            "enum": [
+              "planned",
+              "live",
+              "done",
+              "outdated"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "tickets_done": {
+            "title": "Tickets Done",
+            "type": "integer"
+          },
+          "tickets_in_progress": {
+            "title": "Tickets In Progress",
+            "type": "integer"
+          },
+          "tickets_total": {
+            "title": "Tickets Total",
+            "type": "integer"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "node",
+          "description",
+          "project",
+          "features",
+          "status",
+          "tickets_done",
+          "tickets_in_progress",
+          "tickets_total",
+          "owner",
+          "owner_name",
+          "updated_at"
+        ],
+        "title": "SpecRowOut",
         "type": "object"
       },
       "SprintComplete": {
@@ -30461,6 +30639,163 @@
           }
         },
         "summary": "Put Sections",
+        "tags": [
+          "folio",
+          "folio"
+        ]
+      }
+    },
+    "/api/v1/folio/spaces/{key}/specs": {
+      "get": {
+        "description": "The space's published build specs you can see, newest first, with their tickets'\nprogress and the counts the filters show. `feature` only applies with `project`.",
+        "operationId": "list_specs_api_v1_folio_spaces__key__specs_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Docket project key, e.g. RAD",
+            "in": "query",
+            "name": "project",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Docket project key, e.g. RAD",
+              "title": "Project"
+            }
+          },
+          {
+            "description": "Docket areas of that project",
+            "in": "query",
+            "name": "feature",
+            "required": false,
+            "schema": {
+              "default": [],
+              "description": "Docket areas of that project",
+              "items": {
+                "type": "string"
+              },
+              "title": "Feature",
+              "type": "array"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "planned",
+                    "live",
+                    "done",
+                    "outdated"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "description": "Owner handle",
+            "in": "query",
+            "name": "owner",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Owner handle",
+              "title": "Owner"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpecListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Specs",
         "tags": [
           "folio",
           "folio"
