@@ -92,14 +92,17 @@ async def resolve_authors(
     }
 
 
-async def existing_nodes(db: AsyncSession, source: ImportSource, ids: list[str]) -> dict[str, Any]:
-    """External id -> the live node it was imported as before."""
+async def existing_nodes(
+    db: AsyncSession, source: ImportSource, ids: list[str], space_id: uuid.UUID
+) -> dict[str, Any]:
+    """External id -> the live node it was imported as before into this space."""
     rows = await db.execute(
         select(FolioExternalRef.external_id, FolioNode)
         .join(FolioNode, FolioNode.id == FolioExternalRef.node_id)
         .where(
             FolioExternalRef.source == source,
             FolioExternalRef.external_id.in_(ids),
+            FolioExternalRef.space_id == space_id,
             FolioNode.deleted_at.is_(None),
         )
     )
@@ -125,7 +128,7 @@ async def dry_run(
     authors = await resolve_authors(
         db, {p.author for p in found.pages if p.author}, options.get("authors") or {}
     )
-    before = await existing_nodes(db, item.source, [p.external_id for p in found.pages])
+    before = await existing_nodes(db, item.source, [p.external_id for p in found.pages], space.id)
     pages = [
         {
             "external_id": p.external_id,

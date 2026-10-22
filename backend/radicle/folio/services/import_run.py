@@ -141,7 +141,14 @@ async def _page(
         node = await nodes.create_node(
             db, user, space, kind=KINDS[page.kind], title=page.title, parent_id=parent_id
         )
-        db.add(FolioExternalRef(source=item.source, external_id=page.external_id, node_id=node.id))
+        db.add(
+            FolioExternalRef(
+                source=item.source,
+                external_id=page.external_id,
+                space_id=space.id,
+                node_id=node.id,
+            )
+        )
         result["action"] = "created"
     else:
         await nodes.update_node(db, user, node, nodes.NodeChanges(title=page.title))
@@ -172,7 +179,8 @@ async def apply(db: AsyncSession, user: User, item: FolioImport) -> dict[str, An
     authors = await import_plan.resolve_authors(
         db, {p.author for p in found.pages if p.author}, chosen
     )
-    before = await import_plan.existing_nodes(db, item.source, [p.external_id for p in found.pages])
+    ids = [p.external_id for p in found.pages]
+    before = await import_plan.existing_nodes(db, item.source, ids, space.id)
     root = item.options.get("parent_id")
     made: dict[str, uuid.UUID] = {}
     results = []

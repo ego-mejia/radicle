@@ -77,7 +77,10 @@ async def test_authors_match_by_email_and_pages_already_imported_are_updates(
         db, fernando, space, source=ImportSource.markdown, filename="hola.md", data=files.encode()
     )
     node = await nodes.create_node(db, fernando, space, kind=NodeKind.page, title="Hola")
-    db.add(FolioExternalRef(source=ImportSource.markdown, external_id="hola.md", node_id=node.id))
+    ref = FolioExternalRef(
+        source=ImportSource.markdown, external_id="hola.md", space_id=space.id, node_id=node.id
+    )
+    db.add(ref)
     report = await import_plan.dry_run(db, fernando, item, {})
     assert report["authors"][0]["user"]["handle"] == "luis"
     assert report["pages"][0]["action"] == "update" and report["totals"]["updates"] == 1
