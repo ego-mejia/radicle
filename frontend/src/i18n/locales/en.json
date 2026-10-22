@@ -2818,6 +2818,74 @@
     },
     "plugin": {
       "off": "This block comes from the plugin {{plugin}}, which is off. An admin can turn it on in Admin → Plugins."
+    },
+    "spaceHome": {
+      "kicker": "Space",
+      "follow": "Follow",
+      "following": "Following",
+      "followed": "You follow {{space}}: new pages show up in For you",
+      "unfollowed": "You no longer follow {{space}}",
+      "manage": "Manage",
+      "write": "Write here",
+      "search": "Search {{space}} or ask Radi",
+      "searchButton": "Search",
+      "searchLabel": "Search in {{space}}",
+      "pages_one": "<b>{{count}}</b> page",
+      "pages_other": "<b>{{count}}</b> pages",
+      "folders_one": "<b>{{count}}</b> folder",
+      "folders_other": "<b>{{count}}</b> folders",
+      "sections": "Sections of {{space}}",
+      "all": "All",
+      "people": {
+        "open": "See who takes part: {{summary}}",
+        "summary": "{{admins}} admins and {{count}} more",
+        "title": "Who takes part",
+        "admins_one": "{{count}} admin",
+        "admins_other": "{{count}} admins",
+        "others_one": "{{count}} participant",
+        "others_other": "{{count}} participants",
+        "role": {
+          "admin": "Admins",
+          "editor": "Editors",
+          "reader": "Readers"
+        },
+        "everyone": {
+          "reader": "Everyone can read this space.",
+          "editor": "Everyone can write in this space.",
+          "admin": "Everyone manages this space."
+        }
+      }
+    },
+    "sections": {
+      "specs": {
+        "label": "Specs",
+        "title": "Specs",
+        "description": "What we build in each stage, with its deliverables and the progress of their tickets.",
+        "cta": "New build spec",
+        "search": "Search the specs"
+      },
+      "decisions": {
+        "label": "Architecture decisions",
+        "title": "Architecture decisions",
+        "description": "What we decided, why, and which options we ruled out. So nobody has to ask why it is built this way.",
+        "cta": "Record a decision",
+        "search": "Why do we use…?"
+      },
+      "guides": {
+        "label": "Guides",
+        "title": "Guides",
+        "description": "How things are done on the team, step by step. If something is missing, ask Radi or write the guide.",
+        "cta": "New guide",
+        "search": "How do I deploy…?"
+      },
+      "docs": {
+        "label": "Docs",
+        "title": "Docs",
+        "description": "The reference of the system, module by module: what each part does, its API and its diagrams.",
+        "cta": "Document a module",
+        "search": "Search a module, endpoint or tool"
+      },
+      "crumbLabel": "Path"
     }
   },
   "notifications": {
