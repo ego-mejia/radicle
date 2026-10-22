@@ -49,7 +49,7 @@ Esta es la versión en español del README. La versión principal, en inglés, e
 | 🔒 **Control de acceso en serio** | Grupos, matriz de permisos por proyecto, tickets restringidos que no aparecen en ningún lado (búsqueda, boards, reportes, MCP), SSO con OpenID Connect y un audit log que nadie puede modificar. |
 | 🗺️ **Planea y ve** | Boards Kanban y Scrum, sprints, timeline con pronóstico, diez reportes agile y generales, y dashboards que armas arrastrando. |
 | 🟢 **Una guía adentro** | Radi, la mascota, responde cómo hacer las cosas con la guía de uso y, con el LLM que elijas, te lleva por la pantalla paso a paso. |
-| 📚 **Docs junto a los tickets** | **Folio**, la segunda app, guarda la documentación del equipo: spaces, un editor por bloques, versiones, permisos por página, búsqueda que entiende preguntas y un MCP para que los agentes lean y propongan docs que un admin aprueba. |
+| 📚 **Docs junto a los tickets** | **Folio**, la segunda app, guarda la documentación del equipo: spaces, un editor por bloques, versiones, permisos por página, búsqueda y un chat que responden con citas, edición en tiempo real, templates, bloques visuales, whiteboards y databases, ligas a tickets de Docket, páginas públicas, importar desde Confluence y Notion, exportar a PDF, Slack y Teams, webhooks, calendarios, analytics y un MCP para que los agentes lean y propongan docs que un admin aprueba. |
 | ⚡ **Rápido para trabajar** | Lenguaje de queries (RQL), paleta de comandos, atajos para todo y temas claro y oscuro. En inglés y en español. |
 | 🏠 **Tuyo** | Un `docker compose up`. PostgreSQL, tu servidor, tus datos. |
 
@@ -347,7 +347,7 @@ Los clientes que solo hablan stdio pueden usar [`mcp-remote`](https://www.npmjs.
 
 Hay 52 tools, agrupadas en contexto, búsqueda de trabajo, tickets, colaboración, archivos y tiempo, planeación y Buzón. La lista completa está en el [README en inglés](README.md#13-ai-agents-over-mcp). Los agentes siguen la misma matriz de permisos y los mismos niveles de seguridad que las personas, y se pueden limitar a algunas tools.
 
-**Folio** tiene su propio servidor MCP en `/mcp/folio`, con los mismos tokens. Por ahora trae `whoami`, que le dice al agente su rol global en Folio; las tools para leer, buscar y proponer docs llegan con la fase 1 de Folio.
+**Folio** tiene su propio servidor MCP en `/mcp/folio`, con los mismos tokens; sus tools están en [MCP de Folio](#15-folio-los-docs-de-tu-equipo).
 
 ### 14. Teclado, paleta de comandos y temas
 
@@ -441,7 +441,24 @@ Docket (el tracker de tickets) y Folio comparten personas, grupos, agentes y el 
   <img src="docs/images/folio-build-spec.png" alt="Los entregables de un build spec y el avance en vivo de sus tickets de Docket" width="49%">
 </p>
 
-- **MCP de Folio.** `/mcp/folio` acepta los mismos tokens que `/mcp`. Los agentes buscan (`search_docs`, `query_docs`), leen páginas en Markdown (`get_page`), ven qué pide publicar (`get_metadata_schema`), escriben (`create_page`, `update_draft`) y mandan a aprobación (`submit_for_publication`, `list_my_submissions`). También preguntan a los docs (`ask_docs`), ligan docs con tickets (`link_ticket`, `get_docs_for_ticket`) y convierten un build spec en tickets (`create_tickets_from_build_spec`, que solo simula salvo con `dry_run=false`). Tres prompts guían a un agente que trabaja en un codebase: `weekly_changes_post`, `document_module` y `build_spec_from_discussion`; todos terminan esperando aprobación. Los admins eligen qué tools de Folio puede usar cada agente, igual que con las de Docket.
+- **Páginas públicas.** **Compartir → Link público** le da a una página o a todo un space un link de solo lectura que abre sin cuenta, en la vista revista, sin datos de personas y oculto de los buscadores por default. Las páginas restringidas nunca salen por ahí, y **Revocar** lo vuelve un 404. Solo los admins del space los crean.
+- **Exportar.** **Exportar** en una página o un space baja un PDF que se ve como la lectura (lo imprime Chromium sin interfaz, así que visuales, diagramas y fórmulas salen como en pantalla), un Word, un sitio HTML que abre desde el disco o Markdown con front matter. Construye con `--build-arg PDF=false` para dejar fuera Chromium (unos 290 MB).
+- **Importar.** **Folio → Admin → Importar** trae un space de Confluence (export HTML), un export de Notion (Markdown y CSV, donde los CSV se vuelven databases), archivos de Word o carpetas de Markdown. Un dry run muestra cada página, sus autores (por email), labels y archivos antes de crear nada; las páginas llegan como borrador, e importar el mismo export otra vez al mismo space las actualiza en vez de duplicarlas.
+- **Slack, Teams, webhooks y reglas.** **Admin → Integraciones** publica lo que pasa en un space en canales de Slack o Teams, responde `/radicle search` y `/radicle ask` (el chat de los docs, con citas, como quien pregunta) y muestra la vista previa de los links de Folio pegados en Slack a quien puede verlos. Los webhooks mandan eventos firmados (`page.published`, `page.outdated`, `submission.created`…) con reintentos y un log de entregas. Las reglas de automatización corren con un evento o un horario y avisan a un canal o una persona, cambian el estado de una página, agregan un label, abren un ticket en Docket o archivan; una regla lista avisa en un canal cuando una página se vence.
+- **Calendarios.** Cada space puede tener calendarios con vista de mes y semana, eventos por categoría (release, vacaciones, guardia…), personas y los milestones de proyectos de Docket. Suscríbete desde Google Calendar u Outlook con su link iCal, o pon un calendario dentro de una página o en la home.
+- **Plugins.** **Admin → Plugins** instala plugins en JSON que agregan bloques al editor, dibujados en el mismo sandbox que el bloque Visual (sin red ni acceso a la página). El ejemplo **Cuenta regresiva** se instala con un clic.
+- **Analytics.** Dueños y admins del space ven las vistas, lectores únicos y tiempo de lectura de cada página; **Folio → Admin → Analytics** muestra las páginas más leídas, los spaces más activos, lo que se buscó sin encontrar y las preguntas del chat sin respuesta: lo que toca documentar. Los agentes reciben esa lista con `get_search_gaps`.
+
+<p align="center">
+  <img src="docs/images/folio-public.png" alt="Una página abierta por su link público, sin cuenta" width="49%">
+  <img src="docs/images/folio-import.png" alt="El dry run de una importación de Confluence" width="49%">
+</p>
+<p align="center">
+  <img src="docs/images/folio-integrations.png" alt="Admin, Integraciones: Slack, webhooks y reglas de automatización" width="49%">
+  <img src="docs/images/folio-calendar.png" alt="El calendario de releases de un space con milestones de Docket" width="49%">
+</p>
+
+- **MCP de Folio.** `/mcp/folio` acepta los mismos tokens que `/mcp`. Los agentes buscan (`search_docs`, `query_docs`), leen páginas en Markdown (`get_page`), ven qué pide publicar (`get_metadata_schema`), escriben (`create_page`, `update_draft`) y mandan a aprobación (`submit_for_publication`, `list_my_submissions`). También preguntan a los docs (`ask_docs`), ligan docs con tickets (`link_ticket`, `get_docs_for_ticket`) y convierten un build spec en tickets (`create_tickets_from_build_spec`, que solo simula salvo con `dry_run=false`). Exportan una página (`export_page`), leen y agregan eventos del calendario (`list_calendar_events`, `add_calendar_event`) y ven los lectores de una página y lo que se busca sin encontrar (`get_page_analytics`, `get_search_gaps`). Tres prompts guían a un agente que trabaja en un codebase: `weekly_changes_post`, `document_module` y `build_spec_from_discussion`; todos terminan esperando aprobación. Los admins eligen qué tools de Folio puede usar cada agente, igual que con las de Docket.
 
 ```bash
 claude mcp add --transport http radicle-folio https://radicle.example.com/mcp/folio \
@@ -524,7 +541,7 @@ Las etapas 1 a 4 están completas: core y MCP, configuración y trabajo diario, 
 - [x] Fase 2: edición en tiempo real con carets y punteros con nombre, comentarios anclados al texto, menciones, avisos en la app y por email, reacciones, seguir, compartir, action items y Mis tareas, live docs con snapshots, mover, copiar y archivar páginas, dueños y estados que vencen, y el feed Para ti.
 - [x] Fase 3: templates de páginas y spaces, editor de la home, bloques visuales (diagramas, gráficas, timelines, fórmulas y visuales en sandbox), whiteboards, databases y embeds.
 - [x] Fase 4: tickets dentro de los docs, build specs que crean sus tickets, ligas a milestones y áreas, el chat de los docs con citas, IA en el editor con glosario y prompts del MCP para agentes que escriben desde un codebase.
-- [ ] Fase 5: páginas públicas, importar y exportar, Slack y Teams, webhooks.
+- [x] Fase 5: páginas públicas, exportar a PDF, Word, HTML y Markdown, importar desde Confluence, Notion, Word y Markdown, Slack y Teams, webhooks, reglas de automatización, plugins, calendarios con feed iCal, analytics y el audit de Folio.
 
 **Etapa 5: integraciones**
 

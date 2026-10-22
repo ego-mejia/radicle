@@ -862,4 +862,63 @@ Encontrados al probar en Chrome sobre un stack aislado:
 
 Probada en el navegador sobre un stack aislado, en claro y oscuro, con capturas en cada ticket. La IA corrió contra un modelo simulado determinista (`frontend/e2e/fixtures/fake-ai.mjs`, compatible con OpenAI): pegar PA-6 muestra su estado y PA-4 lista los docs que lo mencionan; una frase seleccionada crea PA-13 ligado a "Cómo conectarlo"; el build spec crea sus cuatro tareas con su criterio como checklist y el bloque muestra "1 de 4 terminados"; el milestone V1 lista sus tres docs; el chat cita la sección correcta y la abre resaltada, y dice cuando no está en los docs; Publicar propone descripción, labels y tipo; el glosario muestra su definición al pasar el cursor. Un agente siguió `weekly_changes_post` por MCP con el log real de esta fase: el post quedó pendiente de aprobación con su diagrama y sus tickets ligados por sección. E2E nuevo `e2e/suite-folio4-docket-ai.spec.ts` (#386): build spec a tickets y de regreso, panel Docs y chat con cita (en CI se salta el chat si Docker no alcanza al modelo simulado).
 
-Pendiente: el diálogo de crear ticket arranca con el primer proyecto de la lista, no con el `docket_project` del doc; el panel Docs muestra una fila por tipo de liga (un doc que menciona y además liga un ticket sale dos veces); los diagramas Mermaid anchos se ven con letra chica; no hay filtros de docs en las listas de tickets de Docket.
+Pendiente: los diagramas Mermaid anchos se ven con letra chica; no hay filtros de docs en las listas de tickets de Docket. (Arreglados al cerrar la fase 5: el diálogo de crear ticket y el asistente arrancan en el `docket_project` del doc, #424, y el panel Docs lista cada doc una vez, #425.)
+
+## Folio fase 5: Integraciones externas
+
+Cerrada el 22 de octubre de 2026 (RAD-45 a RAD-53, milestone "Folio Fase 5"). Spec: `docs/Docket/fase-5.md`. Referencias: `docs/folio/calendars.md`, `docs/folio/plugins.md`, `docs/folio/analytics.md`, ADR 0042 (eventos públicos, webhooks e integraciones) y ADR 0043 (plugins).
+
+| # | Entregable | Estado |
+| --- | --- | --- |
+| 5.1 | Páginas públicas | Listo (#341, #353, #373, #374, #379) |
+| 5.2 | Exportar | Listo (#387, #388, #392, #395, #399, #403, #407, #408, #415, #418, #422, #423) |
+| 5.3 | Importar | Listo (#337–#394, #428, #429) |
+| 5.4 | Slack y Teams | Listo (#361, #369, #372, #378, #380, #382, #386, #410, #412, #426) |
+| 5.5 | Webhooks | Listo (#338, #342, #346, #352, #355, #364, #406) |
+| 5.6 | Automatización | Listo (#389, #395, #397, #398, #402, #413, #421) |
+| 5.7 | Plugins | Listo (#405, #411, #414, #416, #417, #419, #427) |
+| 5.8 | Calendarios | Listo (#335, #343, #344, #362, #365, #368, #370, #376, #377, #384, #390, #396, #401, #404, #420) |
+| 5.9 | Analytics y audit | Listo (#336, #340, #349, #351, #358, #366, #375, #409) |
+
+- **Públicas:** `folio_public_links` por página o space, solo los admins del space; `/pub/{token}` sin sesión en la vista revista, sin datos de personas, con `X-Robots-Tag: noindex` por default; lo restringido, archivado o borrado nunca sale, y revocar da 404.
+- **Exportar:** PDF con Chromium sin interfaz (Playwright) sobre una vista de impresión con token firmado, Word con python-docx (visuales como imagen), sitio HTML estático y Markdown con front matter; MCP `export_page`. La imagen crece unos 290 MB con Chromium (`--build-arg PDF=false` lo deja fuera). Los bloques con datos en vivo (tablas de tickets, listas, databases, whiteboards, calendarios) salen como una nota.
+- **Importar:** Confluence (export HTML), Notion (Markdown y CSV; los CSV se vuelven databases), Word y carpetas de Markdown, con lectura segura del zip (límites y sin rutas que salgan), dry run por página con autores por email, borradores que se publican si la metadata default los completa, y re-importar sin duplicar por `folio_external_refs`, que es por space (migración 0064).
+- **Platform (la reusa Docket):** eventos públicos en el bus, webhooks firmados `Radicle-Signature: t=…,v1=…` con reintentos de 1 min a 6 h y SSRF revisado al guardar y al mandar; integraciones de Slack y Teams con credenciales cifradas, avisos por space y evento, `/radicle search` y `/radicle ask` con los permisos del usuario ligado (por email en Slack; con un link para conectar la cuenta en Teams), y vista previa de links en Slack; motor de reglas con triggers por evento u horario, acciones de Folio y protección de loops; plugins en JSON sin código de servidor con el hook `folio.register_blocks`.
+- **Calendarios:** `folio_calendars` y `folio_events`, vistas de mes y semana, milestones de Docket por `docket.public`, feed iCal de solo lectura por token y bloque `::calendar{id=… view=week}`; MCP `list_calendar_events` y `add_calendar_event`.
+- **Analytics y audit:** vistas por página y día, lectores solo si el space lo permite, tiempo de lectura estimado, búsquedas sin resultados y preguntas sin respuesta en Admin → Analytics; MCP `get_page_analytics` y `get_search_gaps`; restricciones, links públicos, exports e imports en el audit log con `app = folio`.
+
+### Arreglos al cerrar la fase
+
+Encontrados al probar en Chrome sobre un stack aislado:
+
+- #421: cada regla de ejemplo salía dos veces en Admin → Integraciones (las acciones de Folio se registraban al arrancar la app y otra vez al importarlas el worker).
+- #422: el PDF de un doc en español decía "Oct 22, 2026 · 1 min read": la vista de impresión ahora usa el idioma del doc.
+- #423: en la barra de lectura, el botón Exportar se encogía a 40 px y su texto tapaba Editar (la regla del menú ⋯ de #393 alcanzaba a cualquier menú).
+- #426: Slack mostraba `**negritas**` literales en las respuestas de `/radicle`; ahora usa su `*negrita*`.
+- #427: el bloque del plugin de ejemplo decía "days until…" en una página en español; los bloques reciben el idioma como `window.radicle.lang`.
+- #428: importar el mismo export a otro space actualizaba las páginas del primero; las referencias externas ahora son por space.
+- #424 y #425: pendientes de la fase 4 (proyecto default del doc al crear tickets y el panel Docs sin duplicados).
+
+### Aceptación de la fase
+
+Probada en el navegador sobre un stack aislado (puerto 8100) con main al día, en claro y oscuro, con capturas en cada ticket:
+
+- **Importar:** el export de Confluence de muestra entra con su árbol, autores, archivos y labels; importarlo otra vez marca las 4 páginas como "Actualiza" y no duplica.
+- **Link público:** abre en un contexto sin sesión con `noindex` y, al revocarlo, da 404.
+- **PDF:** el de una página con visual SVG, Mermaid, gráfica y KaTeX se ve como la lectura.
+- **Slack, webhooks y la regla de vencimiento:** el worker corrió con un transporte que registra cada request en lugar de mandarlo, porque no hay workspace real y Radicle no llama direcciones privadas.
+  - Publicar en Anuncios manda el aviso a su canal.
+  - `/radicle ask` responde con la cita correcta en el `response_url` (con firma inválida, 401).
+  - Un receptor recibe `page.published` con una firma que valida con su secreto.
+  - La regla avisa en el canal cuando una página pasa a Desactualizada.
+- **iCal:** el feed lo lee `icalendar` con sus eventos y el milestone de PA. No se suscribió desde Google Calendar, porque necesita una URL pública.
+- **Analytics:** Admin → Analytics lista lo buscado sin encontrar, y un agente lo recibe con `get_search_gaps` por MCP.
+- **Plugin:** el bloque de cuenta regresiva se ve en un post.
+- **E2E nuevo** `e2e/suite-folio5-import-public.spec.ts` (#429): importar Confluence dos veces, publicar y compartir con un link público que se revoca.
+
+Pendiente:
+
+- No se ha probado con exports reales de Confluence o Notion; las muestras están hechas a mano en su formato.
+- Teams no muestra vistas previas de links, y su `/radicle ask` contesta en la misma petición, así que con un modelo lento se puede pasar del tiempo.
+- Los avisos que manda Radicle a Slack y Teams están en inglés.
+

@@ -6,6 +6,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Added
 
+- Folio fase 5 (integraciones externas): páginas públicas con link revocable, exportar a PDF, Word, HTML y Markdown, importar desde Confluence, Notion, Word y Markdown con dry run, Slack y Teams (avisos por space, `/radicle search` y `/radicle ask`, vista previa de links), webhooks firmados, reglas de automatización, plugins con bloques para el editor, calendarios por space con milestones de Docket y feed iCal, y analytics con búsquedas sin resultados y el audit de Folio.
 - Folio fase 4 (Docket + IA): smart links de tickets con estado en vivo, tabla de tickets por RQL, crear un ticket desde una selección o un action item, panel Docs en los tickets y milestones de Docket, build spec a tickets con checklist y bloque de avance en vivo, ligas de docs a proyectos, milestones y áreas, chat de los docs con citas a la sección exacta, IA en el editor (resumir, reescribir, sugerir metadata) con glosario, y prompts del MCP para agentes que escriben desde un codebase.
 - Folio fase 3 (contenido rico): templates de página y de space (con "Equipo de ingeniería" incluido), editor de la home en un grid de 12 columnas, bloque Visual en sandbox, diagramas Mermaid, gráficas, timeline, comparación, fórmulas KaTeX, lista por label, whiteboards de Excalidraw en tiempo real, databases con vistas de tabla, tarjetas y tablero, y embeds con vista previa de links.
 - Folio fase 2 (colaboración): avisos in-app y por email con preferencias, edición en tiempo real con carets y punteros con nombre, comentarios al pie e inline anclados al texto, menciones, reacciones, seguir, favoritos, compartir, action items con Mis tareas, live docs con snapshots, mover, copiar y archivar páginas, dueño y estados con vencimiento, recientes y el feed Para ti.
@@ -24,6 +25,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ### Fixed
 
+- Folio: importar el mismo export a otro space ya no actualiza las páginas del primero; el PDF de un doc en español sale en español; el botón Exportar de la lectura ya no se encoge; las reglas de ejemplo salen una vez; Slack muestra las negritas de `/radicle`; los bloques de plugins reciben el idioma de quien lee; crear tickets desde un doc arranca en su proyecto de Docket; el panel Docs de un ticket lista cada doc una vez.
 - Folio: las respuestas del chat se guardan (antes se perdían y dejaban una conexión abierta), también si el lector se va en cuanto llegan; los tickets que crea Folio salen en el idioma del doc; la propuesta de reescritura de la IA ya no tapa los botones de comentar y crear ticket; las tareas del editor alinean su texto con la casilla; el menú ⋯ de la página muestra su icono.
 - Folio: un whiteboard o una database sin elegir ya no impiden guardar el borrador en el editor en tiempo real; el iframe de un visual ya no se pinta blanco en modo oscuro y se encoge a su contenido; la vista y la columna default de una database se traducen.
 - Folio: una tarea que te asignas tú mismo ya no te avisa (y los avisos de tareas dicen quién la asignó); los tipos de aviso en Perfil se traducen.
