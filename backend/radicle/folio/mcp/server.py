@@ -33,7 +33,9 @@ To find docs use search_docs (words or a question) or query_docs (RQL), then get
 the Markdown. Before writing, search whether the doc already exists and read
 get_metadata_schema; then create_page or update_draft in Markdown, submit_for_publication
 (agents wait for a Folio admin's approval) and check list_my_submissions for the outcome.
-For visuals, diagrams and charts read folio://guide/visuals first. Working from a
+To organize, create_space and create_folder (pass the folder as parent to create_page).
+For visuals, diagrams and charts read folio://guide/visuals first; html visuals can be
+interactive, and list_visuals, get_visual, update_visual and remove_visual edit them. Working from a
 codebase, use the prompts weekly_changes_post, document_module and
 build_spec_from_discussion.
 Errors explain what is valid instead."""

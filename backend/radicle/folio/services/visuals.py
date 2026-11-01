@@ -6,6 +6,7 @@ here tell an agent beforehand what the sandbox would block, so the visual works 
 time. The page gives it the Radicle tokens as CSS variables (`TOKENS`), in light or dark.
 """
 
+import copy
 import re
 from dataclasses import dataclass, field
 from typing import Any
@@ -209,3 +210,79 @@ def require_publishable(doc: dict[str, Any]) -> None:
             f"Give every visual a title before publishing (visual {which} has none).",
             errors=[{"field": "content", "message": f"visual {n} needs a title"} for n in untitled],
         )
+
+
+# Editing the visuals already in a draft (ADR 0046): an agent lists them, reads one and
+# changes or removes it by its position in the document, without rewriting the page.
+VISUAL_FIELDS = ("format", "code", "title", "description")
+
+
+def _paths(nodes: list[dict[str, Any]], at: tuple[int, ...] = ()) -> list[tuple[int, ...]]:
+    """Where each visual is, in document order, as indexes into nested `content` lists."""
+    found: list[tuple[int, ...]] = []
+    for i, n in enumerate(nodes):
+        here = (*at, i)
+        if n.get("type") == "visual":
+            found.append(here)
+        found += _paths(n.get("content") or [], here)
+    return found
+
+
+def _locate(doc: dict[str, Any], index: int) -> tuple[list[dict[str, Any]], int]:
+    """The list that holds visual `index` and its position there."""
+    paths = _paths(doc.get("content") or [])
+    if not 0 <= index < len(paths):
+        count = len(paths)
+        hint = (
+            f"valid indexes are 0 to {count - 1}" if count else "add one with insert_visual first"
+        )
+        raise ValidationFailed(
+            f"There is no visual {index}: the draft has {count} visual(s); {hint}.",
+            errors=[{"field": "index", "message": "out of range"}],
+        )
+    *parents, last = paths[index]
+    holder: list[dict[str, Any]] = doc["content"]
+    for i in parents:
+        holder = holder[i]["content"]
+    return holder, last
+
+
+def summary(doc: dict[str, Any]) -> list[dict[str, Any]]:
+    """Every visual of the document, in order: index, title, format, description, size."""
+    out = []
+    for i, v in enumerate(_visuals(doc.get("content") or [])):
+        attrs = v.get("attrs") or {}
+        out.append(
+            {
+                "index": i,
+                "title": attrs.get("title"),
+                "format": attrs.get("format"),
+                "description": attrs.get("description"),
+                "size": len((attrs.get("code") or "").encode()),
+            }
+        )
+    return out
+
+
+def get_visual(doc: dict[str, Any], index: int) -> dict[str, Any]:
+    holder, at = _locate(doc, index)
+    attrs = holder[at].get("attrs") or {}
+    return {"index": index} | {k: attrs.get(k) for k in VISUAL_FIELDS}
+
+
+def update_visual(doc: dict[str, Any], index: int, changes: dict[str, Any]) -> dict[str, Any]:
+    """The document with visual `index` changed (only the given fields), checked again."""
+    edited = copy.deepcopy(doc)
+    holder, at = _locate(edited, index)
+    attrs = {**(holder[at].get("attrs") or {})}
+    attrs.update({k: v for k, v in changes.items() if k in VISUAL_FIELDS and v is not None})
+    require_valid(*(attrs.get(k) or "" for k in ("format", "code", "description", "title")))
+    holder[at] = {**holder[at], "attrs": attrs}
+    return schema.validate(edited)
+
+
+def remove_visual(doc: dict[str, Any], index: int) -> dict[str, Any]:
+    edited = copy.deepcopy(doc)
+    holder, at = _locate(edited, index)
+    del holder[at]
+    return schema.validate(edited)

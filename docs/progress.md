@@ -938,3 +938,8 @@ Cerrada el 22 de octubre de 2026. Diseño iterado en el canvas de diseño y prob
 - **Arreglos al cerrar:** el diálogo Escribir se queda abierto sobre el editor porque el botón ahora vive en la barra (#465); WriteButton pasa a los componentes compartidos (#462).
 - **Pruebas:** `e2e/suite-folio-navigation.spec.ts` (#464) y las pruebas de live docs y whiteboards ajustadas a Administrar (#466). Suite de Playwright completa sobre un stack aislado: 52 de 52. Backend: 1,564 pruebas pasan con 95% de cobertura; frontend: 571 pruebas y el build.
 
+
+## Editar visuales y organizar desde el MCP (ADR 0046)
+
+- REST `GET/PATCH/DELETE /folio/nodes/{id}/visuals[/{index}]` y tools `list_visuals`, `get_visual`, `update_visual`, `remove_visual`; `create_space` y `create_folder`.
+- `folio://guide/visuals` con visuales interactivos. Pruebas en `test_folio_visual_edits_api.py` y `test_folio_mcp_visuals.py`.

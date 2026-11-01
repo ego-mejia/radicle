@@ -17,6 +17,8 @@ READ = (
     "list_notifications",
     "query_database",
     "validate_visual",
+    "list_visuals",
+    "get_visual",
     "get_docs_for_ticket",
     "get_build_spec_items",
     "ask_docs",
@@ -27,6 +29,8 @@ READ = (
 )
 
 WRITE = (
+    "create_space",
+    "create_folder",
     "create_page",
     "update_draft",
     "submit_for_publication",
@@ -40,6 +44,8 @@ WRITE = (
     "append_to_live_doc",
     "add_database_rows",
     "insert_visual",
+    "update_visual",
+    "remove_visual",
     "insert_diagram",
     "insert_chart",
     "insert_timeline",
