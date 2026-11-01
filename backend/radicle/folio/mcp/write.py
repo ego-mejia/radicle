@@ -36,6 +36,41 @@ async def _write(client: RadicleAPI, node_id: str, body: dict[str, Any]) -> dict
 
 def register(server: MCPServer) -> None:
     @server.tool()
+    async def create_space(
+        ctx: Context,
+        key: Annotated[str, Field(description="2 to 40 lowercase letters, digits and dashes")],
+        name: str,
+        description: str = "",
+        icon: Annotated[str | None, Field(description="An emoji")] = None,
+    ) -> dict[str, Any]:
+        """Create a team space; you become its admin. Needs the Folio creator role. Check
+        list_spaces first so you do not duplicate one."""
+        body = {"key": key, "name": name, "description": description, "icon": icon}
+        async with api(ctx) as client:
+            try:
+                space = await client.call("POST", "/folio/spaces", json=body)
+            except APIError as exc:
+                raise _explained(exc) from exc
+        return {k: space[k] for k in ("key", "name", "description", "icon", "permissions")}
+
+    @server.tool()
+    async def create_folder(
+        ctx: Context,
+        space: SpaceKey,
+        title: str,
+        parent: Annotated[str | None, Field(description="Parent folder or page id")] = None,
+    ) -> dict[str, Any]:
+        """Create a folder in a space's tree to group pages; pass its id as parent to
+        create_page. Folders have no content and are never published."""
+        body = {"space": space, "kind": "folder", "title": title, "parent": parent}
+        async with api(ctx) as client:
+            try:
+                node = await client.call("POST", "/folio/nodes", json=body)
+            except APIError as exc:
+                raise _explained(exc) from exc
+        return {"id": node["id"], "title": node["title"], "space": node["space"]}
+
+    @server.tool()
     async def create_page(
         ctx: Context,
         space: SpaceKey,

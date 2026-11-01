@@ -4,7 +4,7 @@ a timeline to a draft, and learns what the sandbox would block before it does.""
 from httpx import AsyncClient
 from mcp import Client
 
-from radicle.folio.mcp.visuals import STARTER
+from radicle.folio.mcp.visuals import INTERACTIVE, STARTER
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, METADATA, agent_can_write
 from tests.mcp.conftest import error_text, folio_mcp, payload
@@ -100,3 +100,55 @@ async def test_errors_say_what_to_fix(client: AsyncClient, team: Team) -> None:
         assert "must be a number" in text
         text = error_text(await folio.call_tool("insert_timeline", {"id": page, "items": []}))
         assert "1 to 100 items" in text
+
+
+async def test_an_agent_organizes_and_edits_visuals(client: AsyncClient, team: Team) -> None:
+    i = team.instance.headers
+    r = await client.post(
+        f"{API}/admin/grants",
+        headers=i,
+        json={"grantee_type": "user", "grantee": team.agent.handle, "role": "creator"},
+    )
+    assert r.status_code == 201, r.text
+    async with folio_mcp(client, team.agent) as folio:
+        space = payload(
+            await folio.call_tool("create_space", {"key": "mna", "name": "MNA", "icon": "🎓"})
+        )
+        assert space["key"] == "mna" and "create" in space["permissions"]
+        text = error_text(await folio.call_tool("create_space", {"key": "M N", "name": "x"}))
+        assert "key" in text
+        folder = payload(
+            await folio.call_tool("create_folder", {"space": "mna", "title": "Visión"})
+        )
+        args = {
+            "space": "mna",
+            "title": "Harris",
+            "content_md": DRAFT,
+            "metadata": METADATA,
+            "parent": folder["id"],
+        }
+        page = str(payload(await folio.call_tool("create_page", args))["id"])
+        guide = (await folio.read_resource("folio://guide/visuals")).contents[0].text
+        assert "Interactive visuals" in guide and INTERACTIVE in guide
+        args = {
+            "id": page,
+            "format": "html",
+            "code": INTERACTIVE,
+            "title": "Puntos",
+            "description": "Botones y un deslizador que redibujan los puntos.",
+        }
+        await folio.call_tool("insert_visual", args)
+        listed = payload(await folio.call_tool("list_visuals", {"id": page}))
+        assert listed[0]["title"] == "Puntos" and listed[0]["format"] == "html"
+        got = payload(await folio.call_tool("get_visual", {"id": page, "index": 0}))
+        assert got["code"] == INTERACTIVE
+        out = payload(
+            await folio.call_tool("update_visual", {"id": page, "index": 0, "title": "Más"})
+        )
+        assert out["visuals"][0]["title"] == "Más"
+        text = error_text(await folio.call_tool("get_visual", {"id": page, "index": 4}))
+        assert "the draft has 1 visual(s)" in text
+        out = payload(await folio.call_tool("remove_visual", {"id": page, "index": 0}))
+        assert out["visuals"] == [] and "```visual" not in out["content_md"]
+    r = await client.get(f"{API}/spaces/mna/tree", headers=i)
+    assert r.json()[0]["title"] == "Visión" and r.json()[0]["children"][0]["title"] == "Harris"

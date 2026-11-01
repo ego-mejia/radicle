@@ -62,6 +62,10 @@ VISUAL_CALLS = {
     "insert_diagram": {"source": "flowchart LR; A-->B"},
     "insert_chart": {"kind": "bar", "data": [["Mes", "Abiertos"], ["Ene", 4]]},
     "insert_timeline": {"items": [{"title": "Lanzamiento"}]},
+    "list_visuals": {},
+    "get_visual": {"index": 0},
+    "update_visual": {"index": 0, "title": "x"},
+    "remove_visual": {"index": 0},
 }
 
 # Tools that take or return docs, each checked below; the rest never touch a page.
@@ -87,6 +91,10 @@ COVERED = {
     "insert_diagram",
     "insert_chart",
     "insert_timeline",
+    "list_visuals",
+    "get_visual",
+    "update_visual",
+    "remove_visual",
     "link_ticket",
     "unlink_ticket",
     "ask_docs",
@@ -103,6 +111,8 @@ EXEMPT = {
     "list_spaces",
     "get_metadata_schema",
     "create_page",
+    "create_space",  # makes a new space
+    "create_folder",  # makes a new folder; a parent you can't see is not found
     "list_my_submissions",
     "list_templates",
     "create_from_template",
@@ -200,6 +210,8 @@ async def test_every_tool_explains_missing_access(
         "get_metadata_schema": {},
         "get_versions": {"id": some_id},
         "create_page": {"space": "docs", "title": "x", "content_md": "x", "metadata": {}},
+        "create_space": {"key": "otra", "name": "Otra"},
+        "create_folder": {"space": "docs", "title": "x"},
         "update_draft": {"id": some_id, "content_md": "x"},
         "submit_for_publication": {"id": some_id, "change_note": "x"},
         "list_my_submissions": {},
