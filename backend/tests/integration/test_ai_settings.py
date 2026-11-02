@@ -7,8 +7,8 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import AiSettings, AuditEntry
-from radicle.platform.services import ai
+from gumball_factory.platform.db.models import AiSettings, AuditEntry
+from gumball_factory.platform.services import ai
 from tests.conftest import Team
 
 API = "/api/v1"

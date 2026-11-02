@@ -6,21 +6,21 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 
 # Importing the modules registers their tables on the shared metadata.
-import radicle.folio.db.analytics
-import radicle.folio.db.calendars
-import radicle.folio.db.chat
-import radicle.folio.db.collab
-import radicle.folio.db.databases
-import radicle.folio.db.docket_links
-import radicle.folio.db.exports
-import radicle.folio.db.glossary
-import radicle.folio.db.imports
-import radicle.folio.db.models
-import radicle.folio.db.public_links
-import radicle.folio.db.templates
-import radicle.folio.db.whiteboards  # noqa: F401  (ruff flags only the last of these)
-from radicle.docket.db.models import Base
-from radicle.platform.config import get_settings
+import gumball_factory.folio.db.analytics
+import gumball_factory.folio.db.calendars
+import gumball_factory.folio.db.chat
+import gumball_factory.folio.db.collab
+import gumball_factory.folio.db.databases
+import gumball_factory.folio.db.docket_links
+import gumball_factory.folio.db.exports
+import gumball_factory.folio.db.glossary
+import gumball_factory.folio.db.imports
+import gumball_factory.folio.db.models
+import gumball_factory.folio.db.public_links
+import gumball_factory.folio.db.templates
+import gumball_factory.folio.db.whiteboards  # noqa: F401  (ruff flags only the last of these)
+from gumball_factory.docket.db.models import Base
+from gumball_factory.platform.config import get_settings
 
 config = context.config
 if config.config_file_name is not None and config.attributes.get("configure_logger", True):

@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from radicle.folio.services.databases import convert
+from gumball_factory.folio.services.databases import convert
 
 CHOICES = {"choices": [{"value": "Idea", "color": "grey"}, {"value": "Trial", "color": "blue"}]}
 

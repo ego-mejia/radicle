@@ -2,10 +2,10 @@ import uuid
 
 import pytest
 
-from radicle.docket.db.models import Resolution, Status, TicketType, Transition
-from radicle.docket.services.workflow_engine import available, decide
-from radicle.docket.services.workflows import DEFAULT_WORKFLOWS, Workflow
-from radicle.platform.errors import Conflict, ValidationFailed
+from gumball_factory.docket.db.models import Resolution, Status, TicketType, Transition
+from gumball_factory.docket.services.workflow_engine import available, decide
+from gumball_factory.docket.services.workflows import DEFAULT_WORKFLOWS, Workflow
+from gumball_factory.platform.errors import Conflict, ValidationFailed
 
 R = Resolution
 

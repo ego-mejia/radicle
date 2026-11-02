@@ -11,12 +11,12 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.docket_links import FolioTicketLink
-from radicle.folio.db.models import FolioNode, FolioNodeLabel
-from radicle.folio.services import quality
-from radicle.platform.db.models import AutomationRun, IntegrationKind, User
-from radicle.platform.services import automation, integrations, safe_fetch
-from radicle.platform.services.integrations import IntegrationData, Route
+from gumball_factory.folio.db.docket_links import FolioTicketLink
+from gumball_factory.folio.db.models import FolioNode, FolioNodeLabel
+from gumball_factory.folio.services import quality
+from gumball_factory.platform.db.models import AutomationRun, IntegrationKind, User
+from gumball_factory.platform.services import automation, integrations, safe_fetch
+from gumball_factory.platform.services.integrations import IntegrationData, Route
 from tests.conftest import Clock, Team, run_jobs
 from tests.integration.folio_helpers import API, publish
 

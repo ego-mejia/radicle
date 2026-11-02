@@ -1,6 +1,6 @@
 """Notion's Markdown & CSV export into pages and databases (Folio 5.3)."""
 
-from radicle.folio.services.importing.notion import notion_id, read_notion, title_of
+from gumball_factory.folio.services.importing.notion import notion_id, read_notion, title_of
 
 ENG = "Ingenieria 0f1e2d3c4b5a69788796a5b4c3d2e1f0"
 GUIDE = "Conectar un agente 11112222333344445555666677778888"

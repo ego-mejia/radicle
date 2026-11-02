@@ -7,12 +7,12 @@ from httpx import AsyncClient
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioGlobalGrant, FolioRole, GranteeType
-from radicle.folio.services import roles
-from radicle.platform import authz
-from radicle.platform.db.models import User
-from radicle.platform.errors import NotFound, ValidationFailed
-from radicle.platform.services import groups
+from gumball_factory.folio.db.models import FolioGlobalGrant, FolioRole, GranteeType
+from gumball_factory.folio.services import roles
+from gumball_factory.platform import authz
+from gumball_factory.platform.db.models import User
+from gumball_factory.platform.errors import NotFound, ValidationFailed
+from gumball_factory.platform.services import groups
 from tests.conftest import Team
 
 

@@ -1,5 +1,5 @@
-"""Folio's `/radicle` commands (Folio 5.4). Acceptance: `/radicle ask` in Slack answers with
-citations, as the Radicle user behind the Slack account."""
+"""Folio's `/gumball-factory` commands (Folio 5.4). Acceptance: `/gumball-factory ask` in Slack
+answers with citations, as the Gumball Factory user behind the Slack account."""
 
 import json
 import time
@@ -11,11 +11,11 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.chat import FolioChatSession
-from radicle.folio.services import chat
-from radicle.platform.db.models import IntegrationKind, User
-from radicle.platform.services import chat_commands, integrations, safe_fetch
-from radicle.platform.services.integrations import IntegrationData
+from gumball_factory.folio.db.chat import FolioChatSession
+from gumball_factory.folio.services import chat
+from gumball_factory.platform.db.models import IntegrationKind, User
+from gumball_factory.platform.services import chat_commands, integrations, safe_fetch
+from gumball_factory.platform.services.integrations import IntegrationData
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_chat_helpers import docs, model  # noqa: F401  (fixtures)
 
@@ -80,7 +80,7 @@ async def test_acceptance_ask_answers_with_citations(
     [reply] = replies
     assert reply["text"].startswith("Ve a Admin, Agentes [1].")
     guide = f"http://localhost:8000/folio/p/{docs['guide']}"
-    assert f"[1] Conecta un agente a Radicle: {guide}" in reply["text"]
+    assert f"[1] Conecta un agente a Gumball Factory: {guide}" in reply["text"]
     session = await db.scalar(select(FolioChatSession))
     fernando = await db.scalar(select(User).where(User.handle == "fernando"))
     assert session is not None and fernando is not None and session.user_id == fernando.id
@@ -94,7 +94,9 @@ async def test_search_gives_the_top_five(
     docs: dict,  # noqa: F811
 ) -> None:
     text = (await _slash(client, db, team, "search agente"))["text"]
-    assert text.startswith("• Conecta un agente a Radicle (docs): http://localhost:8000/folio/p/")
+    assert text.startswith(
+        "• Conecta un agente a Gumball Factory (docs): http://localhost:8000/folio/p/"
+    )
     text = (await _slash(client, db, team, "search zzzqqq"))["text"]
     assert text == "Nothing in the docs matches “zzzqqq”."
     # Without a chat model, ask says so instead of failing.

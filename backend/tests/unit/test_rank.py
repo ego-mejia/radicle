@@ -2,7 +2,7 @@ import random
 
 import pytest
 
-from radicle.platform.services import rank
+from gumball_factory.platform.services import rank
 
 
 def test_first_key() -> None:

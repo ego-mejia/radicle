@@ -1,6 +1,6 @@
 """Inline comment anchors survive edits around and inside their text (Folio 2.3)."""
 
-from radicle.folio.services import anchors
+from gumball_factory.folio.services import anchors
 
 TEXT = "Intro.\nCrea el agente en Admin y conéctalo por MCP con su token.\nFin."
 QUOTE = "conéctalo por MCP"

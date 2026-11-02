@@ -5,7 +5,7 @@ fails `test_every_folio_get_route_is_covered` until it is added."""
 import pytest
 from httpx import AsyncClient
 
-from radicle.main import create_app
+from gumball_factory.main import create_app
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, publish
 

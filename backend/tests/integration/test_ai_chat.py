@@ -8,8 +8,8 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import AiCall, AiProvider
-from radicle.platform.services import ai
+from gumball_factory.platform.db.models import AiCall, AiProvider
+from gumball_factory.platform.services import ai
 
 TURNS = [ai.Turn("user", "Resume esta página secreta")]
 

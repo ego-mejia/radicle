@@ -1,8 +1,8 @@
 """Finding a build spec's deliverables (Folio 4.3): a deliverables table or numbered
 level-3 headings."""
 
-from radicle.folio.services.build_spec import detect
-from radicle.folio.services.parse_markdown import from_markdown
+from gumball_factory.folio.services.build_spec import detect
+from gumball_factory.folio.services.parse_markdown import from_markdown
 
 TABLE = """# Fase 4
 

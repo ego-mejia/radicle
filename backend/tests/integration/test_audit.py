@@ -6,9 +6,9 @@ from sqlalchemy import select, text
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket.db.models import AuditEntry, utcnow
-from radicle.platform.db.models import AuditApp
-from radicle.platform.services import audit
+from gumball_factory.docket.db.models import AuditEntry, utcnow
+from gumball_factory.platform.db.models import AuditApp
+from gumball_factory.platform.services import audit
 from tests.conftest import (
     ADMIN_PASSWORD,
     Team,

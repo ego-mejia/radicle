@@ -12,7 +12,7 @@ from typing import Any
 import pycrdt
 from httpx import AsyncClient
 
-from radicle.folio.services import ydoc
+from gumball_factory.folio.services import ydoc
 
 
 class Rejected(Exception):

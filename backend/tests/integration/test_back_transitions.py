@@ -4,8 +4,8 @@ card can be dragged back to To Do on the board."""
 import pytest
 from httpx import AsyncClient
 
-from radicle.docket.db.models import TicketType
-from radicle.docket.services.template_config import default_config
+from gumball_factory.docket.db.models import TicketType
+from gumball_factory.docket.services.template_config import default_config
 from tests.conftest import Team, new_ticket
 
 API = "/api/v1"
@@ -43,7 +43,7 @@ async def test_back_to_the_first_status(
 
 async def test_the_default_template_has_them(client: AsyncClient, board: Team) -> None:
     templates = (await client.get(f"{API}/templates", headers=board.instance.headers)).json()
-    default = next(t for t in templates["items"] if t["name"] == "Radicle default")
+    default = next(t for t in templates["items"] if t["name"] == "Gumball Factory default")
     detail = (
         await client.get(f"{API}/templates/{default['id']}", headers=board.instance.headers)
     ).json()

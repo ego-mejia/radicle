@@ -1,7 +1,7 @@
 """Example rules are listed once, however many times an app registers them."""
 
-from radicle.folio.services import automation_actions
-from radicle.platform.services import automation
+from gumball_factory.folio.services import automation_actions
+from gumball_factory.platform.services import automation
 
 
 def test_registering_twice_lists_each_example_once() -> None:

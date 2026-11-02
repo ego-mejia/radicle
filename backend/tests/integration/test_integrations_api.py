@@ -7,7 +7,7 @@ import httpx
 import pytest
 from httpx import AsyncClient
 
-from radicle.platform.services import safe_fetch
+from gumball_factory.platform.services import safe_fetch
 from tests.conftest import Team
 
 URL = "/api/v1/integrations"

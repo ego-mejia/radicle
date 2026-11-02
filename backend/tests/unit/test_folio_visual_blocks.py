@@ -3,8 +3,8 @@ and reads them."""
 
 import pytest
 
-from radicle.folio.services import convert, schema
-from radicle.folio.services.parse_markdown import from_markdown
+from gumball_factory.folio.services import convert, schema
+from gumball_factory.folio.services.parse_markdown import from_markdown
 from tests.unit.folio_docs import block
 
 
@@ -166,8 +166,8 @@ def test_inline_math_only_between_dollars() -> None:
 
 
 def test_ticket_progress_round_trips_with_or_without_title() -> None:
-    from radicle.folio.services import convert
-    from radicle.folio.services.parse_markdown import from_markdown
+    from gumball_factory.folio.services import convert
+    from gumball_factory.folio.services.parse_markdown import from_markdown
 
     for md, attrs in (("::progress{}", {}), ("::progress{title=Avance}", {"title": "Avance"})):
         doc = from_markdown(md)

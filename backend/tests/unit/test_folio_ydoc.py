@@ -4,7 +4,7 @@ import copy
 
 import pycrdt
 
-from radicle.folio.services import schema, ydoc
+from gumball_factory.folio.services import schema, ydoc
 from tests.unit.folio_docs import EVERY_BLOCK, block, p, t
 
 

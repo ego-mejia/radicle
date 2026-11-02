@@ -6,8 +6,8 @@ from typing import Any
 
 import pytest
 
-from radicle.folio.services import schema
-from radicle.folio.services.schema import SchemaError
+from gumball_factory.folio.services import schema
+from gumball_factory.folio.services.schema import SchemaError
 from tests.unit.folio_docs import EVERY_BLOCK, block, p, t
 
 

@@ -1,6 +1,6 @@
 import pytest
 
-from radicle.docket.services.assistant import guide
+from gumball_factory.docket.services.assistant import guide
 
 
 @pytest.mark.parametrize(

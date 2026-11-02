@@ -5,15 +5,15 @@ import re
 
 from httpx import AsyncClient
 
-from radicle.docket.mcp.server import server as docket_server
-from radicle.folio.mcp.server import server as folio_server
+from gumball_factory.docket.mcp.server import server as docket_server
+from gumball_factory.folio.mcp.server import server as folio_server
 from tests.conftest import Team, new_ticket
 from tests.integration.folio_helpers import API, METADATA, agent_can_write
 from tests.mcp.conftest import folio_mcp, payload
 
 ARGS = {
-    "weekly_changes_post": {"space": "eng", "since": "v1.4", "repo": "radicle"},
-    "document_module": {"space": "eng", "module": "backend/radicle/auth"},
+    "weekly_changes_post": {"space": "eng", "since": "v1.4", "repo": "gumball-factory"},
+    "document_module": {"space": "eng", "module": "backend/gumball_factory/auth"},
     "build_spec_from_discussion": {
         "space": "eng",
         "title": "Fase 6",
@@ -31,7 +31,7 @@ async def test_each_prompt_is_listed_and_renders(client: AsyncClient, team: Team
             assert "submit_for_publication" in text and '"eng"' in text
         weekly = await folio.get_prompt("weekly_changes_post", ARGS["weekly_changes_post"])
         text = weekly.messages[0].content.text  # type: ignore[union-attr]
-        assert "v1.4..HEAD" in text and "radicle" in text
+        assert "v1.4..HEAD" in text and "gumball-factory" in text
         spec = await folio.get_prompt(
             "build_spec_from_discussion", ARGS["build_spec_from_discussion"]
         )

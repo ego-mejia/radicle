@@ -1,6 +1,6 @@
 """iCal text (RFC 5545): escaping and folding long lines without splitting characters."""
 
-from radicle.folio.services.ical import escape, fold
+from gumball_factory.folio.services.ical import escape, fold
 
 
 def test_escape() -> None:

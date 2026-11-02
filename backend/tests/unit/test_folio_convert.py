@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from radicle.folio.services import convert
+from gumball_factory.folio.services import convert
 from tests.unit.folio_docs import EVERY_BLOCK, block, p, t
 
 EXPECTED = (Path(__file__).parent / "folio_every_block.md").read_text()
@@ -68,7 +68,7 @@ def test_plain_text_for_search() -> None:
     assert "Diagrama El flujo\nspec.pdf\nDemo\n" in text
     # Visual blocks: search reads their description, source, table and items.
     assert text.endswith(
-        "Raíz Un círculo lima: la semilla de Radicle.\n"
+        "Raíz Un círculo lima: la semilla de Gumball Factory.\n"
         "Flujo graph TD\n  A-->B\n"
         "Tickets por área\nÁrea Abiertos Cerrados\nLegal 3 5\nBackend 7 2.5\n"
         "2026-11-01 Beta Equipo interno\nLanzamiento\n"

@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import (
+from gumball_factory.folio.db.models import (
     FolioNode,
     FolioPageRestriction,
     FolioRole,
@@ -15,9 +15,9 @@ from radicle.folio.db.models import (
     NodeKind,
     RestrictionMode,
 )
-from radicle.folio.services import access, nodes, publishing, roles, spaces
-from radicle.platform.db.models import Group, User
-from radicle.platform.services import groups
+from gumball_factory.folio.services import access, nodes, publishing, roles, spaces
+from gumball_factory.platform.db.models import Group, User
+from gumball_factory.platform.services import groups
 from tests.conftest import Team
 
 

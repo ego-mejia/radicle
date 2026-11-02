@@ -4,7 +4,7 @@ from httpx import AsyncClient
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket.db.models import ApiToken
+from gumball_factory.docket.db.models import ApiToken
 from tests.conftest import Actor, new_agent
 
 

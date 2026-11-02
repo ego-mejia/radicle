@@ -8,10 +8,10 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import radicle.docket.public as docket
-from radicle.folio.db.models import FolioNode
-from radicle.folio.services import build_spec
-from radicle.platform.errors import Forbidden, ValidationFailed
+import gumball_factory.docket.public as docket
+from gumball_factory.folio.db.models import FolioNode
+from gumball_factory.folio.services import build_spec
+from gumball_factory.platform.errors import Forbidden, ValidationFailed
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, METADATA
 from tests.integration.test_docket_public import _user

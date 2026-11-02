@@ -7,7 +7,7 @@ import httpx
 import pytest
 from httpx import AsyncClient
 
-from radicle.platform.services import ai
+from gumball_factory.platform.services import ai
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, publish
 
@@ -16,10 +16,10 @@ ANSWER = json.dumps(
         {
             "term": "Docket",
             "aliases": ["tickets"],
-            "definition": "El tracker de Radicle.",
+            "definition": "El tracker de Gumball Factory.",
             "doc": 1,
         },
-        {"term": "Folio", "definition": "Los docs de Radicle.", "doc": 9},
+        {"term": "Folio", "definition": "Los docs de Gumball Factory.", "doc": 9},
         {"term": "", "definition": "sin término"},
     ]
 )
@@ -43,7 +43,7 @@ async def _page(client: AsyncClient, team: Team, title: str, *, verified: bool) 
         f"{API}/nodes", headers=i, json={"space": "eng", "kind": "page", "title": title}
     )
     nid = r.json()["id"]
-    await publish(client, team, nid, f"# {title}\n\nDocket es el tracker de Radicle.")
+    await publish(client, team, nid, f"# {title}\n\nDocket es el tracker de Gumball Factory.")
     if verified:
         r = await client.patch(f"{API}/nodes/{nid}/status", headers=i, json={"status": "verified"})
         assert r.status_code == 200, r.text

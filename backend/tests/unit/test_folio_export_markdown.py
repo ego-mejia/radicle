@@ -3,8 +3,8 @@
 import uuid
 from types import SimpleNamespace
 
-from radicle.folio.services.exporting import markdown
-from radicle.folio.services.exporting.pages import ExportAsset
+from gumball_factory.folio.services.exporting import markdown
+from gumball_factory.folio.services.exporting.pages import ExportAsset
 
 ID = "0b5c2a4e-1111-4111-8111-111111111111"
 

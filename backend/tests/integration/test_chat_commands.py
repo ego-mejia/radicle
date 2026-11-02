@@ -1,4 +1,4 @@
-"""`/radicle` from Slack and Teams (Folio 5.4): signatures, who is asking, and slow
+"""`/gumball-factory` from Slack and Teams (Folio 5.4): signatures, who is asking, and slow
 commands answered later on Slack's response_url."""
 
 import base64
@@ -12,9 +12,9 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import Integration, IntegrationKind, User
-from radicle.platform.services import chat_commands, integrations, safe_fetch
-from radicle.platform.services.integrations import IntegrationData
+from gumball_factory.platform.db.models import Integration, IntegrationKind, User
+from gumball_factory.platform.services import chat_commands, integrations, safe_fetch
+from gumball_factory.platform.services.integrations import IntegrationData
 from tests.conftest import Team, run_jobs
 
 SIGNING = "slack-signing-secret"
@@ -97,7 +97,7 @@ async def test_slack_runs_commands_as_the_user_with_that_email(
     r = await client.post(url, **_slack_request("whoami **hola** y **adiós**"))
     assert r.json()["text"] == "fernando: *hola* y *adiós*"  # Slack's bold
     r = await client.post(url, **_slack_request("bailar"))
-    assert "/radicle whoami" in r.json()["text"]
+    assert "/gumball-factory whoami" in r.json()["text"]
     r = await client.post(url, **_slack_request("whoami"))
     assert "Add what to whoami" in r.json()["text"]
 
@@ -127,7 +127,7 @@ async def test_a_stranger_links_their_account_first(
     url = f"/api/v1/hooks/chat/{hook.id}/command"
     r = await client.post(url, **_slack_request("whoami x", user="U_NADIE"))
     text = r.json()["text"]
-    assert "couldn't find your Radicle account" in text
+    assert "couldn't find your Gumball Factory account" in text
     token = text.split("token=", 1)[1]
     r = await client.post(
         "/api/v1/integrations/link", headers=team.member.headers, json={"token": token}
@@ -159,13 +159,13 @@ async def test_teams_asks_to_link_then_answers(
         auth = chat_commands.teams_signature(TEAMS_SECRET, content)
         return {"content": content, "headers": {"Authorization": auth}}
 
-    r = await client.post(url, **activity("<at>Radicle</at> whoami hola"))
-    assert r.status_code == 200 and "Connect your Radicle account" in r.json()["text"]
+    r = await client.post(url, **activity("<at>Gumball Factory</at> whoami hola"))
+    assert r.status_code == 200 and "Connect your Gumball Factory account" in r.json()["text"]
     token = r.json()["text"].split("token=", 1)[1]
     await client.post(
         "/api/v1/integrations/link", headers=team.member.headers, json={"token": token}
     )
-    r = await client.post(url, **activity("<at>Radicle</at> whoami hola"))
+    r = await client.post(url, **activity("<at>Gumball Factory</at> whoami hola"))
     assert r.json() == {"type": "message", "text": f"{team.member.handle}: hola"}
     bad = activity("search x") | {"headers": {"Authorization": "HMAC bad"}}
     assert (await client.post(url, **bad)).status_code == 401

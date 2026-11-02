@@ -8,9 +8,9 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket.db.models import InstanceSetting
-from radicle.docket.services.assistant import llm
-from radicle.platform.config import get_settings
+from gumball_factory.docket.db.models import InstanceSetting
+from gumball_factory.docket.services.assistant import llm
+from gumball_factory.platform.config import get_settings
 from tests.conftest import Team
 
 API = "/api/v1"

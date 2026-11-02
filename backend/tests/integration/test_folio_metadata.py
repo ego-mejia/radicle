@@ -4,14 +4,14 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import NodeKind
-from radicle.folio.services import catalogs, nodes, spaces
-from radicle.folio.services.metadata import MetadataIncomplete, validate_metadata
-from radicle.platform.db.models import User
+from gumball_factory.folio.db.models import NodeKind
+from gumball_factory.folio.services import catalogs, nodes, spaces
+from gumball_factory.folio.services.metadata import MetadataIncomplete, validate_metadata
+from gumball_factory.platform.db.models import User
 from tests.conftest import Team
 
 GOOD = {
-    "description": "Cómo conectar un agente a Radicle por MCP, paso a paso y con el token.",
+    "description": "Cómo conectar un agente a Gumball Factory por MCP, paso a paso y con el token.",
     "doc_type": "how-to",
     "labels": ["mcp", "#Agentes", "mcp"],
     "owner": "@Fernando",

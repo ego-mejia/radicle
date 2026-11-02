@@ -2,9 +2,9 @@ from decimal import Decimal
 
 import pytest
 
-from radicle.docket.db.models import TicketType
-from radicle.docket.services import ticket_fields as f
-from radicle.platform.errors import NotFound, ValidationFailed
+from gumball_factory.docket.db.models import TicketType
+from gumball_factory.docket.services import ticket_fields as f
+from gumball_factory.platform.errors import NotFound, ValidationFailed
 
 
 def test_parse_key() -> None:

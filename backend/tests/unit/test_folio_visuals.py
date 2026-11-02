@@ -2,8 +2,8 @@
 
 import pytest
 
-from radicle.folio.services import chunking, visuals
-from radicle.platform.errors import ValidationFailed
+from gumball_factory.folio.services import chunking, visuals
+from gumball_factory.platform.errors import ValidationFailed
 
 GOOD = '<svg xmlns="http://www.w3.org/2000/svg"><text fill="var(--rdc-text)">Hola</text></svg>'
 DESC = "Un saludo en el color del texto."
@@ -30,7 +30,7 @@ def test_a_good_visual_passes() -> None:
         ("html", "<script>top.location='x'</script>", "can't reach the page"),
         ("html", "<script>window.parent.document</script>", "can't reach the page"),
         ("html", '<meta http-equiv="Content-Security-Policy" content="x">', "meta http-equiv"),
-        ("html", "<p style='color:var(--rdc-pink)'>x</p>", "not a Radicle token"),
+        ("html", "<p style='color:var(--rdc-pink)'>x</p>", "not a Gumball Factory token"),
     ],
 )
 def test_problems(fmt: str, code: str, problem: str) -> None:

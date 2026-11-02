@@ -2,8 +2,8 @@
 
 import pytest
 
-from radicle.folio.services import convert, schema
-from radicle.folio.services.parse_markdown import from_markdown
+from gumball_factory.folio.services import convert, schema
+from gumball_factory.folio.services.parse_markdown import from_markdown
 
 ITEM = {
     "type": "actionItem",

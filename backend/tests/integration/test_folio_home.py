@@ -4,9 +4,9 @@ from httpx import AsyncClient
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.collab import FolioViewCountDaily
-from radicle.folio.db.models import FolioGlobalGrant
-from radicle.folio.services import views
+from gumball_factory.folio.db.collab import FolioViewCountDaily
+from gumball_factory.folio.db.models import FolioGlobalGrant
+from gumball_factory.folio.services import views
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, METADATA
 

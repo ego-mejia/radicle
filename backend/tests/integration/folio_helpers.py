@@ -6,7 +6,7 @@ from tests.conftest import Team
 
 API = "/api/v1/folio"
 METADATA = {
-    "description": "Cómo conectar un agente a Radicle por MCP, paso a paso y con el token.",
+    "description": "Cómo conectar un agente a Gumball Factory por MCP, paso a paso y con el token.",
     "doc_type": "how-to",
     "labels": ["mcp", "#Agentes"],
     "owner": "@fernando",

@@ -5,9 +5,9 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioNode
-from radicle.folio.services import databases, db_rows
-from radicle.platform.errors import Forbidden, NotFound, ValidationFailed
+from gumball_factory.folio.db.models import FolioNode
+from gumball_factory.folio.services import databases, db_rows
+from gumball_factory.platform.errors import Forbidden, NotFound, ValidationFailed
 from tests.conftest import Team
 from tests.integration.folio_db_helpers import COLUMNS, inventory, user
 from tests.integration.folio_helpers import API

@@ -5,11 +5,11 @@ from sqlalchemy import select, text
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioNodeEvent, NodeKind
-from radicle.folio.services import nodes, spaces
-from radicle.folio.services.nodes import NodeChanges, TreeNode
-from radicle.platform.db.models import User
-from radicle.platform.errors import NotFound, ValidationFailed
+from gumball_factory.folio.db.models import FolioNodeEvent, NodeKind
+from gumball_factory.folio.services import nodes, spaces
+from gumball_factory.folio.services.nodes import NodeChanges, TreeNode
+from gumball_factory.platform.db.models import User
+from gumball_factory.platform.errors import NotFound, ValidationFailed
 from tests.conftest import Team
 
 

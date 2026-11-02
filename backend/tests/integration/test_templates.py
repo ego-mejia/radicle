@@ -6,10 +6,10 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket.db.models import Project, Template
-from radicle.docket.services import template_sync
-from radicle.docket.services.template_config import parse
-from radicle.docket.services.templates import system_user
+from gumball_factory.docket.db.models import Project, Template
+from gumball_factory.docket.services import template_sync
+from gumball_factory.docket.services.template_config import parse
+from gumball_factory.docket.services.templates import system_user
 from tests.conftest import Team, new_ticket, run_jobs
 
 API = "/api/v1"
@@ -203,7 +203,11 @@ async def test_removing_a_status_needs_a_mapping_and_moves_tickets(
     events = (await client.get(f"{API}/tickets/{key}/history", headers=board.member.headers)).json()
     remap = events["items"][0]
     assert remap["event_type"] == "status_remapped"
-    assert remap["actor"] == {"handle": "system", "display_name": "Radicle", "kind": "system"}
+    assert remap["actor"] == {
+        "handle": "system",
+        "display_name": "Gumball Factory",
+        "kind": "system",
+    }
     assert remap["old_value"]["status"] == "In Review"
     pb = await project(client, board, "PB")
     assert statuses(pb) == ["To Do", "In Progress", "Done"]
@@ -295,7 +299,7 @@ async def test_failed_sync_does_not_stop_others_and_can_be_retried(
             raise ValueError("disk full")
         return await original(db_, project_, *args, **kwargs)
 
-    monkeypatch.setattr("radicle.docket.services.templates.apply_config", flaky)
+    monkeypatch.setattr("gumball_factory.docket.services.templates.apply_config", flaky)
     config = copy.deepcopy(producto["config"])
     config["areas"].append({"name": "Soporte"})
     r = await patch_config(client, board, producto["id"], config)
@@ -312,7 +316,7 @@ async def test_failed_sync_does_not_stop_others_and_can_be_retried(
     assert "Soporte" in [a["name"] for a in (await project(client, board, "PD"))["areas"]]
     assert "Soporte" not in [a["name"] for a in (await project(client, board, "PB"))["areas"]]
 
-    monkeypatch.setattr("radicle.docket.services.templates.apply_config", original)
+    monkeypatch.setattr("gumball_factory.docket.services.templates.apply_config", original)
     run_id = by_project["PB"]["id"]
     r = await client.post(
         f"{API}/templates/{producto['id']}/sync-runs/{by_project['PD']['id']}/retry",
@@ -546,9 +550,13 @@ async def test_template_lifecycle_and_permissions(client: AsyncClient, board: Te
     assert r.status_code == 403
 
 
-async def test_new_projects_follow_radicle_default(client: AsyncClient, board: Team) -> None:
+async def test_new_projects_follow_gumball_factory_default(
+    client: AsyncClient, board: Team
+) -> None:
     pa = await project(client, board, "PA")
-    assert pa["template"]["name"] == "Radicle default" and pa["template"]["mode"] == "linked"
+    assert (
+        pa["template"]["name"] == "Gumball Factory default" and pa["template"]["mode"] == "linked"
+    )
     task = next(w for w in pa["workflows"] if w["type"] == "task")
     assert [s["ref"] for s in task["statuses"]] == ["to_do", "in_progress", "in_review", "done"]
     close = next(t for t in task["transitions"] if t["name"] == "Close")

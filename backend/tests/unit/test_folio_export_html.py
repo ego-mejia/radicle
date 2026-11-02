@@ -1,6 +1,6 @@
 """Folio documents as static HTML for exports: every block, escaped and sandboxed."""
 
-from radicle.folio.services.exporting.html_render import Links, render
+from gumball_factory.folio.services.exporting.html_render import Links, render
 from tests.unit.folio_docs import EVERY_BLOCK
 
 
@@ -96,5 +96,5 @@ def test_live_blocks_toc_children_and_charts_from_the_table_above() -> None:
     html = render(doc, _links())
     assert '<nav class="toc"><ul><li class="h2"><a href="#s1">Uso</a></li></ul></nav>' in html
     assert html.count("<td>Oct</td>") == 1  # the chart's own table
-    assert "Live content from Radicle" in html
+    assert "Live content from Gumball Factory" in html
     assert '<a href="hija.html">Hija</a>' in html and 'src="assets/a1.bin"' in html

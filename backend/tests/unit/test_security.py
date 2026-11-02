@@ -1,6 +1,6 @@
 import pytest
 
-from radicle.platform import security
+from gumball_factory.platform import security
 
 
 def test_api_token_format() -> None:

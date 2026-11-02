@@ -19,7 +19,7 @@ Copia el token del agente y configúralo en tu cliente MCP con el encabezado Aut
 
 Limita las tools del agente por grupo: lectura de docs, escritura, tickets.
 """,
-    "Despliegue con Docker": """Cómo instalar Radicle en un servidor propio.
+    "Despliegue con Docker": """Cómo instalar Gumball Factory en un servidor propio.
 
 # Requisitos
 
@@ -27,7 +27,8 @@ Necesitas Docker Compose y un servidor con 2 GB de memoria.
 
 # Variables de entorno
 
-Define RADICLE_SECRET_KEY con 32 caracteres y RADICLE_BASE_URL con la dirección pública.
+Define GUMBALL_FACTORY_SECRET_KEY con 32 caracteres y GUMBALL_FACTORY_BASE_URL con la
+dirección pública.
 
 # Actualizar la versión
 
@@ -188,16 +189,20 @@ QUESTIONS: list[tuple[str, str, str]] = [
         "Conecta un agente",
         "Permisos del agente",
     ),
-    ("¿Qué necesito para instalar Radicle con Docker?", "Despliegue con Docker", "Requisitos"),
+    (
+        "¿Qué necesito para instalar Gumball Factory con Docker?",
+        "Despliegue con Docker",
+        "Requisitos",
+    ),
     ("¿Cuánta memoria necesita el servidor?", "Despliegue con Docker", "Requisitos"),
     ("¿Qué variables de entorno hay que definir?", "Despliegue con Docker", "Variables de entorno"),
     (
-        "¿Cuántos caracteres lleva RADICLE_SECRET_KEY?",
+        "¿Cuántos caracteres lleva GUMBALL_FACTORY_SECRET_KEY?",
         "Despliegue con Docker",
         "Variables de entorno",
     ),
     (
-        "¿Cómo actualizo Radicle a la versión nueva?",
+        "¿Cómo actualizo Gumball Factory a la versión nueva?",
         "Despliegue con Docker",
         "Actualizar la versión",
     ),

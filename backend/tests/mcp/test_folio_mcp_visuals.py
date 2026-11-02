@@ -4,7 +4,7 @@ a timeline to a draft, and learns what the sandbox would block before it does.""
 from httpx import AsyncClient
 from mcp import Client
 
-from radicle.folio.mcp.visuals import STARTER
+from gumball_factory.folio.mcp.visuals import STARTER
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, METADATA, agent_can_write
 from tests.mcp.conftest import error_text, folio_mcp, payload

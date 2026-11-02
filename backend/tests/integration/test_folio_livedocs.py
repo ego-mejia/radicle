@@ -11,9 +11,9 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioNode
-from radicle.folio.services import collab, livedocs
-from radicle.platform.db.models import User
+from gumball_factory.folio.db.models import FolioNode
+from gumball_factory.folio.services import collab, livedocs
+from gumball_factory.platform.db.models import User
 from tests.conftest import Clock, Team
 from tests.integration.folio_helpers import API
 from tests.integration.test_folio_room import Mem
@@ -115,7 +115,7 @@ async def test_restore_brings_back_a_snapshot_as_a_new_one(
     restored = await livedocs.restore(db, admin, minuta, first.id)
     assert restored.id != first.id and restored.content_json == first.content_json
     doc = await collab.current(db, minuta)
-    from radicle.folio.services import ydoc
+    from gumball_factory.folio.services import ydoc
 
     assert ydoc.to_json(doc) == {"type": "doc", "content": [p(t("Versión buena."))]}
     assert len(await livedocs.snapshots(db, minuta)) == 3

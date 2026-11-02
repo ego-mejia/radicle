@@ -8,8 +8,8 @@ from httpx import AsyncClient
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.collab import FolioActionItem
-from radicle.folio.db.models import FolioGlobalGrant
+from gumball_factory.folio.db.collab import FolioActionItem
+from gumball_factory.folio.db.models import FolioGlobalGrant
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, METADATA
 

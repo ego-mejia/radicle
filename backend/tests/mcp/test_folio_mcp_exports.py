@@ -3,7 +3,7 @@
 import pytest
 from httpx import AsyncClient
 
-from radicle.folio.mcp import exports as exports_mcp
+from gumball_factory.folio.mcp import exports as exports_mcp
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, agent_can_write, publish
 from tests.mcp.conftest import error_text, folio_mcp, payload

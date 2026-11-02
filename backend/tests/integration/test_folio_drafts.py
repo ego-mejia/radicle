@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioNodeEvent
+from gumball_factory.folio.db.models import FolioNodeEvent
 from tests.conftest import Clock, Team
 from tests.integration.folio_helpers import publish
 from tests.unit.folio_docs import EVERY_BLOCK

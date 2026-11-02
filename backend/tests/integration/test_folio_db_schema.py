@@ -8,10 +8,10 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.databases import FolioDbRow
-from radicle.folio.db.models import FolioNode
-from radicle.folio.services import databases
-from radicle.platform.errors import Forbidden, ValidationFailed
+from gumball_factory.folio.db.databases import FolioDbRow
+from gumball_factory.folio.db.models import FolioNode
+from gumball_factory.folio.services import databases
+from gumball_factory.platform.errors import Forbidden, ValidationFailed
 from tests.conftest import Team
 from tests.integration.folio_db_helpers import COLUMNS, STATUS, inventory, user
 from tests.integration.folio_helpers import API

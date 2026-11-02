@@ -9,8 +9,8 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.services import quality
-from radicle.platform.services import safe_fetch, webhooks
+from gumball_factory.folio.services import quality
+from gumball_factory.platform.services import safe_fetch, webhooks
 from tests.conftest import Clock, Team, run_jobs
 from tests.integration.folio_helpers import API, agent_can_write, agent_submits, publish
 
@@ -28,7 +28,7 @@ def received(monkeypatch: pytest.MonkeyPatch) -> list[httpx.Request]:
 
 
 async def _hook(client: AsyncClient, team: Team, **body: Any) -> str:
-    base = {"name": "CI", "url": "https://93.184.216.34/radicle"}
+    base = {"name": "CI", "url": "https://93.184.216.34/gumball-factory"}
     r = await client.post("/api/v1/webhooks", headers=team.instance.headers, json=base | body)
     assert r.status_code == 201, r.text
     return str(r.json()["secret"])
@@ -56,7 +56,7 @@ async def test_acceptance_a_receiver_gets_page_published_signed(
     await publish(client, team, page)
     await run_jobs(db)
     [request] = received
-    assert webhooks.verify(secret, request.headers["radicle-signature"], request.content)
+    assert webhooks.verify(secret, request.headers["gumball-factory-signature"], request.content)
     [(name, data)] = _events(received)
     assert name == "page.published" and data["version"] == 1
     assert data["page"]["id"] == page and data["page"]["space"] == "docs"

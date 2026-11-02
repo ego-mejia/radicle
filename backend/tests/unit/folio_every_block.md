@@ -1,6 +1,6 @@
 # Conecta un agente
 
-Texto **negrita** y `código` con [link](https://radicle.dev)\
+Texto **negrita** y `código` con [link](https://gumball-factory.dev)\
 @fernando :status[Listo]{color=green} :ticket[PA-4]
 
 ## Antes de empezar
@@ -50,7 +50,7 @@ derecha
 
 ::video{src=https://example.com/v.mp4 caption=Demo}
 
-```visual{format=svg title="Raíz" description="Un círculo lima: la semilla de Radicle."}
+```visual{format=svg title="Raíz" description="Un círculo lima: la semilla de Gumball Factory."}
 <svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--accent)"/></svg>
 ```
 

@@ -5,9 +5,9 @@ import zipfile
 
 import pytest
 
-from radicle.folio.services.importing import bundle
-from radicle.folio.services.importing.files import front_matter, read_markdown
-from radicle.platform.errors import ValidationFailed
+from gumball_factory.folio.services.importing import bundle
+from gumball_factory.folio.services.importing.files import front_matter, read_markdown
+from gumball_factory.platform.errors import ValidationFailed
 
 PNG = b"\x89PNG\r\n\x1a\n" + b"0" * 32
 

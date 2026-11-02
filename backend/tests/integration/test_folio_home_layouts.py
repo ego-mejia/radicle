@@ -2,7 +2,7 @@
 
 from httpx import AsyncClient
 
-from radicle.folio.services.home_layouts import DEFAULT
+from gumball_factory.folio.services.home_layouts import DEFAULT
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, publish
 

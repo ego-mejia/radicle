@@ -1,6 +1,10 @@
 import pytest
 
-from radicle.platform.services.markdown import extract_mentions, parse_checklist, set_checklist_item
+from gumball_factory.platform.services.markdown import (
+    extract_mentions,
+    parse_checklist,
+    set_checklist_item,
+)
 
 SAMPLE = """Integrar cobro.
 

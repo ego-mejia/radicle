@@ -7,7 +7,7 @@ import httpx
 import pytest
 from httpx import AsyncClient
 
-from radicle.platform.services import ai
+from gumball_factory.platform.services import ai
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, publish
 
@@ -81,8 +81,8 @@ async def test_suggest_metadata_keeps_only_what_publishing_accepts(
     i = team.instance.headers
     nid = await _setup(client, team)
     llm[0]["answers"].append(
-        'Aquí va: {"description": "Cómo crear un agente en Admin y conectarlo a Radicle por '
-        'MCP con su token.", "labels": ["MCP", "#agentes", "no válido!"], '
+        'Aquí va: {"description": "Cómo crear un agente en Admin y conectarlo a Gumball '
+        'Factory por MCP con su token.", "labels": ["MCP", "#agentes", "no válido!"], '
         '"doc_type": "how-to"}'
     )
     r = await client.post(f"{API}/ai/suggest-metadata", headers=i, json={"node_id": nid})
