@@ -10,8 +10,8 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.whiteboards import FolioWhiteboard
-from radicle.folio.services import collab, whiteboards
+from gumball_factory.folio.db.whiteboards import FolioWhiteboard
+from gumball_factory.folio.services import collab, whiteboards
 from tests.conftest import Team, run_jobs
 from tests.integration.collab_ws import Rejected, YClient, connected, settle
 from tests.integration.folio_helpers import API

@@ -1,7 +1,7 @@
 import pytest
 
-from radicle.platform.errors import ValidationFailed
-from radicle.platform.services import validation
+from gumball_factory.platform.errors import ValidationFailed
+from gumball_factory.platform.services import validation
 
 
 @pytest.mark.parametrize(

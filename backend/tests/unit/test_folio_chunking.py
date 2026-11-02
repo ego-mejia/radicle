@@ -1,7 +1,7 @@
 """Chunking (Folio 1.6): sections with their heading path and anchor, long sections split
 without cutting tables, code or lists."""
 
-from radicle.folio.services import chunking
+from gumball_factory.folio.services import chunking
 from tests.unit.folio_docs import EVERY_BLOCK, block, p, t
 
 

@@ -7,9 +7,9 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket import public as docket
-from radicle.platform.db.models import User
-from radicle.platform.errors import Forbidden, ValidationFailed
+from gumball_factory.docket import public as docket
+from gumball_factory.platform.db.models import User
+from gumball_factory.platform.errors import Forbidden, ValidationFailed
 from tests.conftest import Team, new_ticket
 from tests.integration.test_restricted import restrict
 

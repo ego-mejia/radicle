@@ -115,7 +115,7 @@ export const PROJECT: ProjectDetail = {
   ],
   template: {
     id: '00000000-0000-0000-0000-000000000002',
-    name: 'Radicle default',
+    name: 'Gumball Factory default',
     mode: 'linked',
     version: 1,
     applied_version: 1,

@@ -7,8 +7,8 @@ import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.config import Settings
-from radicle.platform.db.models import (
+from gumball_factory.platform.config import Settings
+from gumball_factory.platform.db.models import (
     Channel,
     DeliveryStatus,
     EventDelivery,
@@ -17,7 +17,7 @@ from radicle.platform.db.models import (
     OutboxEvent,
     User,
 )
-from radicle.platform.services import email, events
+from gumball_factory.platform.services import email, events
 from tests.conftest import Team, run_jobs
 
 
@@ -95,7 +95,7 @@ async def test_a_failing_event_does_not_block_the_others(db: AsyncSession, team:
 
 @pytest.fixture
 def smtp(monkeypatch: pytest.MonkeyPatch) -> list[EmailMessage]:
-    settings = Settings(smtp_host="smtp.test", base_url="https://radicle.test")
+    settings = Settings(smtp_host="smtp.test", base_url="https://gumball-factory.test")
     monkeypatch.setattr(events, "get_settings", lambda: settings)
     monkeypatch.setattr(email, "get_settings", lambda: settings)
     sent: list[EmailMessage] = []
@@ -110,7 +110,7 @@ async def test_email_goes_out_with_a_full_link(
     await events.emit(db, "test", "ping", actor=None, payload={"to": ["ana"]})
     assert "platform_send_email" in await run_jobs(db)
     assert len(smtp) == 1 and smtp[0]["To"] == ana.email and smtp[0]["Subject"] == "Ping for ana"
-    assert "https://radicle.test/x" in smtp[0].get_content()
+    assert "https://gumball-factory.test/x" in smtp[0].get_content()
     statuses = set(await db.scalars(select(EventDelivery.status)))
     assert statuses == {DeliveryStatus.sent}
 

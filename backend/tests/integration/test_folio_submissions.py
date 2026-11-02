@@ -4,17 +4,17 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import (
+from gumball_factory.folio.db.models import (
     FolioRole,
     FolioSpaceGrant,
     GranteeType,
     NodeKind,
     SubmissionStatus,
 )
-from radicle.folio.services import access, drafts, nodes, roles, spaces, submissions
-from radicle.platform.db.models import User
-from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
-from radicle.platform.services import groups
+from gumball_factory.folio.services import access, drafts, nodes, roles, spaces, submissions
+from gumball_factory.platform.db.models import User
+from gumball_factory.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from gumball_factory.platform.services import groups
 from tests.conftest import Team
 from tests.integration.folio_helpers import METADATA
 

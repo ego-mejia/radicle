@@ -7,9 +7,9 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
-from radicle.platform.api.ratelimit import login_limiter
-from radicle.platform.config import get_settings
-from radicle.platform.db import session as db_session
+from gumball_factory.platform.api.ratelimit import login_limiter
+from gumball_factory.platform.config import get_settings
+from gumball_factory.platform.db import session as db_session
 from tests.conftest import run_alembic
 
 
@@ -25,11 +25,11 @@ async def test_50_parallel_creations_get_numbers_1_to_50(
     url = admin_url.rsplit("/", 1)[0] + "/concurrency_check"
     await asyncio.to_thread(run_alembic, url, "upgrade", "head")
 
-    monkeypatch.setenv("RADICLE_DATABASE_URL", url)
+    monkeypatch.setenv("GUMBALL_FACTORY_DATABASE_URL", url)
     get_settings.cache_clear()
     await db_session.dispose_engine()
     login_limiter.reset()
-    from radicle.main import create_app
+    from gumball_factory.main import create_app
 
     app = create_app()
     try:
@@ -44,7 +44,7 @@ async def test_50_parallel_creations_get_numbers_1_to_50(
                 },
             )
             assert setup.status_code == 201, setup.text
-            h = {"X-CSRF-Token": c.cookies["radicle_csrf"]}
+            h = {"X-CSRF-Token": c.cookies["gumball_factory_csrf"]}
             token = (await c.post("/api/v1/me/tokens", headers=h, json={"name": "t"})).json()
             bearer = {"Authorization": f"Bearer {token['token']}"}
             await c.post("/api/v1/projects", headers=h, json={"key": "PA", "name": "A"})
@@ -78,11 +78,11 @@ async def fresh_app(postgres: PostgresContainer, monkeypatch, name: str):  # typ
     await engine.dispose()
     url = admin_url.rsplit("/", 1)[0] + f"/{name}"
     await asyncio.to_thread(run_alembic, url, "upgrade", "head")
-    monkeypatch.setenv("RADICLE_DATABASE_URL", url)
+    monkeypatch.setenv("GUMBALL_FACTORY_DATABASE_URL", url)
     get_settings.cache_clear()
     await db_session.dispose_engine()
     login_limiter.reset()
-    from radicle.main import create_app
+    from gumball_factory.main import create_app
 
     return create_app()
 
@@ -102,7 +102,7 @@ async def test_parallel_votes_keep_vote_count_exact(
                     "password": "password-123",
                 },
             )
-            h = {"X-CSRF-Token": c.cookies["radicle_csrf"]}
+            h = {"X-CSRF-Token": c.cookies["gumball_factory_csrf"]}
             await c.post("/api/v1/projects", headers=h, json={"key": "PA", "name": "A"})
             await c.post(
                 "/api/v1/projects/PA/tickets",
@@ -132,7 +132,7 @@ async def test_parallel_votes_keep_vote_count_exact(
                     )
                     token = await u.post(
                         "/api/v1/me/tokens",
-                        headers={"X-CSRF-Token": u.cookies["radicle_csrf"]},
+                        headers={"X-CSRF-Token": u.cookies["gumball_factory_csrf"]},
                         json={"name": "t"},
                     )
                 bearers.append({"Authorization": f"Bearer {token.json()['token']}"})
@@ -167,7 +167,7 @@ async def test_ten_agents_claim_different_tickets(postgres: PostgresContainer, m
                     "password": "password-123",
                 },
             )
-            h = {"X-CSRF-Token": c.cookies["radicle_csrf"]}
+            h = {"X-CSRF-Token": c.cookies["gumball_factory_csrf"]}
             await c.post("/api/v1/projects", headers=h, json={"key": "PA", "name": "A"})
             await c.post("/api/v1/projects/PA/areas", headers=h, json={"name": "Backend"})
             for i in range(12):

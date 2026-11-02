@@ -5,8 +5,8 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import AuditEntry
-from radicle.platform.services import groups
+from gumball_factory.platform.db.models import AuditEntry
+from gumball_factory.platform.services import groups
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, publish
 

@@ -15,7 +15,7 @@ export interface paths {
         get: operations["get_ai_api_v1_admin_ai_get"];
         /**
          * Put Ai
-         * @description Only the fields sent change. Without a provider, the rest of Radicle still works.
+         * @description Only the fields sent change. Without a provider, the rest of Gumball Factory still works.
          */
         put: operations["put_ai_api_v1_admin_ai_put"];
         post?: never;
@@ -121,7 +121,7 @@ export interface paths {
         put?: never;
         /**
          * Install Example
-         * @description Install a plugin that ships with Radicle, such as radicle.countdown.
+         * @description Install a plugin that ships with Gumball Factory, such as radicle.countdown.
          */
         post: operations["install_example_api_v1_admin_plugins_examples__key__post"];
         delete?: never;
@@ -265,7 +265,7 @@ export interface paths {
         put?: never;
         /**
          * Assistant Chat
-         * @description Ask Radi how to use Radicle. Answers come from the usage guide, written by the
+         * @description Ask Radi how to use Gumball Factory. Answers come from the usage guide, written by the
          *     configured LLM when there is one.
          */
         post: operations["assistant_chat_api_v1_assistant_chat_post"];
@@ -3457,8 +3457,8 @@ export interface paths {
         put?: never;
         /**
          * Chat Command
-         * @description Slack slash commands (`/radicle search …`, `/radicle ask …`) and Teams outgoing
-         *     webhooks. The answer uses the permissions of the Radicle user behind the sender.
+         * @description Slack slash commands (`/gumball-factory search …`, `/gumball-factory ask …`) and Teams outgoing
+         *     webhooks. The answer uses the permissions of the Gumball Factory user behind the sender.
          */
         post: operations["chat_command_api_v1_hooks_chat__integration_id__command_post"];
         delete?: never;
@@ -3478,7 +3478,7 @@ export interface paths {
         put?: never;
         /**
          * Chat Events
-         * @description Slack's Events API (Request URL): Radicle previews its own links (`link_shared`).
+         * @description Slack's Events API (Request URL): Gumball Factory previews its own links (`link_shared`).
          */
         post: operations["chat_events_api_v1_hooks_chat__integration_id__events_post"];
         delete?: never;
@@ -3519,7 +3519,7 @@ export interface paths {
         put?: never;
         /**
          * Link Chat Account
-         * @description Confirm that you are the Slack or Teams user who got this link from /radicle.
+         * @description Confirm that you are the Slack or Teams user who got this link from /gumball-factory.
          */
         post: operations["link_chat_account_api_v1_integrations_link_post"];
         delete?: never;
@@ -3817,7 +3817,7 @@ export interface paths {
         put?: never;
         /**
          * Create Project
-         * @description Create a project from a template (Radicle default if none) and make you its admin.
+         * @description Create a project from a template (Gumball Factory default if none) and make you its admin.
          */
         post: operations["create_project_api_v1_projects_post"];
         delete?: never;
@@ -5827,7 +5827,7 @@ export interface components {
             has_key: boolean;
             /**
              * Managed By Env
-             * @description RADICLE_ASSISTANT_* variables set it; read-only
+             * @description GUMBALL_FACTORY_ASSISTANT_* variables set it; read-only
              */
             managed_by_env: boolean;
             /** Model */
@@ -8965,7 +8965,7 @@ export interface components {
             active: boolean;
             /**
              * Command Url
-             * @description Where Slack or Teams sends /radicle commands
+             * @description Where Slack or Teams sends /gumball-factory commands
              */
             command_url: string;
             /**
@@ -10231,7 +10231,7 @@ export interface components {
         PluginsOut: {
             /**
              * Examples
-             * @description Plugins that ship with Radicle
+             * @description Plugins that ship with Gumball Factory
              */
             examples: components["schemas"]["PluginExampleOut"][];
             /**
@@ -10310,7 +10310,7 @@ export interface components {
             name: string;
             /**
              * Template Id
-             * @description Template to copy the configuration from; default Radicle default
+             * @description Template to copy the configuration from; default Gumball Factory default
              */
             template_id?: string | null;
             /**
@@ -11899,7 +11899,7 @@ export interface components {
         };
         /** TemplateCreate */
         TemplateCreate: {
-            /** @description Default: Radicle default */
+            /** @description Default: Gumball Factory default */
             config?: components["schemas"]["TemplateConfig"] | null;
             /**
              * Description Md

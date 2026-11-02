@@ -33,7 +33,7 @@ EVERY_BLOCK: dict[str, Any] = {
             t(" y "),
             t("código", "code"),
             t(" con "),
-            t("link", "link", href="https://radicle.dev"),
+            t("link", "link", href="https://gumball-factory.dev"),
             {"type": "hardBreak"},
             {"type": "mention", "attrs": {"handle": "fernando"}},
             t(" "),
@@ -89,7 +89,7 @@ EVERY_BLOCK: dict[str, Any] = {
                 '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--accent)"/></svg>'
             ),
             title="Raíz",
-            description="Un círculo lima: la semilla de Radicle.",
+            description="Un círculo lima: la semilla de Gumball Factory.",
         ),
         block("diagram", language="mermaid", source="graph TD\n  A-->B", caption="Flujo"),
         block(

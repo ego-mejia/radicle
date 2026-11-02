@@ -16,7 +16,7 @@ test.describe.configure({ mode: 'serial' });
 const ADMIN = { email: 'fernando@example.com', password: 'e2e-password-1' };
 const FAKE_AI_PORT = 8791;
 const FAKE_AI =
-  process.env.RADICLE_E2E_FAKE_AI_URL ??
+  process.env.GUMBALL_FACTORY_E2E_FAKE_AI_URL ??
   (process.env.CI ? '' : `http://host.docker.internal:${FAKE_AI_PORT}/v1`);
 const META = { owner: '@fernando', audiences: ['everyone'], language: 'es', labels: ['equipo'] };
 // A fresh space per run, so a rerun against the same instance starts clean.
@@ -29,7 +29,7 @@ let fakeAi: Server | undefined;
 async function api<T = unknown>(method: string, url: string, body?: unknown, ok409 = false) {
   return admin.evaluate(
     async ({ method, url, body, ok409 }) => {
-      const csrf = document.cookie.match(/radicle_csrf=([^;]+)/)?.[1] ?? '';
+      const csrf = document.cookie.match(/gumball_factory_csrf=([^;]+)/)?.[1] ?? '';
       const r = await fetch(`/api/v1${url}`, {
         method,
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
@@ -211,7 +211,10 @@ test('Manage opens the admin mode of the space', async () => {
 });
 
 test('Radi answers in Folio with the tools he used', async () => {
-  test.skip(!FAKE_AI, 'Set RADICLE_E2E_FAKE_AI_URL so Radicle can reach the fake model.');
+  test.skip(
+    !FAKE_AI,
+    'Set GUMBALL_FACTORY_E2E_FAKE_AI_URL so Gumball Factory can reach the fake model.',
+  );
   fakeAi = await startFakeAi(FAKE_AI_PORT);
   await api('PUT', '/admin/ai', {
     provider: 'openai_compatible',

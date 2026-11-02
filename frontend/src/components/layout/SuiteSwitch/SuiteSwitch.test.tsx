@@ -16,13 +16,17 @@ function setup(folio: typeof reader | null, admin = false) {
 describe('SuiteSwitch', () => {
   it('lists both apps, marks the current one and shows the shortcut of the other', async () => {
     setup(reader);
-    const trigger = await screen.findByRole('button', { name: /Switch app, now Radicle Docket/ });
+    const trigger = await screen.findByRole('button', {
+      name: /Switch app, now Gumball Factory Docket/,
+    });
     expect(trigger).toHaveTextContent('DOCKET');
     await userEvent.click(trigger);
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
-    const docket = await screen.findByRole('menuitem', { name: /Radicle Docket/ });
+    const docket = await screen.findByRole('menuitem', { name: /Gumball Factory Docket/ });
     expect(docket).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByRole('menuitem', { name: /Radicle Folio/ })).toHaveTextContent('G F');
+    expect(screen.getByRole('menuitem', { name: /Gumball Factory Folio/ })).toHaveTextContent(
+      'G F',
+    );
     expect(screen.queryByRole('menuitem', { name: /Instance administration/ })).toBeNull();
     await userEvent.keyboard('{Escape}');
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
@@ -31,8 +35,10 @@ describe('SuiteSwitch', () => {
   it('hides Folio when no grant reaches the user, and offers admin to instance admins', async () => {
     setup(null, true);
     await userEvent.click(await screen.findByRole('button', { name: /Switch app/ }));
-    expect(await screen.findByRole('menuitem', { name: /Radicle Docket/ })).toBeInTheDocument();
-    expect(screen.queryByRole('menuitem', { name: /Radicle Folio/ })).toBeNull();
+    expect(
+      await screen.findByRole('menuitem', { name: /Gumball Factory Docket/ }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('menuitem', { name: /Gumball Factory Folio/ })).toBeNull();
     expect(screen.getByRole('menuitem', { name: /Instance administration/ })).toBeInTheDocument();
   });
 });

@@ -1,32 +1,34 @@
 services:
   app:
     build: .
-    # RADICLE_IMAGE names the image, so a dev checkout (radicle-dev) never replaces
-    # the everyday install's image (radicle).
-    image: ${RADICLE_IMAGE:-radicle}:latest
+    # GUMBALL_FACTORY_IMAGE names the image, so a dev checkout (gumball-factory-dev) never
+    # replaces the everyday install's image (gumball-factory). Each GUMBALL_FACTORY_* falls
+    # back to its pre-rename RADICLE_* twin (ADR 0046).
+    image: ${GUMBALL_FACTORY_IMAGE:-${RADICLE_IMAGE:-gumball-factory}}:latest
     ports:
-      - "${RADICLE_PORT:-8000}:8000"
+      - "${GUMBALL_FACTORY_PORT:-${RADICLE_PORT:-8000}}:8000"
     environment: &app-env
-      RADICLE_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-radicle}:${POSTGRES_PASSWORD:-radicle}@db:5432/${POSTGRES_DB:-radicle}
-      RADICLE_BASE_URL: ${RADICLE_BASE_URL:-http://localhost:8000}
-      RADICLE_TIMEZONE: ${RADICLE_TIMEZONE:-UTC}
-      RADICLE_WORKDAYS: ${RADICLE_WORKDAYS:-mon,tue,wed,thu,fri}
-      RADICLE_SECRET_KEY: ${RADICLE_SECRET_KEY:?Set RADICLE_SECRET_KEY in .env, e.g. openssl rand -hex 32}
-      RADICLE_STORAGE: ${RADICLE_STORAGE:-local}
-      RADICLE_MAX_UPLOAD_MB: ${RADICLE_MAX_UPLOAD_MB:-25}
-      RADICLE_IMAGE_DEFAULT_RESIZE: ${RADICLE_IMAGE_DEFAULT_RESIZE:-large}
-      RADICLE_S3_BUCKET: ${RADICLE_S3_BUCKET:-radicle}
-      RADICLE_S3_ENDPOINT: ${RADICLE_S3_ENDPOINT:-}
-      RADICLE_S3_REGION: ${RADICLE_S3_REGION:-us-east-1}
-      RADICLE_S3_ACCESS_KEY: ${RADICLE_S3_ACCESS_KEY:-}
-      RADICLE_S3_SECRET_KEY: ${RADICLE_S3_SECRET_KEY:-}
-      RADICLE_SMTP_HOST: ${RADICLE_SMTP_HOST:-}
-      RADICLE_SMTP_PORT: ${RADICLE_SMTP_PORT:-587}
-      RADICLE_SMTP_USER: ${RADICLE_SMTP_USER:-}
-      RADICLE_SMTP_PASSWORD: ${RADICLE_SMTP_PASSWORD:-}
-      RADICLE_SMTP_FROM: ${RADICLE_SMTP_FROM:-Radicle <radicle@localhost>}
-      RADICLE_SMTP_TLS: ${RADICLE_SMTP_TLS:-true}
-      RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE: ${RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE:-10}
+      GUMBALL_FACTORY_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-gumball_factory}:${POSTGRES_PASSWORD:-gumball_factory}@db:5432/${POSTGRES_DB:-gumball_factory}
+      GUMBALL_FACTORY_BASE_URL: ${GUMBALL_FACTORY_BASE_URL:-${RADICLE_BASE_URL:-http://localhost:8000}}
+      GUMBALL_FACTORY_TIMEZONE: ${GUMBALL_FACTORY_TIMEZONE:-${RADICLE_TIMEZONE:-UTC}}
+      GUMBALL_FACTORY_WORKDAYS: ${GUMBALL_FACTORY_WORKDAYS:-${RADICLE_WORKDAYS:-mon,tue,wed,thu,fri}}
+      # Required: the app refuses to start without it (openssl rand -hex 32).
+      GUMBALL_FACTORY_SECRET_KEY: ${GUMBALL_FACTORY_SECRET_KEY:-${RADICLE_SECRET_KEY:-}}
+      GUMBALL_FACTORY_STORAGE: ${GUMBALL_FACTORY_STORAGE:-${RADICLE_STORAGE:-local}}
+      GUMBALL_FACTORY_MAX_UPLOAD_MB: ${GUMBALL_FACTORY_MAX_UPLOAD_MB:-${RADICLE_MAX_UPLOAD_MB:-25}}
+      GUMBALL_FACTORY_IMAGE_DEFAULT_RESIZE: ${GUMBALL_FACTORY_IMAGE_DEFAULT_RESIZE:-${RADICLE_IMAGE_DEFAULT_RESIZE:-large}}
+      GUMBALL_FACTORY_S3_BUCKET: ${GUMBALL_FACTORY_S3_BUCKET:-${RADICLE_S3_BUCKET:-gumball-factory}}
+      GUMBALL_FACTORY_S3_ENDPOINT: ${GUMBALL_FACTORY_S3_ENDPOINT:-${RADICLE_S3_ENDPOINT:-}}
+      GUMBALL_FACTORY_S3_REGION: ${GUMBALL_FACTORY_S3_REGION:-${RADICLE_S3_REGION:-us-east-1}}
+      GUMBALL_FACTORY_S3_ACCESS_KEY: ${GUMBALL_FACTORY_S3_ACCESS_KEY:-${RADICLE_S3_ACCESS_KEY:-}}
+      GUMBALL_FACTORY_S3_SECRET_KEY: ${GUMBALL_FACTORY_S3_SECRET_KEY:-${RADICLE_S3_SECRET_KEY:-}}
+      GUMBALL_FACTORY_SMTP_HOST: ${GUMBALL_FACTORY_SMTP_HOST:-${RADICLE_SMTP_HOST:-}}
+      GUMBALL_FACTORY_SMTP_PORT: ${GUMBALL_FACTORY_SMTP_PORT:-${RADICLE_SMTP_PORT:-587}}
+      GUMBALL_FACTORY_SMTP_USER: ${GUMBALL_FACTORY_SMTP_USER:-${RADICLE_SMTP_USER:-}}
+      GUMBALL_FACTORY_SMTP_PASSWORD: ${GUMBALL_FACTORY_SMTP_PASSWORD:-${RADICLE_SMTP_PASSWORD:-}}
+      GUMBALL_FACTORY_SMTP_FROM: ${GUMBALL_FACTORY_SMTP_FROM:-${RADICLE_SMTP_FROM:-Gumball Factory <gumball-factory@localhost>}}
+      GUMBALL_FACTORY_SMTP_TLS: ${GUMBALL_FACTORY_SMTP_TLS:-${RADICLE_SMTP_TLS:-true}}
+      GUMBALL_FACTORY_LOGIN_RATE_LIMIT_PER_MINUTE: ${GUMBALL_FACTORY_LOGIN_RATE_LIMIT_PER_MINUTE:-${RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE:-10}}
     volumes:
       - attachments:/data/attachments
     depends_on:
@@ -36,19 +38,19 @@ services:
       default:
         # The worker's browser opens the print view here: Chromium forces HTTPS for a
         # bare "app" (.app is an HSTS-preloaded domain), so it needs another name.
-        aliases: [radicle-web]
+        aliases: [gumball-factory-web]
     restart: unless-stopped
 
   # Background jobs (template sync, image variants, bulk edits). Same image as app;
   # it starts after app so migrations have already run.
   worker:
-    image: ${RADICLE_IMAGE:-radicle}:latest
-    command: ["radicle", "worker"]
+    image: ${GUMBALL_FACTORY_IMAGE:-${RADICLE_IMAGE:-gumball-factory}}:latest
+    command: ["gumball-factory", "worker"]
     environment:
       <<: *app-env
-      RADICLE_MIGRATE: "false"
+      GUMBALL_FACTORY_MIGRATE: "false"
       # PDF exports: the worker's browser opens the app's print view here.
-      RADICLE_INTERNAL_URL: http://radicle-web:8000
+      GUMBALL_FACTORY_INTERNAL_URL: http://gumball-factory-web:8000
     volumes:
       - attachments:/data/attachments
     depends_on:
@@ -61,11 +63,11 @@ services:
   db:
     # PostgreSQL 16 on Alpine with pgvector for Folio's search (ADR 0037).
     build: docker/postgres
-    image: ${RADICLE_DB_IMAGE:-radicle-postgres}:16-pgvector
+    image: ${GUMBALL_FACTORY_DB_IMAGE:-${RADICLE_DB_IMAGE:-gumball-factory-postgres}}:16-pgvector
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-radicle}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-radicle}
-      POSTGRES_DB: ${POSTGRES_DB:-radicle}
+      POSTGRES_USER: ${POSTGRES_USER:-gumball_factory}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gumball_factory}
+      POSTGRES_DB: ${POSTGRES_DB:-gumball_factory}
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:

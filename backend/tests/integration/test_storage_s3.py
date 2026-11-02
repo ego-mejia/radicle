@@ -9,15 +9,15 @@ import pytest
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.wait_strategies import LogMessageWaitStrategy
 
-from radicle.platform.config import Settings
-from radicle.platform.storage import LocalStorage, S3Storage, get_storage
+from gumball_factory.platform.config import Settings
+from gumball_factory.platform.storage import LocalStorage, S3Storage, get_storage
 
 
 @pytest.fixture(scope="module")
 def s3() -> Iterator[str]:
     container = (
         DockerContainer("adobe/s3mock:3.12.0")
-        .with_env("initialBuckets", "radicle")
+        .with_env("initialBuckets", "gumball-factory")
         .with_exposed_ports(9090)
         .waiting_for(LogMessageWaitStrategy("Started S3MockApplication"))
     )
@@ -29,7 +29,7 @@ async def test_s3_put_get_presign_delete(s3: str) -> None:
     storage = S3Storage(
         Settings(
             storage="s3",
-            s3_bucket="radicle",
+            s3_bucket="gumball-factory",
             s3_endpoint=s3,
             s3_access_key="test",
             s3_secret_key="test",
@@ -59,14 +59,18 @@ async def test_local_storage_rejects_escaping_keys(tmp_path) -> None:  # type: i
 
 
 def test_storage_choice(monkeypatch: pytest.MonkeyPatch) -> None:
-    from radicle.platform import config
+    from gumball_factory.platform import config
 
     get_storage.cache_clear()
     monkeypatch.setattr(config, "get_settings", lambda: Settings(storage="ftp"))
-    monkeypatch.setattr("radicle.platform.storage.get_settings", lambda: Settings(storage="ftp"))
+    monkeypatch.setattr(
+        "gumball_factory.platform.storage.get_settings", lambda: Settings(storage="ftp")
+    )
     with pytest.raises(ValueError, match="local or s3"):
         get_storage()
-    monkeypatch.setattr("radicle.platform.storage.get_settings", lambda: Settings(storage="s3"))
+    monkeypatch.setattr(
+        "gumball_factory.platform.storage.get_settings", lambda: Settings(storage="s3")
+    )
     get_storage.cache_clear()
     assert isinstance(get_storage(), S3Storage)
     get_storage.cache_clear()

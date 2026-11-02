@@ -4,7 +4,7 @@ import type { MilestoneRecap } from '../../../services/api/types';
 export type CardStat = { value: string; label: string };
 
 /** Fired when a ticket with a milestone reaches done; the celebration checks the rest. */
-export const TICKET_DONE = 'radicle:ticket-done';
+export const TICKET_DONE = 'gumball-factory:ticket-done';
 export type TicketDone = { project: string; milestone: string };
 
 export function announceDone(ticket: {
@@ -19,7 +19,7 @@ export function announceDone(ticket: {
 
 /** Celebrate each milestone once per browser, even if its last ticket moves twice. */
 export function firstTime(project: string, milestone: string): boolean {
-  const key = `radicle:celebrated:${project}:${milestone}`;
+  const key = `gumball-factory:celebrated:${project}:${milestone}`;
   try {
     if (localStorage.getItem(key)) return false;
     localStorage.setItem(key, new Date().toISOString());

@@ -6,7 +6,7 @@ from httpx import AsyncClient
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioChunk
+from gumball_factory.folio.db.models import FolioChunk
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, publish
 

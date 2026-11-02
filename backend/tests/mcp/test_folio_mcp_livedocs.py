@@ -9,7 +9,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.services import collab, ydoc
+from gumball_factory.folio.services import collab, ydoc
 from tests.conftest import Clock, Team
 from tests.integration.collab_ws import connected, settle
 from tests.integration.folio_helpers import API, agent_can_write

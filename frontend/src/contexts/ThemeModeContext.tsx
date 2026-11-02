@@ -5,7 +5,7 @@ import { themes, type ThemeMode } from '../styles/theme';
 
 import { ThemeModeContext, type ThemePreference } from './themeMode';
 
-const STORAGE_KEY = 'radicle.theme';
+const STORAGE_KEY = 'gumball-factory.theme';
 
 function readStored(): ThemePreference {
   try {

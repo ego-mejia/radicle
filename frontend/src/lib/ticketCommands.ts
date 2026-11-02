@@ -4,7 +4,7 @@
  */
 export type TicketCommand = 'edit-title' | 'assign-me' | 'move' | 'tags' | 'priority';
 
-const EVENT = 'radicle:ticket-command';
+const EVENT = 'gumball-factory:ticket-command';
 
 export function sendTicketCommand(command: TicketCommand): void {
   window.dispatchEvent(new CustomEvent<TicketCommand>(EVENT, { detail: command }));
@@ -16,7 +16,7 @@ export function onTicketCommand(handler: (command: TicketCommand) => void): () =
   return () => window.removeEventListener(EVENT, listener);
 }
 
-const RECENT_KEY = 'radicle.recent';
+const RECENT_KEY = 'gumball-factory.recent';
 
 export type Recent = { key: string; title: string };
 

@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from radicle.folio.services.db_rows import _matches
+from gumball_factory.folio.services.db_rows import _matches
 
 
 @pytest.mark.parametrize(

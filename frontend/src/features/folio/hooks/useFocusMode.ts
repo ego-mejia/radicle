@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const key = (handle: string) => `radicle.folio.focus.${handle}`;
+const key = (handle: string) => `gumball-factory.folio.focus.${handle}`;
 
 function read(handle: string): boolean {
   try {

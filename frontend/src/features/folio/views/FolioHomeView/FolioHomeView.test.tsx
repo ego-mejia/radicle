@@ -14,7 +14,9 @@ const HOME: FolioHome = {
   spaces: [],
   most_read: [],
   blocks: [
-    block('featured', 0, 0, 7, { cards: [card('n1', 'Welcome to Radicle', { kind: 'page' })] }),
+    block('featured', 0, 0, 7, {
+      cards: [card('n1', 'Welcome to Gumball Factory', { kind: 'page' })],
+    }),
     block('announcement', 7, 0, 5, { cards: [card('n2', 'V1 ships in November')] }),
     block('posts', 0, 4, 5, { cards: [card('n4', 'Weekly changes')] }),
   ],
@@ -24,8 +26,8 @@ describe('FolioHomeView', () => {
   it('renders the published layout from the API', async () => {
     mockFetch({ 'GET /api/v1/folio/home': { status: 200, body: HOME } });
     renderWithProviders(<FolioHomeView />);
-    const featured = await screen.findByRole('link', { name: 'Welcome to Radicle' });
-    expect(featured).toHaveAttribute('href', '/folio/p/n1-welcome-to-radicle');
+    const featured = await screen.findByRole('link', { name: 'Welcome to Gumball Factory' });
+    expect(featured).toHaveAttribute('href', '/folio/p/n1-welcome-to-gumball-factory');
     expect(screen.getByRole('article', { name: 'Announcement' })).toHaveTextContent(
       'V1 ships in November',
     );

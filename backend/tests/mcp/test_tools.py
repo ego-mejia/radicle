@@ -298,11 +298,11 @@ async def test_outsider_sees_nothing(seeded: Team, mcp_for: McpFor) -> None:
 async def test_resources(seeded: Team, mcp_for: McpFor) -> None:
     async with mcp_for(seeded.agent) as mcp:
         uris = {str(r.uri) for r in (await mcp.list_resources()).resources}
-        assert "radicle://guide/rql" in uris
-        guide = await mcp.read_resource("radicle://guide/rql")
+        assert "gumball-factory://guide/rql" in uris
+        guide = await mcp.read_resource("gumball-factory://guide/rql")
         text = guide.contents[0].text
         assert "| `priority` |" in text and "currentUser()" in text
-        schema = await mcp.read_resource("radicle://projects/PA/schema")
+        schema = await mcp.read_resource("gumball-factory://projects/PA/schema")
         assert '"areas"' in schema.contents[0].text
 
 

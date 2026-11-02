@@ -1,4 +1,4 @@
-/** Radicle's roots, drawn in the accent color over the dark cover. */
+/** Gumball Factory's roots, drawn in the accent color over the dark cover. */
 export function RootsArt() {
   return (
     <svg viewBox="0 0 720 260" preserveAspectRatio="xMidYMid slice" aria-hidden>

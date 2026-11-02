@@ -5,8 +5,8 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import AuditApp, AuditEntry
-from radicle.platform.services import groups
+from gumball_factory.platform.db.models import AuditApp, AuditEntry
+from gumball_factory.platform.services import groups
 from tests.conftest import Team
 
 API = "/api/v1/folio"

@@ -4,7 +4,7 @@ each with a success and an error case; restricted pages stay out."""
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.services import quality
+from gumball_factory.folio.services import quality
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, publish
 from tests.mcp.conftest import error_text, folio_mcp, payload

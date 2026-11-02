@@ -4,7 +4,7 @@ from httpx import AsyncClient
 from sqlalchemy import delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioGlobalGrant
+from gumball_factory.folio.db.models import FolioGlobalGrant
 from tests.conftest import Team
 
 URL = "/api/v1/folio/people"

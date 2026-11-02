@@ -18,9 +18,9 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.services import chat, retrieval
-from radicle.platform.db.models import AiProvider, AiSettings, User
-from radicle.platform.services import ai
+from gumball_factory.folio.services import chat, retrieval
+from gumball_factory.platform.db.models import AiProvider, AiSettings, User
+from gumball_factory.platform.services import ai
 from tests.conftest import Team, run_jobs
 from tests.eval.rag_corpus import DOCS, QUESTIONS
 from tests.integration.folio_helpers import API, METADATA

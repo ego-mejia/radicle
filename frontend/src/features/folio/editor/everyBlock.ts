@@ -24,7 +24,7 @@ export const EVERY_BLOCK: JSONContent = {
       t(' y '),
       t('código', [{ type: 'code' }]),
       t(' con '),
-      t('link', [{ type: 'link', attrs: { href: 'https://radicle.dev' } }]),
+      t('link', [{ type: 'link', attrs: { href: 'https://gumball-factory.dev' } }]),
       { type: 'hardBreak' },
       { type: 'mention', attrs: { handle: 'fernando' } },
       t(' '),
@@ -96,7 +96,7 @@ export const EVERY_BLOCK: JSONContent = {
       format: 'svg',
       code: '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="var(--accent)"/></svg>',
       title: 'Raíz',
-      description: 'Un círculo lima: la semilla de Radicle.',
+      description: 'Un círculo lima: la semilla de Gumball Factory.',
     }),
     node('diagram', { language: 'mermaid', source: 'graph TD\n  A-->B', caption: 'Flujo' }),
     node('chart', {

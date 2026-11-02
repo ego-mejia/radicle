@@ -21,7 +21,7 @@ const guide = (id: string, title: string, labels: string[]) => ({
 
 const PATH = [
   guide('g1', '1. Onboarding', ['getting-started']),
-  guide('g2', '2. Levanta Radicle', ['getting-started']),
+  guide('g2', '2. Levanta Gumball Factory', ['getting-started']),
   guide('g3', '3. Tu primer PR', ['getting-started']),
 ];
 const ALL = [

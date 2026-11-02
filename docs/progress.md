@@ -938,3 +938,9 @@ Cerrada el 22 de octubre de 2026. Diseño iterado en el canvas de diseño y prob
 - **Arreglos al cerrar:** el diálogo Escribir se queda abierto sobre el editor porque el botón ahora vive en la barra (#465); WriteButton pasa a los componentes compartidos (#462).
 - **Pruebas:** `e2e/suite-folio-navigation.spec.ts` (#464) y las pruebas de live docs y whiteboards ajustadas a Administrar (#466). Suite de Playwright completa sobre un stack aislado: 52 de 52. Backend: 1,564 pruebas pasan con 95% de cobertura; frontend: 571 pruebas y el build.
 
+## Gumball Factory: fase 1, rename
+
+- Radicle pasa a llamarse Gumball Factory (ADR 0046). No cambia el comportamiento.
+- Compatibilidad: variables `RADICLE_*`, cookies viejas, headers `Radicle-*` de webhooks, `window.radicle` en plugins y llaves `radicle.*` de localStorage siguen funcionando.
+- Migración 0066: el usuario system y la plantilla default se renombran (con downgrade).
+- Pasos manuales: renombrar el repo en GitHub, `git remote set-url`, fijar en el `.env` de la instalación viva `COMPOSE_PROJECT_NAME`, `POSTGRES_*` y la imagen viejos, actualizar los clientes MCP y el comando de Slack.

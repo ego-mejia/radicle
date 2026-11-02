@@ -13,10 +13,10 @@ from httpx import AsyncClient
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.collab import FolioYUpdate
-from radicle.folio.db.models import FolioDraft, FolioNode
-from radicle.folio.services import collab, ydoc
-from radicle.platform.db.models import User
+from gumball_factory.folio.db.collab import FolioYUpdate
+from gumball_factory.folio.db.models import FolioDraft, FolioNode
+from gumball_factory.folio.services import collab, ydoc
+from gumball_factory.platform.db.models import User
 from tests.conftest import Team
 from tests.integration.folio_helpers import API
 from tests.unit.folio_docs import p, t

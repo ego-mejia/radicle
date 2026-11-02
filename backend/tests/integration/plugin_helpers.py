@@ -4,7 +4,7 @@ from typing import Any
 
 import pytest
 
-from radicle.platform.services import plugins
+from gumball_factory.platform.services import plugins
 
 
 def widgets(value: Any) -> list[str]:

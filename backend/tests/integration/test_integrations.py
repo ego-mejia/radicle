@@ -7,10 +7,10 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import IntegrationKind, User
-from radicle.platform.errors import ValidationFailed
-from radicle.platform.services import integrations
-from radicle.platform.services.integrations import IntegrationData, Route
+from gumball_factory.platform.db.models import IntegrationKind, User
+from gumball_factory.platform.errors import ValidationFailed
+from gumball_factory.platform.services import integrations
+from gumball_factory.platform.services.integrations import IntegrationData, Route
 from tests.conftest import Team
 
 SLACK = {"bot_token": "xoxb-1-2-abc", "signing_secret": "8f742231b10e8888abcd99yyyzzz85a5"}

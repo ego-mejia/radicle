@@ -34,13 +34,17 @@ type Props = { token: string; mcpUrl?: string; onClose: () => void };
 export function TokenReveal({ token, mcpUrl, onClose }: Props) {
   const { t } = useTranslation();
   const claude = mcpUrl
-    ? `claude mcp add --transport http radicle ${mcpUrl} \\\n  --header "Authorization: Bearer ${token}"`
+    ? `claude mcp add --transport http gumball-factory ${mcpUrl} \\\n  --header "Authorization: Bearer ${token}"`
     : '';
   const json = mcpUrl
     ? JSON.stringify(
         {
           mcpServers: {
-            radicle: { type: 'http', url: mcpUrl, headers: { Authorization: `Bearer ${token}` } },
+            'gumball-factory': {
+              type: 'http',
+              url: mcpUrl,
+              headers: { Authorization: `Bearer ${token}` },
+            },
           },
         },
         null,

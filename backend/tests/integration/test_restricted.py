@@ -6,7 +6,7 @@ import re
 import pytest
 from httpx import AsyncClient
 
-from radicle.main import create_app
+from gumball_factory.main import create_app
 from tests.conftest import Actor, Team, bearer_for_new_human, make_project, new_ticket, patch_ticket
 from tests.mcp.conftest import McpFor, error_text, payload
 from tests.mcp.conftest import mcp_for as mcp_for  # the fixture

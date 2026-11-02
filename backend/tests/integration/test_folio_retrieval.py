@@ -7,8 +7,8 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioSpace
-from radicle.folio.services import retrieval, search
+from gumball_factory.folio.db.models import FolioSpace
+from gumball_factory.folio.services import retrieval, search
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_chat_helpers import docs, user
 from tests.integration.folio_helpers import API

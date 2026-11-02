@@ -20,7 +20,7 @@ import {
 } from '../../../../services/api/plugins';
 import * as S from './style';
 
-/** Admin, Plugins (ADR 0043): plugins that ship with Radicle, installing one from its
+/** Admin, Plugins (ADR 0043): plugins that ship with Gumball Factory, installing one from its
  * manifest, and turning installed ones off and on. */
 export function PluginsTab() {
   const { t } = useTranslation();

@@ -5,11 +5,11 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.chat import ChatFeedback, FolioChatMessage
-from radicle.folio.db.models import FolioSpace, FolioSpaceGrant, GranteeType
-from radicle.folio.services import chat, retrieval, search
-from radicle.platform.db.models import AiCall, User
-from radicle.platform.errors import Forbidden, NotFound, ValidationFailed
+from gumball_factory.folio.db.chat import ChatFeedback, FolioChatMessage
+from gumball_factory.folio.db.models import FolioSpace, FolioSpaceGrant, GranteeType
+from gumball_factory.folio.services import chat, retrieval, search
+from gumball_factory.platform.db.models import AiCall, User
+from gumball_factory.platform.errors import Forbidden, NotFound, ValidationFailed
 from tests.conftest import Team
 from tests.integration.folio_chat_helpers import docs, model, user
 
@@ -34,7 +34,7 @@ async def test_acceptance_cites_the_right_section(
     assert cited[0]["url"].endswith("#conecta-un-agente") and cited[0]["version"] == 1
     system = model[0]["system"]
     passages = system.split("Passages:\n\n")[1]
-    assert passages.startswith("[1] Conecta un agente a Radicle > Conecta un agente\n")
+    assert passages.startswith("[1] Conecta un agente a Gumball Factory > Conecta un agente\n")
     assert "Use only the numbered passages" in system
     saved = await db.get(FolioChatMessage, done.data["message"]["id"])
     assert saved is not None and saved.input_tokens == 300 and saved.output_tokens == 9

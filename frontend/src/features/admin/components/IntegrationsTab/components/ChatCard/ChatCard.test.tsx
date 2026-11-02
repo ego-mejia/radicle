@@ -25,8 +25,8 @@ const slack = {
   name: 'Acme',
   active: true,
   notices: [{ channel: 'C0ANUNCIOS', events: ['page.published'], filter: { space: 'anuncios' } }],
-  command_url: 'https://radicle.acme.com/api/v1/hooks/chat/i1/command',
-  events_url: 'https://radicle.acme.com/api/v1/hooks/chat/i1/events',
+  command_url: 'https://gumball-factory.acme.com/api/v1/hooks/chat/i1/command',
+  events_url: 'https://gumball-factory.acme.com/api/v1/hooks/chat/i1/events',
 };
 
 describe('ChatCard', () => {

@@ -1,7 +1,9 @@
 import createClient, { type Middleware } from 'openapi-fetch';
 import type { paths } from './schema';
 
-export const CSRF_COOKIE = 'radicle_csrf';
+export const CSRF_COOKIE = 'gumball_factory_csrf';
+// Before the rename (ADR 0046) the cookie was radicle_csrf; the server swaps it on the next response.
+const LEGACY_CSRF_COOKIE = 'radicle_csrf';
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 export function readCookie(name: string): string | null {
@@ -9,11 +11,16 @@ export function readCookie(name: string): string | null {
   return match ? decodeURIComponent(match.slice(name.length + 1)) : null;
 }
 
+/** The CSRF token the server set, under its current or its pre-rename cookie name. */
+export function csrfToken(): string | null {
+  return readCookie(CSRF_COOKIE) ?? readCookie(LEGACY_CSRF_COOKIE);
+}
+
 // Cookie sessions need the CSRF token echoed back on every mutation.
 const csrf: Middleware = {
   onRequest({ request }) {
     if (!SAFE_METHODS.has(request.method)) {
-      const token = readCookie(CSRF_COOKIE);
+      const token = csrfToken();
       if (token) request.headers.set('X-CSRF-Token', token);
     }
     return request;
@@ -28,7 +35,7 @@ export const api = createClient<paths>({
 });
 api.use(csrf);
 
-/** RFC 9457 problem returned by every API error, plus Radicle's extra members. */
+/** RFC 9457 problem returned by every API error, plus Gumball Factory's extra members. */
 export type Problem = {
   type: string;
   title: string;

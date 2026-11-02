@@ -5,8 +5,8 @@ from datetime import UTC
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.services import views
-from radicle.platform.db.models import utcnow
+from gumball_factory.folio.services import views
+from gumball_factory.platform.db.models import utcnow
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, publish
 

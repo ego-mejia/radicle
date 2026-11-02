@@ -19,7 +19,7 @@ const SCHEMA = {
   languages: [entry('es', 'Español')],
 };
 const SUGGESTION = {
-  description: 'Cómo crear un agente en Admin y conectarlo a Radicle por MCP con su token.',
+  description: 'Cómo crear un agente en Admin y conectarlo a Gumball Factory por MCP con su token.',
   labels: ['mcp', 'agentes'],
   doc_type: 'how-to',
 };

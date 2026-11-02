@@ -10,9 +10,14 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import DeliveryStatus, IntegrationKind, IntegrationNotice, User
-from radicle.platform.services import integrations, safe_fetch
-from radicle.platform.services.integrations import IntegrationData, Route
+from gumball_factory.platform.db.models import (
+    DeliveryStatus,
+    IntegrationKind,
+    IntegrationNotice,
+    User,
+)
+from gumball_factory.platform.services import integrations, safe_fetch
+from gumball_factory.platform.services.integrations import IntegrationData, Route
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, publish
 

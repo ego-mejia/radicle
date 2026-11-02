@@ -74,13 +74,13 @@ def _setup_realm(base: str) -> None:
             headers=h,
             json={"realm": REALM, "enabled": True, "sslRequired": "none"},
         ).is_success
-        for name in ("radicle-backend", "otros"):
+        for name in ("gumball-factory-backend", "otros"):
             c.post(f"/admin/realms/{REALM}/groups", headers=h, json={"name": name})
         r = c.post(
             f"/admin/realms/{REALM}/clients",
             headers=h,
             json={
-                "clientId": "radicle",
+                "clientId": "gumball-factory",
                 "secret": SECRET,
                 "publicClient": False,
                 "redirectUris": ["*"],
@@ -103,7 +103,7 @@ def _setup_realm(base: str) -> None:
         )
         assert r.is_success, r.text
         users = [
-            ("ana", "ana@acme.com", ["/radicle-backend"]),
+            ("ana", "ana@acme.com", ["/gumball-factory-backend"]),
             ("fer", "admin@example.com", []),
             ("eve", "eve@other.com", []),
             ("leo", "leo@acme.com", ["/otros"]),
@@ -172,11 +172,11 @@ async def provider(client: AsyncClient, board: Team, keycloak: str) -> dict:
         json={
             "name": "Acme Keycloak",
             "issuer_url": keycloak,
-            "client_id": "radicle",
+            "client_id": "gumball-factory",
             "client_secret": SECRET,
             "allowed_domains": ["acme.com"],
             "group_claim": "groups",
-            "group_mapping": {"radicle-backend": "backend", "otros": "otros-rad"},
+            "group_mapping": {"gumball-factory-backend": "backend", "otros": "otros-rad"},
         },
     )
     assert r.status_code == 201, r.text

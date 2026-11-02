@@ -18,7 +18,7 @@ declare global {
     EXCALIDRAW_ASSET_PATH?: string | string[];
   }
 }
-// Fonts come from Radicle's own build (vite.config.ts), not from a CDN.
+// Fonts come from Gumball Factory's own build (vite.config.ts), not from a CDN.
 if (import.meta.env.PROD) window.EXCALIDRAW_ASSET_PATH = '/assets/excalidraw/';
 
 type Elements = Parameters<ExcalidrawImperativeAPI['updateScene']>[0]['elements'];

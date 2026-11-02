@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from radicle.folio.services import convert
-from radicle.folio.services.parse_markdown import from_markdown
+from gumball_factory.folio.services import convert
+from gumball_factory.folio.services.parse_markdown import from_markdown
 from tests.unit.folio_docs import EVERY_BLOCK
 
 EXPECTED_MD = (Path(__file__).parent / "folio_every_block.md").read_text()

@@ -6,7 +6,7 @@ import { expect, test, type Browser, type Page } from '@playwright/test';
  * importing it again updates instead of duplicating, one of its pages is published and
  * shared with a public link that opens without an account, and revoking the link makes it
  * a 404. (The Slack notice on publishing is covered by the backend tests: a local
- * receiver is a private address, which Radicle refuses to call.) Runs after suite.spec.ts
+ * receiver is a private address, which Gumball Factory refuses to call.) Runs after suite.spec.ts
  * on the same instance (it signs in as its admin).
  */
 test.describe.configure({ mode: 'serial' });
@@ -15,7 +15,7 @@ const ADMIN = { email: 'fernando@example.com', password: 'e2e-password-1' };
 // The backend's sample export (backend/tests/fixtures/folio_import/confluence), zipped.
 const EXPORT = fileURLToPath(new URL('./fixtures/confluence-eng.zip', import.meta.url));
 const METADATA = {
-  description: 'Cómo conectar un agente de Claude a Radicle, traído desde Confluence.',
+  description: 'Cómo conectar un agente de Claude a Gumball Factory, traído desde Confluence.',
   doc_type: 'how-to',
   labels: ['mcp'],
   owner: '@fernando',
@@ -39,7 +39,7 @@ async function signIn(browser: Browser) {
 async function api<T = unknown>(method: string, url: string, body?: unknown) {
   return admin.evaluate(
     async ({ method, url, body }) => {
-      const csrf = document.cookie.match(/radicle_csrf=([^;]+)/)?.[1] ?? '';
+      const csrf = document.cookie.match(/gumball_factory_csrf=([^;]+)/)?.[1] ?? '';
       const r = await fetch(`/api/v1${url}`, {
         method,
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },

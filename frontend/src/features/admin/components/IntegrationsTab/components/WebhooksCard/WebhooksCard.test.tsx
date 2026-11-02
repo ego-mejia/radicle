@@ -6,7 +6,7 @@ import { WebhooksCard } from '.';
 const hook = {
   id: 'w1',
   name: 'CI',
-  url: 'https://ci.example.com/radicle',
+  url: 'https://ci.example.com/gumball-factory',
   events: ['page.published'],
   filter: {},
   active: true,

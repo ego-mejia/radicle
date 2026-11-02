@@ -5,9 +5,13 @@ import { describe, expect, it } from 'vitest';
 const publicDir = resolve(__dirname, '../../public');
 
 describe('app manifest', () => {
-  it('makes Radicle installable as its own app, with Radi as the icon', () => {
+  it('makes Gumball Factory installable as its own app, with Radi as the icon', () => {
     const manifest = JSON.parse(readFileSync(resolve(publicDir, 'manifest.json'), 'utf8'));
-    expect(manifest).toMatchObject({ name: 'Radicle', start_url: '/', display: 'standalone' });
+    expect(manifest).toMatchObject({
+      name: 'Gumball Factory',
+      start_url: '/',
+      display: 'standalone',
+    });
     const sizes = manifest.icons.map((icon: { sizes: string }) => icon.sizes);
     expect(sizes).toEqual(expect.arrayContaining(['192x192', '512x512']));
     for (const icon of manifest.icons)

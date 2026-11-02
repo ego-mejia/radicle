@@ -2,8 +2,8 @@
 
 from httpx import AsyncClient
 
-from radicle.docket.core import mcp_catalog
-from radicle.folio.mcp import catalog as folio_catalog
+from gumball_factory.docket.core import mcp_catalog
+from gumball_factory.folio.mcp import catalog as folio_catalog
 from tests.conftest import Team
 from tests.mcp.conftest import McpFor, error_text, folio_mcp, payload
 

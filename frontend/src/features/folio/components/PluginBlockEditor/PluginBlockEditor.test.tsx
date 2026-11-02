@@ -33,7 +33,7 @@ describe('PluginBlockEditor', () => {
     expect(update).toHaveBeenLastCalledWith({ data: { title: 'V1', size: 'M' } });
     const frame = document.querySelector('iframe');
     expect(frame?.getAttribute('srcdoc')).toContain(
-      'window.radicle={"data":{"title":"V1"},"lang":"en"}',
+      'window.gumballFactory=window.radicle={"data":{"title":"V1"},"lang":"en"}',
     );
     expect(frame).toHaveAttribute('sandbox', 'allow-scripts');
   });

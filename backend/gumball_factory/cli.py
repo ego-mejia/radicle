@@ -1,0 +1,82 @@
+"""`gumball-factory` command line: `gumball-factory worker` runs background jobs."""
+
+import argparse
+import asyncio
+import logging
+
+from gumball_factory.platform.config import get_settings
+
+
+def _worker(concurrency: int) -> None:
+    from gumball_factory.worker.app import build_app
+
+    app = build_app()
+
+    async def run() -> None:
+        async with app.open_async():
+            await app.run_worker_async(concurrency=concurrency, wait=True)
+
+    asyncio.run(run())
+
+
+def _backfill(command: str, start: str | None) -> None:
+    from datetime import date
+
+    from gumball_factory.docket.services import periods
+    from gumball_factory.platform.db.session import dispose_engine, get_sessionmaker
+
+    async def run() -> None:
+        async with get_sessionmaker()() as db:
+            if command == "backfill-periods":
+                count = await periods.backfill(db)
+                print(f"{count} status periods rebuilt")
+            else:
+                count = await periods.backfill_snapshots(db, date.fromisoformat(start or ""))
+                print(f"{count} daily rows written")
+            await db.commit()
+        await dispose_engine()
+
+    asyncio.run(run())
+
+
+def _folio(command: str) -> None:
+    from gumball_factory.folio.services import rag
+    from gumball_factory.platform.db.session import dispose_engine, get_sessionmaker
+
+    async def run() -> None:
+        async with get_sessionmaker()() as db:
+            count = await rag.reembed_missing(db)
+            await db.commit()
+        print(f"{count} Folio chunks embedded")
+        await dispose_engine()
+
+    asyncio.run(run())
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(prog="gumball-factory")
+    commands = parser.add_subparsers(dest="command", required=True)
+    worker = commands.add_parser("worker", help="Run background jobs")
+    worker.add_argument("--concurrency", type=int, default=4)
+    commands.add_parser("backfill-periods", help="Rebuild status periods from ticket history")
+    snapshots = commands.add_parser(
+        "backfill-snapshots", help="Recompute daily status counts from a date until today"
+    )
+    snapshots.add_argument("--from", dest="start", required=True, help="YYYY-MM-DD")
+    folio = commands.add_parser("folio", help="Folio maintenance")
+    folio_commands = folio.add_subparsers(dest="folio_command", required=True)
+    folio_commands.add_parser(
+        "reembed", help="Embed search chunks that have no vector yet (after setting a provider)"
+    )
+    args = parser.parse_args(argv)
+    logging.basicConfig(level=get_settings().log_level.upper())
+    if args.command == "worker":
+        _worker(args.concurrency)
+    elif args.command == "folio":
+        _folio(args.folio_command)
+    else:
+        _backfill(args.command, getattr(args, "start", None))
+
+
+if __name__ == "__main__":  # pragma: no cover
+    main()

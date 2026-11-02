@@ -4,8 +4,8 @@ from typing import Any, ClassVar
 
 import pytest
 
-from radicle.platform.config import Settings
-from radicle.platform.services import email
+from gumball_factory.platform.config import Settings
+from gumball_factory.platform.services import email
 
 
 class FakeSMTP:

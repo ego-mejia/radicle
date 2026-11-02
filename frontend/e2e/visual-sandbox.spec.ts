@@ -8,18 +8,18 @@ import {
 
 /**
  * The Visual block's sandbox in a real browser (Folio 3.3): a visual can't read the page
- * around it, its cookies or its storage, and it can't reach the network. Needs no Radicle:
- * the page is served by the test itself at http://radicle.test.
+ * around it, its cookies or its storage, and it can't reach the network. Needs no Gumball Factory:
+ * the page is served by the test itself at http://gumball-factory.test.
  *   pnpm exec playwright test e2e/visual-sandbox.spec.ts
  */
-const ORIGIN = 'http://radicle.test';
+const ORIGIN = 'http://gumball-factory.test';
 
 // Everything a hostile visual would try; it reports each outcome to the page.
 const PROBE = `<div style="height:420px">probe</div><script>
 const report = (name, value) => parent.postMessage({ probe: name, value }, '*');
 try { report('parentDocument', parent.document.title); } catch (e) { report('parentDocument', 'blocked'); }
 try { report('cookie', document.cookie); } catch (e) { report('cookie', 'blocked'); }
-try { localStorage.setItem('k', '1'); report('storage', localStorage.getItem('radicle.theme')); }
+try { localStorage.setItem('k', '1'); report('storage', localStorage.getItem('gumball-factory.theme')); }
 catch (e) { report('storage', 'blocked'); }
 fetch('${ORIGIN}/api/probe').then(() => report('fetch', 'ok'), () => report('fetch', 'blocked'));
 const x = new XMLHttpRequest();
@@ -44,12 +44,12 @@ test('a visual reaches neither the page nor the network', async ({ page }) => {
   await page.route(`${ORIGIN}/`, (route) =>
     route.fulfill({
       contentType: 'text/html',
-      headers: { 'Set-Cookie': 'radicle_session=secret; Path=/' },
+      headers: { 'Set-Cookie': 'gumball_factory_session=secret; Path=/' },
       body: '<!doctype html><title>Folio secreto</title><body></body>',
     }),
   );
   await page.goto(`${ORIGIN}/`);
-  await page.evaluate(() => localStorage.setItem('radicle.theme', 'dark'));
+  await page.evaluate(() => localStorage.setItem('gumball-factory.theme', 'dark'));
 
   const srcdoc = visualDocument(PROBE, LIGHT);
   await page.evaluate(

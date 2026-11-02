@@ -5,8 +5,8 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.services import link_preview
-from radicle.platform.services import safe_fetch
+from gumball_factory.folio.services import link_preview
+from gumball_factory.platform.services import safe_fetch
 from tests.conftest import Clock, Team
 from tests.integration.folio_helpers import API
 

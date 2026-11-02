@@ -2,9 +2,9 @@
 
 import pytest
 
-from radicle.folio.services import schema
-from radicle.folio.services.parse_markdown import from_markdown
-from radicle.folio.services.template_library import BUILTINS, SPACE_BUILTINS
+from gumball_factory.folio.services import schema
+from gumball_factory.folio.services.parse_markdown import from_markdown
+from gumball_factory.folio.services.template_library import BUILTINS, SPACE_BUILTINS
 
 
 def test_keys_are_unique() -> None:

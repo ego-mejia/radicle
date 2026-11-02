@@ -9,14 +9,14 @@ from sqlalchemy import select, text, update
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioDraft, FolioNode, FolioSpaceGrant, GranteeType
-from radicle.platform.db.models import User
+from gumball_factory.folio.db.models import FolioDraft, FolioNode, FolioSpaceGrant, GranteeType
+from gumball_factory.platform.db.models import User
 from tests.conftest import Team
 from tests.unit.folio_docs import EVERY_BLOCK
 
 API = "/api/v1/folio"
 METADATA = {
-    "description": "Cómo conectar un agente a Radicle por MCP, paso a paso y con el token.",
+    "description": "Cómo conectar un agente a Gumball Factory por MCP, paso a paso y con el token.",
     "doc_type": "how-to",
     "labels": ["mcp", "#Agentes"],
     "owner": "@fernando",

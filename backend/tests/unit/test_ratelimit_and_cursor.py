@@ -2,9 +2,9 @@ from datetime import UTC, datetime
 
 import pytest
 
-from radicle.platform.api.pagination import decode_cursor, encode_cursor
-from radicle.platform.api.ratelimit import SlidingWindowLimiter
-from radicle.platform.errors import RateLimited, ValidationFailed
+from gumball_factory.platform.api.pagination import decode_cursor, encode_cursor
+from gumball_factory.platform.api.ratelimit import SlidingWindowLimiter
+from gumball_factory.platform.errors import RateLimited, ValidationFailed
 
 
 def test_limiter_blocks_after_limit_and_is_per_key() -> None:

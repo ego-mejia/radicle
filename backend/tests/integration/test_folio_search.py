@@ -11,10 +11,10 @@ from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, METADATA
 
 GUIDE = (
-    "Todo sobre agentes en Radicle.\n\n# Antes de empezar\n\nNecesitas ser admin.\n\n"
+    "Todo sobre agentes en Gumball Factory.\n\n# Antes de empezar\n\nNecesitas ser admin.\n\n"
     "# Conecta un agente\n\nCrea un agente en Admin y conéctalo por MCP con su token.\n"
 )
-DEPLOY = "# Despliegue\n\nCómo subir Radicle a producción con Docker.\n"
+DEPLOY = "# Despliegue\n\nCómo subir Gumball Factory a producción con Docker.\n"
 
 
 async def _page(client: AsyncClient, team: Team, title: str, md: str, **meta: object) -> str:
@@ -34,7 +34,7 @@ async def _page(client: AsyncClient, team: Team, title: str, md: str, **meta: ob
 async def docs(client: AsyncClient, db: AsyncSession, team: Team) -> dict:
     i = team.instance.headers
     await client.post(f"{API}/spaces", headers=i, json={"key": "docs", "name": "Docs"})
-    guide = await _page(client, team, "Conecta un agente a Radicle", GUIDE)
+    guide = await _page(client, team, "Conecta un agente a Gumball Factory", GUIDE)
     deploy = await _page(client, team, "Guía de deploy", DEPLOY, doc_type="guide", labels=["ops"])
     await run_jobs(db)
     return {"guide": guide, "deploy": deploy}
@@ -83,7 +83,7 @@ async def test_a_question_finds_pages_with_some_of_its_words(
     )
     await run_jobs(db)
     h = team.member.headers
-    for q in ("cómo conecto un agente", "¿cómo conecto mi agente a Radicle?"):
+    for q in ("cómo conecto un agente", "¿cómo conecto mi agente a Gumball Factory?"):
         r = await client.get(f"{API}/search", params={"q": q, "mode": "text"}, headers=h)
         assert [x["node_id"] for x in r.json()["items"]][:1] == [nid], q
     # Exclusions keep their meaning: no fallback that would match everything.
@@ -111,7 +111,7 @@ async def test_snippets_hide_markdown(client: AsyncClient, db: AsyncSession, tea
 async def test_filters(client: AsyncClient, team: Team, docs: dict) -> None:
     async def ids(**params: str) -> list[str]:
         r = await client.get(
-            f"{API}/search", params={"q": "radicle", **params}, headers=team.member.headers
+            f"{API}/search", params={"q": "Gumball", **params}, headers=team.member.headers
         )
         return [h["node_id"] for h in r.json()["items"]]
 
@@ -136,7 +136,7 @@ async def test_semantic_and_hybrid_with_a_provider(
             200, json={"data": [{"index": n, "embedding": vector(t)} for n, t in enumerate(inputs)]}
         )
 
-    from radicle.platform.services import ai
+    from gumball_factory.platform.services import ai
 
     monkeypatch.setattr(ai, "transport", httpx.MockTransport(handler))
     await client.put(
@@ -168,7 +168,7 @@ async def test_semantic_and_hybrid_with_a_provider(
 async def test_hybrid_survives_a_provider_that_fails(
     client: AsyncClient, team: Team, docs: dict, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    from radicle.platform.services import ai
+    from gumball_factory.platform.services import ai
 
     await client.put(
         "/api/v1/admin/ai",

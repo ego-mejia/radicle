@@ -1,8 +1,8 @@
 import pytest
 
-from radicle.platform.query import ast
-from radicle.platform.query.errors import RQLError
-from radicle.platform.query.parser import parse
+from gumball_factory.platform.query import ast
+from gumball_factory.platform.query.errors import RQLError
+from gumball_factory.platform.query.parser import parse
 
 C = ast.Compare
 

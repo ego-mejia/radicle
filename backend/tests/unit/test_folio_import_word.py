@@ -3,7 +3,7 @@
 import io
 import zipfile
 
-from radicle.folio.services.importing.word import read_word
+from gumball_factory.folio.services.importing.word import read_word
 
 W = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
 R = 'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"'
@@ -55,7 +55,8 @@ def docx(body: str = BODY, core: bool = True) -> bytes:
         z.writestr(
             "word/_rels/document.xml.rels",
             '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
-            '<Relationship Id="rIdLink" Target="https://radicle.dev/docs" TargetMode="External"/>'
+            '<Relationship Id="rIdLink" Target="https://gumball-factory.dev/docs" '
+            'TargetMode="External"/>'
             '<Relationship Id="rIdImg" Target="media/image1.png"/></Relationships>',
         )
         z.writestr(
@@ -82,7 +83,7 @@ def test_a_document_becomes_a_page() -> None:
     assert page.title == "Guía de despliegue"
     assert page.author == "luis@example.com" and page.labels == ["deploy", "docker"]
     assert page.markdown == (
-        "# Antes de empezar\n\nUsa **Docker** *siempre* [la guía](https://radicle.dev/docs)\n\n"
+        "# Antes de empezar\n\nUsa **Docker** *siempre* [la guía](https://gumball-factory.dev/docs)\n\n"
         "1. Instalar\n1. Configurar\n  - Con token\n\n"
         "| Variable | Valor |\n| --- | --- |\n| PORT |   |\n\n"
         "![image1.png](import:a1)\n\n## Detalles\n"

@@ -9,8 +9,8 @@ from httpx import AsyncClient
 from mcp import Client
 from mcp.client.streamable_http import streamable_http_client
 
-from radicle.docket.mcp.server import server
-from radicle.folio.mcp.server import server as folio_server
+from gumball_factory.docket.mcp.server import server
+from gumball_factory.folio.mcp.server import server as folio_server
 from tests.conftest import Actor
 
 McpFor = Callable[[Actor], AbstractAsyncContextManager[Client]]

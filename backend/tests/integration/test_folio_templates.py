@@ -6,11 +6,11 @@ from httpx import AsyncClient
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioDraft, FolioNode, FolioSpace
-from radicle.folio.db.templates import FolioTemplate, TemplateKind
-from radicle.folio.services import convert, quality, templates
-from radicle.platform.db.models import User
-from radicle.platform.errors import Forbidden, ValidationFailed
+from gumball_factory.folio.db.models import FolioDraft, FolioNode, FolioSpace
+from gumball_factory.folio.db.templates import FolioTemplate, TemplateKind
+from gumball_factory.folio.services import convert, quality, templates
+from gumball_factory.platform.db.models import User
+from gumball_factory.platform.errors import Forbidden, ValidationFailed
 from tests.conftest import Team
 from tests.integration.folio_helpers import API
 

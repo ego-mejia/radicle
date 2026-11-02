@@ -42,7 +42,7 @@ describe('theme and language', () => {
     const after = screen.getByTestId('mode').textContent;
     expect(after).not.toBe(before);
     expect(screen.getByTestId('bg')).toHaveTextContent(after === 'dark' ? '#0E0F11' : '#F5F6F8');
-    expect(localStorage.getItem('radicle.theme')).toBe(after);
+    expect(localStorage.getItem('gumball-factory.theme')).toBe(after);
   });
 
   it('has every English key in Spanish', async () => {

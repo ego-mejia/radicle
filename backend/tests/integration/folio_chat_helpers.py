@@ -8,16 +8,16 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import AiProvider, AiSettings, User
-from radicle.platform.services import ai
+from gumball_factory.platform.db.models import AiProvider, AiSettings, User
+from gumball_factory.platform.services import ai
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, METADATA
 
 GUIDE = (
-    "Todo sobre agentes en Radicle.\n\n# Antes de empezar\n\nNecesitas ser admin.\n\n"
+    "Todo sobre agentes en Gumball Factory.\n\n# Antes de empezar\n\nNecesitas ser admin.\n\n"
     "# Conecta un agente\n\nCrea un agente en Admin, Agentes y conéctalo por MCP con su token.\n"
 )
-DEPLOY = "# Despliegue\n\nCómo subir Radicle a producción con Docker Compose.\n"
+DEPLOY = "# Despliegue\n\nCómo subir Gumball Factory a producción con Docker Compose.\n"
 
 
 async def page(client: AsyncClient, team: Team, title: str, md: str, **meta: object) -> str:
@@ -37,7 +37,7 @@ async def page(client: AsyncClient, team: Team, title: str, md: str, **meta: obj
 async def docs(client: AsyncClient, db: AsyncSession, team: Team) -> dict:
     i = team.instance.headers
     await client.post(f"{API}/spaces", headers=i, json={"key": "docs", "name": "Docs"})
-    guide = await page(client, team, "Conecta un agente a Radicle", GUIDE)
+    guide = await page(client, team, "Conecta un agente a Gumball Factory", GUIDE)
     deploy = await page(
         client, team, "Guía de deploy", DEPLOY, owner=f"@{team.member.handle}", doc_type="guide"
     )

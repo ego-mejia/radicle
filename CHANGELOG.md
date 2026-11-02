@@ -4,6 +4,10 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- El proyecto se llama Gumball Factory (ADR 0046). Cambian el paquete `gumball_factory`, el comando `gumball-factory`, las variables `GUMBALL_FACTORY_*` (las `RADICLE_*` se siguen leyendo con un aviso en el log), las cookies (la sesión abierta no se pierde), los servidores MCP `gumball-factory` y `gumball-factory-folio` con recursos `gumball-factory://`, los headers `Gumball-Factory-*` de los webhooks (los `Radicle-*` se siguen mandando) y los defaults de base, imagen y volumen. Los tokens siguen empezando con `rdc_`.
+
 ### Added
 
 - Folio con navegación nueva (RAD-57): sidebar fijo como el de Docket con el switch de suite en el mismo lugar, cada space abre en su portada (hero con búsqueda, participantes y secciones, y bento), secciones configurables de Specs, Decisiones de arquitectura, Guías y Documentación, tablas con filtros que escalan (proyecto → feature), modo Administrar del space, ruta y anterior/siguiente al leer, y Radi en Folio con citas y sugerencias.

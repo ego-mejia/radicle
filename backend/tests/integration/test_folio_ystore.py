@@ -9,9 +9,9 @@ from httpx import AsyncClient
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.collab import FolioYUpdate
-from radicle.folio.db.models import FolioDraft, FolioNode
-from radicle.folio.services import ydoc, ystore
+from gumball_factory.folio.db.collab import FolioYUpdate
+from gumball_factory.folio.db.models import FolioDraft, FolioNode
+from gumball_factory.folio.services import ydoc, ystore
 from tests.conftest import Team
 from tests.integration.folio_helpers import API, publish
 from tests.unit.folio_docs import p, t

@@ -2,7 +2,7 @@ import type { Theme } from '../../../../styles/theme';
 import type { VisualTheme } from './visualDocument';
 
 /** The `--rdc-*` variables a visual sees, from the theme (the names agents read in
- * folio://guide/visuals; backend/radicle/folio/services/visuals.py lists them). */
+ * folio://guide/visuals; backend/gumball_factory/folio/services/visuals.py lists them). */
 export function visualTheme(theme: Theme, reducedMotion: boolean): VisualTheme {
   const c = theme.color;
   return {

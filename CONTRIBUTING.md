@@ -1,6 +1,6 @@
-# Contributing to Radicle
+# Contributing to Gumball Factory
 
-Thanks for wanting to help! 🌱 Radicle is a community project. Bug reports, docs, translations, design and code all count, and first-time contributors are very welcome.
+Thanks for wanting to help! 🌱 Gumball Factory is a community project. Bug reports, docs, translations, design and code all count, and first-time contributors are very welcome.
 
 <p align="center"><img src="docs/images/contributing-flow.svg" alt="How a change gets in" width="900"></p>
 
@@ -27,7 +27,7 @@ Thanks for wanting to help! 🌱 Radicle is a community project. Bug reports, do
 
 ### Fixes we'd love help with
 
-These came out of Folio's new navigation. Each one has its ticket in Radicle's own tracker; say which one you're taking in your PR.
+These came out of Folio's new navigation. Each one has its ticket in Gumball Factory's own tracker; say which one you're taking in your PR.
 
 | Ticket | Fix | Size |
 | --- | --- | --- |
@@ -113,9 +113,9 @@ Draft PRs are welcome when you want early feedback.
 
 ```bash
 cp .env.example .env
-echo "RADICLE_SECRET_KEY=$(openssl rand -hex 32)" >> .env
+echo "GUMBALL_FACTORY_SECRET_KEY=$(openssl rand -hex 32)" >> .env
 # Dev containers, volumes and image get their own names, apart from an everyday install
-printf "COMPOSE_PROJECT_NAME=radicle-dev\nRADICLE_IMAGE=radicle-dev\n" >> .env
+printf "COMPOSE_PROJECT_NAME=gumball-factory-dev\nGUMBALL_FACTORY_IMAGE=gumball-factory-dev\n" >> .env
 cp .env backend/.env
 
 # Database and migrations
@@ -123,17 +123,17 @@ docker compose up -d db
 cd backend && uv sync && uv run alembic upgrade head
 
 # Backend at http://localhost:8000
-uv run uvicorn radicle.main:app --reload
+uv run uvicorn gumball-factory.main:app --reload
 
 # Frontend at http://localhost:5173 (proxies the API to :8000)
 cd ../frontend && pnpm install && pnpm dev
 ```
 
-Want data to play with? `cd backend && uv run python ../scripts/seed.py --tickets 400 --project PA` creates a realistic project. Sign in as `fernando@example.com` / `radicle-demo`.
+Want data to play with? `cd backend && uv run python ../scripts/seed.py --tickets 400 --project PA` creates a realistic project. Sign in as `fernando@example.com` / `gumball-factory-demo`.
 
 ## Code rules
 
-The design documents in [`docs/`](docs/) (in Spanish) explain the decisions behind Radicle. The rules that matter most day to day:
+The design documents in [`docs/`](docs/) (in Spanish) explain the decisions behind Gumball Factory. The rules that matter most day to day:
 
 **Everywhere**
 
@@ -143,10 +143,10 @@ The design documents in [`docs/`](docs/) (in Spanish) explain the decisions behi
 
 **Backend** (`backend/`)
 
-- Business logic lives in services: `radicle/platform/services/` (shared by the apps) and `radicle/docket/services/` (tickets). Routers (`radicle/docket/api/`) and MCP tools (`radicle/docket/mcp/`) only validate input and call services. `radicle/platform` never imports from an app.
-- Errors are raised as `ProblemError` (`radicle/platform/errors.py`) with a message that tells the user what to do. They are returned as RFC 9457 problem details.
+- Business logic lives in services: `gumball-factory/platform/services/` (shared by the apps) and `gumball-factory/docket/services/` (tickets). Routers (`gumball-factory/docket/api/`) and MCP tools (`gumball-factory/docket/mcp/`) only validate input and call services. `gumball-factory/platform` never imports from an app.
+- Errors are raised as `ProblemError` (`gumball-factory/platform/errors.py`) with a message that tells the user what to do. They are returned as RFC 9457 problem details.
 - Every schema change is an Alembic migration with both `upgrade` and `downgrade`.
-- Permissions always go through `radicle/docket/core/permissions.py`. Restricted tickets must never leak: if you add a `GET` route or an MCP tool, add it to `tests/integration/test_restricted.py`.
+- Permissions always go through `gumball-factory/docket/core/permissions.py`. Restricted tickets must never leak: if you add a `GET` route or an MCP tool, add it to `tests/integration/test_restricted.py`.
 - `mypy --strict` passes on `services/` and `query/`. Format with `ruff format`.
 
 **Frontend** (`frontend/`)
@@ -168,7 +168,7 @@ Each PR brings tests for what it changes:
 GitHub Actions CI is paused for now, so run the checks yourself before every push:
 
 ```bash
-cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy radicle && uv run pytest --cov
+cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy gumball-factory && uv run pytest --cov
 cd frontend && pnpm check && pnpm build
 scripts/smoke.sh
 ```
@@ -183,11 +183,11 @@ Backend tests start PostgreSQL in Docker with testcontainers. Tests marked `slow
 
 ## Reporting bugs and security issues
 
-- **Bugs**: open an issue with steps, expected and actual behavior, your Radicle version and logs if you have them.
+- **Bugs**: open an issue with steps, expected and actual behavior, your Gumball Factory version and logs if you have them.
 - **Security issues**: do **not** open a public issue. Use GitHub's **private vulnerability reporting** (Security tab → *Report a vulnerability*). We will answer as soon as we can and credit you in the fix.
 
 ## License of your contributions
 
-Radicle is licensed under the [GNU AGPL v3.0](LICENSE). By opening a pull request, you agree that your contribution is licensed under the same terms, and you confirm that you have the right to submit it.
+Gumball Factory is licensed under the [GNU AGPL v3.0](LICENSE). By opening a pull request, you agree that your contribution is licensed under the same terms, and you confirm that you have the right to submit it.
 
-Thank you for helping Radicle grow! 🌿
+Thank you for helping Gumball Factory grow! 🌿

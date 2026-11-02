@@ -6,10 +6,10 @@ from datetime import datetime, timedelta
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.calendars import EventCategory, FolioCalendar
-from radicle.folio.services import calendar_events, calendars
-from radicle.folio.services.calendar_events import EventData
-from radicle.platform.errors import Forbidden, NotFound, ValidationFailed
+from gumball_factory.folio.db.calendars import EventCategory, FolioCalendar
+from gumball_factory.folio.services import calendar_events, calendars
+from gumball_factory.folio.services.calendar_events import EventData
+from gumball_factory.platform.errors import Forbidden, NotFound, ValidationFailed
 from tests.conftest import Team
 from tests.integration.folio_calendar_helpers import at, releases, user
 

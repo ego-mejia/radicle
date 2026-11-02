@@ -4,8 +4,8 @@ from httpx import AsyncClient
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket.db.models import Job, User
-from radicle.platform.services import jobs, queue
+from gumball_factory.docket.db.models import Job, User
+from gumball_factory.platform.services import jobs, queue
 from tests.conftest import Team, run_jobs
 
 CALLS: list[dict] = []

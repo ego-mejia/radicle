@@ -13,6 +13,6 @@ labels: bug
 1.
 2.
 
-**Radicle version, browser and how you run it** (Docker, local...)
+**Gumball Factory version, browser and how you run it** (Docker, local...)
 
 **Screenshots or logs**

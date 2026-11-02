@@ -1,7 +1,7 @@
 /**
  * A deterministic OpenAI-compatible chat server for the end-to-end specs, so Folio's AI
  * (chat, summarize, rewrite, publish suggestions, glossary) runs without a real model.
- * It answers from what Radicle sends: the chat cites the passage that shares the most
+ * It answers from what Gumball Factory sends: the chat cites the passage that shares the most
  * words with the question. Start it with `startFakeAi(port)` or `node fake-ai.mjs 8790`.
  */
 import http from 'node:http';
@@ -59,10 +59,13 @@ function metadata(prompt) {
 }
 
 const TERMS = [
-  ['MCP', 'Model Context Protocol: el protocolo con el que los agentes usan las tools de Radicle.'],
-  ['RQL', 'El lenguaje de consultas de Radicle para filtrar tickets y docs.'],
-  ['Folio', 'La app de documentación de Radicle: spaces, páginas, búsqueda y chat.'],
-  ['Docket', 'El ticket tracker de Radicle: proyectos, tickets, milestones y áreas.'],
+  [
+    'MCP',
+    'Model Context Protocol: el protocolo con el que los agentes usan las tools de Gumball Factory.',
+  ],
+  ['RQL', 'El lenguaje de consultas de Gumball Factory para filtrar tickets y docs.'],
+  ['Folio', 'La app de documentación de Gumball Factory: spaces, páginas, búsqueda y chat.'],
+  ['Docket', 'El ticket tracker de Gumball Factory: proyectos, tickets, milestones y áreas.'],
 ];
 
 function glossary(docs) {

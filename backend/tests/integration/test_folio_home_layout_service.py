@@ -6,10 +6,10 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.services import home_layouts
-from radicle.folio.services.home_layouts import DEFAULT
-from radicle.platform.db.models import User
-from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from gumball_factory.folio.services import home_layouts
+from gumball_factory.folio.services.home_layouts import DEFAULT
+from gumball_factory.platform.db.models import User
+from gumball_factory.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from tests.conftest import Team
 
 

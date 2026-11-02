@@ -7,11 +7,11 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.calendars import FolioCalendar, FolioEvent
-from radicle.folio.db.models import FolioSpace
-from radicle.folio.services import calendars
-from radicle.folio.services.calendars import CalendarData
-from radicle.platform.errors import Forbidden, NotFound, ValidationFailed
+from gumball_factory.folio.db.calendars import FolioCalendar, FolioEvent
+from gumball_factory.folio.db.models import FolioSpace
+from gumball_factory.folio.services import calendars
+from gumball_factory.folio.services.calendars import CalendarData
+from gumball_factory.platform.errors import Forbidden, NotFound, ValidationFailed
 from tests.conftest import Team
 from tests.integration.folio_calendar_helpers import at, eng_space, releases, user
 

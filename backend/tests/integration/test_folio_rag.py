@@ -9,9 +9,9 @@ from httpx import AsyncClient
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import FolioChunk
-from radicle.folio.services import rag
-from radicle.platform.services import ai
+from gumball_factory.folio.db.models import FolioChunk
+from gumball_factory.folio.services import rag
+from gumball_factory.platform.services import ai
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, publish
 

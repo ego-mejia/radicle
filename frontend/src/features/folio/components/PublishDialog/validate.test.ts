@@ -3,7 +3,7 @@ import { fromDraft, parseLabels, toDraft, validate, type Metadata } from './vali
 
 const CATALOGS = { doc_types: ['how-to'], audiences: ['everyone'], languages: ['es'] };
 const GOOD: Metadata = {
-  description: 'Cómo conectar un agente a Radicle por MCP, paso a paso y con el token.',
+  description: 'Cómo conectar un agente a Gumball Factory por MCP, paso a paso y con el token.',
   doc_type: 'how-to',
   labels: ['mcp'],
   owner: 'fernando',

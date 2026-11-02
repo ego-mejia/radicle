@@ -8,7 +8,7 @@ import { useErrorMessage } from '../../../../hooks/useErrorMessage';
 import { linkChatAccount } from '../../../../services/api/integrations';
 import * as S from './style';
 
-/** The page /radicle links to: confirm you are that Slack or Teams user (Folio 5.4). */
+/** The page /gumball-factory links to: confirm you are that Slack or Teams user (Folio 5.4). */
 export function LinkChatView() {
   const { t } = useTranslation();
   const { token = '' } = useSearch({ from: '/app/integrations/link' });

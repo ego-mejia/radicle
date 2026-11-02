@@ -1,5 +1,5 @@
 """Previews of Folio links pasted in Slack (Folio 5.4): only when the person who pasted
-the link can see the page through their linked Radicle account."""
+the link can see the page through their linked Gumball Factory account."""
 
 import json
 import time
@@ -10,9 +10,9 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import IntegrationKind, User
-from radicle.platform.services import chat_commands, integrations, safe_fetch
-from radicle.platform.services.integrations import IntegrationData
+from gumball_factory.platform.db.models import IntegrationKind, User
+from gumball_factory.platform.services import chat_commands, integrations, safe_fetch
+from gumball_factory.platform.services.integrations import IntegrationData
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, METADATA, publish
 
@@ -95,7 +95,7 @@ async def test_previews_only_pages_the_paster_can_see(
     assert list(call["unfurls"]) == [guide]
     assert call["unfurls"][guide]["title"] == "Guía"
     assert call["unfurls"][guide]["text"] == METADATA["description"]
-    await _send(client, url, _shared("U_X", guide))  # no Radicle account behind it
+    await _send(client, url, _shared("U_X", guide))  # no Gumball Factory account behind it
     await run_jobs(db)
     assert len(unfurls) == 1
     forged = await client.post(url, content=b"{}", headers={"X-Slack-Signature": "v0=0"})

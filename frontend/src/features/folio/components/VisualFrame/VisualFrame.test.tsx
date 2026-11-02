@@ -64,7 +64,7 @@ describe('VisualFrame', () => {
     const report = (height: number, source: MessageEventSource | null) =>
       act(() => {
         window.dispatchEvent(
-          new MessageEvent('message', { data: { type: 'radicle:height', height }, source }),
+          new MessageEvent('message', { data: { type: 'gumball-factory:height', height }, source }),
         );
       });
     report(320, iframe.contentWindow);

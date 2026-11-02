@@ -14,13 +14,13 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
-from radicle.platform.config import get_settings
-from radicle.platform.db import session as db_session
+from gumball_factory.platform.config import get_settings
+from gumball_factory.platform.db import session as db_session
 from tests.conftest import run_alembic
 
 # The budgets are for a real server. Shared CI runners are several times slower, so CI
-# sets RADICLE_PERF_BUDGET_FACTOR to stretch them instead of failing at random.
-FACTOR = float(os.environ.get("RADICLE_PERF_BUDGET_FACTOR", "1"))
+# sets GUMBALL_FACTORY_PERF_BUDGET_FACTOR to stretch them instead of failing at random.
+FACTOR = float(os.environ.get("GUMBALL_FACTORY_PERF_BUDGET_FACTOR", "1"))
 
 QUERIES = [
     "project = PERF AND type = bug AND priority >= high AND milestone = V1 AND tag != backlog",
@@ -46,12 +46,12 @@ async def test_search_p95_and_board_with_10k_tickets(
     await engine.dispose()
     url = admin_url.rsplit("/", 1)[0] + "/perf_check"
     await asyncio.to_thread(run_alembic, url, "upgrade", "head")
-    monkeypatch.setenv("RADICLE_DATABASE_URL", url)
+    monkeypatch.setenv("GUMBALL_FACTORY_DATABASE_URL", url)
     get_settings.cache_clear()
     await db_session.dispose_engine()
 
-    from radicle.main import create_app
-    from radicle.seed import seed
+    from gumball_factory.main import create_app
+    from gumball_factory.seed import seed
 
     async with db_session.get_sessionmaker()() as db:
         await seed(db, tickets=10_000)
@@ -76,10 +76,11 @@ async def test_search_p95_and_board_with_10k_tickets(
         app = create_app()
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://t") as c:
             r = await c.post(
-                "/api/v1/auth/login", json={"email": "luis@example.com", "password": "radicle-demo"}
+                "/api/v1/auth/login",
+                json={"email": "luis@example.com", "password": "gumball-factory-demo"},
             )
             assert r.status_code == 200
-            h = {"X-CSRF-Token": c.cookies["radicle_csrf"]}
+            h = {"X-CSRF-Token": c.cookies["gumball_factory_csrf"]}
             token = (await c.post("/api/v1/me/tokens", headers=h, json={"name": "p"})).json()
             bearer = {"Authorization": f"Bearer {token['token']}"}
 

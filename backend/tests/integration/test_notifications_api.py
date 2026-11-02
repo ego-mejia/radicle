@@ -9,10 +9,10 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.api import notifications as api
-from radicle.platform.db.models import OutboxEvent, User
-from radicle.platform.services import events
-from radicle.platform.services.notify_hub import Hub, _dsn
+from gumball_factory.platform.api import notifications as api
+from gumball_factory.platform.db.models import OutboxEvent, User
+from gumball_factory.platform.services import events
+from gumball_factory.platform.services.notify_hub import Hub, _dsn
 from tests.conftest import Team, run_jobs
 
 URL = "/api/v1/me/notifications"

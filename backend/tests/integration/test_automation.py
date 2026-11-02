@@ -9,7 +9,7 @@ import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import (
+from gumball_factory.platform.db.models import (
     AutomationRun,
     DeliveryStatus,
     IntegrationKind,
@@ -17,9 +17,9 @@ from radicle.platform.db.models import (
     OutboxEvent,
     User,
 )
-from radicle.platform.errors import ValidationFailed
-from radicle.platform.services import automation, events, integrations, safe_fetch
-from radicle.platform.services.integrations import IntegrationData, Route
+from gumball_factory.platform.errors import ValidationFailed
+from gumball_factory.platform.services import automation, events, integrations, safe_fetch
+from gumball_factory.platform.services.integrations import IntegrationData, Route
 from tests.conftest import Clock, Team, run_jobs
 
 events.public_event("test.rang", "A test bell rang")

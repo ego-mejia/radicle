@@ -6,10 +6,10 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.docket_links import TicketLinkKind
-from radicle.folio.db.models import FolioNode
-from radicle.folio.services import ticket_links
-from radicle.platform.errors import Forbidden, NotFound, ValidationFailed
+from gumball_factory.folio.db.docket_links import TicketLinkKind
+from gumball_factory.folio.db.models import FolioNode
+from gumball_factory.folio.services import ticket_links
+from gumball_factory.platform.errors import Forbidden, NotFound, ValidationFailed
 from tests.conftest import Team, new_ticket
 from tests.integration.folio_helpers import API, publish
 from tests.integration.test_docket_public import _user

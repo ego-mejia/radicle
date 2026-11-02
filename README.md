@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo-dark.svg">
-    <img src="docs/images/logo.svg" alt="Radicle" width="320">
+    <img src="docs/images/logo.svg" alt="Gumball Factory" width="320">
   </picture>
 </p>
 
@@ -18,17 +18,17 @@
 </p>
 
 <p align="center">
-  <img src="docs/images/board.png" alt="Radicle board" width="900">
+  <img src="docs/images/board.png" alt="Gumball Factory board" width="900">
 </p>
 
-> 🌱 **Radicle** is named after the radicle: the first root a seed puts out when it sprouts.
+> 🌱 **Gumball Factory** is named after the gumball-factory: the first root a seed puts out when it sprouts.
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Hi! I'm Radi, the green fellow in the corner of the app (and in the logo). I'll walk you through this README: look for my notes at the start of each section.
 
 
 ## Contents
 
-- [Why Radicle](#-why-radicle)
+- [Why Gumball Factory](#-why-gumball-factory)
 - [Quick start](#-quick-start)
 - [Meet Radi](#-meet-radi)
 - [User guide](#-user-guide)
@@ -54,7 +54,7 @@
 - [Contributing](#-contributing)
 - [License](#-license)
 
-## ✨ Why Radicle
+## ✨ Why Gumball Factory
 
 | | |
 | --- | --- |
@@ -74,11 +74,11 @@
 You need Docker with Compose.
 
 ```bash
-git clone https://github.com/ego-mejia/radicle.git
-cd radicle
+git clone https://github.com/ego-mejia/gumball-factory.git
+cd gumball-factory
 cp .env.example .env
 # Required: a long random secret. It encrypts stored secrets and signs links.
-echo "RADICLE_SECRET_KEY=$(openssl rand -hex 32)" >> .env
+echo "GUMBALL_FACTORY_SECRET_KEY=$(openssl rand -hex 32)" >> .env
 docker compose up -d
 ```
 
@@ -87,13 +87,13 @@ Open <http://localhost:8000>. The first visit shows a **setup** screen where you
 Three containers start: `app` (web app, REST API and MCP), `worker` (background jobs) and `db` (PostgreSQL 16). The REST API lives at `/api/v1` and its interactive docs at `/api/docs`.
 
 > [!TIP]
-> In production, put Radicle behind HTTPS and set `RADICLE_BASE_URL` to its public URL. Cookies switch to `Secure` on their own.
+> In production, put Gumball Factory behind HTTPS and set `GUMBALL_FACTORY_BASE_URL` to its public URL. Cookies switch to `Secure` on their own.
 
 ## 🟢 Meet Radi
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** That's me! Click me in the bottom-right corner of any page and ask how to do something. My eyes follow your pointer, and I get a little bigger when you hover me.
 
-Radi answers questions about using Radicle and shows you where things are.
+Radi answers questions about using Gumball Factory and shows you where things are.
 
 - **Without any setup** Radi answers from the built-in usage guide (English and Spanish) and offers a ready-made tour for the main topics: click **Show me**.
 - **With an LLM** (Anthropic, OpenAI or any OpenAI-compatible server such as Ollama), Radi writes the answer in the language you asked in and walks you through the screen: a white cursor with a green glow moves to each button, opens pages and dialogs, highlights each field and explains it. It never clicks **Create**, **Save** or **Add** for you; it only points at them.
@@ -108,14 +108,14 @@ Radi answers questions about using Radicle and shows you where things are.
 
 | Variable | What it does |
 | --- | --- |
-| `RADICLE_ASSISTANT_PROVIDER` | `anthropic`, `openai` or `none` |
-| `RADICLE_ASSISTANT_API_KEY` | The provider's API key |
-| `RADICLE_ASSISTANT_MODEL` | Optional; defaults to `claude-haiku-5-5` or `gpt-4o-mini` |
-| `RADICLE_ASSISTANT_BASE_URL` | Optional; for OpenAI-compatible servers, like `http://ollama:11434/v1` |
+| `GUMBALL_FACTORY_ASSISTANT_PROVIDER` | `anthropic`, `openai` or `none` |
+| `GUMBALL_FACTORY_ASSISTANT_API_KEY` | The provider's API key |
+| `GUMBALL_FACTORY_ASSISTANT_MODEL` | Optional; defaults to `claude-haiku-5-5` or `gpt-4o-mini` |
+| `GUMBALL_FACTORY_ASSISTANT_BASE_URL` | Optional; for OpenAI-compatible servers, like `http://ollama:11434/v1` |
 
 <p align="center"><img src="docs/images/assistant-settings.png" alt="Assistant settings" width="820"></p>
 
-Radi can only point at a fixed catalog of places in the app, so a model cannot invent buttons. The guide it answers from lives in `backend/radicle/docket/services/assistant/guide/`.
+Radi can only point at a fixed catalog of places in the app, so a model cannot invent buttons. The guide it answers from lives in `backend/gumball_factory/docket/services/assistant/guide/`.
 
 ## 📖 User guide
 
@@ -180,7 +180,7 @@ Each project starts with a Kanban board called **Main**, with **To Do**, **In Pr
 
 Cards show their area (with its icon) and milestone like Jira's labels, plus how many subtickets they have. Click the area or milestone on a card to change it from a menu, without opening the ticket.
 
-**Swimlanes** split the board into rows by area, assignee, priority, milestone, parent or type, like several boards stacked. Click a row header to fold it, or use **Collapse all**; Radicle remembers which rows you folded.
+**Swimlanes** split the board into rows by area, assignee, priority, milestone, parent or type, like several boards stacked. Click a row header to fold it, or use **Collapse all**; Gumball Factory remembers which rows you folded.
 
 <p align="center">
   <img src="docs/images/board-lanes.png" alt="Board with swimlanes by area" width="49%">
@@ -197,7 +197,7 @@ Admins create more boards with **New board** and set them up in **Configure**:
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Want something precise? RQL finds it. In **List**, the **Filter** button builds simple queries for you.
 
-RQL (Radicle Query Language) works in the search bar, in **List**, in boards and in saved filters:
+RQL (Gumball Factory Query Language) works in the search bar, in **List**, in boards and in saved filters:
 
 ```text
 type = bug AND priority >= high AND assignee = currentUser()
@@ -207,7 +207,7 @@ sprint = active AND #backlog
 classification = complaint AND origin = user ORDER BY votes DESC
 ```
 
-Mistakes are underlined in place, with what was expected, and the editor autocompletes fields and values. Save a query as a **filter** to reuse it, share it or put it on a dashboard. Agents read the full guide as the MCP resource `radicle://guide/rql`.
+Mistakes are underlined in place, with what was expected, and the editor autocompletes fields and values. Save a query as a **filter** to reuse it, share it or put it on a dashboard. Agents read the full guide as the MCP resource `gumball-factory://guide/rql`.
 
 **List** shows tickets in a table. Click **Filter** above it to filter by type, status, priority, assignee, area or milestone without writing RQL (each filter is a chip you can remove), **Group by** to split the rows into groups you can fold, and **Saved filters** to reuse queries. Tickets with subtickets have an arrow that opens their tasks and bugs right below them.
 
@@ -237,7 +237,7 @@ Create a board of kind **Scrum** to plan in sprints. Then, in **Backlog**:
 
 <p align="center"><img src="docs/images/timeline.png" alt="Timeline" width="820"></p>
 
-**Milestones** are goals with an optional target date, like a release. When the last open ticket of a milestone reaches done, Radicle celebrates: confetti, Radi cheering and the numbers behind it (tickets shipped, hours invested, bugs squashed, tasks, ideas, days to ship, and the people and AI agents who did it). **Share on LinkedIn** copies a ready-made image to your clipboard and opens a post with the text filled in; **Download image** saves it.
+**Milestones** are goals with an optional target date, like a release. When the last open ticket of a milestone reaches done, Gumball Factory celebrates: confetti, Radi cheering and the numbers behind it (tickets shipped, hours invested, bugs squashed, tasks, ideas, days to ship, and the people and AI agents who did it). **Share on LinkedIn** copies a ready-made image to your clipboard and opens a post with the text filled in; **Download image** saves it.
 
 <p align="center">
   <img src="docs/images/milestone-celebration.png" alt="Milestone celebration" width="49%">
@@ -264,7 +264,7 @@ The **Inbox** collects Drafts: ideas from the team, requests from agents, and co
 
 <p align="center"><img src="docs/images/inbox-flow.svg" alt="From feedback to ticket" width="900"></p>
 
-**Open the public form.** In **Settings → Inbox**, switch it on and choose the slug, the texts, which kinds people can send, whether email is required, attachments and the captcha. ALTCHA is the default and needs no third party; Turnstile and hCaptcha also work. Then share the link: `https://your-radicle/b/<slug>`.
+**Open the public form.** In **Settings → Inbox**, switch it on and choose the slug, the texts, which kinds people can send, whether email is required, attachments and the captcha. ALTCHA is the default and needs no third party; Turnstile and hCaptcha also work. Then share the link: `https://your-gumball-factory/b/<slug>`.
 
 <p align="center">
   <img src="docs/images/public-form.png" alt="Public form" width="49%">
@@ -306,7 +306,7 @@ Every submission gets a **tracking code**. The tracking page shows its state (Re
 In **Admin → SSO**, add OpenID Connect providers (Google, Microsoft Entra ID, Okta, Keycloak, Authentik...) with their issuer URL, client ID and secret. Register the callback URL shown in the form with your provider.
 
 - **Allowed domains** decide who gets an account automatically. An existing account with the same verified email is linked.
-- **Group mapping** syncs the provider's groups with Radicle groups on every sign-in. Only mapped groups are touched.
+- **Group mapping** syncs the provider's groups with Gumball Factory groups on every sign-in. Only mapped groups are touched.
 - In **Admin → Settings** you can turn off password sign-in. The first instance admin can still sign in with a password: that is your way back in if the provider fails.
 
 <p align="center"><img src="docs/images/sso.png" alt="SSO providers" width="820"></p>
@@ -317,7 +317,7 @@ In **Admin → SSO**, add OpenID Connect providers (Google, Microsoft Entra ID, 
 
 **Admin → Audit log** records 39 kinds of administrative actions: users, tokens, agents, projects, members, groups, permissions, security levels, deletions, moves, bulk edits, templates, workflows, Inbox settings and SSO. Each entry says who, when, from which IP, and what changed (before and after). Filter by person, action, project and dates, and export to CSV. Project admins see their projects' entries in **Settings → Audit log**.
 
-The log is **append-only**: the database itself rejects updates and deletes. Entries older than `RADICLE_AUDIT_RETENTION_DAYS` (730 by default) are purged.
+The log is **append-only**: the database itself rejects updates and deletes. Entries older than `GUMBALL_FACTORY_AUDIT_RETENTION_DAYS` (730 by default) are purged.
 
 <p align="center"><img src="docs/images/audit.png" alt="Audit log" width="820"></p>
 
@@ -339,7 +339,7 @@ You can change an agent's tools any time with **MCP permissions** in Users or Ag
 **Claude Code**
 
 ```bash
-claude mcp add --transport http radicle http://localhost:8000/mcp \
+claude mcp add --transport http gumball-factory http://localhost:8000/mcp \
   --header "Authorization: Bearer rdc_xxxxxxxx"
 ```
 
@@ -348,7 +348,7 @@ claude mcp add --transport http radicle http://localhost:8000/mcp \
 ```json
 {
   "mcpServers": {
-    "radicle": {
+    "gumball-factory": {
       "type": "http",
       "url": "http://localhost:8000/mcp",
       "headers": { "Authorization": "Bearer rdc_xxxxxxxx" }
@@ -372,7 +372,7 @@ Clients that only speak stdio can use [`mcp-remote`](https://www.npmjs.com/packa
 | Planning | `create_area`, `update_area`, `create_milestone`, `update_milestone`, `list_boards`, `get_board`, `list_sprints`, `get_sprint`, `add_to_sprint`, `remove_from_sprint`, `start_sprint`, `complete_sprint`, `get_milestone_progress`, `get_report` |
 | Inbox | `list_inbox`, `score_inbox_item`, `approve_inbox_item`, `discard_inbox_item`, `mark_inbox_duplicate` |
 
-Resources: `radicle://guide/rql` and `radicle://projects/{key}/schema`. Agents follow the same permission matrix and security levels as people, and can be limited to some of these tools. `GET /api/v1/mcp/tools` lists them with their group and whether they only read.
+Resources: `gumball-factory://guide/rql` and `gumball-factory://projects/{key}/schema`. Agents follow the same permission matrix and security levels as people, and can be limited to some of these tools. `GET /api/v1/mcp/tools` lists them with their group and whether they only read.
 
 </details>
 
@@ -397,11 +397,11 @@ Press <kbd>?</kbd> to see every shortcut. The main ones:
 
 Switch between light and dark with the moon button, and between English and Spanish in your profile or from the palette. You can turn shortcuts off in your profile.
 
-**Use it as a desktop app.** Radicle can be installed as its own app, with Radi in the Dock and its own window: in Chrome click **Install** in the address bar, or in Safari choose **File → Add to Dock**.
+**Use it as a desktop app.** Gumball Factory can be installed as its own app, with Radi in the Dock and its own window: in Chrome click **Install** in the address bar, or in Safari choose **File → Add to Dock**.
 
 ### 15. Folio: your team's docs
 
-> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Radicle has a second app now: **Folio**, for documentation. Open the menu on the logo, or press <kbd>g</kbd> <kbd>f</kbd>, and press <kbd>g</kbd> <kbd>d</kbd> to come back to Docket.
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Gumball Factory has a second app now: **Folio**, for documentation. Open the menu on the logo, or press <kbd>g</kbd> <kbd>f</kbd>, and press <kbd>g</kbd> <kbd>d</kbd> to come back to Docket.
 
 Docket (the ticket tracker) and Folio share people, groups, agents and the sign-in. Each app opens where you left it.
 
@@ -434,7 +434,7 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
 </p>
 <p align="center"><img src="docs/images/folio-mobile.png" alt="Folio's sidebar as a drawer on a phone" width="300"></p>
 
-- **Reading.** Pages read like a magazine, with a path back to their space and section, previous and next in their folder, an "On this page" index, the owner, status, type, language and labels. **Focus mode** leaves just the text and a progress bar, and it remembers your choice. Light and dark, like the rest of Radicle.
+- **Reading.** Pages read like a magazine, with a path back to their space and section, previous and next in their folder, an "On this page" index, the owner, status, type, language and labels. **Focus mode** leaves just the text and a progress bar, and it remembers your choice. Light and dark, like the rest of Gumball Factory.
 - **Writing.** A full-screen editor saves your draft as you type. Press <kbd>/</kbd> for any block (headings, lists, checklists, tables, code, panels, expands, columns, images, files and video), or write Markdown shortcuts. Paste or drop images to upload them.
 
 <p align="center">
@@ -487,7 +487,7 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
 - **Public pages.** **Share → Public link** gives a page or a whole space a read-only link that opens without an account, in the magazine view, with no people data and hidden from search engines by default. Restricted pages never show through it, and **Revoke** turns it into a 404. Only the space's admins create them.
 - **Export.** **Export** on a page or a space downloads a PDF that looks like the reader (printed by headless Chromium, so visuals, diagrams and formulas come out as on screen), a Word file, a static HTML site that opens from disk, or Markdown with front matter. Build with `--build-arg PDF=false` to leave Chromium out (about 290 MB).
 - **Import.** **Folio → Admin → Import** brings in a Confluence space (HTML export), a Notion export (Markdown and CSV, where CSVs become databases), Word files or folders of Markdown. A dry run shows every page, its authors (matched by email), labels and files before anything is created; pages arrive as drafts, and importing the same export again into the same space updates them instead of duplicating them.
-- **Slack, Teams, webhooks and rules.** **Admin → Integrations** posts what happens in a space to Slack or Teams channels, answers `/radicle search` and `/radicle ask` (the docs chat, with citations, as the person asking), and previews Folio links pasted in Slack for people who can see them. Webhooks send signed events (`page.published`, `page.outdated`, `submission.created`…) with retries and a delivery log. Automation rules run on an event or a schedule and notify a channel or a person, change a page's status, add a label, open a Docket ticket or archive; one ready-made rule tells a channel when a page goes out of date.
+- **Slack, Teams, webhooks and rules.** **Admin → Integrations** posts what happens in a space to Slack or Teams channels, answers `/gumball-factory search` and `/gumball-factory ask` (the docs chat, with citations, as the person asking), and previews Folio links pasted in Slack for people who can see them. Webhooks send signed events (`page.published`, `page.outdated`, `submission.created`…) with retries and a delivery log. Automation rules run on an event or a schedule and notify a channel or a person, change a page's status, add a label, open a Docket ticket or archive; one ready-made rule tells a channel when a page goes out of date.
 - **Calendars.** Each space can have calendars with month and week views, events by category (release, vacation, on-call…), people, and the milestones of Docket projects. Subscribe from Google Calendar or Outlook with its iCal link, or embed a calendar in a page or on the home.
 - **Plugins.** **Admin → Plugins** installs JSON plugins that add editor blocks, drawn in the same sandbox as the Visual block (no network, no access to the page). The **Countdown** example installs with one click.
 - **Analytics.** Owners and space admins see each page's views, unique readers and reading time; **Folio → Admin → Analytics** shows the most read pages and active spaces, the searches that found nothing and the chat questions without an answer: what to document next. Agents get the same list with `get_search_gaps`.
@@ -509,32 +509,32 @@ Docket (the ticket tracker) and Folio share people, groups, agents and the sign-
 - **Folio's MCP.** `/mcp/folio` takes the same tokens as `/mcp`. Agents search (`search_docs`, `query_docs`), read pages in Markdown (`get_page`), learn what publishing needs (`get_metadata_schema`), write (`create_page`, `update_draft`) and send for approval (`submit_for_publication`, `list_my_submissions`). They also ask the docs (`ask_docs`), link docs to tickets (`link_ticket`, `get_docs_for_ticket`) and turn a build spec into tickets (`create_tickets_from_build_spec`, a dry run unless `dry_run=false`). They export a page (`export_page`), read and add calendar events (`list_calendar_events`, `add_calendar_event`) and see a page's readers and what people search without finding (`get_page_analytics`, `get_search_gaps`). Three prompts guide an agent working in a codebase: `weekly_changes_post`, `document_module` and `build_spec_from_discussion`; all of them end waiting for approval. Admins pick which Folio tools each agent may use, as with Docket's.
 
 ```bash
-claude mcp add --transport http radicle-folio https://radicle.example.com/mcp/folio \
+claude mcp add --transport http gumball-factory-folio https://gumball-factory.example.com/mcp/folio \
   --header "Authorization: Bearer rdc_your_agent_token"
 ```
 
 ## ⚙️ Configuration
 
-> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** The knobs for whoever runs Radicle.
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** The knobs for whoever runs Gumball Factory.
 
 Everything is set with environment variables (see [`.env.example`](.env.example)).
 
 | Variable | Default | What it does |
 | --- | --- | --- |
-| `RADICLE_SECRET_KEY` | **required** | Encrypts stored secrets (SSO, captcha) and signs links and the SSO cookie. Generate it with `openssl rand -hex 32` and never change it afterwards. |
-| `RADICLE_BASE_URL` | `http://localhost:8000` | Public URL, used for cookies, MCP snippets and public form links. |
-| `RADICLE_PORT` | `8000` | Host port of the app container. |
-| `RADICLE_TIMEZONE` | `UTC` | Time zone for relative dates in RQL and reports. |
-| `RADICLE_WORKDAYS` | `mon,tue,wed,thu,fri` | Working days for burndowns. |
-| `RADICLE_STORAGE` | `local` | `local` keeps attachments in a Docker volume; `s3` uses any S3-compatible store (AWS, MinIO, R2) with `RADICLE_S3_*`. |
-| `RADICLE_MAX_UPLOAD_MB` | `25` | Maximum size per file. |
-| `RADICLE_IMAGE_DEFAULT_RESIZE` | `large` | Default image size: `original`, `large` (2048 px), `medium` or `small`. |
-| `RADICLE_AUDIT_RETENTION_DAYS` | `730` | Days the audit log is kept. |
-| `RADICLE_SESSION_DAYS` | `14` | Session length (sliding). |
-| `RADICLE_ASSISTANT_*` | unset | Radi's LLM; see [Meet Radi](#-meet-radi). Without it, Radi answers from the guide. |
-| `RADICLE_SMTP_HOST`, `_PORT`, `_USER`, `_PASSWORD`, `_FROM`, `_TLS` | unset, `587` | Email notifications. Without a host, notifications are in-app only. Port 465 uses implicit TLS. |
-| `RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE` | `10` | Sign-in attempts per IP per minute. |
-| `POSTGRES_*` | `radicle` | Database credentials. Change the password in production. |
+| `GUMBALL_FACTORY_SECRET_KEY` | **required** | Encrypts stored secrets (SSO, captcha) and signs links and the SSO cookie. Generate it with `openssl rand -hex 32` and never change it afterwards. |
+| `GUMBALL_FACTORY_BASE_URL` | `http://localhost:8000` | Public URL, used for cookies, MCP snippets and public form links. |
+| `GUMBALL_FACTORY_PORT` | `8000` | Host port of the app container. |
+| `GUMBALL_FACTORY_TIMEZONE` | `UTC` | Time zone for relative dates in RQL and reports. |
+| `GUMBALL_FACTORY_WORKDAYS` | `mon,tue,wed,thu,fri` | Working days for burndowns. |
+| `GUMBALL_FACTORY_STORAGE` | `local` | `local` keeps attachments in a Docker volume; `s3` uses any S3-compatible store (AWS, MinIO, R2) with `GUMBALL_FACTORY_S3_*`. |
+| `GUMBALL_FACTORY_MAX_UPLOAD_MB` | `25` | Maximum size per file. |
+| `GUMBALL_FACTORY_IMAGE_DEFAULT_RESIZE` | `large` | Default image size: `original`, `large` (2048 px), `medium` or `small`. |
+| `GUMBALL_FACTORY_AUDIT_RETENTION_DAYS` | `730` | Days the audit log is kept. |
+| `GUMBALL_FACTORY_SESSION_DAYS` | `14` | Session length (sliding). |
+| `GUMBALL_FACTORY_ASSISTANT_*` | unset | Radi's LLM; see [Meet Radi](#-meet-radi). Without it, Radi answers from the guide. |
+| `GUMBALL_FACTORY_SMTP_HOST`, `_PORT`, `_USER`, `_PASSWORD`, `_FROM`, `_TLS` | unset, `587` | Email notifications. Without a host, notifications are in-app only. Port 465 uses implicit TLS. |
+| `GUMBALL_FACTORY_LOGIN_RATE_LIMIT_PER_MINUTE` | `10` | Sign-in attempts per IP per minute. |
+| `POSTGRES_*` | `gumball-factory` | Database credentials. Change the password in production. |
 
 The `worker` container runs background jobs: template propagation, image variants, large bulk edits, ranking, daily snapshots and audit retention. If it is down, those jobs wait in the queue.
 
@@ -542,7 +542,7 @@ The `worker` container runs background jobs: template propagation, image variant
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** How the pieces fit: one app, one worker, one database.
 
-<p align="center"><img src="docs/images/architecture.svg" alt="Radicle architecture" width="900"></p>
+<p align="center"><img src="docs/images/architecture.svg" alt="Gumball Factory architecture" width="900"></p>
 
 | Layer | Stack |
 | --- | --- |
@@ -552,28 +552,28 @@ The `worker` container runs background jobs: template propagation, image variant
 | MCP | Official Python MCP SDK, Streamable HTTP at `/mcp` (Docket) and `/mcp/folio` (Folio) |
 | Quality | pytest with testcontainers (real Postgres and Keycloak), mypy strict, ruff, Vitest, Playwright E2E |
 
-Business logic lives only in the services: `backend/radicle/platform/services/` for what the apps share and `backend/radicle/docket/services/` for tickets. The REST routers and the MCP tools validate input and call those services, so the UI, the API and agents always follow the same rules.
+Business logic lives only in the services: `backend/gumball_factory/platform/services/` for what the apps share and `backend/gumball_factory/docket/services/` for tickets. The REST routers and the MCP tools validate input and call those services, so the UI, the API and agents always follow the same rules.
 
 ## 🧑‍💻 Development
 
-> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Want to hack on Radicle (or on me)? Start here.
+> <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Want to hack on Gumball Factory (or on me)? Start here.
 
 | Part | Needs | Commands |
 | --- | --- | --- |
-| Backend | Python 3.12, [uv](https://docs.astral.sh/uv/), Docker (for tests) | `cd backend && uv sync`, `uv run uvicorn radicle.main:app --reload`, `uv run pytest` |
+| Backend | Python 3.12, [uv](https://docs.astral.sh/uv/), Docker (for tests) | `cd backend && uv sync`, `uv run uvicorn gumball-factory.main:app --reload`, `uv run pytest` |
 | Frontend | Node 22, pnpm 9 | `cd frontend && pnpm install`, `pnpm dev` (proxies to `:8000`), `pnpm check` |
 | Local database | Docker | `docker compose up -d db`, then `cd backend && uv run alembic upgrade head` |
 
 ```bash
 # Run these before every push (GitHub Actions CI is paused for now)
-cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy radicle && uv run pytest --cov
+cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy gumball-factory && uv run pytest --cov
 cd frontend && pnpm check && pnpm build
 scripts/smoke.sh   # builds the image and runs it from scratch on port 8001
 ```
 
 - Backend tests start PostgreSQL 16 with testcontainers (no SQLite). Tests marked `slow` also start Keycloak.
 - If you change the API: `cd backend && uv run python ../scripts/export_openapi.py`, then `cd frontend && pnpm api:types`.
-- Demo data: `cd backend && uv run python ../scripts/seed.py --tickets 400 --project PA`, then sign in as `fernando@example.com` / `radicle-demo`.
+- Demo data: `cd backend && uv run python ../scripts/seed.py --tickets 400 --project PA`, then sign in as `fernando@example.com` / `gumball-factory-demo`.
 - Design documents, decisions (ADRs) and progress notes live in [`docs/`](docs/). They are written in Spanish.
 
 ## 🗺️ Roadmap and known issues
@@ -582,7 +582,7 @@ scripts/smoke.sh   # builds the image and runs it from scratch on port 8001
 
 Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning and visibility, and the Inbox with access control. This is what comes next. Ideas and help are very welcome.
 
-**Radicle Folio (docs)**
+**Gumball Factory Folio (docs)**
 
 - [x] Phase 0: shared platform (one backend split into `platform`, `docket` and `folio`, generic authorization, AI provider, suite switch, Folio's skeleton).
 - [x] Phase 1: spaces and pages, the editor, publishing with versions, permissions, agent submissions with approval, RAG search and Folio's MCP.
@@ -627,7 +627,7 @@ Stages 1 to 4 are complete: core and MCP, configuration and daily work, planning
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Every contribution counts, from a typo to a feature. Come say hi!
 
-Radicle is a community project, and contributions of every size are welcome: bug reports, docs, translations, design and code.
+Gumball Factory is a community project, and contributions of every size are welcome: bug reports, docs, translations, design and code.
 
 <p align="center"><img src="docs/images/contributing-flow.svg" alt="How a change gets in" width="900"></p>
 
@@ -651,8 +651,8 @@ Read **[CONTRIBUTING.md](CONTRIBUTING.md)** for the full guide: setup, code rule
 
 > <img src="docs/images/radi.svg" alt="Radi" width="22" align="top"> **Radi:** Free software, and it stays free.
 
-Radicle is free software under the **[GNU Affero General Public License v3.0](LICENSE)** (AGPL-3.0-only).
+Gumball Factory is free software under the **[GNU Affero General Public License v3.0](LICENSE)** (AGPL-3.0-only).
 
-In short: you can use, study, modify and share Radicle, including at your company and for commercial work. If you change it and let other people use your version, **including over a network** (for example, hosting it for your team or your customers), you must offer them the source code of your changes under the same license. That way, improvements come back to the community instead of staying in private forks.
+In short: you can use, study, modify and share Gumball Factory, including at your company and for commercial work. If you change it and let other people use your version, **including over a network** (for example, hosting it for your team or your customers), you must offer them the source code of your changes under the same license. That way, improvements come back to the community instead of staying in private forks.
 
 By contributing, you agree that your contributions are licensed under the same terms.

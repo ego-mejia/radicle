@@ -3,8 +3,8 @@
 import httpx
 import pytest
 
-from radicle.platform.services import safe_fetch
-from radicle.platform.services.safe_fetch import Blocked, _public, fetch
+from gumball_factory.platform.services import safe_fetch
+from gumball_factory.platform.services.safe_fetch import Blocked, _public, fetch
 
 DNS = {
     "blog.example.com": ["93.184.216.34"],

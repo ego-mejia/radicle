@@ -9,11 +9,11 @@ from httpx import AsyncClient
 from sqlalchemy import ColumnElement, select, true
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket.db.models import Project, Ticket
-from radicle.platform import authz
-from radicle.platform.db.models import User
-from radicle.platform.errors import Forbidden, NotFound
-from radicle.platform.services import groups
+from gumball_factory.docket.db.models import Project, Ticket
+from gumball_factory.platform import authz
+from gumball_factory.platform.db.models import User
+from gumball_factory.platform.errors import Forbidden, NotFound
+from gumball_factory.platform.services import groups
 from tests.conftest import Team, new_ticket, patch_ticket
 
 

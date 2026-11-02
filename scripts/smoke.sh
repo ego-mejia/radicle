@@ -5,11 +5,11 @@
 # never touches the stack you develop with.
 set -euo pipefail
 
-export COMPOSE_PROJECT_NAME="${SMOKE_PROJECT:-radicle-smoke}"
+export COMPOSE_PROJECT_NAME="${SMOKE_PROJECT:-gumball-factory-smoke}"
 # Its own image too, so a smoke build never replaces the image of your everyday install.
-export RADICLE_IMAGE="${SMOKE_IMAGE:-radicle-smoke}"
-export RADICLE_PORT="${SMOKE_PORT:-8001}"
-BASE_URL="${1:-http://localhost:${RADICLE_PORT}}"
+export GUMBALL_FACTORY_IMAGE="${SMOKE_IMAGE:-gumball-factory-smoke}"
+export GUMBALL_FACTORY_PORT="${SMOKE_PORT:-8001}"
+BASE_URL="${1:-http://localhost:${GUMBALL_FACTORY_PORT}}"
 JAR="$(mktemp)"
 trap 'rm -f "$JAR"; [ "${SMOKE_KEEP:-0}" = 1 ] || docker compose down -v >/dev/null 2>&1' EXIT
 
@@ -35,7 +35,7 @@ echo "==> setup"
 curl -fsS -c "$JAR" -H 'Content-Type: application/json' "$BASE_URL/api/v1/setup" \
   -d '{"handle":"admin","display_name":"Admin","email":"admin@example.com","password":"smoke-password"}' \
   >/dev/null || fail "setup"
-CSRF="$(awk '$6 == "radicle_csrf" {print $7}' "$JAR")"
+CSRF="$(awk '$6 == "gumball_factory_csrf" {print $7}' "$JAR")"
 
 echo "==> create agent"
 TOKEN="$(curl -fsS -b "$JAR" -H "X-CSRF-Token: $CSRF" -H 'Content-Type: application/json' \
@@ -62,7 +62,7 @@ mcp() {
 
 echo "==> MCP initialize"
 mcp '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"smoke","version":"1"}}}' \
-  | grep -q '"radicle"' || fail "MCP initialize"
+  | grep -q '"gumball-factory"' || fail "MCP initialize"
 
 echo "==> MCP whoami"
 mcp '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"whoami","arguments":{}}}' \

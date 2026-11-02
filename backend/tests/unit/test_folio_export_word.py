@@ -5,7 +5,7 @@ import io
 from docx import Document
 from PIL import Image
 
-from radicle.folio.services.exporting.word import _Writer
+from gumball_factory.folio.services.exporting.word import _Writer
 from tests.unit.folio_docs import EVERY_BLOCK
 
 
@@ -49,7 +49,7 @@ def test_links_and_live_blocks() -> None:
             {
                 "type": "text",
                 "text": "la guía",
-                "marks": [{"type": "link", "attrs": {"href": "https://radicle.dev"}}],
+                "marks": [{"type": "link", "attrs": {"href": "https://gumball-factory.dev"}}],
             }
         ],
     }
@@ -58,6 +58,6 @@ def test_links_and_live_blocks() -> None:
     )
     xml = doc.paragraphs[0]._p.xml
     assert "w:hyperlink" in xml and "la guía" in xml
-    assert "Live content from Radicle" in _text(doc)
+    assert "Live content from Gumball Factory" in _text(doc)
     rels = [r.target_ref for r in doc.part.rels.values() if r.is_external]
-    assert rels == ["https://radicle.dev"]
+    assert rels == ["https://gumball-factory.dev"]

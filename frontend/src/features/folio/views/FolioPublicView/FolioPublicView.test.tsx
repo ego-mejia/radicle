@@ -83,7 +83,7 @@ describe('FolioPublicView', () => {
       'src',
       `/api/v1/folio/pub/${TOKEN}/assets/a1`,
     );
-    expect(screen.getByRole('note')).toHaveTextContent(/open it in Radicle/);
+    expect(screen.getByRole('note')).toHaveTextContent(/open it in Gumball Factory/);
     expect(screen.queryByRole('navigation', { name: 'Pages' })).toBeNull();
   });
 

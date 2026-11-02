@@ -6,7 +6,7 @@ from tests.conftest import Team, new_ticket, patch_ticket
 
 @pytest.fixture
 async def board(client: AsyncClient, board: Team) -> Team:
-    """PA detached from Radicle default, so its fields can be edited here."""
+    """PA detached from Gumball Factory default, so its fields can be edited here."""
     r = await client.post("/api/v1/projects/PA/detach", headers=board.instance.headers)
     assert r.status_code == 200, r.text
     return board
@@ -118,7 +118,12 @@ async def test_field_that_does_not_apply(client: AsyncClient, board: Team) -> No
         ("date", "2026-11-30", "2026-11-30", "30/11/2026"),
         ("checkbox", True, True, "yes"),
         ("user", "@luis", "luis", "olga"),
-        ("url", "https://radicle.dev", "https://radicle.dev", "ftp://radicle.dev"),
+        (
+            "url",
+            "https://gumball-factory.dev",
+            "https://gumball-factory.dev",
+            "ftp://gumball-factory.dev",
+        ),
     ],
 )
 async def test_values_by_type(

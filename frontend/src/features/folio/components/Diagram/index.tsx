@@ -5,7 +5,7 @@ import * as S from './style';
 
 type Props = { source: string; caption?: string | null };
 
-/** A Mermaid diagram (Folio 3.4) in Radicle's colors. Mermaid loads only when one shows,
+/** A Mermaid diagram (Folio 3.4) in Gumball Factory's colors. Mermaid loads only when one shows,
  * and a diagram that doesn't compile says why instead of disappearing. */
 export function Diagram({ source, caption }: Props) {
   const { t } = useTranslation();

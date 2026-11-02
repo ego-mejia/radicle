@@ -29,7 +29,7 @@ async function api<T = unknown>(
 ): Promise<T> {
   return page.evaluate(
     async ({ method, url, body, ok }) => {
-      const csrf = document.cookie.match(/radicle_csrf=([^;]+)/)?.[1] ?? '';
+      const csrf = document.cookie.match(/gumball_factory_csrf=([^;]+)/)?.[1] ?? '';
       const r = await fetch(`/api/v1${url}`, {
         method,
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
@@ -49,11 +49,13 @@ test.beforeAll(async ({ browser }) => {
 
 test('switch to Folio from the logo and back without signing in again', async () => {
   await page.goto('/p/PA/board');
-  await page.getByRole('button', { name: /Switch app, now Radicle Docket/ }).click();
-  await page.getByRole('menuitem', { name: /Radicle Folio/ }).click();
+  await page.getByRole('button', { name: /Switch app, now Gumball Factory Docket/ }).click();
+  await page.getByRole('menuitem', { name: /Gumball Factory Folio/ }).click();
   await expect(page).toHaveURL(/\/folio$/);
   await expect(page.getByRole('heading', { name: 'Home', exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: /Switch app, now Radicle Folio/ })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /Switch app, now Gumball Factory Folio/ }),
+  ).toBeVisible();
 
   // g d goes back to where Docket was left; g f returns to Folio.
   await page.keyboard.press('g');
@@ -98,8 +100,8 @@ test('without a Folio role, Folio is not in the switch', async ({ browser }) => 
   try {
     const teo = await signIn(browser, OUTSIDER);
     await teo.getByRole('button', { name: /Switch app/ }).click();
-    await expect(teo.getByRole('menuitem', { name: /Radicle Docket/ })).toBeVisible();
-    await expect(teo.getByRole('menuitem', { name: /Radicle Folio/ })).toHaveCount(0);
+    await expect(teo.getByRole('menuitem', { name: /Gumball Factory Docket/ })).toBeVisible();
+    await expect(teo.getByRole('menuitem', { name: /Gumball Factory Folio/ })).toHaveCount(0);
     await teo.keyboard.press('Escape');
     await teo.goto('/folio');
     await expect(teo.getByRole('heading', { name: 'Projects' })).toBeVisible();

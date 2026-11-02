@@ -6,7 +6,7 @@ import copy
 import pytest
 from httpx import AsyncClient
 
-from radicle.folio.services import plugin_blocks
+from gumball_factory.folio.services import plugin_blocks
 from tests.conftest import Team
 from tests.integration.folio_helpers import API
 
@@ -41,7 +41,7 @@ async def test_acceptance_the_example_adds_a_block(client: AsyncClient, team: Te
         "default": "",
         "options": [],
     }
-    assert "window.radicle" in countdown["html"]
+    assert "window.gumballFactory" in countdown["html"]
     await client.patch(f"{ADMIN}/radicle.countdown", headers=i, json={"enabled": False})
     assert (await client.get(f"{API}/plugin-blocks", headers=m)).json()["items"] == []
     assert (await client.get(ADMIN, headers=i)).json()["examples"][0]["installed"] is True

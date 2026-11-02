@@ -17,7 +17,7 @@ import {
 import { ChatForm } from './components/ChatForm';
 import * as S from './style';
 
-/** Slack and Teams: notices on channels and `/radicle search` / `ask` (Folio 5.4). */
+/** Slack and Teams: notices on channels and `/gumball-factory search` / `ask` (Folio 5.4). */
 export function ChatCard() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();

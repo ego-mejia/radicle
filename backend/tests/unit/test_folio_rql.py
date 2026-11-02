@@ -6,9 +6,9 @@ from datetime import UTC, datetime
 import pytest
 from sqlalchemy.dialects import postgresql
 
-from radicle.folio.query.compiler import Context, compile_query
-from radicle.platform.query.errors import RQLError
-from radicle.platform.query.parser import parse
+from gumball_factory.folio.query.compiler import Context, compile_query
+from gumball_factory.platform.query.errors import RQLError
+from gumball_factory.platform.query.parser import parse
 
 CTX = Context(user_id=uuid.uuid4(), now=datetime(2026, 10, 20, 12, tzinfo=UTC))
 

@@ -2,7 +2,7 @@
 
 import uuid
 
-from radicle.folio.services.exporting import print_link
+from gumball_factory.folio.services.exporting import print_link
 
 ID = uuid.UUID("0b5c2a4e-1111-4111-8111-111111111111")
 

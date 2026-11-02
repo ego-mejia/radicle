@@ -5,9 +5,14 @@ from httpx import AsyncClient
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.docket.db.models import DailyStatusCount, Ticket, TicketEvent, TicketStatusPeriod
-from radicle.docket.services import period_builder, periods
-from radicle.platform.config import get_settings
+from gumball_factory.docket.db.models import (
+    DailyStatusCount,
+    Ticket,
+    TicketEvent,
+    TicketStatusPeriod,
+)
+from gumball_factory.docket.services import period_builder, periods
+from gumball_factory.platform.config import get_settings
 from tests.conftest import Team, make_project, new_ticket, run_jobs
 
 API = "/api/v1"
@@ -152,7 +157,7 @@ async def test_snapshot_job_runs_from_the_queue(
     db: AsyncSession, board: Team, client: AsyncClient
 ) -> None:
     await new_ticket(client, board.member)
-    from radicle.platform.services import queue
+    from gumball_factory.platform.services import queue
 
     await queue.enqueue(db, periods.SNAPSHOT_JOB)
     assert await run_jobs(db) == ["daily_snapshot"]

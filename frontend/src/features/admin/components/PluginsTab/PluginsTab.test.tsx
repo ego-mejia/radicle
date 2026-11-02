@@ -9,7 +9,7 @@ const COUNTDOWN = {
   name: 'Cuenta regresiva',
   version: '1.0.0',
   description: 'Días que faltan',
-  author: 'Radicle',
+  author: 'Gumball Factory',
   enabled: true,
   hooks: ['folio.register_blocks'],
   manifest: {},

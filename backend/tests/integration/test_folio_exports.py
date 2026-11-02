@@ -11,12 +11,12 @@ from PIL import Image
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.exports import ExportFormat, ExportStatus
-from radicle.folio.db.models import FolioNode, FolioSpace
-from radicle.folio.services import exports
-from radicle.folio.services.exporting import browser
-from radicle.platform.db.models import User
-from radicle.platform.errors import Forbidden, NotFound, ValidationFailed
+from gumball_factory.folio.db.exports import ExportFormat, ExportStatus
+from gumball_factory.folio.db.models import FolioNode, FolioSpace
+from gumball_factory.folio.services import exports
+from gumball_factory.folio.services.exporting import browser
+from gumball_factory.platform.db.models import User
+from gumball_factory.platform.errors import Forbidden, NotFound, ValidationFailed
 from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, publish
 

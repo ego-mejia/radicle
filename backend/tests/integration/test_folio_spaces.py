@@ -4,10 +4,10 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.folio.db.models import SpaceKind
-from radicle.folio.services import spaces
-from radicle.platform.db.models import User
-from radicle.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
+from gumball_factory.folio.db.models import SpaceKind
+from gumball_factory.folio.services import spaces
+from gumball_factory.platform.db.models import User
+from gumball_factory.platform.errors import Conflict, Forbidden, NotFound, ValidationFailed
 from tests.conftest import Team
 
 

@@ -10,8 +10,8 @@ async def test_login_sets_httponly_session_and_csrf(client: AsyncClient, admin: 
     )
     assert r.status_code == 200
     cookies = r.headers.get_list("set-cookie")
-    session = next(c for c in cookies if c.startswith("radicle_session="))
-    csrf = next(c for c in cookies if c.startswith("radicle_csrf="))
+    session = next(c for c in cookies if c.startswith("gumball_factory_session="))
+    csrf = next(c for c in cookies if c.startswith("gumball_factory_csrf="))
     assert "HttpOnly" in session and "SameSite=lax" in session
     assert "HttpOnly" not in csrf
 
@@ -102,7 +102,7 @@ async def test_logout_with_token_is_rejected(client: AsyncClient, admin: Actor) 
 
 
 async def test_expired_session_cookie(client: AsyncClient, admin: Actor) -> None:
-    client.cookies.set("radicle_session", "not-a-real-session")
+    client.cookies.set("gumball_factory_session", "not-a-real-session")
     r = await client.get("/api/v1/me")
     assert r.status_code == 401
     assert "expired" in r.json()["detail"]
@@ -112,3 +112,17 @@ async def test_session_survives_relogin(client: AsyncClient, admin: Actor) -> No
     actor = await login(client, "admin@example.com", ADMIN_PASSWORD)
     r = await client.get("/api/v1/me")
     assert r.json()["handle"] == actor.handle
+
+
+async def test_pre_rename_session_cookie_still_signs_in(client: AsyncClient, admin: Actor) -> None:
+    """ADR 0046: a browser that still has radicle_session stays signed in and gets the new
+    cookies in the same response."""
+    token = client.cookies.get("gumball_factory_session")
+    assert token
+    client.cookies.clear()
+    client.cookies.set("radicle_session", token)
+    r = await client.get("/api/v1/me")
+    assert r.status_code == 200
+    cookies = r.headers.get_list("set-cookie")
+    assert any(c.startswith("gumball_factory_session=") for c in cookies)
+    assert any(c.startswith("radicle_session=") and "Max-Age=0" in c for c in cookies)

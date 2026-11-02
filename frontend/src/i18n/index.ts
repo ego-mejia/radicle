@@ -16,7 +16,7 @@ void i18n
     supportedLngs: LANGUAGES,
     nonExplicitSupportedLngs: true,
     interpolation: { escapeValue: false },
-    detection: { order: ['localStorage', 'navigator'], lookupLocalStorage: 'radicle.lang' },
+    detection: { order: ['localStorage', 'navigator'], lookupLocalStorage: 'gumball-factory.lang' },
   });
 
 export default i18n;

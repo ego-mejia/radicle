@@ -9,7 +9,7 @@ const TERMS = [
     id: 't1',
     term: 'Docket',
     aliases: [],
-    definition: 'El tracker de tickets de Radicle.',
+    definition: 'El tracker de tickets de Gumball Factory.',
     status: 'approved',
     source: { id: '9f3c0000-0000-4000-8000-000000000001', title: 'Guía de Docket', slug: 'guia' },
     updated_at: '2026-10-21T10:00:00Z',
@@ -55,7 +55,9 @@ describe('GlossaryTooltips', () => {
       fireEvent.mouseMove(content, { clientX: 20, clientY: 20 });
       expect(screen.getByRole('tooltip')).toBeInTheDocument();
     });
-    expect(screen.getByRole('tooltip')).toHaveTextContent('El tracker de tickets de Radicle.');
+    expect(screen.getByRole('tooltip')).toHaveTextContent(
+      'El tracker de tickets de Gumball Factory.',
+    );
     expect(screen.getByRole('link', { name: 'Source: Guía de Docket' })).toHaveAttribute(
       'href',
       '/folio/p/9f3c0000-0000-4000-8000-000000000001-guia',

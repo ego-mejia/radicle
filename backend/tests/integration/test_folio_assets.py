@@ -3,7 +3,7 @@
 import pytest
 from httpx import AsyncClient
 
-from radicle.folio.services import assets
+from gumball_factory.folio.services import assets
 from tests.conftest import Team
 from tests.integration.folio_helpers import publish
 from tests.integration.test_attachments import png

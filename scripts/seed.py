@@ -1,22 +1,22 @@
 """Seed a project with realistic tickets for demos and benchmarks.
 
 Usage: cd backend && uv run python ../scripts/seed.py --tickets 10000 [--project PERF]
-Uses RADICLE_DATABASE_URL. Demo users get the password from --password.
+Uses GUMBALL_FACTORY_DATABASE_URL. Demo users get the password from --password.
 """
 
 import argparse
 import asyncio
 import sys
 
-from radicle.platform.db.session import dispose_engine, get_sessionmaker
-from radicle.seed import seed
+from gumball_factory.platform.db.session import dispose_engine, get_sessionmaker
+from gumball_factory.seed import seed
 
 
 async def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tickets", type=int, default=10_000)
     parser.add_argument("--project", default="PERF")
-    parser.add_argument("--password", default="radicle-demo")
+    parser.add_argument("--password", default="gumball-factory-demo")
     args = parser.parse_args()
     async with get_sessionmaker()() as db:
         result = await seed(

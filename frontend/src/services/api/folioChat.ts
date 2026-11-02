@@ -1,5 +1,5 @@
 import { readEvents } from '../../lib/sse';
-import { ApiError, CSRF_COOKIE, api, readCookie, unwrap, type Problem } from './client';
+import { ApiError, api, csrfToken, unwrap, type Problem } from './client';
 import type { components } from './schema';
 
 type S = components['schemas'];
@@ -82,7 +82,7 @@ export async function askDocs(
   signal?: AbortSignal,
 ): Promise<ChatMessage> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-  const token = readCookie(CSRF_COOKIE);
+  const token = csrfToken();
   if (token) headers['X-CSRF-Token'] = token;
   const response = await globalThis.fetch(
     `${window.location.origin}/api/v1/folio/chat/sessions/${sessionId}/messages`,

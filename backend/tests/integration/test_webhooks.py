@@ -8,9 +8,9 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.db.models import DeliveryStatus, OutboxEvent, User, WebhookDelivery
-from radicle.platform.errors import ValidationFailed
-from radicle.platform.services import events, safe_fetch, webhooks
+from gumball_factory.platform.db.models import DeliveryStatus, OutboxEvent, User, WebhookDelivery
+from gumball_factory.platform.errors import ValidationFailed
+from gumball_factory.platform.services import events, safe_fetch, webhooks
 from tests.conftest import Team, run_jobs
 
 events.public_event("test.happened", "Something happened (tests)")
@@ -56,7 +56,7 @@ async def _admin(db: AsyncSession, team: Team) -> User:
 def _data(**changes: object) -> webhooks.WebhookData:
     base: dict[str, object] = {
         "name": "CI",
-        "url": "https://hooks.example.com/radicle",
+        "url": "https://hooks.example.com/gumball-factory",
         "events": ["test.happened"],
         "filter": {},
     }
@@ -72,9 +72,14 @@ async def test_an_event_arrives_signed_once(
     await run_jobs(db)
     [request] = receiver.requests
     assert request.headers["host"] == "hooks.example.com"
+    assert request.headers["gumball-factory-event"] == "test.happened"
+    # ADR 0046: receivers written for the pre-rename headers keep working.
     assert request.headers["radicle-event"] == "test.happened"
-    assert webhooks.verify(secret, request.headers["radicle-signature"], request.content)
-    assert not webhooks.verify("whsec_other", request.headers["radicle-signature"], request.content)
+    assert request.headers["radicle-signature"] == request.headers["gumball-factory-signature"]
+    assert webhooks.verify(secret, request.headers["gumball-factory-signature"], request.content)
+    assert not webhooks.verify(
+        "whsec_other", request.headers["gumball-factory-signature"], request.content
+    )
     doc = json.loads(request.content)
     assert doc["event"] == "test.happened" and doc["data"] == {"what": "x"}
     [delivery] = await webhooks.deliveries(db, hook)

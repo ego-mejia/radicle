@@ -1,11 +1,11 @@
-from radicle import cli
-from radicle.platform.services import queue
-from radicle.worker import app as worker_app
+from gumball_factory import cli
+from gumball_factory.platform.services import queue
+from gumball_factory.worker import app as worker_app
 
 
 def test_conninfo() -> None:
-    url = "postgresql+asyncpg://u:p@db:5432/radicle"
-    assert worker_app.conninfo(url) == "postgresql://u:p@db:5432/radicle"
+    url = "postgresql+asyncpg://u:p@db:5432/gumball_factory"
+    assert worker_app.conninfo(url) == "postgresql://u:p@db:5432/gumball_factory"
     assert worker_app.conninfo("postgresql://x/y") == "postgresql://x/y"
 
 

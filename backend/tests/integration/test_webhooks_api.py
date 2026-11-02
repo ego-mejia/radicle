@@ -6,11 +6,11 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.services import safe_fetch, webhooks
+from gumball_factory.platform.services import safe_fetch, webhooks
 from tests.conftest import Team, run_jobs
 
 URL = "/api/v1/webhooks"
-BODY = {"name": "CI", "url": "https://93.184.216.34/radicle", "events": []}
+BODY = {"name": "CI", "url": "https://93.184.216.34/gumball-factory", "events": []}
 
 
 @pytest.fixture
@@ -39,14 +39,16 @@ async def test_manage_ping_and_read_the_log(
     assert r.status_code == 202 and r.json()["event"] == "ping"
     await run_jobs(db)
     [request] = received
-    assert webhooks.verify(secret, request.headers["radicle-signature"], request.content)
+    assert webhooks.verify(secret, request.headers["gumball-factory-signature"], request.content)
     log = (await client.get(f"{URL}/{hook['id']}/deliveries", headers=i)).json()
     assert log[0]["status"] == "sent" and log[0]["response_status"] == 204
     r = await client.post(f"{URL}/{hook['id']}/deliveries/{log[0]['id']}/redeliver", headers=i)
     assert r.status_code == 202
     new = (await client.post(f"{URL}/{hook['id']}/secret", headers=i)).json()["secret"]
     await run_jobs(db)
-    assert webhooks.verify(new, received[1].headers["radicle-signature"], received[1].content)
+    assert webhooks.verify(
+        new, received[1].headers["gumball-factory-signature"], received[1].content
+    )
     r = await client.put(f"{URL}/{hook['id']}", headers=i, json=BODY | {"active": False})
     assert r.json()["active"] is False
     assert [h["name"] for h in (await client.get(URL, headers=i)).json()] == ["CI"]

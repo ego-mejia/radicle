@@ -25,7 +25,7 @@ const SCHEMA = {
   languages: [entry('es', 'Español')],
 };
 const METADATA = {
-  description: 'Cómo conectar un agente a Radicle por MCP, paso a paso y con el token.',
+  description: 'Cómo conectar un agente a Gumball Factory por MCP, paso a paso y con el token.',
   doc_type: 'how-to',
   labels: ['mcp', 'agentes'],
   owner: 'fernando',

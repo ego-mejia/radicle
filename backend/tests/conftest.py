@@ -2,7 +2,7 @@ import os
 import shutil
 
 # The app refuses to start without it (it encrypts secrets in the database).
-os.environ.setdefault("RADICLE_SECRET_KEY", "tests-only-secret-key-0123456789")
+os.environ.setdefault("GUMBALL_FACTORY_SECRET_KEY", "tests-only-secret-key-0123456789")
 import subprocess
 import sys
 from collections.abc import AsyncIterator, Iterator
@@ -16,11 +16,11 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from testcontainers.community.postgres import PostgresContainer
 
-from radicle.platform import security
-from radicle.platform.api.ratelimit import login_limiter
-from radicle.platform.config import get_settings
-from radicle.platform.db.session import get_db
-from radicle.platform.services import queue
+from gumball_factory.platform import security
+from gumball_factory.platform.api.ratelimit import login_limiter
+from gumball_factory.platform.config import get_settings
+from gumball_factory.platform.db.session import get_db
+from gumball_factory.platform.services import queue
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 ADMIN_PASSWORD = "admin-password-1"
@@ -30,7 +30,7 @@ security._hasher = PasswordHasher(time_cost=1, memory_cost=1024, parallelism=1)
 
 
 def run_alembic(url: str, *args: str) -> None:
-    env = {**os.environ, "RADICLE_DATABASE_URL": url}
+    env = {**os.environ, "GUMBALL_FACTORY_DATABASE_URL": url}
     result = subprocess.run(
         [sys.executable, "-m", "alembic", *args],
         cwd=BACKEND_DIR,
@@ -43,7 +43,7 @@ def run_alembic(url: str, *args: str) -> None:
         raise AssertionError(f"alembic {' '.join(args)} failed:\n{result.stderr[-3000:]}")
 
 
-POSTGRES_IMAGE = "radicle-postgres:16-pgvector"
+POSTGRES_IMAGE = "gumball-factory-postgres:16-pgvector"
 
 
 @pytest.fixture(scope="session")
@@ -61,12 +61,12 @@ def postgres() -> Iterator[PostgresContainer]:
 
 @pytest.fixture(scope="session")
 def database_url(postgres: PostgresContainer, tmp_path_factory: pytest.TempPathFactory) -> str:
-    from radicle.platform.storage import get_storage
+    from gumball_factory.platform.storage import get_storage
 
     url = postgres.get_connection_url()
     run_alembic(url, "upgrade", "head")
-    os.environ["RADICLE_DATABASE_URL"] = url
-    os.environ["RADICLE_STORAGE_DIR"] = str(tmp_path_factory.mktemp("attachments"))
+    os.environ["GUMBALL_FACTORY_DATABASE_URL"] = url
+    os.environ["GUMBALL_FACTORY_STORAGE_DIR"] = str(tmp_path_factory.mktemp("attachments"))
     get_settings.cache_clear()
     get_storage.cache_clear()
     return url
@@ -96,7 +96,7 @@ async def db(engine) -> AsyncIterator[AsyncSession]:  # type: ignore[no-untyped-
 
 @pytest.fixture
 async def client(db: AsyncSession) -> AsyncIterator[AsyncClient]:
-    from radicle.main import create_app
+    from gumball_factory.main import create_app
 
     app = create_app()
 
@@ -110,7 +110,7 @@ async def client(db: AsyncSession) -> AsyncIterator[AsyncClient]:
 
     app.dependency_overrides[get_db] = _override_db
     login_limiter.reset()
-    from radicle.docket.public.router import tracking_limiter
+    from gumball_factory.docket.public.router import tracking_limiter
 
     tracking_limiter.reset()
     transport = ASGITransport(app=app, client=("10.0.0.1", 1234))
@@ -129,7 +129,9 @@ class Actor:
 async def login(client: AsyncClient, email: str, password: str) -> Actor:
     response = await client.post("/api/v1/auth/login", json={"email": email, "password": password})
     assert response.status_code == 200, response.text
-    return Actor(response.json()["handle"], {"X-CSRF-Token": client.cookies["radicle_csrf"]})
+    return Actor(
+        response.json()["handle"], {"X-CSRF-Token": client.cookies["gumball_factory_csrf"]}
+    )
 
 
 @pytest.fixture
@@ -144,7 +146,7 @@ async def admin(client: AsyncClient) -> Actor:
         },
     )
     assert response.status_code == 201, response.text
-    return Actor("fernando", {"X-CSRF-Token": client.cookies["radicle_csrf"]})
+    return Actor("fernando", {"X-CSRF-Token": client.cookies["gumball_factory_csrf"]})
 
 
 async def bearer_for_new_human(client: AsyncClient, admin: Actor, handle: str) -> Actor:
@@ -170,7 +172,7 @@ async def bearer_for_new_human(client: AsyncClient, admin: Actor, handle: str) -
         r = await other.post(
             "/api/v1/me/tokens",
             json={"name": "tests"},
-            headers={"X-CSRF-Token": other.cookies["radicle_csrf"]},
+            headers={"X-CSRF-Token": other.cookies["gumball_factory_csrf"]},
         )
         assert r.status_code == 201, r.text
     return Actor(handle, {"Authorization": f"Bearer {r.json()['token']}"})
@@ -272,7 +274,7 @@ async def run_jobs(db: AsyncSession) -> list[str]:
     """
     from sqlalchemy import text
 
-    import radicle.worker.app as worker_app
+    import gumball_factory.worker.app as worker_app
 
     for module in worker_app.JOB_MODULES:
         __import__(module)
@@ -309,7 +311,7 @@ class Clock:
 
 @pytest.fixture
 def clock(monkeypatch: pytest.MonkeyPatch) -> Clock:
-    from radicle.platform.db.models import base
+    from gumball_factory.platform.db.models import base
 
     c = Clock(base._system_clock())
     monkeypatch.setattr(base, "clock", lambda: c.now)

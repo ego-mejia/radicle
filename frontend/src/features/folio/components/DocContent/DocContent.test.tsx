@@ -17,7 +17,7 @@ const TEXT_BLOCKS = doc(
     {
       type: 'text',
       text: 'link',
-      marks: [{ type: 'link', attrs: { href: 'https://radicle.dev' } }],
+      marks: [{ type: 'link', attrs: { href: 'https://gumball-factory.dev' } }],
     },
     { type: 'hardBreak' },
     { type: 'mention', attrs: { handle: 'fernando' } },

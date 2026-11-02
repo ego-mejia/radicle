@@ -8,7 +8,7 @@ from tests.conftest import Team, run_jobs
 from tests.integration.folio_helpers import API, METADATA, agent_can_write
 from tests.mcp.conftest import error_text, folio_mcp, payload
 
-README = """Radicle is a self-hosted ticket tracker with MCP.
+README = """Gumball Factory is a self-hosted ticket tracker with MCP.
 
 # Quick start
 
@@ -37,7 +37,7 @@ async def test_acceptance_an_agent_posts_from_a_repo(
         args = {
             "space": "eng",
             "kind": "blog_post",
-            "title": "Radicle en 5 minutos",
+            "title": "Gumball Factory en 5 minutos",
             "content_md": README,
             "metadata": METADATA,
         }
@@ -50,7 +50,7 @@ async def test_acceptance_an_agent_posts_from_a_repo(
         )
         assert sent["status"] == "pending"
         mine = payload(await folio.call_tool("list_my_submissions", {"status": "pending"}))
-        assert [s["title"] for s in mine] == ["Radicle en 5 minutos"]
+        assert [s["title"] for s in mine] == ["Gumball Factory en 5 minutos"]
 
         # A Folio admin approves it from the queue (REST, as the web app does).
         i = team.instance.headers

@@ -1,6 +1,6 @@
 """Confluence's HTML space export into pages (Folio 5.3)."""
 
-from radicle.folio.services.importing.confluence import read_confluence
+from gumball_factory.folio.services.importing.confluence import read_confluence
 from tests.folio_import_fixtures import load
 
 
@@ -15,13 +15,15 @@ def test_a_space_export_becomes_its_tree() -> None:
     home, guides, guide, decisions = bundle.pages
     assert home.author == "fernando@example.com" and guide.author == "Ana López"
     assert "Bienvenido al space de **Ingeniería**." in home.markdown
-    assert "las guías" in home.markdown and "[el sitio](https://radicle.dev)" in home.markdown
+    assert (
+        "las guías" in home.markdown and "[el sitio](https://gumball-factory.dev)" in home.markdown
+    )
     assert "Home-Guias" not in home.markdown  # the table of contents macro is dropped
     assert "1. Instalar\n2. Conectar un agente\n  - Con un token" in guides.markdown
     assert guide.labels == ["mcp", "agentes"]
     assert "# Pasos" in guide.markdown and "![flow.png](import:a1)" in guide.markdown
     assert "> El token se ve una sola vez." in guide.markdown
-    assert "```\nclaude mcp add radicle --transport http\n```" in guide.markdown
+    assert "```\nclaude mcp add gumball-factory --transport http\n```" in guide.markdown
     assert "| URL | `/mcp` |" in guide.markdown
     assert '::file{asset=import:a2 name="spec.pdf"}' in guide.markdown
     assert '::file{asset=import:a3 name="notas.txt"}' in guide.markdown

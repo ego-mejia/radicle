@@ -1,11 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * End-to-end tests run against a real Radicle with a fresh database. The specs sign in
+ * End-to-end tests run against a real Gumball Factory with a fresh database. The specs sign in
  * more than the login limit allows in a minute, so raise it for the run:
  *   docker compose down -v
- *   RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE=100 docker compose up -d --build && pnpm e2e
- * RADICLE_E2E_URL points elsewhere; PLAYWRIGHT_CHANNEL=chrome uses the local Chrome.
+ *   GUMBALL_FACTORY_LOGIN_RATE_LIMIT_PER_MINUTE=100 docker compose up -d --build && pnpm e2e
+ * GUMBALL_FACTORY_E2E_URL points elsewhere; PLAYWRIGHT_CHANNEL=chrome uses the local Chrome.
  */
 export default defineConfig({
   testDir: './e2e',
@@ -16,7 +16,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   use: {
-    baseURL: process.env.RADICLE_E2E_URL ?? 'http://localhost:8000',
+    baseURL: process.env.GUMBALL_FACTORY_E2E_URL ?? 'http://localhost:8000',
     locale: 'en-US',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

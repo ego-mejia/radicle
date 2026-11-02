@@ -794,7 +794,7 @@
             "type": "boolean"
           },
           "managed_by_env": {
-            "description": "RADICLE_ASSISTANT_* variables set it; read-only",
+            "description": "GUMBALL_FACTORY_ASSISTANT_* variables set it; read-only",
             "title": "Managed By Env",
             "type": "boolean"
           },
@@ -8983,7 +8983,7 @@
             "type": "boolean"
           },
           "command_url": {
-            "description": "Where Slack or Teams sends /radicle commands",
+            "description": "Where Slack or Teams sends /gumball-factory commands",
             "title": "Command Url",
             "type": "string"
           },
@@ -12647,7 +12647,7 @@
       "PluginsOut": {
         "properties": {
           "examples": {
-            "description": "Plugins that ship with Radicle",
+            "description": "Plugins that ship with Gumball Factory",
             "items": {
               "$ref": "#/components/schemas/PluginExampleOut"
             },
@@ -12838,7 +12838,7 @@
                 "type": "null"
               }
             ],
-            "description": "Template to copy the configuration from; default Radicle default",
+            "description": "Template to copy the configuration from; default Gumball Factory default",
             "title": "Template Id"
           },
           "template_mode": {
@@ -17014,7 +17014,7 @@
                 "type": "null"
               }
             ],
-            "description": "Default: Radicle default"
+            "description": "Default: Gumball Factory default"
           },
           "description_md": {
             "default": "",
@@ -21109,7 +21109,7 @@
   },
   "info": {
     "description": "Open source, self-hosted ticket tracker with a built-in MCP server.",
-    "title": "Radicle",
+    "title": "Gumball Factory",
     "version": "0.1.0"
   },
   "openapi": "3.1.0",
@@ -21135,7 +21135,7 @@
         ]
       },
       "put": {
-        "description": "Only the fields sent change. Without a provider, the rest of Radicle still works.",
+        "description": "Only the fields sent change. Without a provider, the rest of Gumball Factory still works.",
         "operationId": "put_ai_api_v1_admin_ai_put",
         "requestBody": {
           "content": {
@@ -21344,7 +21344,7 @@
     },
     "/api/v1/admin/plugins/examples/{key}": {
       "post": {
-        "description": "Install a plugin that ships with Radicle, such as radicle.countdown.",
+        "description": "Install a plugin that ships with Gumball Factory, such as radicle.countdown.",
         "operationId": "install_example_api_v1_admin_plugins_examples__key__post",
         "parameters": [
           {
@@ -21769,7 +21769,7 @@
     },
     "/api/v1/assistant/chat": {
       "post": {
-        "description": "Ask Radi how to use Radicle. Answers come from the usage guide, written by the\nconfigured LLM when there is one.",
+        "description": "Ask Radi how to use Gumball Factory. Answers come from the usage guide, written by the\nconfigured LLM when there is one.",
         "operationId": "assistant_chat_api_v1_assistant_chat_post",
         "requestBody": {
           "content": {
@@ -32236,7 +32236,7 @@
     },
     "/api/v1/hooks/chat/{integration_id}/command": {
       "post": {
-        "description": "Slack slash commands (`/radicle search \u2026`, `/radicle ask \u2026`) and Teams outgoing\nwebhooks. The answer uses the permissions of the Radicle user behind the sender.",
+        "description": "Slack slash commands (`/gumball-factory search \u2026`, `/gumball-factory ask \u2026`) and Teams outgoing\nwebhooks. The answer uses the permissions of the Gumball Factory user behind the sender.",
         "operationId": "chat_command_api_v1_hooks_chat__integration_id__command_post",
         "parameters": [
           {
@@ -32282,7 +32282,7 @@
     },
     "/api/v1/hooks/chat/{integration_id}/events": {
       "post": {
-        "description": "Slack's Events API (Request URL): Radicle previews its own links (`link_shared`).",
+        "description": "Slack's Events API (Request URL): Gumball Factory previews its own links (`link_shared`).",
         "operationId": "chat_events_api_v1_hooks_chat__integration_id__events_post",
         "parameters": [
           {
@@ -32393,7 +32393,7 @@
     },
     "/api/v1/integrations/link": {
       "post": {
-        "description": "Confirm that you are the Slack or Teams user who got this link from /radicle.",
+        "description": "Confirm that you are the Slack or Teams user who got this link from /gumball-factory.",
         "operationId": "link_chat_account_api_v1_integrations_link_post",
         "requestBody": {
           "content": {
@@ -33203,7 +33203,7 @@
         ]
       },
       "post": {
-        "description": "Create a project from a template (Radicle default if none) and make you its admin.",
+        "description": "Create a project from a template (Gumball Factory default if none) and make you its admin.",
         "operationId": "create_project_api_v1_projects_post",
         "requestBody": {
           "content": {

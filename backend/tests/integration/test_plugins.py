@@ -5,7 +5,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from radicle.platform.services import plugins
+from gumball_factory.platform.services import plugins
 from tests.conftest import Team
 from tests.integration.plugin_helpers import manifest, test_hook
 

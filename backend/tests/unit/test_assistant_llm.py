@@ -5,8 +5,8 @@ import json
 import httpx
 import pytest
 
-from radicle.docket.services.assistant import llm, tours
-from radicle.docket.services.assistant.config import AssistantConfig
+from gumball_factory.docket.services.assistant import llm, tours
+from gumball_factory.docket.services.assistant.config import AssistantConfig
 
 STEPS = {"steps": [{"target": "nav.projects", "action": "click", "text": "Go"}]}
 

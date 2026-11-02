@@ -16,7 +16,8 @@ type Props = {
   onOpen: (key: string) => void;
 };
 
-const storageKey = (data: BoardData) => `radicle.lanes.${data.board.id}.${data.swimlane_by}`;
+const storageKey = (data: BoardData) =>
+  `gumball-factory.lanes.${data.board.id}.${data.swimlane_by}`;
 
 function readClosed(key: string): Set<string> {
   try {

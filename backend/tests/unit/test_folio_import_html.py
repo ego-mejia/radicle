@@ -1,6 +1,6 @@
 """HTML to Folio Markdown, for imports (Folio 5.3)."""
 
-from radicle.folio.services.importing.html_md import parse, to_markdown
+from gumball_factory.folio.services.importing.html_md import parse, to_markdown
 
 
 def test_html_becomes_markdown() -> None:
