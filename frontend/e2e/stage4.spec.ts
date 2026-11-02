@@ -33,7 +33,7 @@ async function api<T = unknown>(
 ): Promise<T> {
   return page.evaluate(
     async ({ method, url, body, ok, headers }) => {
-      const csrf = document.cookie.match(/radicle_csrf=([^;]+)/)?.[1] ?? '';
+      const csrf = document.cookie.match(/gumball_factory_csrf=([^;]+)/)?.[1] ?? '';
       const r = await fetch(`/api/v1${url}`, {
         method,
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf, ...headers },

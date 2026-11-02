@@ -8,7 +8,7 @@ const term = (id: string, name: string, status: string) => ({
   id,
   term: name,
   aliases: [],
-  definition: `${name} es parte de Radicle.`,
+  definition: `${name} es parte de Gumball Factory.`,
   status,
   source: null,
   updated_at: '2026-10-21T10:00:00Z',
@@ -36,7 +36,7 @@ describe('GlossaryAdmin', () => {
       }),
     });
     renderWithProviders(<GlossaryAdmin />);
-    expect(await screen.findByText('Folio es parte de Radicle.')).toBeInTheDocument();
+    expect(await screen.findByText('Folio es parte de Gumball Factory.')).toBeInTheDocument();
     await userEvent.click(await screen.findByRole('button', { name: 'Approve Docket' }));
     await waitFor(() => expect(screen.getByText('No suggestions waiting.')).toBeInTheDocument());
     expect(calls.find((c) => c.method === 'PATCH')?.body).toEqual({ status: 'approved' });

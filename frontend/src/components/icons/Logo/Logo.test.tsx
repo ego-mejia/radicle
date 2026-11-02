@@ -11,7 +11,7 @@ describe('Logo', () => {
         <Logo size={26} />
       </ThemeProvider>,
     );
-    const logo = screen.getByRole('img', { name: 'Radicle' });
+    const logo = screen.getByRole('img', { name: 'Gumball Factory' });
     expect(logo).toHaveAttribute('width', '26');
     expect(logo.querySelectorAll('.badge')).toHaveLength(1);
     expect(logo.querySelectorAll('.eye')).toHaveLength(2);

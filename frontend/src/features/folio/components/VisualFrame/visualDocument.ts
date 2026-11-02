@@ -11,8 +11,8 @@ export const VISUAL_SANDBOX = 'allow-scripts';
 export const MAX_HEIGHT = 2000;
 
 /** The page → visual message with the theme; the visual → page one with its height. */
-export const THEME_MESSAGE = 'radicle:theme';
-export const HEIGHT_MESSAGE = 'radicle:height';
+export const THEME_MESSAGE = 'gumball-factory:theme';
+export const HEIGHT_MESSAGE = 'gumball-factory:height';
 
 export type VisualTheme = {
   mode: 'light' | 'dark';

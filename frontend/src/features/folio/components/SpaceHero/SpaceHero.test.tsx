@@ -9,7 +9,7 @@ const SPACE = {
   id: 's1',
   key: 'eng',
   name: 'Ingeniería',
-  description: 'Cómo construimos Radicle.',
+  description: 'Cómo construimos Gumball Factory.',
   kind: 'team',
   icon: null,
   cover_asset_id: null,

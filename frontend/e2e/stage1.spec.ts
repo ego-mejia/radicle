@@ -168,7 +168,7 @@ test('create an agent and copy its token', async () => {
   await page.getByRole('button', { name: 'Copy Token' }).click();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(token);
   await expect(page.getByTestId('copy-Claude Code')).toContainText(
-    'claude mcp add --transport http radicle',
+    'claude mcp add --transport http gumball-factory',
   );
   await page.getByRole('button', { name: 'Done, I copied it' }).click();
   await expect(page.getByRole('dialog', { name: 'Your new token' })).toBeHidden();

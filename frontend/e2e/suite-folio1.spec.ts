@@ -13,7 +13,7 @@ let page: Page;
 async function api<T = unknown>(method: string, url: string, body?: unknown, token?: string) {
   return page.evaluate(
     async ({ method, url, body, token }) => {
-      const csrf = document.cookie.match(/radicle_csrf=([^;]+)/)?.[1] ?? '';
+      const csrf = document.cookie.match(/gumball_factory_csrf=([^;]+)/)?.[1] ?? '';
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       if (token) headers.Authorization = `Bearer ${token}`;
       else headers['X-CSRF-Token'] = csrf;
@@ -61,7 +61,7 @@ test('write a page, publish it with its metadata and read it', async () => {
   const publish = page.getByRole('dialog', { name: 'Publish' });
   await publish
     .getByLabel('Description')
-    .fill('Cómo desplegar Radicle en un servidor propio, paso a paso.');
+    .fill('Cómo desplegar Gumball Factory en un servidor propio, paso a paso.');
   await publish.getByLabel('Document type').selectOption({ index: 1 });
   await publish.getByLabel('Language').selectOption({ index: 1 });
   await publish.getByLabel('Labels').fill('deploy, e2e');

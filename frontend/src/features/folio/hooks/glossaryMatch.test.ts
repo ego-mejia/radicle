@@ -19,7 +19,7 @@ describe('glossaryMatches', () => {
       '<p>Abre <strong>Docket</strong> y busca en docketing.</p><p>Usa RQL en tickets.</p>';
     const found = glossaryMatches(root, [
       term('a', 'Docket'),
-      term('b', 'Radicle Query Language', ['rql']),
+      term('b', 'Gumball Factory Query Language', ['rql']),
       term('c', 'Folio'),
     ]);
     expect(found.map((m) => [m.term.id, m.range.toString()]).sort()).toEqual([

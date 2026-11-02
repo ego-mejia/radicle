@@ -14,7 +14,7 @@ function hue(text: string): number {
   return hash;
 }
 
-/** Initials for people, a bot for agents and a sprout for Radicle itself (system). */
+/** Initials for people, a bot for agents and a sprout for Gumball Factory itself (system). */
 export function Avatar({ handle, name, kind = 'human', size = 22 }: Props) {
   const label = name ? `${name} (@${handle})` : `@${handle}`;
   const initials = (name || handle)

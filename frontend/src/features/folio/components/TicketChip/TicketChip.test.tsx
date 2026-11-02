@@ -50,8 +50,8 @@ describe('TicketChip', () => {
 
   it('turns a pasted key or Docket link into a key', () => {
     expect(ticketKeyIn(' pa-4 ')).toBe('PA-4');
-    expect(ticketKeyIn('https://radicle.example.com/t/RAD-38')).toBe('RAD-38');
+    expect(ticketKeyIn('https://gumball-factory.example.com/t/RAD-38')).toBe('RAD-38');
     expect(ticketKeyIn('PA-4 y PA-5')).toBeNull();
-    expect(ticketKeyIn('https://radicle.example.com/p/PA/board')).toBeNull();
+    expect(ticketKeyIn('https://gumball-factory.example.com/p/PA/board')).toBeNull();
   });
 });

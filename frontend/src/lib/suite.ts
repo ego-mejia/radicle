@@ -1,4 +1,4 @@
-/** The apps of the Radicle suite and the last page each one showed, per user. */
+/** The apps of the Gumball Factory suite and the last page each one showed, per user. */
 export type SuiteApp = 'docket' | 'folio';
 
 export const HOME: Record<SuiteApp, string> = { docket: '/', folio: '/folio' };
@@ -7,7 +7,7 @@ export function appOf(pathname: string): SuiteApp {
   return pathname === '/folio' || pathname.startsWith('/folio/') ? 'folio' : 'docket';
 }
 
-const storageKey = (app: SuiteApp, handle: string) => `radicle.lastRoute.${app}.${handle}`;
+const storageKey = (app: SuiteApp, handle: string) => `gumball-factory.lastRoute.${app}.${handle}`;
 
 export function rememberRoute(handle: string, href: string): void {
   const app = appOf(href.split(/[?#]/)[0] ?? '/');

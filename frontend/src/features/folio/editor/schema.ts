@@ -1,4 +1,4 @@
-// Mirror of the server's document schema (backend/radicle/folio/services/schema.py): which
+// Mirror of the server's document schema (backend/gumball_factory/folio/services/schema.py): which
 // attributes each node and mark may carry. TipTap adds defaults the server does not know
 // (an ordered list's `type`, a link's `rel`), so documents go through `toFolioDoc` first.
 

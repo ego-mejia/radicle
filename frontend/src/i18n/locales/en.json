@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Radicle",
+    "name": "Gumball Factory",
     "tagline": "Tickets that grow with your team"
   },
   "common": {
@@ -257,7 +257,7 @@
   },
   "auth": {
     "setupTitle": "Plant the first seed",
-    "setupText": "Create the admin account for this Radicle instance.",
+    "setupText": "Create the admin account for this Gumball Factory instance.",
     "displayName": "Name",
     "handle": "Handle",
     "handleHint": "Used for @mentions: lowercase letters, digits, - and _.",
@@ -456,7 +456,7 @@
     "emptyText": "Enjoy the quiet. New work shows up here when someone assigns you."
   },
   "admin": {
-    "subtitle": "People, agents and projects of this Radicle instance.",
+    "subtitle": "People, agents and projects of this Gumball Factory instance.",
     "users": "Users",
     "agents": "Agents",
     "projects": "Projects",
@@ -950,7 +950,7 @@
     "visibilities": {
       "private": "Only me",
       "project": "Everyone in {{key}}",
-      "instance": "Everyone in Radicle"
+      "instance": "Everyone in Gumball Factory"
     }
   },
   "shortcuts": {
@@ -1235,7 +1235,7 @@
     "visibilityHelp": {
       "private": "Only you.",
       "project": "Members of the project. Each person sees only the tickets they can see.",
-      "instance": "Every user of this Radicle, each with their own permissions."
+      "instance": "Every user of this Gumball Factory, each with their own permissions."
     },
     "project": "Project",
     "widgetTitle": "Title",
@@ -1452,7 +1452,7 @@
     "groupClaim": "Groups claim",
     "groupClaimHint": "e.g. groups; leave empty to not sync groups",
     "mapping": "Group mapping",
-    "mappingHint": "One per line: provider value = Radicle group. Only these groups are added or removed on each sign-in.",
+    "mappingHint": "One per line: provider value = Gumball Factory group. Only these groups are added or removed on each sign-in.",
     "autoCreate": "Create accounts on first sign-in",
     "enabled": "On",
     "redirect": "Callback URL to register with the provider:",
@@ -1483,9 +1483,9 @@
   "assistant": {
     "open": "Ask Radi for help",
     "close": "Close Radi's help",
-    "title": "Radi, help with Radicle",
-    "subtitle": "Help with Radicle",
-    "greeting": "Hi! I'm Radi. Ask me how to do anything in Radicle.",
+    "title": "Radi, help with Gumball Factory",
+    "subtitle": "Help with Gumball Factory",
+    "greeting": "Hi! I'm Radi. Ask me how to do anything in Gumball Factory.",
     "placeholder": "How do I…",
     "ask": "Your question",
     "send": "Send",
@@ -1523,7 +1523,7 @@
       "removeKey": "Remove key",
       "test": "Test connection",
       "saved": "Assistant saved",
-      "managedByEnv": "Set by RADICLE_ASSISTANT_* environment variables on the server, so it is read-only here."
+      "managedByEnv": "Set by GUMBALL_FACTORY_ASSISTANT_* environment variables on the server, so it is read-only here."
     },
     "more": "Ask something else:",
     "tour": {
@@ -1556,12 +1556,12 @@
     "people_other": "{{count}} people",
     "agents_one": "{{count}} AI agent",
     "agents_other": "{{count}} AI agents",
-    "brand": "Tracked with Radicle",
+    "brand": "Tracked with Gumball Factory",
     "download": "Download image",
     "share": "Share on LinkedIn",
     "copied": "Image copied: paste it into your LinkedIn post.",
     "downloaded": "Image downloaded: attach it to your LinkedIn post.",
-    "post": "🎉 We just completed {{milestone}} in {{project}}! {{done}} tickets shipped, {{bugs}} bugs squashed and {{hours}} hours invested by {{team}}. Tracked with Radicle."
+    "post": "🎉 We just completed {{milestone}} in {{project}}! {{done}} tickets shipped, {{bugs}} bugs squashed and {{hours}} hours invested by {{team}}. Tracked with Gumball Factory."
   },
   "aiProvider": {
     "title": "AI provider",
@@ -1602,19 +1602,19 @@
   },
   "suite": {
     "switch": "Switch app, now {{app}}",
-    "menu": "Radicle apps",
+    "menu": "Gumball Factory apps",
     "switchTo": "Switch to",
     "current": "Current app",
     "admin": "Instance administration",
     "note": "Same session and same users in both apps.",
     "apps": {
       "docket": {
-        "name": "Radicle Docket",
+        "name": "Gumball Factory Docket",
         "badge": "DOCKET",
         "description": "Projects, tickets, sprints and reports"
       },
       "folio": {
-        "name": "Radicle Folio",
+        "name": "Gumball Factory Folio",
         "badge": "FOLIO",
         "description": "Docs, blog and knowledge"
       }
@@ -2631,7 +2631,7 @@
       }
     },
     "public": {
-      "liveOnly": "Live content from Radicle; open it in Radicle to see it.",
+      "liveOnly": "Live content from Gumball Factory; open it in Gumball Factory to see it.",
       "badge": "Public page",
       "pages": "Pages",
       "empty": "Nothing has been published here yet.",
@@ -2745,7 +2745,7 @@
         "with_errors": "with problems"
       },
       "authors": "Authors",
-      "authorsHelp": "Who each author in the export becomes in Radicle; they'll own their pages. People with the same email are picked for you.",
+      "authorsHelp": "Who each author in the export becomes in Gumball Factory; they'll own their pages. People with the same email are picked for you.",
       "authorOf": "Who {{name}} becomes",
       "nobody": "Nobody (I'll set the owner later)",
       "defaults": "Publish complete pages",
@@ -3082,7 +3082,7 @@
     "email": "Email",
     "inAppFor": "In the app: {{label}}",
     "emailFor": "By email: {{label}}",
-    "emailOff": "Email is off on this server: an admin sets RADICLE_SMTP_HOST to turn it on.",
+    "emailOff": "Email is off on this server: an admin sets GUMBALL_FACTORY_SMTP_HOST to turn it on.",
     "noTypes": "No notifications yet.",
     "types": {
       "folio": {
@@ -3115,11 +3115,11 @@
   },
   "integrations": {
     "webhooks": "Webhooks",
-    "webhooksHelp": "Radicle POSTs the events you pick to your receiver, signed with HMAC-SHA256 in the Radicle-Signature header. Failed deliveries retry for six hours.",
+    "webhooksHelp": "Gumball Factory POSTs the events you pick to your receiver, signed with HMAC-SHA256 in the Gumball-Factory-Signature header. Failed deliveries retry for six hours.",
     "newWebhook": "New webhook",
     "name": "Name",
     "url": "Receiver URL",
-    "urlHint": "A public https address. Radicle won't connect inside your network.",
+    "urlHint": "A public https address. Gumball Factory won't connect inside your network.",
     "space": "Only this space",
     "spaceHint": "A space key; empty means every space.",
     "events": "Events",
@@ -3142,7 +3142,7 @@
       "skipped": "Skipped"
     },
     "chat": "Slack and Teams",
-    "chatHelp": "Post events on channels, and answer /radicle search and /radicle ask with the permissions of whoever asks. Paste the command URL in Slack (slash command) or Teams (outgoing webhook); in Slack, paste the events URL too for link previews.",
+    "chatHelp": "Post events on channels, and answer /gumball-factory search and /gumball-factory ask with the permissions of whoever asks. Paste the command URL in Slack (slash command) or Teams (outgoing webhook); in Slack, paste the events URL too for link previews.",
     "newChat": "Connect Slack or Teams",
     "kind": "Kind",
     "slack": "Slack",
@@ -3161,9 +3161,9 @@
     "eventsUrl": "Events URL",
     "testChannel": "Send a test to {{channel}}",
     "linkTitle": "Connect Slack or Teams",
-    "linkHelp": "Radicle sent you here from /radicle. Connect that chat account to yours, so its answers show what you can see in Radicle.",
+    "linkHelp": "Gumball Factory sent you here from /gumball-factory. Connect that chat account to yours, so its answers show what you can see in Gumball Factory.",
     "linkConfirm": "Connect my account",
-    "linked": "Done: {{name}} now answers with your Radicle account. Go back to the chat and run /radicle again.",
+    "linked": "Done: {{name}} now answers with your Gumball Factory account. Go back to the chat and run /gumball-factory again.",
     "rules": "Automation rules",
     "rulesHelp": "When an event happens, or every hour or day, run actions with your permissions: notify a person or a channel, change a page's status, add a label, create a Docket ticket, archive. A rule never triggers itself in a loop.",
     "newRule": "New rule",
@@ -3196,7 +3196,7 @@
     "deleteTitle": "Delete this plugin?",
     "deleteMessage": "{{name}} will be removed. Pages that use its blocks keep them, but readers see a notice instead.",
     "examples": "Examples",
-    "examplesHelp": "Plugins that ship with Radicle.",
+    "examplesHelp": "Plugins that ship with Gumball Factory.",
     "install": "Install",
     "isInstalled": "Installed",
     "fromManifest": "Install from a manifest",

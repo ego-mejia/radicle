@@ -35,7 +35,7 @@ describe('DocContent read through a public link', () => {
       '/pub/tok/assets/f1',
     );
     expect(screen.getByText('PA-4')).toBeVisible();
-    expect(screen.getByRole('note')).toHaveTextContent(/open it in Radicle/);
+    expect(screen.getByRole('note')).toHaveTextContent(/open it in Gumball Factory/);
     expect(screen.getByRole('link', { name: /Un doc/ })).toHaveAttribute(
       'href',
       'https://example.com/doc',

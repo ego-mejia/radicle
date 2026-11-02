@@ -34,7 +34,7 @@ async function signIn(browser: Browser, who: { email: string; password: string }
 async function api<T = unknown>(method: string, url: string, body?: unknown) {
   return admin.evaluate(
     async ({ method, url, body }) => {
-      const csrf = document.cookie.match(/radicle_csrf=([^;]+)/)?.[1] ?? '';
+      const csrf = document.cookie.match(/gumball_factory_csrf=([^;]+)/)?.[1] ?? '';
       const r = await fetch(`/api/v1${url}`, {
         method,
         headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },

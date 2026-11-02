@@ -1,4 +1,4 @@
-// The publishing rules of backend/radicle/folio/services/metadata.py, checked while you type.
+// The publishing rules of backend/gumball_factory/folio/services/metadata.py, checked while you type.
 // The server checks them again; its 422 errors show on the same fields.
 
 export type Metadata = {

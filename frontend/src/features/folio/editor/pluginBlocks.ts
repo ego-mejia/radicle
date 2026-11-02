@@ -33,11 +33,12 @@ export function pluginBlockItems(): BlockItem[] {
   return items;
 }
 
-/** What a block's HTML gets before its own code: its values as window.radicle.data and the
- * reader's language (en, es) as window.radicle.lang. The sandbox can't read the app's. */
+/** What a block's HTML gets before its own code: its values as window.gumballFactory.data and
+ * the reader's language (en, es) as window.gumballFactory.lang. The sandbox can't read the
+ * app's. window.radicle, the name before ADR 0046, holds the same for older plugins. */
 export function pluginCode(html: string, data: Record<string, string>, lang = 'en'): string {
   const json = JSON.stringify({ data, lang }).replace(/</g, '\\u003c');
-  return `<script>window.radicle=${json};</script>${html}`;
+  return `<script>window.gumballFactory=window.radicle=${json};</script>${html}`;
 }
 
 export const PluginBlockNode = Node.create({

@@ -7,7 +7,7 @@ export const PX_PER_DAY: Record<Zoom, number> = { week: 36, month: 12, quarter: 
 
 const DAY_MS = 86_400_000;
 /** dataTransfer type for dragging an undated ticket onto the chart. */
-export const DRAG_TYPE = 'application/x-radicle-ticket';
+export const DRAG_TYPE = 'application/x-gumball-factory-ticket';
 
 /** Days since 1970-01-01 for a YYYY-MM-DD date (calendar days, no time zone shifts). */
 export function toDay(iso: string): number {

@@ -9,7 +9,7 @@ export type CardText = {
   subtitle: string; // the project
   stats: CardStat[]; // up to six
   footer: string; // who did it
-  brand: string; // "Tracked with Radicle"
+  brand: string; // "Tracked with Gumball Factory"
 };
 
 // LinkedIn's recommended size for a shared image.

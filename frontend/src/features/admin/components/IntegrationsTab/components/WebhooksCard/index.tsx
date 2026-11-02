@@ -158,7 +158,7 @@ export function WebhooksCard() {
               <Input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://ci.example.com/radicle"
+                placeholder="https://ci.example.com/gumball-factory"
               />
             </Field>
             <Field label={t('integrations.space')} hint={t('integrations.spaceHint')}>

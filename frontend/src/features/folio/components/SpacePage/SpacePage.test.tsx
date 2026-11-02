@@ -7,7 +7,7 @@ import { SpacePage } from '.';
 const SPACE = {
   key: 'docs',
   name: 'Ingeniería',
-  description: 'Cómo construimos Radicle.',
+  description: 'Cómo construimos Gumball Factory.',
   kind: 'team',
   icon: null,
   cover_asset_id: null,

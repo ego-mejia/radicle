@@ -19,7 +19,7 @@ const PIECES = 220;
 const GRAVITY = 900; // px/s²
 const DURATION = 4.5; // seconds
 
-/** A burst of confetti from both bottom corners, in Radicle's greens. */
+/** A burst of confetti from both bottom corners, in Gumball Factory's greens. */
 export function Confetti() {
   const canvas = useRef<HTMLCanvasElement>(null);
   const theme = useTheme();

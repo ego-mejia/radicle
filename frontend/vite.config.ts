@@ -3,10 +3,10 @@ import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
 import { defineConfig, type Plugin } from 'vite';
 
-/** Excalidraw's fonts, served by Radicle itself instead of a CDN (Folio 3.5). */
+/** Excalidraw's fonts, served by Gumball Factory itself instead of a CDN (Folio 3.5). */
 function excalidrawFonts(): Plugin {
   return {
-    name: 'radicle-excalidraw-fonts',
+    name: 'gumball-factory-excalidraw-fonts',
     apply: 'build',
     writeBundle(options) {
       const from = new URL(

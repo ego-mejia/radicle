@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "Radicle",
-  "short_name": "Radicle",
+  "name": "Gumball Factory",
+  "short_name": "Gumball Factory",
   "description": "Ticket tracker for people and AI agents",
   "start_url": "/",
   "scope": "/",

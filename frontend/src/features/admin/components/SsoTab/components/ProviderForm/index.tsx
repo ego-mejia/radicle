@@ -116,7 +116,7 @@ export function ProviderForm({ initial, groupNames, pending, error, onSave, onCa
           rows={3}
           value={mapping}
           onChange={(e) => setMapping(e.target.value)}
-          placeholder="radicle-backend = backend"
+          placeholder="gumball-factory-backend = backend"
         />
       </Field>
       <S.Row>

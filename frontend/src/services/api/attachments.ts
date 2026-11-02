@@ -1,4 +1,4 @@
-import { ApiError, CSRF_COOKIE, api, readCookie, unwrap } from './client';
+import { ApiError, api, csrfToken, unwrap } from './client';
 import type { Attachment, ImagePreset } from './types';
 
 export const attachmentKeys = {
@@ -24,7 +24,7 @@ export function uploadAttachment(
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `/api/v1/tickets/${encodeURIComponent(ticketKey)}/attachments`);
     xhr.withCredentials = true;
-    const token = readCookie(CSRF_COOKIE);
+    const token = csrfToken();
     if (token) xhr.setRequestHeader('X-CSRF-Token', token);
     xhr.upload.onprogress = (e) => e.lengthComputable && onProgress?.(e.loaded / e.total);
     xhr.onload = () => {

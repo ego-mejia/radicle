@@ -17,7 +17,7 @@ export const Card = styled.a`
   }
 `;
 
-/** The dark cover with Radicle's roots, or the page's own cover image. */
+/** The dark cover with Gumball Factory's roots, or the page's own cover image. */
 export const Cover = styled.div`
   height: 260px;
   background: ${darkTheme.color.bg};
