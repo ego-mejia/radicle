@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Creating the app (for the OpenAPI export) needs a key; tests set their own.
-      RADICLE_SECRET_KEY: ci-only-not-secret-0123456789abcdef
+      GUMBALL_FACTORY_SECRET_KEY: ci-only-not-secret-0123456789abcdef
       # Shared runners are slower than a real server: double the performance budgets.
-      RADICLE_PERF_BUDGET_FACTOR: "2"
+      GUMBALL_FACTORY_PERF_BUDGET_FACTOR: "2"
     defaults:
       run:
         working-directory: backend
@@ -28,11 +28,11 @@ jobs:
       - name: Lint
         run: uv run ruff check . && uv run ruff format --check .
       - name: Types
-        run: uv run mypy radicle
+        run: uv run mypy gumball_factory
       - name: Tests (Postgres via testcontainers, includes migration up/down/up)
         run: uv run pytest --cov --cov-report=term --cov-fail-under=70
       - name: Coverage of services/ and query/ (min 85%)
-        run: uv run coverage report --include="radicle/services/*,radicle/query/*" --fail-under=85
+        run: uv run coverage report --include="gumball_factory/services/*,gumball_factory/query/*" --fail-under=85
       - name: OpenAPI client is up to date
         run: |
           uv run python ../scripts/export_openapi.py
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build image and run smoke test
         env:
-          RADICLE_SECRET_KEY: ci-only-not-secret-0123456789abcdef
+          GUMBALL_FACTORY_SECRET_KEY: ci-only-not-secret-0123456789abcdef
         run: scripts/smoke.sh
 
   e2e:
@@ -82,11 +82,11 @@ jobs:
           node-version-file: frontend/.nvmrc
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
-      - name: Start Radicle on a fresh database
+      - name: Start Gumball Factory on a fresh database
         env:
-          RADICLE_SECRET_KEY: ci-only-not-secret-0123456789abcdef
+          GUMBALL_FACTORY_SECRET_KEY: ci-only-not-secret-0123456789abcdef
           # The specs sign in more often than the default login limit allows a minute.
-          RADICLE_LOGIN_RATE_LIMIT_PER_MINUTE: "100"
+          GUMBALL_FACTORY_LOGIN_RATE_LIMIT_PER_MINUTE: "100"
         run: |
           docker compose up -d --build
           for i in $(seq 1 60); do curl -fsS localhost:8000/health && break; sleep 2; done

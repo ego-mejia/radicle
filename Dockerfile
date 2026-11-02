@@ -29,20 +29,20 @@ RUN if [ "$PDF" = "true" ]; then \
       && apt-get install -y --no-install-recommends chromium fonts-liberation fonts-noto-color-emoji \
       && rm -rf /var/lib/apt/lists/*; \
     fi
-ENV RADICLE_CHROMIUM_PATH=/usr/bin/chromium
-RUN groupadd --system radicle && useradd --system --gid radicle --home /app radicle \
-    && mkdir -p /data/attachments && chown -R radicle:radicle /data
+ENV GUMBALL_FACTORY_CHROMIUM_PATH=/usr/bin/chromium
+RUN groupadd --system gumball-factory && useradd --system --gid gumball-factory --home /app gumball-factory \
+    && mkdir -p /data/attachments && chown -R gumball-factory:gumball-factory /data
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
-    RADICLE_STATIC_DIR=/app/static
+    GUMBALL_FACTORY_STATIC_DIR=/app/static
 WORKDIR /app/backend
 COPY --from=backend /opt/venv /opt/venv
 COPY --from=backend /app/backend /app/backend
 COPY --from=frontend /app/frontend/dist /app/static
 COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-USER radicle
+USER gumball-factory
 EXPOSE 8000
 HEALTHCHECK --interval=10s --timeout=3s --start-period=20s --retries=5 \
   CMD python -c "import urllib.request,sys; sys.exit(urllib.request.urlopen('http://127.0.0.1:8000/health').status != 200)"
 ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["uvicorn", "radicle.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]
+CMD ["uvicorn", "gumball_factory.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]

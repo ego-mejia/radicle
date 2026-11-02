@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-from radicle.main import create_app
+from gumball_factory.main import create_app
 
 target = Path(__file__).resolve().parent.parent / "frontend" / "openapi.json"
 target.write_text(json.dumps(create_app().openapi(), indent=2, sort_keys=True) + "\n")
